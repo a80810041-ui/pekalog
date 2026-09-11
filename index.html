@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v2.1</title>
+<title>ペカログ JUGGLER EDITION v3.0</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -24,7 +24,7 @@ h2,h3{margin:0 0 10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid #323a48;border-radius:12px;padding:11px;font-size:16px}textarea{resize:vertical}
 .btn{border:0;border-radius:16px;padding:15px 11px;font-size:17px;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent}.btn:active{transform:scale(.985)}
 .big{background:var(--big);color:#1a0b0e}.reg{background:var(--reg);color:#1a1505}.cherry{background:var(--ch);color:#25070e}.green{background:var(--green);color:#07150e}.blue{background:var(--blue);color:#fff}.violet{background:var(--violet);color:#140b20}.dark{background:#252c37;color:#fff}.cyan{background:var(--cyan);color:#082029}.small{padding:10px 9px;font-size:14px}.wide{width:100%}
-.modelBtn{background:#202631;color:white;border:1px solid #343d4b}.modelBtn.active{background:var(--cyan);color:#082029;border-color:transparent}
+.modelBtn{background:#202631;color:white;border:1px solid #343d4b;min-height:54px}.modelBtn.active{background:var(--cyan);color:#082029;border-color:transparent}
 .hist{display:flex;flex-direction:column;gap:8px;max-height:380px;overflow:auto}.item{background:var(--panel2);border:1px solid #252c37;border-radius:13px;padding:10px;display:flex;justify-content:space-between;gap:8px}
 .tags{margin-top:5px}.tag{display:inline-block;font-size:11px;background:#2a313d;border-radius:999px;padding:3px 7px;margin:0 4px 3px 0}.premium{background:#352a46}.chTag{background:#49212d}.unknown{background:#35383f}
 .bar{height:10px;border-radius:999px;background:#252c37;overflow:hidden;margin-top:4px}.fill{height:100%;background:linear-gradient(90deg,#6ca8ff,#58e39a)}
@@ -45,17 +45,13 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v2.1</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.0</div>
 </header>
 
 <div class="card">
  <h3>今日は何ジャグ？</h3>
- <div class="grid4">
-  <button id="btn-gogo3" class="btn modelBtn" onclick="setModel('gogo3')">ゴージャグ3</button>
-  <button id="btn-neoim" class="btn modelBtn" onclick="setModel('neoim')">ネオアイム</button>
-  <button id="btn-my5" class="btn modelBtn" onclick="setModel('my5')">マイジャグV</button>
-  <button id="btn-my6" class="btn modelBtn" onclick="setModel('my6')">マイジャグVI</button>
- </div>
+ <div id="modelPicker" class="grid3"></div>
+ <div class="tiny" style="margin-top:8px">6機種対応。今後は機種データを追加するだけで選択肢も自動増殖。</div>
  <div class="tiny" id="modelSpec" style="margin-top:8px"></div>
 </div>
 
@@ -167,7 +163,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <div class="card"><h3>保存済み実戦</h3><div id="archives"></div></div>
 
 <div class="footer">
- ペカログは端末ブラウザ内に自動保存。マイジャグラーVI対応。設定推測は参考用です。<br>
+ ペカログは端末ブラウザ内に自動保存。6機種対応。設定推測は参考用です。<br>
  スマホで使うときはSafari/Chromeで開くと入力・保存・共有が使いやすいです。
 </div>
 </div>
@@ -175,29 +171,40 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <script>
 const MODELS={
  gogo3:{
-  name:'ゴーゴージャグラー3',
+  name:'ゴーゴージャグラー3', short:'ゴージャグ3',
   spec:[259.0,354.2,149.6, 258.0,332.7,145.3, 257.0,306.2,139.7, 254.0,268.6,130.5, 247.3,247.3,123.7, 234.9,234.9,117.4],
   premiums:['なし','レインボー系','無音系','遅れ系','スロースタート系','隠れGOGO系','特殊点灯系','その他']
  },
  neoim:{
-  name:'ネオアイムジャグラーEX',
+  name:'ネオアイムジャグラーEX', short:'ネオアイム',
   spec:[273.1,439.8,168.5, 269.7,399.6,161.0, 269.7,331.0,148.6, 259.0,315.1,142.2, 259.0,255.0,128.5, 255.0,255.0,127.5],
   premiums:['なし','告知キャラ点灯','プレミアムボーナス音','軍艦マーチ','第九','運命','みんなのGOGO!CHANCE','特殊点灯系','その他']
  },
  my5:{
-  name:'マイジャグラーV',
+  name:'マイジャグラーV', short:'マイジャグV',
   spec:[273.1,409.6,163.8, 270.8,385.5,159.1, 266.4,336.1,148.6, 254.0,290.0,135.4, 240.1,268.6,126.8, 229.1,229.1,114.6],
   premiums:['なし','トラッピ','GOGO!ランプ変化','レインボー系','瞬き系','特殊点灯系','プレミアム音','その他']
  },
  my6:{
-  name:'マイジャグラーVI',
+  name:'マイジャグラーVI', short:'マイジャグVI',
   spec:[273.1,409.6,163.8, 270.8,385.5,159.1, 266.4,336.1,148.6, 254.0,290.0,135.4, 240.1,268.6,126.8, 229.1,229.1,114.6],
   premiums:['なし','GOGO!ランプ変化','レインボー系','瞬き系','特殊点灯系','プレミアム音','その他']
+ },
+ happy3:{
+  name:'ハッピージャグラーV III', short:'ハッピーV III',
+  spec:[273.1,397.2,161.8, 270.8,362.1,154.9, 263.2,332.7,146.9, 254.0,300.6,137.7, 239.2,273.1,127.5, 226.0,256.0,120.0],
+  premiums:['なし','GOGO!ランプ変化','告知タイミング変化','特殊点灯系','プレミアム音','その他']
+ },
+ ultra:{
+  name:'ウルトラミラクルジャグラー', short:'ウルトラミラクル',
+  spec:[267.5,425.6,164.3, 261.1,402.1,158.3, 256.0,350.5,147.9, 242.7,322.8,138.6, 233.2,297.9,130.8, 216.3,277.7,121.6],
+  premiums:['なし','GOGO!ランプ変化','プレミアムアクション','特殊告知','特殊点灯系','スペシャルボーナス音','その他']
  }
 };
 const KEY='pekalog_v2_state',ARCH='pekalog_v2_archives';
 const $=id=>document.getElementById(id);
 let state=JSON.parse(localStorage.getItem(KEY)||'null')||blankState();
+if(!MODELS[state.model]) state.model='gogo3';
 let pendingType=null,lastReport='';
 
 function blankState(){return {model:'gogo3',date:new Date().toISOString().slice(0,10),shop:'',machine:'',diffCoins:'',sessionMemo:'',totalG:0,currentG:0,big:0,reg:0,cherry:0,history:[]}}
@@ -206,13 +213,19 @@ function specs(){const a=MODELS[state.model].spec;return [0,1,2,3,4,5].map(i=>({
 function rate(n){return n>0&&state.totalG>0?'1/'+(state.totalG/n).toFixed(1):'-'}
 function saveMeta(){state.date=$('date').value;state.shop=$('shop').value;state.machine=$('machine').value;state.diffCoins=$('diffCoins').value;state.sessionMemo=$('sessionMemo').value;persist()}
 function persist(){localStorage.setItem(KEY,JSON.stringify(state))}
-function setModel(m){state.model=m;updatePremiumOptions();render()}
+function renderModelPicker(){
+ const picker=$('modelPicker');
+ picker.innerHTML=Object.entries(MODELS).map(([id,m]) =>
+  `<button id="btn-${id}" class="btn modelBtn ${state.model===id?'active':''}" onclick="setModel('${id}')">${m.short||m.name}</button>`
+ ).join('');
+}
+function setModel(m){if(!MODELS[m])return;state.model=m;updatePremiumOptions();render()}
 function updatePremiumOptions(){
  const p=$('premium'); if(!p)return;
  p.innerHTML=MODELS[state.model].premiums.map(x=>`<option value="${x==='なし'?'':esc(x)}">${x}</option>`).join('')
 }
 function render(){
- ['gogo3','neoim','my5','my6'].forEach(m=>$('btn-'+m).classList.toggle('active',state.model===m));
+ renderModelPicker();
  const sp=specs();$('modelSpec').textContent=`${MODELS[state.model].name}｜設定1 合算 1/${sp[0].all} → 設定6 1/${sp[5].all}`;
  $('date').value=state.date||new Date().toISOString().slice(0,10);$('shop').value=state.shop||'';$('machine').value=state.machine||'';$('diffCoins').value=state.diffCoins||'';$('sessionMemo').value=state.sessionMemo||'';
  $('totalG').textContent=state.totalG;$('currentG').textContent=state.currentG;$('bigCount').textContent=state.big;$('regCount').textContent=state.reg;
@@ -286,7 +299,7 @@ function renderArchives(){
  $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">${esc(x.shop||'')} 台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}</div></div><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button></div></div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'
 }
 function loadArchive(id){const a=JSON.parse(localStorage.getItem(ARCH)||'[]'),x=a.find(v=>v.id===id);if(!x)return;if(!confirm('この実戦を現在の画面に読み込む？'))return;const {id:_,...rest}=x;state=rest;updatePremiumOptions();render();window.scrollTo({top:0,behavior:'smooth'})}
-function downloadJSON(){const payload={version:'2.1',current:state,archives:JSON.parse(localStorage.getItem(ARCH)||'[]')};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_${state.date||'data'}_${state.machine||'machine'}.json`;a.click();URL.revokeObjectURL(a.href)}
+function downloadJSON(){const payload={version:'3.0',current:state,archives:JSON.parse(localStorage.getItem(ARCH)||'[]')};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_${state.date||'data'}_${state.machine||'machine'}.json`;a.click();URL.revokeObjectURL(a.href)}
 function importJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);if(p.current)state=p.current;if(Array.isArray(p.archives))localStorage.setItem(ARCH,JSON.stringify(p.archives));updatePremiumOptions();render();alert('データを読み込んだよ！')}catch(e){alert('JSONを読み込めなかったよ')}};r.readAsText(f);ev.target.value=''}
 function newSession(){if(!confirm('現在の実戦をリセットして、新しい実戦を始める？\n必要なら先に「実戦を保存」してね。'))return;const m=state.model;state=blankState();state.model=m;closeBonus();render();window.scrollTo({top:0,behavior:'smooth'})}
 ['date','shop','machine','diffCoins','sessionMemo'].forEach(id=>$(id).addEventListener('input',saveMeta));
