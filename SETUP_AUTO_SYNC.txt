@@ -1,0 +1,29 @@
+PEKALOG 自動同期 v1 セットアップ
+================================
+
+一度だけ必要な設定
+------------------
+1. App Storeから「Userscripts」をインストール。
+2. iPhoneの 設定 → アプリ → Safari → 機能拡張 → Userscripts をON。
+   Webサイトアクセスは www.pscube.jp で許可（分からなければ「すべてのWebサイト」で許可）。
+3. Userscriptsアプリを開き、「Set Userscripts Directory」で保存フォルダを選ぶ。
+4. このZIP内の pekalog_turkey_autosync.user.js を、そのUserscriptsフォルダへ保存。
+5. GitHubの pekalog リポジトリで index.html と lab.html を上書き。
+
+以後の使い方
+------------
+PEKALOGを開く
+  →「ターキーを同期しますか？」
+  →「同期する」
+  → P's CUBEを651→720まで自動巡回
+  → PEKALOGへ自動で戻る
+  → LAB更新完了
+
+手入力・22回の共有操作・JSON貼り付けは不要です。
+
+注意
+----
+・同期中はSafariのタブを閉じないでください。
+・通信状況により30秒～1分程度かかることがあります。
+・P's CUBEの画面構造が変更された場合はスクリプト更新が必要になることがあります。
+・差枚はP's CUBEのSVGグラフからの推定値です。

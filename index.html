@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.0</title>
+<title>ペカログ JUGGLER EDITION v3.2 AUTO SYNC</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -33,6 +33,13 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 .shareBox{white-space:pre-wrap;background:#0f1319;border:1px solid #2a313d;border-radius:13px;padding:11px;font-size:13px;line-height:1.6;max-height:260px;overflow:auto}
 .footer{text-align:center;color:#778292;font-size:11px;margin-top:20px;line-height:1.6}.hidden{display:none}
 @media(max-width:560px){.grid4{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:1fr}.modelBtn{padding:13px 8px}h1{font-size:24px}.wrap{padding-left:9px;padding-right:9px}}
+
+.syncOverlay{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:18px}
+.syncOverlay.hidden{display:none}
+.syncDialog{width:min(430px,100%);background:#151922;border:1px solid #36404e;border-radius:22px;padding:20px;box-shadow:0 24px 70px rgba(0,0,0,.55)}
+.syncDialog h3{font-size:21px;margin:0 0 8px}.syncDialog p{color:#b8c0cc;font-size:13px;line-height:1.65;margin:0 0 14px}
+.syncProgress{height:8px;background:#252c37;border-radius:999px;overflow:hidden;margin:12px 0}.syncProgress>div{height:100%;background:linear-gradient(90deg,#7de3ff,#58e39a);width:0}
+
 </style>
 
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -44,7 +51,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.1 LAB LINK</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.2 AUTO SYNC</div>
 </header>
 
 <div class="card">
@@ -147,7 +154,15 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
  </div>
 </div>
 
-<div class="card"><h3>🧪 PEKALOG LAB</h3><div class="notice">ターキーの傾向・22日・「その後どうなった？」を検証。</div><button class="btn cyan wide" style="margin-top:9px" onclick="location.href='./lab.html'">LABを開く</button></div>
+<div class="card">
+ <h3>🧪 PEKALOG LAB</h3>
+ <div class="notice">ターキーの傾向・22日・「その後どうなった？」を検証。</div>
+ <div id="turkeySyncStatus" class="tiny" style="margin-top:9px">ターキー同期：まだありません</div>
+ <div class="grid2" style="margin-top:9px">
+  <button class="btn cyan small" onclick="openTurkeySyncPrompt()">🦃 今すぐ同期</button>
+  <button class="btn violet small" onclick="location.href='./lab.html'">LABを開く</button>
+ </div>
+</div>
 
 <div class="card">
  <h3>保存・バックアップ</h3>
@@ -168,6 +183,24 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
  ペカログは端末ブラウザ内に自動保存。6機種対応。設定推測は参考用です。<br>
  スマホで使うときはSafari/Chromeで開くと入力・保存・共有が使いやすいです。
 </div>
+</div>
+
+
+<div id="turkeySyncModal" class="syncOverlay hidden">
+ <div class="syncDialog">
+  <div style="font-size:34px;margin-bottom:4px">🦃📡</div>
+  <h3 id="turkeySyncTitle">ターキーを同期しますか？</h3>
+  <p id="turkeySyncText">ジャグラー22台を自動巡回して、PEKALOG LABを最新データに更新します。</p>
+  <div id="turkeySyncProgress" class="syncProgress hidden"><div id="turkeySyncProgressBar"></div></div>
+  <div id="turkeySyncButtons" class="grid2">
+   <button class="btn cyan" onclick="startTurkeyAutoSync()">同期する</button>
+   <button class="btn dark" onclick="closeTurkeySyncPrompt()">今はしない</button>
+  </div>
+  <div id="turkeySyncDoneButtons" class="grid2 hidden">
+   <button class="btn green" onclick="closeTurkeySyncPrompt()">閉じる</button>
+   <button class="btn violet" onclick="location.href='./lab.html'">LABを見る</button>
+  </div>
+ </div>
 </div>
 
 <script>
@@ -308,5 +341,148 @@ function newSession(){if(!confirm('現在の実戦をリセットして、新し
 updatePremiumOptions();render();
 </script>
 
+
+
+<script>
+const PEKALOG_LAB_KEY='pekalog_lab_v02_data';
+const PEKALOG_SYNC_META_KEY='pekalog_turkey_sync_meta_v1';
+let turkeySyncReturning=false;
+
+function pekaNormMachine(v){
+ const s=String(v??'').trim(),n=Number(s);return Number.isFinite(n)?String(n):s.replace(/^0+/,'')||'0';
+}
+function pekaModelId(name){
+ const n=String(name||'').normalize('NFKC');
+ if(n.includes('ゴーゴー'))return 'gogo3';
+ if(n.includes('ネオアイム'))return 'neoim';
+ if(n.includes('マイジャグラーVI')||n.includes('マイジャグラー6'))return 'my6';
+ if(n.includes('マイジャグラーV'))return 'my5';
+ if(n.includes('ハッピー'))return 'happy3';
+ if(n.includes('ウルトラミラクル'))return 'ultra';
+ return 'unknown';
+}
+function pekaAddDaysISO(date,delta){
+ const p=String(date||'').split('-').map(Number);
+ if(p.length!==3||p.some(x=>!x))return date;
+ const d=new Date(Date.UTC(p[0],p[1]-1,p[2]));d.setUTCDate(d.getUTCDate()+delta);
+ return d.toISOString().slice(0,10);
+}
+function pekaComb(v){
+ const m=String(v||'').match(/1\/([\d.]+)/),n=m?Number(m[1]):null;
+ return Number.isFinite(n)?n:null;
+}
+function pekaSnapshot(rec,date,statKey,graphKey,isFinal){
+ const st=rec?.stats?.[statKey]||{},g=rec?.graphs?.[graphKey]||{};
+ const cap=Date.parse(rec?.capturedAt||'');
+ const ts=isFinal?Date.parse(date+'T23:59:00+09:00'):(Number.isFinite(cap)?cap:Date.now());
+ return {
+  date,ts,machine:pekaNormMachine(rec?.machine),model:pekaModelId(rec?.model),modelName:rec?.model||'',
+  totalG:Number.isFinite(Number(st.totalGEst))?Number(st.totalGEst):null,totalGEstimated:true,
+  big:Number(st.big||0),reg:Number(st.reg||0),comb:pekaComb(st.combined),
+  diff:Number.isFinite(Number(g.currentDiffEst))?Number(g.currentDiffEst):null,
+  maxDiff:Number.isFinite(Number(g.peakDiffEst))?Number(g.peakDiffEst):null,
+  minDiff:Number.isFinite(Number(g.troughDiffEst))?Number(g.troughDiffEst):null,
+  peak1000:!!g.peak1000,peak2000:!!g.peak2000,
+  currentGame:statKey==='today'&&Number.isFinite(Number(rec?.currentGame))?Number(rec.currentGame):null,
+  graphMode:'svg-dom-estimate',diffEstimated:true,updated:rec?.updated||null,
+  source:'pscube-auto-sync',isFinal,snapshotType:isFinal?'historical-final':'live'
+ };
+}
+function importTurkeyBundleDirect(pkg){
+ if(!pkg||pkg.kind!=='pekalog-turkey-bundle')throw new Error('同期データ形式が違います');
+ let lab={snapshots:[]};
+ try{lab=JSON.parse(localStorage.getItem(PEKALOG_LAB_KEY)||'{"snapshots":[]}')}catch{}
+ if(!Array.isArray(lab.snapshots))lab.snapshots=[];
+ const incoming=[];
+ for(const rec of (pkg.machines||[])){
+  if(!rec||!rec.machine||rec.error)continue;
+  incoming.push(pekaSnapshot(rec,pkg.date,'today','today',false));
+  incoming.push(pekaSnapshot(rec,pekaAddDaysISO(pkg.date,-1),'prev1','prev1',true));
+  incoming.push(pekaSnapshot(rec,pekaAddDaysISO(pkg.date,-2),'prev2','prev2',true));
+ }
+ const map=new Map(lab.snapshots.map(s=>[(s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s]));
+ for(const s of incoming)map.set((s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s);
+ lab.snapshots=[...map.values()];
+ localStorage.setItem(PEKALOG_LAB_KEY,JSON.stringify(lab));
+ localStorage.setItem(PEKALOG_SYNC_META_KEY,JSON.stringify({
+  syncedAt:new Date().toISOString(),date:pkg.date,machines:pkg.collected||pkg.machines?.length||0,
+  snapshots:incoming.length,version:pkg.version||''
+ }));
+ updateTurkeySyncStatus();
+ return {machines:pkg.collected||pkg.machines?.length||0,snapshots:incoming.length};
+}
+function decodeB64Url(s){
+ let b64=String(s||'').replace(/-/g,'+').replace(/_/g,'/');
+ while(b64.length%4)b64+='=';
+ const bin=atob(b64),bytes=new Uint8Array(bin.length);
+ for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+ return JSON.parse(new TextDecoder().decode(bytes));
+}
+function updateTurkeySyncStatus(){
+ const el=document.getElementById('turkeySyncStatus');if(!el)return;
+ try{
+  const m=JSON.parse(localStorage.getItem(PEKALOG_SYNC_META_KEY)||'null');
+  if(!m)return;
+  const when=new Date(m.syncedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  el.innerHTML=`✅ 最終同期：${when} ／ ${m.machines}台`;
+ }catch{}
+}
+function openTurkeySyncPrompt(){
+ document.getElementById('turkeySyncModal').classList.remove('hidden');
+ document.getElementById('turkeySyncTitle').textContent='ターキーを同期しますか？';
+ let last='まだ同期データはありません。';
+ try{
+  const m=JSON.parse(localStorage.getItem(PEKALOG_SYNC_META_KEY)||'null');
+  if(m)last='前回：'+new Date(m.syncedAt).toLocaleString('ja-JP')+' ／ '+m.machines+'台';
+ }catch{}
+ document.getElementById('turkeySyncText').innerHTML=`ジャグラー22台を自動巡回してLABを更新します。<br><span style="color:#8995a5">${last}</span>`;
+ document.getElementById('turkeySyncProgress').classList.add('hidden');
+ document.getElementById('turkeySyncButtons').classList.remove('hidden');
+ document.getElementById('turkeySyncDoneButtons').classList.add('hidden');
+}
+function closeTurkeySyncPrompt(){document.getElementById('turkeySyncModal').classList.add('hidden')}
+function startTurkeyAutoSync(){
+ const returnUrl=location.origin+location.pathname;
+ const sid=Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+ const url='https://www.pscube.jp/h/a707001/cgi-bin/nc-v06-001.php?cd_dai=0651'
+   +'#pekalog_sync=1&sid='+encodeURIComponent(sid)
+   +'&return='+encodeURIComponent(returnUrl);
+ document.getElementById('turkeySyncTitle').textContent='🦃 同期を開始します';
+ document.getElementById('turkeySyncText').textContent='P’s CUBEへ移動します。22台を自動巡回したあと、ここへ戻ってLABを更新します。';
+ document.getElementById('turkeySyncProgress').classList.remove('hidden');
+ document.getElementById('turkeySyncProgressBar').style.width='5%';
+ document.getElementById('turkeySyncButtons').classList.add('hidden');
+ setTimeout(()=>location.href=url,180);
+}
+function showTurkeySyncResult(ok,text){
+ document.getElementById('turkeySyncModal').classList.remove('hidden');
+ document.getElementById('turkeySyncTitle').textContent=ok?'✅ 同期完了！':'⚠️ 同期できませんでした';
+ document.getElementById('turkeySyncText').textContent=text;
+ document.getElementById('turkeySyncProgress').classList.remove('hidden');
+ document.getElementById('turkeySyncProgressBar').style.width=ok?'100%':'0%';
+ document.getElementById('turkeySyncButtons').classList.add('hidden');
+ document.getElementById('turkeySyncDoneButtons').classList.remove('hidden');
+}
+function handleTurkeySyncReturn(){
+ const h=new URLSearchParams(location.hash.replace(/^#/,''));
+ const data=h.get('pekalogSyncData'),err=h.get('pekalogSyncError'),cancel=h.get('pekalogSyncCancelled');
+ if(!data&&!err&&!cancel)return false;
+ turkeySyncReturning=true;
+ history.replaceState(null,'',location.pathname+location.search);
+ if(data){
+  try{
+   const pkg=decodeB64Url(data),r=importTurkeyBundleDirect(pkg);
+   showTurkeySyncResult(true,`${r.machines}台を取得して、LABへ${r.snapshots}件反映したよ。`);
+  }catch(e){showTurkeySyncResult(false,'データの取込でエラー：'+e.message)}
+ }else if(err){showTurkeySyncResult(false,decodeURIComponent(err))}
+ else if(cancel){showTurkeySyncResult(false,'同期を中止したよ。')}
+ return true;
+}
+window.addEventListener('load',()=>{
+ updateTurkeySyncStatus();
+ const returned=handleTurkeySyncReturn();
+ if(!returned)setTimeout(openTurkeySyncPrompt,450);
+});
+</script>
 
 </body></html>
