@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>PEKALOG LAB v0.3 LIVE</title>
+<title>PEKALOG LAB v0.4 COLLECT</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -36,7 +36,7 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 </head>
 <body>
 <div class="wrap">
-<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.3 LIVE</div></header>
+<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.4 COLLECT</div></header>
 <div class="nav" id="nav">
  <button class="btn dark active" data-view="dash">🏠 LAB</button>
  <button class="btn dark" data-view="hyp">🧠 仮説</button>
@@ -124,20 +124,18 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 
 <section id="data" class="view">
  <div class="card">
-  <div class="sectionTitle"><div><h3>📡 ターキー LIVE取得 <span class="pill warn">BETA</span></h3><div class="tiny">P's CUBEが公開している台データJSONを、LABから通常のブラウザ通信で読み込む接続テスト版。</div></div></div>
-  <div class="notice" style="margin-top:9px">まず <strong>0711で接続テスト</strong>。成功したら全ジャグ22台をまとめて取得できる。CAPTCHA回避や認証回避はしないので、P's CUBE側に通信を拒否された場合はそこで停止する。</div>
-  <div class="grid2" style="margin-top:10px">
-   <div><label>取得日</label><input id="liveDate" type="date"></div>
-   <div><label>自動更新（LABを開いている間だけ）</label><select id="liveAuto"><option value="off">OFF</option><option value="30">30分おき</option><option value="60">60分おき</option></select></div>
+  <div class="sectionTitle"><div><h3>📦 ターキー収集係 <span class="pill good">v0.4</span></h3><div class="tiny">GitHub Pagesからの直接取得はP's CUBEのセッション制限でHTMLに差し替わったため、P's CUBE画面上で動く1タップ収集方式に切り替え。</div></div></div>
+  <div class="notice" style="margin-top:9px">
+   <strong>使い方：</strong> P's CUBEでどれか1台の詳細画面を開く → 「PEKALOG収集」ブックマークをタップ → 全22台をまとめて取得 → 出てきたJSONをこのLABで読み込む。<br>
+   <span class="tiny">認証・CAPTCHAの回避はしない。あなたが通常閲覧できている同一ページ内の通信だけを使う。</span>
   </div>
-  <div style="margin-top:9px"><label>対象台（カンマ区切り・変更可）</label><textarea id="liveMachines" rows="3">651,652,653,655,656,657,658,660,661,662,663,707,708,710,711,712,713,715,716,717,718,720</textarea></div>
+  <button class="btn cyan wide" style="margin-top:10px" onclick="location.href='./collector_install.html'">📱 収集ブックマークを作る</button>
   <div class="grid2" style="margin-top:9px">
-   <button class="btn cyan" id="liveTestBtn">🧪 0711で接続テスト</button>
-   <button class="btn green" id="liveScanBtn">📡 全台を今すぐ取得</button>
+   <label class="btn green" style="text-align:center;cursor:pointer">⬆ 収集JSONを読み込む<input id="collectorFile" type="file" accept=".json,application/json" style="display:none"></label>
+   <button class="btn dark" id="collectorPasteBtn">📋 貼り付けJSONを取込</button>
   </div>
-  <button class="btn dark wide" style="margin-top:9px" id="liveDebugBtn">🧩 0711の診断JSONを保存</button>
-  <div id="liveStatus" class="notice" style="margin-top:10px">未接続。まず0711でテストしてね。</div>
-  <div id="liveRows" class="list" style="margin-top:10px"></div>
+  <textarea id="collectorPaste" rows="5" style="margin-top:9px" placeholder="収集係で『JSONをコピー』した場合はここに貼り付け"></textarea>
+  <div id="collectorStatus" class="notice" style="margin-top:10px">まだ収集JSONは読み込まれていないよ。</div>
  </div>
  <div class="card">
   <h3>🗃 LABデータ</h3>
@@ -148,7 +146,7 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
    <button class="btn cyan" id="reloadRemote">🔄 daily.json再読込</button>
    <button class="btn violet" id="demoBtn">🧪 デモデータ</button>
   </div>
-  <div class="tiny" style="margin-top:9px">本番では <code>daily.json</code> を自動更新する収集係につなぐ。画面側の分析はすでにその形式で動く。</div>
+  <div class="tiny" style="margin-top:9px">収集JSON・LABバックアップ・CSV・daily.jsonは全部同じ分析エンジンに入る。</div>
  </div>
  <div class="card">
   <h3>必要データ形式</h3>
@@ -284,20 +282,44 @@ function renderIF(){
  const rs=Object.entries(reasonMap).map(([reason,vals])=>({reason,n:vals.length,av:vals.reduce((a,b)=>a+b,0)/vals.length,up:vals.filter(v=>v>=500).length,down:vals.filter(v=>v<=-500).length})).sort((a,b)=>b.n-a.n);
  $('reasonStats').innerHTML=rs.length?rs.map(r=>`<div class="row"><div class="rowtop"><div><b>${esc(r.reason)}</b><div class="tiny">n=${r.n} ／ その後+500 ${r.up} ／ -500 ${r.down}</div></div><div class="right"><b class="${r.av>=0?'pos':'neg'}">平均 ${signed(Math.round(r.av))}枚</b></div></div></div>`).join(''):'<div class="empty">ヤメ理由つき実戦が貯まると理由別に比較する。</div>';
 }
+
+function collectorToSnapshots(pkg){
+ if(!pkg||pkg.kind!=='pekalog-collector')throw new Error('PEKALOG収集JSONではないよ');
+ const rows=Array.isArray(pkg.machines)?pkg.machines:[];
+ const snaps=[];let graphOk=0,histOk=0,errors=0;
+ for(const rec of rows){
+  if(!rec||!rec.machine||!rec.basic||rec.basic.error){errors++;continue}
+  try{
+   const s=parseBasicJSON(rec.basic,pkg.date||todayJST(),rec.machine);
+   if(rec.history&&!rec.history.error){Object.assign(s,parseHistoryJSON(rec.history));histOk++}
+   if(rec.graph&&!rec.graph.error){const g=parseGraphJSON(rec.graph,pkg.date||s.date);s.diff=g.diff;s.maxDiff=g.maxDiff;s.minDiff=g.minDiff;s.graphMode=g.graphMode;s.graphPoints=g.pointCount;if(Number.isFinite(Number(g.diff)))graphOk++}
+   else{s.diff=null;s.graphMode='collector-no-graph'}
+   const cap=Date.parse(pkg.capturedAt||'');if(Number.isFinite(cap)&&(!s.ts||s.ts>Date.now()+86400000))s.ts=cap;
+   s.source='pscube-collector';snaps.push(s)
+  }catch(e){errors++}
+ }
+ if(snaps.length)mergeData({snapshots:snaps});
+ return {count:snaps.length,graphOk,histOk,errors,total:rows.length};
+}
+function collectorStatusText(r){return `✅ <strong>${r.count}/${r.total}台をLABへ追加</strong>。履歴 ${r.histOk}台${r.graphOk?` ／ 差枚解析 ${r.graphOk}台`:''}${r.errors?` ／ 失敗 ${r.errors}台`:''}。${r.graphOk?'1000/2000枚分析へそのまま反映したよ。':'差枚はグラフ点列の解析が通った台から自動反映する。'}`}
+function importCollectorObject(j){const r=collectorToSnapshots(j);const el=$('collectorStatus');if(el)el.innerHTML=collectorStatusText(r);renderAll();return r}
+function importCollectorFile(ev){const f=ev.target.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const j=JSON.parse(rd.result);const r=importCollectorObject(j);alert(`${r.count}台ぶん読み込んだよ！`)}catch(e){alert('収集JSONを読み込めなかったよ：'+e.message)}ev.target.value=''};rd.readAsText(f)}
+function importCollectorPaste(){const t=$('collectorPaste')?.value.trim();if(!t)return alert('収集JSONを貼り付けてね');try{const j=JSON.parse(t);const r=importCollectorObject(j);$('collectorPaste').value='';alert(`${r.count}台ぶん読み込んだよ！`)}catch(e){alert('貼り付けJSONを読み込めなかったよ：'+e.message)}}
+
 async function loadRemote(silent=false){try{const r=await fetch('./daily.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error(r.status);const j=await r.json();mergeData(j);if(!silent)alert('daily.jsonを読み込んだよ')}catch(e){if(!silent)alert('daily.jsonはまだ接続されてないよ。今はJSON読込かデモで試せる。')}renderAll()}
 function mergeData(j){const incoming=Array.isArray(j)?j:(j.snapshots||[]);if(!Array.isArray(incoming))return;const map=new Map((lab.snapshots||[]).map(s=>[(s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s]));for(const raw of incoming){const s={...raw,machine:normMachine(raw.machine)};map.set((s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s);}lab.snapshots=[...map.values()];persist()}
 function demoData(){if(!confirm('分析画面確認用のDEMOデータを追加する？（実データではありません）'))return;const models=['gogo3','gogo3','gogo3','my5','my5','neoim'];const machines=['301','302','303','311','312','321'];const dates=['2026-06-22','2026-07-22','2026-08-22','2026-09-10','2026-09-11'];let arr=[];dates.forEach((d,di)=>machines.forEach((m,i)=>{let g=4200+((di*777+i*433)%3500),big=14+((di*7+i*5)%20),reg=10+((di*5+i*3)%18),diff=((di*911+i*733)%4200)-1500;if(d.endsWith('-22')){g+=1300;big+=7;reg+=6;diff+=700}arr.push({date:d,ts:new Date(d+'T22:35:00+09:00').getTime(),machine:m,model:models[i],totalG:g,big,reg,diff,demo:true})}));
  // one unmistakable 72-peka DEMO record, explicitly demo only
  arr.push({date:'2026-08-22',ts:new Date('2026-08-22T22:36:00+09:00').getTime(),machine:'399-DEMO',model:'gogo3',totalG:8000,big:39,reg:33,diff:2600,demo:true});mergeData({snapshots:arr});renderAll()}
-function renderData(){const demos=(lab.snapshots||[]).filter(x=>x.demo).length,live=(lab.snapshots||[]).filter(x=>x.source==='pscube-live').length;$('dataStatus').innerHTML=`スナップショット <strong>${(lab.snapshots||[]).length}件</strong>${live?` ／ LIVE ${live}件`:''}${demos?`（DEMO ${demos}件）`:''}。<br>LIVE取得・<code>daily.json</code>・CSV/JSONは全部同じ分析エンジンに入る。P's CUBE側に通信を拒否された場合は回避せず停止する。`}
+function renderData(){const demos=(lab.snapshots||[]).filter(x=>x.demo).length,live=(lab.snapshots||[]).filter(x=>x.source==='pscube-live'||x.source==='pscube-collector').length;$('dataStatus').innerHTML=`スナップショット <strong>${(lab.snapshots||[]).length}件</strong>${live?` ／ P's CUBE ${live}件`:''}${demos?`（DEMO ${demos}件）`:''}。<br>収集JSON・<code>daily.json</code>・CSV/JSONは全部同じ分析エンジンに入る。`}
 function exportData(){const blob=new Blob([JSON.stringify({version:'0.3',exportedAt:new Date().toISOString(),snapshots:lab.snapshots,hypotheses},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pekalog_lab_backup.json';a.click();URL.revokeObjectURL(a.href)}
-function importFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(j.snapshots)mergeData(j);if(Array.isArray(j.hypotheses)){hypotheses=j.hypotheses;persist()}renderAll();alert('LABデータを読み込んだよ')}catch(e){alert('JSONを読み込めなかったよ')}ev.target.value=''};r.readAsText(f)}
+function importFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(j.kind==='pekalog-collector'){const z=importCollectorObject(j);alert(`${z.count}台ぶんの収集JSONを読み込んだよ`)}else{if(j.snapshots)mergeData(j);if(Array.isArray(j.hypotheses)){hypotheses=j.hypotheses;persist()}renderAll();alert('LABデータを読み込んだよ')}}catch(e){alert('JSONを読み込めなかったよ')}ev.target.value=''};r.readAsText(f)}
 function parseCSVLine(line){const out=[];let cur='',q=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'){if(q&&line[i+1]==='"'){cur+='"';i++}else q=!q}else if(c===','&&!q){out.push(cur.trim());cur=''}else cur+=c}out.push(cur.trim());return out}
 function importCSVText(){const text=$('csvPaste').value.trim();if(!text)return alert('CSVを貼ってね');const lines=text.split(/\r?\n/).filter(Boolean),first=parseCSVLine(lines[0]);const expected=['date','ts','machine','model','totalG','big','reg','diff'];let start=0,headers=expected;if(first.some(x=>expected.includes(x))){headers=first;start=1}let arr=[];for(let i=start;i<lines.length;i++){const vals=parseCSVLine(lines[i]),o={};headers.forEach((h,j)=>o[h]=vals[j]);['ts','totalG','big','reg','diff'].forEach(k=>{if(o[k]!==undefined&&o[k]!=='')o[k]=Number(o[k])});if(o.date&&o.machine)arr.push(o)}if(!arr.length)return alert('取り込める行がなかったよ');mergeData({snapshots:arr});$('csvPaste').value='';renderAll();alert(`${arr.length}件取り込んだよ`)}
 function saveEventConfig(){const d=Number($('eventDay').value||22);if(d<1||d>31)return alert('特定日は1〜31で入れてね');cfg.eventDay=d;cfg.extraEvents=$('extraEvents').value.split(',').map(x=>x.trim()).filter(Boolean);persist();renderAll();alert('イベント設定を保存したよ 🔥')}
 function renderConfig(){if($('eventDay'))$('eventDay').value=cfg.eventDay||22;if($('extraEvents'))$('extraEvents').value=(cfg.extraEvents||[]).join(',')}
 function renderAll(){renderDash();renderHyp();renderEvent();renderIF();renderData();renderConfig()}
-nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('exportBtn').onclick=exportData;$('reloadRemote').onclick=()=>loadRemote(false);$('demoBtn').onclick=demoData;$('csvImportBtn').onclick=importCSVText;$('saveEventCfg').onclick=saveEventConfig;$('hDate').value=todayJST();initLiveUI();renderAll();loadRemote(true);
+nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collectorFile').onchange=importCollectorFile;$('collectorPasteBtn').onclick=importCollectorPaste;$('exportBtn').onclick=exportData;$('reloadRemote').onclick=()=>loadRemote(false);$('demoBtn').onclick=demoData;$('csvImportBtn').onclick=importCSVText;$('saveEventCfg').onclick=saveEventConfig;$('hDate').value=todayJST();initLiveUI();renderAll();loadRemote(true);
 </script>
 
 </body>
