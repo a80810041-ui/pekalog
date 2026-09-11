@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.2 AUTO SYNC</title>
+<title>ペカログ JUGGLER EDITION v3.2.1 AUTO SYNC</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -51,7 +51,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.2 AUTO SYNC</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.2.1 AUTO SYNC</div>
 </header>
 
 <div class="card">
@@ -452,7 +452,9 @@ function startTurkeyAutoSync(){
  document.getElementById('turkeySyncProgress').classList.remove('hidden');
  document.getElementById('turkeySyncProgressBar').style.width='5%';
  document.getElementById('turkeySyncButtons').classList.add('hidden');
- setTimeout(()=>location.href=url,180);
+ // iOSのホーム画面Webアプリでは、ユーザー操作から遅延した外部遷移が止められることがある。
+ // そのためタップ操作の中で即時に遷移する。
+ window.location.assign(url);
 }
 function showTurkeySyncResult(ok,text){
  document.getElementById('turkeySyncModal').classList.remove('hidden');
