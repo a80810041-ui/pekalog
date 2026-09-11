@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>PEKALOG LAB v0.2</title>
+<title>PEKALOG LAB v0.3 LIVE</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -36,7 +36,7 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 </head>
 <body>
 <div class="wrap">
-<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.2</div></header>
+<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.3 LIVE</div></header>
 <div class="nav" id="nav">
  <button class="btn dark active" data-view="dash">🏠 LAB</button>
  <button class="btn dark" data-view="hyp">🧠 仮説</button>
@@ -124,6 +124,22 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 
 <section id="data" class="view">
  <div class="card">
+  <div class="sectionTitle"><div><h3>📡 ターキー LIVE取得 <span class="pill warn">BETA</span></h3><div class="tiny">P's CUBEが公開している台データJSONを、LABから通常のブラウザ通信で読み込む接続テスト版。</div></div></div>
+  <div class="notice" style="margin-top:9px">まず <strong>0711で接続テスト</strong>。成功したら全ジャグ22台をまとめて取得できる。CAPTCHA回避や認証回避はしないので、P's CUBE側に通信を拒否された場合はそこで停止する。</div>
+  <div class="grid2" style="margin-top:10px">
+   <div><label>取得日</label><input id="liveDate" type="date"></div>
+   <div><label>自動更新（LABを開いている間だけ）</label><select id="liveAuto"><option value="off">OFF</option><option value="30">30分おき</option><option value="60">60分おき</option></select></div>
+  </div>
+  <div style="margin-top:9px"><label>対象台（カンマ区切り・変更可）</label><textarea id="liveMachines" rows="3">651,652,653,655,656,657,658,660,661,662,663,707,708,710,711,712,713,715,716,717,718,720</textarea></div>
+  <div class="grid2" style="margin-top:9px">
+   <button class="btn cyan" id="liveTestBtn">🧪 0711で接続テスト</button>
+   <button class="btn green" id="liveScanBtn">📡 全台を今すぐ取得</button>
+  </div>
+  <button class="btn dark wide" style="margin-top:9px" id="liveDebugBtn">🧩 0711の診断JSONを保存</button>
+  <div id="liveStatus" class="notice" style="margin-top:10px">未接続。まず0711でテストしてね。</div>
+  <div id="liveRows" class="list" style="margin-top:10px"></div>
+ </div>
+ <div class="card">
   <h3>🗃 LABデータ</h3>
   <div id="dataStatus" class="notice"></div>
   <div class="grid2" style="margin-top:10px">
@@ -156,12 +172,58 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
  </div>
 </section>
 
-<div class="footer">PEKALOG LABは過去データと自分の仮説を検証する研究ツール。設定・勝利を保証するものではありません。<br>同一GitHub Pagesドメイン配下ならPEKALOGのlocalStorageを直接連携できます。</div>
+<div class="footer">PEKALOG LABは公開データと自分の仮説を検証する研究ツール。設定・勝利を保証するものではありません。<br>同一GitHub Pagesドメイン配下ならPEKALOGのlocalStorageを直接連携できます。</div>
 </div>
 <script>
 const LAB_KEY='pekalog_lab_v02_data', HYP_KEY='pekalog_lab_v02_hypotheses', CFG_KEY='pekalog_lab_v02_config';
 const PEKA_ARCH='pekalog_v2_archives';
 const MODELS={gogo3:'ゴージャグ3',neoim:'ネオアイム',my5:'マイジャグV',my6:'マイジャグVI',happy3:'ハッピーV III',ultra:'ウルトラミラクル'};
+const TURKEY_LIVE={
+ base:'https://www.pscube.jp/h/a707001/cgi-bin/',
+ endpoints:{basic:'nc-m06-001.php',history:'nc-m06-008.php',graph:'nc-m06-003.php'},
+ defaultMachines:['651','652','653','655','656','657','658','660','661','662','663','707','708','710','711','712','713','715','716','717','718','720']
+};
+let liveTimer=null, liveBusy=false, lastLiveDebug=null;
+function normMachine(v){const s=String(v??'').trim();if(!s)return '';const n=Number(s);return Number.isFinite(n)?String(n):s.replace(/^0+/,'')||'0'}
+function apiMachine(v){const s=normMachine(v);return /^\d+$/.test(s)?s.padStart(4,'0'):s}
+function ymd8(date){return String(date||'').replace(/-/g,'')}
+function date10(ymd){const s=String(ymd||'');return s.length===8?s.slice(0,4)+'-'+s.slice(4,6)+'-'+s.slice(6,8):s}
+function todayJST(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
+function modelIdFromName(name){const n=String(name||'').normalize('NFKC');if(n.includes('ゴーゴー'))return 'gogo3';if(n.includes('ネオアイム'))return 'neoim';if(n.includes('マイジャグラーVI')||n.includes('マイジャグラー6'))return 'my6';if(n.includes('マイジャグラーV'))return 'my5';if(n.includes('ハッピー'))return 'happy3';if(n.includes('ウルトラミラクル'))return 'ultra';return 'unknown'}
+function deepGetArrays(root){const out=[];const seen=new Set();function walk(v,path=''){if(!v||typeof v!=='object'||seen.has(v))return;seen.add(v);if(Array.isArray(v)){out.push({path,value:v});v.forEach((x,i)=>walk(x,path+'['+i+']'));return}for(const [k,x] of Object.entries(v))walk(x,path?path+'.'+k:k)}walk(root);return out}
+function deepObjects(root){const out=[];const seen=new Set();function walk(v,path=''){if(!v||typeof v!=='object'||seen.has(v))return;seen.add(v);if(!Array.isArray(v))out.push({path,value:v});if(Array.isArray(v))v.forEach((x,i)=>walk(x,path+'['+i+']'));else for(const [k,x] of Object.entries(v))walk(x,path?path+'.'+k:k)}walk(root);return out}
+function nval(v){if(v===null||v===undefined||v===false||v==='')return null;const n=Number(String(v).replace(/,/g,''));return Number.isFinite(n)?n:null}
+function titleText(v){return String(v??'').normalize('NFKC').replace(/\s/g,'').toUpperCase()}
+function firstNumeric(arr){if(!Array.isArray(arr))return nval(arr);for(const x of arr){const n=nval(x);if(n!==null)return n}return null}
+function parseBasicJSON(j,requestedDate,machine){
+ const root=Array.isArray(j)?(j[0]||{}):(j||{}), data=Array.isArray(root.Data)?root.Data:(Array.isArray(root.data)?root.data:[]);
+ let big=null,reg=null,comb=null,totalG=null;
+ for(const row of data){if(!row||typeof row!=='object')continue;const t=titleText(row.title);const a=row.item??row.Item??row.value??row.values;const v=firstNumeric(a);if(t.includes('BIG'))big=v;else if(t.includes('REG'))reg=v;else if(t.includes('合成')||t.includes('合算'))comb=v;else if(t.includes('総ゲーム')||t.includes('総回転')||t==='GAME'||t.includes('ゲーム数'))totalG=v;}
+ big=big??0;reg=reg??0;if(totalG===null&&comb!==null&&(big+reg)>0)totalG=Math.round(comb*(big+reg));if(totalG===null&&big===0&&reg===0)totalG=0;
+ const modelName=root?.Ki?.name||root?.KI?.name||root?.K?.name||'';
+ const date=date10(root.YMD_biz||ymd8(requestedDate));
+ let ts=Date.now();const u=root?.up_YMDhms?.YMDhms||root?.up_YMDhms?.ymdhms||null;if(u){const parsed=Date.parse(String(u).replace(' ','T')+'+09:00');if(Number.isFinite(parsed))ts=parsed}
+ return {date,ts,machine:normMachine(root?.Dai?.cd_dai||machine),model:modelIdFromName(modelName),modelName,big,reg,totalG,comb,basicRawMeta:{kisyu:root?.Ki?.cd_kisyu||root?.KI?.cd_kisyu||null,updated:u||null}};
+}
+function parseHistoryJSON(j){const root=Array.isArray(j)?(j[0]||{}):(j||{}), hs=Array.isArray(root.histories)?root.histories:(Array.isArray(root.Histories)?root.Histories:[]);const bonuses=hs.filter(x=>x&&['BIG','REG'].includes(String(x.nmk_status||x.status||'').toUpperCase())).map(x=>({time:x.hhmm||null,game:nval(x.game),status:String(x.nmk_status||x.status||'').toUpperCase(),dedama:nval(x.dedama)}));const head=hs.find(x=>x&&!(x.nmk_status||x.status));return {historyCount:bonuses.length,lastBonus:bonuses[0]||null,currentGame:head?nval(head.game):null};}
+function parseGraphJSON(j,requestedDate){const root=Array.isArray(j)?(j[0]||{}):(j||{}), target=ymd8(requestedDate);const objs=deepObjects(root);const metas=[];for(const o of objs){const v=o.value;if(v&&typeof v==='object'&&v.xField&&v.yField){metas.push({xField:String(v.xField),yField:String(v.yField),ymd:String(v.YMD_biz||v.ymd||''),path:o.path})}}
+ const exact=[];for(const m of metas){if(m.ymd&&m.ymd!==target)continue;for(const o of objs){const v=o.value;if(Object.prototype.hasOwnProperty.call(v,m.xField)&&Object.prototype.hasOwnProperty.call(v,m.yField)){const x=nval(v[m.xField]),y=nval(v[m.yField]);if(y!==null)exact.push({x,y,path:o.path,meta:m})}}}
+ if(exact.length){exact.sort((a,b)=>(a.x??0)-(b.x??0));const ys=exact.map(p=>p.y);return {diff:ys.at(-1),maxDiff:Math.max(...ys),minDiff:Math.min(...ys),pointCount:ys.length,graphMode:'field-points'};}
+ // generic fallback: arrays of point-like objects with a numeric value/y/diff member
+ let best=null;for(const a of deepGetArrays(root)){if(a.value.length<2)continue;let pts=[];for(const v of a.value){if(!v||typeof v!=='object'||Array.isArray(v))continue;const keys=Object.keys(v);const yk=keys.find(k=>/(^|[-_])(value|diff|y)([-_]|$)/i.test(k)||/^value\d*$/i.test(k));if(!yk)continue;const y=nval(v[yk]);if(y===null)continue;const xk=keys.find(k=>/(^|[-_])(out|x|game|time)([-_]|$)/i.test(k));pts.push({x:xk?nval(v[xk]):pts.length,y})}if(pts.length>=3&&(!best||pts.length>best.pts.length))best={pts,path:a.path};}
+ if(best){best.pts.sort((a,b)=>(a.x??0)-(b.x??0));const ys=best.pts.map(p=>p.y);return {diff:ys.at(-1),maxDiff:Math.max(...ys),minDiff:Math.min(...ys),pointCount:ys.length,graphMode:'generic-points'};}
+ return {diff:null,maxDiff:null,minDiff:null,pointCount:0,graphMode:'unparsed',metaCount:metas.length};
+}
+async function turkeyFetch(endpoint,machine,date){const u=new URL(TURKEY_LIVE.base+endpoint);u.searchParams.set('cd_dai',apiMachine(machine));u.searchParams.set('YMD_biz',ymd8(date));u.searchParams.set('_',String(Date.now()));const r=await fetch(u.toString(),{method:'GET',cache:'no-store',mode:'cors',credentials:'omit'});if(!r.ok)throw new Error(`${endpoint}: HTTP ${r.status}`);const text=await r.text();try{return JSON.parse(text)}catch(e){throw new Error(`${endpoint}: JSONではない応答 (${text.slice(0,60).replace(/\s+/g,' ')})`)}}
+async function turkeyOne(machine,date,{full=true,captureRaw=false}={}){const basicJ=await turkeyFetch(TURKEY_LIVE.endpoints.basic,machine,date);const s=parseBasicJSON(basicJ,date,machine);let hist=null,graph=null;if(full){const results=await Promise.allSettled([turkeyFetch(TURKEY_LIVE.endpoints.history,machine,date),turkeyFetch(TURKEY_LIVE.endpoints.graph,machine,date)]);if(results[0].status==='fulfilled')hist=parseHistoryJSON(results[0].value);if(results[1].status==='fulfilled')graph=parseGraphJSON(results[1].value,date);if(captureRaw)lastLiveDebug={capturedAt:new Date().toISOString(),machine:normMachine(machine),date,basic:basicJ,history:results[0].status==='fulfilled'?results[0].value:{error:String(results[0].reason)},graph:results[1].status==='fulfilled'?results[1].value:{error:String(results[1].reason)}}}else if(captureRaw)lastLiveDebug={capturedAt:new Date().toISOString(),machine:normMachine(machine),date,basic:basicJ};Object.assign(s,hist||{});if(graph){s.diff=graph.diff;s.maxDiff=graph.maxDiff;s.minDiff=graph.minDiff;s.graphMode=graph.graphMode;s.graphPoints=graph.pointCount}else{s.diff=null;s.graphMode='not-fetched'}s.source='pscube-live';return s}
+function liveMachineList(){const v=($('liveMachines')?.value||'').split(',').map(normMachine).filter(Boolean);return [...new Set(v)]}
+function saveLiveSnapshot(s){mergeData({snapshots:[s]})}
+function liveRowHtml(s){const diff=Number.isFinite(Number(s.diff))?`<b class="${Number(s.diff)>=0?'pos':'neg'}">${signed(Math.round(s.diff))}枚</b>`:'<span class="pill warn">差枚解析待ち</span>';return `<div class="row"><div class="rowtop"><div><b>${esc(s.machine)}番 ${esc(MODELS[s.model]||s.modelName||s.model)}</b><div class="tiny">${fmt(s.totalG)}G / BB${fmt(s.big)} RB${fmt(s.reg)} / 合算 ${s.comb?`1/${s.comb}`:'-'}</div></div><div class="right">${diff}<div class="tiny">${esc(s.graphMode||'')}</div></div></div></div>`}
+async function liveTest(){if(liveBusy)return;liveBusy=true;const date=$('liveDate').value||todayJST();$('liveStatus').innerHTML='0711番へ接続中…';$('liveRows').innerHTML='';try{const s=await turkeyOne('711',date,{full:true,captureRaw:true});saveLiveSnapshot(s);$('liveStatus').innerHTML=`✅ <strong>接続成功</strong>。${esc(s.machine)}番 ${esc(MODELS[s.model]||s.modelName||s.model)} / BB${fmt(s.big)} RB${fmt(s.reg)} / ${fmt(s.totalG)}G。<br>${Number.isFinite(Number(s.diff))?`差枚も取得できた：<strong>${signed(Math.round(s.diff))}枚</strong>`:`基本データ・履歴は取得。グラフJSONは取れたが、差枚の点列はまだ自動判読できていない（${esc(s.graphMode)}）。`}<br><span class="tiny">取得時刻：${new Date(s.ts).toLocaleString('ja-JP')}</span>`;$('liveRows').innerHTML=liveRowHtml(s)}catch(e){$('liveStatus').innerHTML=`❌ <strong>接続できなかった</strong>：${esc(e.message)}<br><span class="tiny">GitHub Pages→P's CUBEの直接通信がCORS/セッション等で拒否された可能性がある。この場合は回避せず、次段階の収集係方式に切り替える。</span>`}finally{liveBusy=false;renderAll()}}
+async function liveScan(){if(liveBusy)return;const machines=liveMachineList();if(!machines.length)return alert('対象台を入れてね');liveBusy=true;const date=$('liveDate').value||todayJST(),ok=[],ng=[];$('liveRows').innerHTML='';for(let i=0;i<machines.length;i++){const m=machines[i];$('liveStatus').innerHTML=`📡 ${i+1}/${machines.length}台 取得中… <strong>${m}番</strong>`;try{const s=await turkeyOne(m,date,{full:true});saveLiveSnapshot(s);ok.push(s);$('liveRows').insertAdjacentHTML('beforeend',liveRowHtml(s))}catch(e){ng.push({m,e:e.message});$('liveRows').insertAdjacentHTML('beforeend',`<div class="row"><b>${esc(m)}番</b> <span class="pill bad">取得失敗</span><div class="tiny">${esc(e.message)}</div></div>`)}await new Promise(r=>setTimeout(r,180))}liveBusy=false;$('liveStatus').innerHTML=`✅ 取得完了：<strong>${ok.length}/${machines.length}台</strong>${ng.length?` ／ 失敗 ${ng.length}台`:''}。<br>${ok.some(s=>Number.isFinite(Number(s.diff)))?'差枚まで読めた台は1000/2000枚分析へ自動反映。':'BB/REG/合算は保存済み。差枚はグラフ解析が通った時点から自動反映する。'}`;renderAll()}
+function saveLiveDebug(){if(!lastLiveDebug)return alert('先に0711の接続テストをしてね');const blob=new Blob([JSON.stringify(lastLiveDebug,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_0711_debug_${lastLiveDebug.date||'today'}.json`;a.click();URL.revokeObjectURL(a.href)}
+function setupLiveAuto(){if(liveTimer){clearInterval(liveTimer);liveTimer=null}const mins=Number($('liveAuto')?.value||0);cfg.liveAuto=mins||'off';persist();if(mins>0)liveTimer=setInterval(()=>{if(!liveBusy)liveScan()},mins*60*1000)}
+function initLiveUI(){if(!$('liveDate'))return;$('liveDate').value=todayJST();$('liveAuto').value=String(cfg.liveAuto||'off');if(cfg.liveMachines?.length)$('liveMachines').value=cfg.liveMachines.join(',');$('liveTestBtn').onclick=liveTest;$('liveScanBtn').onclick=liveScan;$('liveDebugBtn').onclick=saveLiveDebug;$('liveAuto').onchange=setupLiveAuto;$('liveMachines').onchange=()=>{cfg.liveMachines=liveMachineList();persist()};setupLiveAuto()}
 const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 let lab=loadLab(), hypotheses=JSON.parse(localStorage.getItem(HYP_KEY)||'[]'), cfg=loadCfg();
 function loadCfg(){try{return {...{eventDay:22,extraEvents:[]},...JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}}catch(e){return {eventDay:22,extraEvents:[]}}}
@@ -173,8 +235,8 @@ function signed(n){if(n===null||n===undefined||n==='')return '-';n=Number(n);ret
 function isEventDate(d){const day=Number(String(d).slice(8,10));return day===Number(cfg.eventDay||22)||(cfg.extraEvents||[]).includes(String(d))}
 function finalRows(){const map=new Map();for(const s of lab.snapshots||[]){if(!s.date||!s.machine)continue;const k=s.date+'|'+s.machine;const old=map.get(k);if(!old||Number(s.ts||0)>=Number(old.ts||0))map.set(k,s)}return [...map.values()].sort((a,b)=>(a.date+a.machine).localeCompare(b.date+b.machine))}
 function rowsByDate(){const m={};for(const r of finalRows())(m[r.date]??=[]).push(r);return m}
-function latestSnapshot(date,machine){return (lab.snapshots||[]).filter(x=>x.date===date&&String(x.machine)===String(machine)).sort((a,b)=>Number(a.ts||0)-Number(b.ts||0)).at(-1)||null}
-function nearestSnapshot(date,machine,ts){const a=(lab.snapshots||[]).filter(x=>x.date===date&&String(x.machine)===String(machine)&&x.ts).sort((x,y)=>Math.abs(x.ts-ts)-Math.abs(y.ts-ts));return a[0]||null}
+function latestSnapshot(date,machine){return (lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===normMachine(machine)).sort((a,b)=>Number(a.ts||0)-Number(b.ts||0)).at(-1)||null}
+function nearestSnapshot(date,machine,ts){const a=(lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===normMachine(machine)&&x.ts).sort((x,y)=>Math.abs(x.ts-ts)-Math.abs(y.ts-ts));return a[0]||null}
 function tags(r){let out=[];if(isEventDate(r.date))out.push('<span class="pill event">22日</span>');const d=Number(r.diff);if(d>=3000)out.push('<span class="pill hit3000">🚀3000</span>');else if(d>=2000)out.push('<span class="pill hit2000">🔥2000</span>');else if(d>=1000)out.push('<span class="pill hit1000">🟡1000</span>');return out.join('')}
 function archiveData(){try{return JSON.parse(localStorage.getItem(PEKA_ARCH)||'[]')}catch(e){return []}}
 function turkeyArchives(){return archiveData().filter(a=>/ターキー|turkey/i.test(a.shop||''))}
@@ -223,19 +285,19 @@ function renderIF(){
  $('reasonStats').innerHTML=rs.length?rs.map(r=>`<div class="row"><div class="rowtop"><div><b>${esc(r.reason)}</b><div class="tiny">n=${r.n} ／ その後+500 ${r.up} ／ -500 ${r.down}</div></div><div class="right"><b class="${r.av>=0?'pos':'neg'}">平均 ${signed(Math.round(r.av))}枚</b></div></div></div>`).join(''):'<div class="empty">ヤメ理由つき実戦が貯まると理由別に比較する。</div>';
 }
 async function loadRemote(silent=false){try{const r=await fetch('./daily.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error(r.status);const j=await r.json();mergeData(j);if(!silent)alert('daily.jsonを読み込んだよ')}catch(e){if(!silent)alert('daily.jsonはまだ接続されてないよ。今はJSON読込かデモで試せる。')}renderAll()}
-function mergeData(j){const incoming=Array.isArray(j)?j:(j.snapshots||[]);if(!Array.isArray(incoming))return;const map=new Map((lab.snapshots||[]).map(s=>[(s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s]));for(const s of incoming)map.set((s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s);lab.snapshots=[...map.values()];persist()}
+function mergeData(j){const incoming=Array.isArray(j)?j:(j.snapshots||[]);if(!Array.isArray(incoming))return;const map=new Map((lab.snapshots||[]).map(s=>[(s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s]));for(const raw of incoming){const s={...raw,machine:normMachine(raw.machine)};map.set((s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s);}lab.snapshots=[...map.values()];persist()}
 function demoData(){if(!confirm('分析画面確認用のDEMOデータを追加する？（実データではありません）'))return;const models=['gogo3','gogo3','gogo3','my5','my5','neoim'];const machines=['301','302','303','311','312','321'];const dates=['2026-06-22','2026-07-22','2026-08-22','2026-09-10','2026-09-11'];let arr=[];dates.forEach((d,di)=>machines.forEach((m,i)=>{let g=4200+((di*777+i*433)%3500),big=14+((di*7+i*5)%20),reg=10+((di*5+i*3)%18),diff=((di*911+i*733)%4200)-1500;if(d.endsWith('-22')){g+=1300;big+=7;reg+=6;diff+=700}arr.push({date:d,ts:new Date(d+'T22:35:00+09:00').getTime(),machine:m,model:models[i],totalG:g,big,reg,diff,demo:true})}));
  // one unmistakable 72-peka DEMO record, explicitly demo only
  arr.push({date:'2026-08-22',ts:new Date('2026-08-22T22:36:00+09:00').getTime(),machine:'399-DEMO',model:'gogo3',totalG:8000,big:39,reg:33,diff:2600,demo:true});mergeData({snapshots:arr});renderAll()}
-function renderData(){const demos=(lab.snapshots||[]).filter(x=>x.demo).length;$('dataStatus').innerHTML=`スナップショット <strong>${(lab.snapshots||[]).length}件</strong>${demos?`（DEMO ${demos}件）`:''}。<br>自動分析の入口は <code>./daily.json</code>。CSV/JSONでも同じ分析エンジンに入る。外部サイト側のCAPTCHAや利用条件を回避する自動取得は行わず、許可された取得方法が確認できたらコネクタを接続する。`}
-function exportData(){const blob=new Blob([JSON.stringify({version:'0.1',exportedAt:new Date().toISOString(),snapshots:lab.snapshots,hypotheses},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pekalog_lab_backup.json';a.click();URL.revokeObjectURL(a.href)}
+function renderData(){const demos=(lab.snapshots||[]).filter(x=>x.demo).length,live=(lab.snapshots||[]).filter(x=>x.source==='pscube-live').length;$('dataStatus').innerHTML=`スナップショット <strong>${(lab.snapshots||[]).length}件</strong>${live?` ／ LIVE ${live}件`:''}${demos?`（DEMO ${demos}件）`:''}。<br>LIVE取得・<code>daily.json</code>・CSV/JSONは全部同じ分析エンジンに入る。P's CUBE側に通信を拒否された場合は回避せず停止する。`}
+function exportData(){const blob=new Blob([JSON.stringify({version:'0.3',exportedAt:new Date().toISOString(),snapshots:lab.snapshots,hypotheses},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pekalog_lab_backup.json';a.click();URL.revokeObjectURL(a.href)}
 function importFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(j.snapshots)mergeData(j);if(Array.isArray(j.hypotheses)){hypotheses=j.hypotheses;persist()}renderAll();alert('LABデータを読み込んだよ')}catch(e){alert('JSONを読み込めなかったよ')}ev.target.value=''};r.readAsText(f)}
 function parseCSVLine(line){const out=[];let cur='',q=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'){if(q&&line[i+1]==='"'){cur+='"';i++}else q=!q}else if(c===','&&!q){out.push(cur.trim());cur=''}else cur+=c}out.push(cur.trim());return out}
 function importCSVText(){const text=$('csvPaste').value.trim();if(!text)return alert('CSVを貼ってね');const lines=text.split(/\r?\n/).filter(Boolean),first=parseCSVLine(lines[0]);const expected=['date','ts','machine','model','totalG','big','reg','diff'];let start=0,headers=expected;if(first.some(x=>expected.includes(x))){headers=first;start=1}let arr=[];for(let i=start;i<lines.length;i++){const vals=parseCSVLine(lines[i]),o={};headers.forEach((h,j)=>o[h]=vals[j]);['ts','totalG','big','reg','diff'].forEach(k=>{if(o[k]!==undefined&&o[k]!=='')o[k]=Number(o[k])});if(o.date&&o.machine)arr.push(o)}if(!arr.length)return alert('取り込める行がなかったよ');mergeData({snapshots:arr});$('csvPaste').value='';renderAll();alert(`${arr.length}件取り込んだよ`)}
 function saveEventConfig(){const d=Number($('eventDay').value||22);if(d<1||d>31)return alert('特定日は1〜31で入れてね');cfg.eventDay=d;cfg.extraEvents=$('extraEvents').value.split(',').map(x=>x.trim()).filter(Boolean);persist();renderAll();alert('イベント設定を保存したよ 🔥')}
 function renderConfig(){if($('eventDay'))$('eventDay').value=cfg.eventDay||22;if($('extraEvents'))$('extraEvents').value=(cfg.extraEvents||[]).join(',')}
 function renderAll(){renderDash();renderHyp();renderEvent();renderIF();renderData();renderConfig()}
-nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('exportBtn').onclick=exportData;$('reloadRemote').onclick=()=>loadRemote(false);$('demoBtn').onclick=demoData;$('csvImportBtn').onclick=importCSVText;$('saveEventCfg').onclick=saveEventConfig;$('hDate').value=new Date().toISOString().slice(0,10);renderAll();loadRemote(true);
+nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('exportBtn').onclick=exportData;$('reloadRemote').onclick=()=>loadRemote(false);$('demoBtn').onclick=demoData;$('csvImportBtn').onclick=importCSVText;$('saveEventCfg').onclick=saveEventConfig;$('hDate').value=todayJST();initLiveUI();renderAll();loadRemote(true);
 </script>
 
 </body>
