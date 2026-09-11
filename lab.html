@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d10">
+<title>PEKALOG LAB v0.2</title>
+<style>
+:root{
+ --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
+ --big:#ff6b7d;--reg:#ffd166;--green:#58e39a;--blue:#6ca8ff;--violet:#b68cff;--cyan:#7de3ff;--orange:#ffae57;--red:#ff6b7d;
+}
+*{box-sizing:border-box} html{background:var(--bg)}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;background:radial-gradient(circle at top right,#182131 0,#0e1117 35%,#0b0d10 72%);color:var(--text)}
+.wrap{max-width:980px;margin:auto;padding:14px 12px 90px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin:6px 2px 12px}
+h1{font-size:28px;margin:0}.ver{font-size:12px;color:var(--muted)}.sub{font-size:13px;color:var(--muted);margin-top:3px}
+.card{background:rgba(21,25,34,.98);border:1px solid var(--line);border-radius:19px;padding:14px;margin:11px 0;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+h2,h3{margin:0 0 10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:var(--panel2);border:1px solid #252c37;border-radius:14px;padding:10px;min-height:72px}.k{font-size:11px;color:var(--muted)}.v{font-size:21px;font-weight:800;margin-top:4px}.tiny{font-size:11px;color:var(--muted);line-height:1.55}.smalltext{font-size:13px;line-height:1.55}
+label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid #323a48;border-radius:12px;padding:11px;font-size:16px} textarea{resize:vertical}
+.btn{border:0;border-radius:16px;padding:13px 11px;font-size:15px;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent}.btn:active{transform:scale(.985)}.green{background:var(--green);color:#07150e}.blue{background:var(--blue);color:#fff}.violet{background:var(--violet);color:#140b20}.dark{background:#252c37;color:#fff}.cyan{background:var(--cyan);color:#082029}.orange{background:var(--orange);color:#241300}.red{background:var(--red);color:#1a0b0e}.small{padding:9px 9px;font-size:13px}.wide{width:100%}
+.nav{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;position:sticky;top:0;z-index:50;background:rgba(11,13,16,.88);backdrop-filter:blur(12px);padding:7px 0}.nav .btn{padding:10px 5px;font-size:12px;border:1px solid #343d4b}.nav .active{background:var(--cyan);color:#082029;border-color:transparent}.view{display:none}.view.active{display:block}
+.notice{font-size:12px;line-height:1.6;color:#b8c0cc;background:#10151c;border:1px solid #29313d;border-radius:12px;padding:10px}.notice strong{color:#fff}
+.pill{display:inline-block;font-size:11px;background:#2a313d;border-radius:999px;padding:4px 8px;margin:0 4px 4px 0}.hit1000{background:#5a4b16;color:#ffe887}.hit2000{background:#6e2c19;color:#ffbd8d}.hit3000{background:#57245f;color:#f5bcff}.event{background:#21375a;color:#aee0ff}.good{background:#183e2a;color:#8ff7bc}.bad{background:#4a2027;color:#ffb0bb}.warn{background:#493b19;color:#ffe69a}
+.list{display:flex;flex-direction:column;gap:8px}.row{background:var(--panel2);border:1px solid #252c37;border-radius:13px;padding:11px}.rowtop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.right{text-align:right}.muted{color:var(--muted)}
+.bar{height:10px;border-radius:999px;background:#252c37;overflow:hidden;margin-top:5px}.fill{height:100%;background:linear-gradient(90deg,#6ca8ff,#58e39a)}
+.tablewrap{overflow:auto;border-radius:13px;border:1px solid #272e39}table{width:100%;border-collapse:collapse;min-width:650px;background:#0f1319}th,td{padding:9px;border-bottom:1px solid #252c37;text-align:right;font-size:12px;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:#9eabba;background:#111720;position:sticky;top:0}.pos{color:#7ff0ad}.neg{color:#ff8998}
+.sectionTitle{display:flex;justify-content:space-between;align-items:center;gap:10px}.score{font-size:28px;font-weight:900}.footer{text-align:center;color:#778292;font-size:11px;margin-top:20px;line-height:1.7}.hidden{display:none!important}.empty{padding:20px 10px;text-align:center;color:#788390;font-size:13px}
+.chipline{display:flex;gap:6px;flex-wrap:wrap}.hr{border:0;border-top:1px solid #2a313d;margin:12px 0}
+@media(max-width:620px){.grid4{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:1fr}.nav{grid-template-columns:repeat(5,1fr)}.nav .btn{font-size:10px;padding:9px 2px}h1{font-size:24px}.wrap{padding-left:9px;padding-right:9px}.score{font-size:24px}}
+</style>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PEKALOG LAB">
+</head>
+<body>
+<div class="wrap">
+<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.2</div></header>
+<div class="nav" id="nav">
+ <button class="btn dark active" data-view="dash">🏠 LAB</button>
+ <button class="btn dark" data-view="hyp">🧠 仮説</button>
+ <button class="btn dark" data-view="event">🔥 22日</button>
+ <button class="btn dark" data-view="iflab">👻 IF</button>
+ <button class="btn dark" data-view="data">🗃 データ</button>
+</div>
+
+<section id="dash" class="view active">
+ <div class="card">
+  <div class="sectionTitle"><div><h3>今日の研究状況</h3><div class="tiny">PEKALOGは実戦、LABは店と判断を検証。</div></div><span class="pill event">鷺沼ターキー</span></div>
+  <div class="grid4" style="margin-top:10px">
+   <div class="stat"><div class="k">保存日数</div><div class="v" id="daysCount">0</div></div>
+   <div class="stat"><div class="k">台データ</div><div class="v" id="finalCount">0</div></div>
+   <div class="stat"><div class="k">PEKALOG実戦</div><div class="v" id="pekaCount">0</div></div>
+   <div class="stat"><div class="k">仮説</div><div class="v" id="hypCount">0</div></div>
+  </div>
+  <div id="syncNotice" class="notice" style="margin-top:10px"></div>
+ </div>
+
+ <div class="card">
+  <div class="sectionTitle"><h3>🏆 最新日の1000枚OVER</h3><div id="latestDate" class="tiny">-</div></div>
+  <div id="latestHits" class="list"></div>
+ </div>
+
+ <div class="card">
+  <div class="sectionTitle"><h3>🔎 LABが見つけた傾向</h3><span class="pill">自動分析</span></div>
+  <div id="discoveries" class="list"></div>
+ </div>
+</section>
+
+<section id="hyp" class="view">
+ <div class="card">
+  <h3>🧠 仮説を事前登録</h3>
+  <div class="notice">ここだけ人間の仕事。登録した内容は作成時刻付きで保存して、あとから都合よく記憶を書き換えない仕様。</div>
+  <div class="grid2" style="margin-top:10px">
+   <div><label>検証日</label><input id="hDate" type="date"></div>
+   <div><label>機種</label><select id="hModel"><option value="all">全ジャグ</option><option value="gogo3">ゴージャグ3</option><option value="neoim">ネオアイム</option><option value="my5">マイジャグV</option><option value="my6">マイジャグVI</option><option value="happy3">ハッピーV III</option><option value="ultra">ウルトラミラクル</option></select></div>
+  </div>
+  <div style="margin-top:9px"><label>仮説名</label><input id="hTitle" placeholder="例：22日はゴージャグが一番強い"></div>
+  <div class="grid2" style="margin-top:9px">
+   <div><label>対象台（任意・カンマ区切り）</label><input id="hMachines" placeholder="301,302,303"></div>
+   <div><label>HIT基準</label><select id="hMetric"><option value="1000">+1000枚以上</option><option value="2000">+2000枚以上</option><option value="content">内容強め（REG/合算）</option></select></div>
+  </div>
+  <div class="grid2" style="margin-top:9px">
+   <div><label>自信度</label><select id="hConfidence"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
+   <div><label>イベントタグ</label><select id="hEvent"><option value="auto">自動（22日はイベント）</option><option value="event">イベント扱い</option><option value="normal">通常日扱い</option></select></div>
+  </div>
+  <div style="margin-top:9px"><label>成功条件</label><select id="hSuccess"><option value="any">対象に1台以上HIT</option><option value="half">対象の半数以上HIT</option><option value="avg0">対象平均差枚がプラス</option><option value="avg500">対象平均差枚 +500枚以上</option><option value="uplift10">1000枚率が基準より+10pt以上</option></select></div>
+  <div style="margin-top:9px"><label>理由・読み</label><textarea id="hReason" rows="3" placeholder="前日凹み、並び、前回22日の配分など"></textarea></div>
+  <button class="btn violet wide" style="margin-top:10px" id="saveHyp">🔒 仮説を登録</button>
+ </div>
+ <div class="card"><h3>🎯 仮説の答え合わせ</h3><div id="hypList" class="list"></div></div>
+</section>
+
+<section id="event" class="view">
+ <div class="card">
+  <div class="sectionTitle"><div><h3>🔥 22日 EVENT LAB</h3><div class="tiny">通常日とは別リーグで比較。</div></div><div id="eventScore" class="score">-</div></div>
+  <div class="grid4" style="margin-top:10px">
+   <div class="stat"><div class="k">22日サンプル</div><div class="v" id="eventDays">0</div></div>
+   <div class="stat"><div class="k">平均差枚</div><div class="v" id="eventAvgDiff">-</div></div>
+   <div class="stat"><div class="k">1000枚率</div><div class="v" id="event1000">-</div></div>
+   <div class="stat"><div class="k">2000枚率</div><div class="v" id="event2000">-</div></div>
+  </div>
+  <div id="eventCompare" class="notice" style="margin-top:10px"></div>
+  <div id="eventLatestDelta" class="notice" style="margin-top:8px"></div>
+ </div>
+ <div class="card"><h3>📈 22日ごとの変化</h3><div id="eventTrend" class="tablewrap"></div></div>
+ <div class="card"><h3>🎰 機種別 22日 vs 通常日</h3><div id="eventModels" class="tablewrap"></div></div>
+ <div class="card"><h3>✨ EVENT ペカ記録</h3><div class="tiny" style="margin-bottom:9px">BB+REGを「ペカ数」として記録。72ペカ級がどれくらい異常だったか、後から比較できる。</div><div id="pekaRecords" class="list"></div></div>
+</section>
+
+<section id="iflab" class="view">
+ <div class="card">
+  <h3>👻 「その後どうなった？」</h3>
+  <div class="notice"><strong>PEKALOGの保存実戦</strong>を同じブラウザから自動読込。LABに10分前後のスナップショットがあれば、ヤメ時刻付近から閉店までの差枚変化を比較する。<br><span class="tiny">※これは「ヤメた後にその台がどう動いたか」の実績。ジャグラーは抽選なので、実際に自分が続けた場合と同じ結果になる保証はないよ。</span></div>
+  <div id="ifList" class="list" style="margin-top:10px"></div>
+ </div>
+ <div class="card">
+  <h3>🧠 判断クセ</h3>
+  <div id="decisionSummary" class="notice">実戦とスナップショットが貯まると、撤退後に伸びた/落ちた比率を集計する。</div>
+  <div id="reasonStats" class="list" style="margin-top:10px"></div>
+ </div>
+</section>
+
+<section id="data" class="view">
+ <div class="card">
+  <h3>🗃 LABデータ</h3>
+  <div id="dataStatus" class="notice"></div>
+  <div class="grid2" style="margin-top:10px">
+   <label class="btn blue" style="text-align:center;cursor:pointer">⬆ JSON読込<input id="jsonFile" type="file" accept=".json,application/json" style="display:none"></label>
+   <button class="btn dark" id="exportBtn">⬇ LABデータ保存</button>
+   <button class="btn cyan" id="reloadRemote">🔄 daily.json再読込</button>
+   <button class="btn violet" id="demoBtn">🧪 デモデータ</button>
+  </div>
+  <div class="tiny" style="margin-top:9px">本番では <code>daily.json</code> を自動更新する収集係につなぐ。画面側の分析はすでにその形式で動く。</div>
+ </div>
+ <div class="card">
+  <h3>必要データ形式</h3>
+  <pre class="notice" style="overflow:auto;white-space:pre-wrap">{
+  "snapshots": [
+    {"date":"2026-09-22","ts":1790089200000,"machine":"301","model":"gogo3","totalG":7200,"big":38,"reg":34,"diff":2100}
+  ]
+}</pre>
+ </div>
+
+ <div class="card">
+  <h3>📥 CSV貼り付け取込</h3>
+  <div class="notice">自動収集が完成するまでの現実データ入口。<br>1行目を <code>date,ts,machine,model,totalG,big,reg,diff</code> にして貼れば、そのままLABに追加できる。</div>
+  <textarea id="csvPaste" rows="6" style="margin-top:9px" placeholder="2026-09-22,1790084100000,301,gogo3,6500,31,29,1800"></textarea>
+  <button class="btn green wide" style="margin-top:9px" id="csvImportBtn">CSVを取り込む</button>
+ </div>
+ <div class="card">
+  <h3>🔥 イベント日設定</h3>
+  <div class="grid2"><div><label>毎月の特定日</label><input id="eventDay" type="number" min="1" max="31" value="22"></div><div><label>追加イベント日（カンマ区切り）</label><input id="extraEvents" placeholder="2026-10-10,2026-11-11"></div></div>
+  <button class="btn orange wide" style="margin-top:9px" id="saveEventCfg">イベント設定を保存</button>
+ </div>
+</section>
+
+<div class="footer">PEKALOG LABは過去データと自分の仮説を検証する研究ツール。設定・勝利を保証するものではありません。<br>同一GitHub Pagesドメイン配下ならPEKALOGのlocalStorageを直接連携できます。</div>
+</div>
+<script>
+const LAB_KEY='pekalog_lab_v02_data', HYP_KEY='pekalog_lab_v02_hypotheses', CFG_KEY='pekalog_lab_v02_config';
+const PEKA_ARCH='pekalog_v2_archives';
+const MODELS={gogo3:'ゴージャグ3',neoim:'ネオアイム',my5:'マイジャグV',my6:'マイジャグVI',happy3:'ハッピーV III',ultra:'ウルトラミラクル'};
+const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+let lab=loadLab(), hypotheses=JSON.parse(localStorage.getItem(HYP_KEY)||'[]'), cfg=loadCfg();
+function loadCfg(){try{return {...{eventDay:22,extraEvents:[]},...JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}}catch(e){return {eventDay:22,extraEvents:[]}}}
+function loadLab(){try{return JSON.parse(localStorage.getItem(LAB_KEY)||'{"snapshots":[]}')}catch(e){return {snapshots:[]}}}
+function persist(){localStorage.setItem(LAB_KEY,JSON.stringify(lab));localStorage.setItem(HYP_KEY,JSON.stringify(hypotheses));localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}
+function fmt(n){if(n===null||n===undefined||Number.isNaN(Number(n)))return '-';return Number(n).toLocaleString('ja-JP')}
+function pct(n,d){return d?((n/d)*100).toFixed(1)+'%':'-'}
+function signed(n){if(n===null||n===undefined||n==='')return '-';n=Number(n);return `${n>0?'+':''}${fmt(n)}`}
+function isEventDate(d){const day=Number(String(d).slice(8,10));return day===Number(cfg.eventDay||22)||(cfg.extraEvents||[]).includes(String(d))}
+function finalRows(){const map=new Map();for(const s of lab.snapshots||[]){if(!s.date||!s.machine)continue;const k=s.date+'|'+s.machine;const old=map.get(k);if(!old||Number(s.ts||0)>=Number(old.ts||0))map.set(k,s)}return [...map.values()].sort((a,b)=>(a.date+a.machine).localeCompare(b.date+b.machine))}
+function rowsByDate(){const m={};for(const r of finalRows())(m[r.date]??=[]).push(r);return m}
+function latestSnapshot(date,machine){return (lab.snapshots||[]).filter(x=>x.date===date&&String(x.machine)===String(machine)).sort((a,b)=>Number(a.ts||0)-Number(b.ts||0)).at(-1)||null}
+function nearestSnapshot(date,machine,ts){const a=(lab.snapshots||[]).filter(x=>x.date===date&&String(x.machine)===String(machine)&&x.ts).sort((x,y)=>Math.abs(x.ts-ts)-Math.abs(y.ts-ts));return a[0]||null}
+function tags(r){let out=[];if(isEventDate(r.date))out.push('<span class="pill event">22日</span>');const d=Number(r.diff);if(d>=3000)out.push('<span class="pill hit3000">🚀3000</span>');else if(d>=2000)out.push('<span class="pill hit2000">🔥2000</span>');else if(d>=1000)out.push('<span class="pill hit1000">🟡1000</span>');return out.join('')}
+function archiveData(){try{return JSON.parse(localStorage.getItem(PEKA_ARCH)||'[]')}catch(e){return []}}
+function turkeyArchives(){return archiveData().filter(a=>/ターキー|turkey/i.test(a.shop||''))}
+function nav(){document.querySelectorAll('#nav .btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav .btn').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.view).classList.add('active');renderAll()})}
+function renderDash(){const rows=finalRows(),dates=[...new Set(rows.map(r=>r.date))].sort();$('daysCount').textContent=dates.length;$('finalCount').textContent=rows.length;$('pekaCount').textContent=turkeyArchives().length;$('hypCount').textContent=hypotheses.length;
+ $('syncNotice').innerHTML=`PEKALOG連携：<strong>${turkeyArchives().length}件</strong> ／ LABスナップショット：<strong>${(lab.snapshots||[]).length}件</strong>${location.protocol==='file:'?'<br>⚠️ ローカルファイルで開いているため、公開PEKALOGのlocalStorageとは別物です。同じGitHub Pages配下に置くと直接連携します。':''}`;
+ const latest=dates.at(-1);$('latestDate').textContent=latest||'-';const hits=rows.filter(r=>r.date===latest&&Number(r.diff)>=1000).sort((a,b)=>Number(b.diff)-Number(a.diff));$('latestHits').innerHTML=hits.length?hits.map(r=>`<div class="row"><div class="rowtop"><div><b>${esc(r.machine)}番 ${esc(MODELS[r.model]||r.model||'')}</b><div class="tiny">${fmt(r.totalG)}G / BB${fmt(r.big)} RB${fmt(r.reg)} / ${fmt(Number(r.big||0)+Number(r.reg||0))}ペカ</div></div><div class="right"><b class="${Number(r.diff)>=0?'pos':'neg'}">${signed(r.diff)}枚</b><div>${tags(r)}</div></div></div></div>`).join(''):'<div class="empty">まだ1000枚OVERデータなし。</div>';
+ renderDiscoveries();}
+function featureRows(rows,fn){return rows.filter(fn)}
+function discoveryLine(title,sub,rate,base,n){const delta=rate-base;const cls=n<5?'warn':delta>=10?'good':delta<=-5?'bad':'';return `<div class="row"><div class="rowtop"><div><b>${esc(title)}</b><div class="tiny">${esc(sub)}</div></div><span class="pill ${cls}">${n<5?'観察中':delta>=10?'有望':delta<=-5?'弱め':'差小'}</span></div><div class="smalltext" style="margin-top:7px">1000枚率 <b>${rate.toFixed(1)}%</b> ／ 基準 ${base.toFixed(1)}% ／ n=${n}</div></div>`}
+function renderDiscoveries(){const rows=finalRows();if(rows.length<2){$('discoveries').innerHTML='<div class="empty">データが貯まると、22日・機種・前日凹みなどを自動比較するよ。</div>';return}const base=rows.filter(r=>Number.isFinite(Number(r.diff)));const baseRate=base.length?base.filter(r=>Number(r.diff)>=1000).length/base.length*100:0;let ds=[];
+ const ev=base.filter(r=>isEventDate(r.date));if(ev.length)ds.push(['22日イベント','通常日と分離して検証',ev.filter(r=>Number(r.diff)>=1000).length/ev.length*100,baseRate,ev.length]);
+ for(const [id,name] of Object.entries(MODELS)){const a=base.filter(r=>r.model===id);if(a.length>=3)ds.push([name,`${name}全日`,a.filter(r=>Number(r.diff)>=1000).length/a.length*100,baseRate,a.length])}
+ // previous-day features
+ const byMachine={};for(const r of base){(byMachine[r.machine]??=[]).push(r)}let prevDeep=[],prevBoom=[];for(const arr of Object.values(byMachine)){arr.sort((a,b)=>a.date.localeCompare(b.date));for(let i=1;i<arr.length;i++){if(Number(arr[i-1].diff)<=-1000)prevDeep.push(arr[i]);if(Number(arr[i-1].diff)>=2000)prevBoom.push(arr[i])}}
+ if(prevDeep.length)ds.push(['前日-1000枚以下','翌日の1000枚OVER率',prevDeep.filter(r=>Number(r.diff)>=1000).length/prevDeep.length*100,baseRate,prevDeep.length]);if(prevBoom.length)ds.push(['前日+2000枚以上','爆出台翌日の1000枚OVER率',prevBoom.filter(r=>Number(r.diff)>=1000).length/prevBoom.length*100,baseRate,prevBoom.length]);
+ ds.sort((a,b)=>(b[2]-b[3])-(a[2]-a[3]));$('discoveries').innerHTML=ds.slice(0,6).map(x=>discoveryLine(...x)).join('')||'<div class="empty">分析条件に必要なサンプルがまだ少ないよ。</div>'}
+function evaluateHyp(h){
+ let rows=finalRows().filter(r=>r.date===h.date);if(h.model!=='all')rows=rows.filter(r=>r.model===h.model);if(h.machines?.length)rows=rows.filter(r=>h.machines.includes(String(r.machine)));if(!rows.length)return {status:'pending',text:'まだ結果データなし',rows:[]};
+ let hits=0;if(h.metric==='1000')hits=rows.filter(r=>Number(r.diff)>=1000).length;else if(h.metric==='2000')hits=rows.filter(r=>Number(r.diff)>=2000).length;else hits=rows.filter(r=>{const g=Number(r.totalG||0),reg=Number(r.reg||0),all=Number(r.big||0)+reg;return g>=5000&&((reg&&g/reg<=320)||(all&&g/all<=135))}).length;
+ const hitRate=rows.length?hits/rows.length*100:0, av=avg(rows,'diff')||0;
+ const baselineRows=finalRows().filter(r=>r.date===h.date && (!h.machines?.length || !h.machines.includes(String(r.machine))));
+ const baseHit=baselineRows.length?baselineRows.filter(r=>Number(r.diff)>=1000).length/baselineRows.length*100:null;
+ let ok=false, rule=h.success||'any';
+ if(rule==='any')ok=hits>=1; else if(rule==='half')ok=hits/rows.length>=.5; else if(rule==='avg0')ok=av>0; else if(rule==='avg500')ok=av>=500; else if(rule==='uplift10')ok=baseHit!==null && hitRate>=baseHit+10;
+ const baseText=baseHit===null?'':` ／ 当日基準1000率 ${baseHit.toFixed(1)}%`;
+ return {status:ok?'hit':'miss',text:`${hits}/${rows.length}台 HIT (${hitRate.toFixed(1)}%) ／ 平均 ${signed(Math.round(av))}枚${baseText}`,rows,hitRate,av,baseHit}
+}
+function renderHyp(){if(!hypotheses.length){$('hypList').innerHTML='<div class="empty">仮説はまだなし。次の22日の読みから入れよう🧪</div>';return}$('hypList').innerHTML=hypotheses.slice().sort((a,b)=>b.createdAt-a.createdAt).map(h=>{const e=evaluateHyp(h),cls=e.status==='hit'?'good':e.status==='miss'?'bad':'warn';return `<div class="row"><div class="rowtop"><div><b>${esc(h.date)} ${esc(h.title)}</b><div class="tiny">${h.model==='all'?'全ジャグ':esc(MODELS[h.model]||h.model)} ${h.machines?.length?'／ 台 '+h.machines.join(', '):''}</div></div><span class="pill ${cls}">${e.status==='hit'?'🎯 HIT':e.status==='miss'?'❌ MISS':'⏳ 待ち'}</span></div><div class="smalltext" style="margin-top:7px">${esc(e.text)} ／ 自信度 ${'★'.repeat(Number(h.confidence||1))}</div><div class="tiny" style="margin-top:5px">理由：${esc(h.reason||'-')}<br>登録：${new Date(h.createdAt).toLocaleString('ja-JP')}</div></div>`}).join('')}
+function saveHyp(){const title=$('hTitle').value.trim(),date=$('hDate').value;if(!title||!date)return alert('検証日と仮説名を入れてね');const machines=$('hMachines').value.split(',').map(x=>x.trim()).filter(Boolean);hypotheses.unshift({id:Date.now(),createdAt:Date.now(),date,title,model:$('hModel').value,machines,metric:$('hMetric').value,confidence:Number($('hConfidence').value),event:$('hEvent').value,success:$('hSuccess').value,reason:$('hReason').value.trim()});persist();$('hTitle').value='';$('hMachines').value='';$('hReason').value='';renderAll();alert('仮説をロックしたよ 🔒')}
+function avg(a,key){const b=a.map(x=>Number(x[key])).filter(Number.isFinite);return b.length?b.reduce((s,x)=>s+x,0)/b.length:null}
+function renderEvent(){const rows=finalRows().filter(r=>Number.isFinite(Number(r.diff))),ev=rows.filter(r=>isEventDate(r.date)),norm=rows.filter(r=>!isEventDate(r.date));const evDates=[...new Set(ev.map(r=>r.date))];$('eventDays').textContent=evDates.length;$('eventAvgDiff').textContent=ev.length?signed(Math.round(avg(ev,'diff'))) : '-';$('event1000').textContent=pct(ev.filter(r=>Number(r.diff)>=1000).length,ev.length);$('event2000').textContent=pct(ev.filter(r=>Number(r.diff)>=2000).length,ev.length);
+ const er=ev.length?ev.filter(r=>Number(r.diff)>=1000).length/ev.length:0,nr=norm.length?norm.filter(r=>Number(r.diff)>=1000).length/norm.length:0;const ratio=nr?er/nr:null;let score='-';if(ev.length>=3){let raw=(er*2)+(ev.filter(r=>Number(r.diff)>=2000).length/ev.length*1.5)+Math.max(0,Math.min(.3,(avg(ev,'diff')||0)/5000));score=Math.max(1,Math.min(5,1+raw*4)).toFixed(1)}$('eventScore').textContent=score==='-'?'-':score+'/5';$('eventCompare').innerHTML=ev.length?`22日の1000枚OVER率は <strong>${(er*100).toFixed(1)}%</strong>。通常日は <strong>${(nr*100).toFixed(1)}%</strong>${ratio?`、約 <strong>${ratio.toFixed(2)}倍</strong>`:''}。<br><span class="tiny">※サンプルが少ない間は「強い」と断定せず観察。</span>`:'22日データが入ると通常日との比較を開始する。';
+ const by=rowsByDate(),trend=evDates.sort().map(d=>{const a=(by[d]||[]).filter(r=>Number.isFinite(Number(r.diff)));return {d,n:a.length,av:avg(a,'diff'),r1:a.filter(r=>Number(r.diff)>=1000).length,r2:a.filter(r=>Number(r.diff)>=2000).length,peka:Math.max(0,...a.map(r=>Number(r.big||0)+Number(r.reg||0)))}});$('eventTrend').innerHTML=trend.length?`<table><tr><th>22日</th><th>台数</th><th>平均差枚</th><th>1000</th><th>2000</th><th>最高ペカ</th></tr>${trend.map(x=>`<tr><td>${x.d}</td><td>${x.n}</td><td class="${x.av>=0?'pos':'neg'}">${signed(Math.round(x.av||0))}</td><td>${pct(x.r1,x.n)}</td><td>${pct(x.r2,x.n)}</td><td>${x.peka}</td></tr>`).join('')}</table>`:'<div class="empty">22日データなし</div>';
+ const last2=trend.slice(-2);if(last2.length>=2){const p=last2[0],c=last2[1],d=Math.round((c.av||0)-(p.av||0)),pp=(c.n?c.r1/c.n*100:0)-(p.n?p.r1/p.n*100:0);$('eventLatestDelta').innerHTML=`最新22日 <strong>${c.d}</strong> は前回 ${p.d} 比で、平均差枚 <strong class="${d>=0?'pos':'neg'}">${signed(d)}枚</strong>、1000枚率 <strong>${pp>=0?'+':''}${pp.toFixed(1)}pt</strong>。`; }else $('eventLatestDelta').textContent='22日が2回以上貯まると「前回から強くなった/弱くなった」を表示する。';
+ const mr=Object.entries(MODELS).map(([id,name])=>{const a=ev.filter(r=>r.model===id),b=norm.filter(r=>r.model===id);return {name,a,b}}).filter(x=>x.a.length||x.b.length);$('eventModels').innerHTML=mr.length?`<table><tr><th>機種</th><th>22日平均</th><th>通常平均</th><th>22日1000率</th><th>通常1000率</th></tr>${mr.map(x=>`<tr><td>${x.name}</td><td>${x.a.length?signed(Math.round(avg(x.a,'diff'))):'-'}</td><td>${x.b.length?signed(Math.round(avg(x.b,'diff'))):'-'}</td><td>${pct(x.a.filter(r=>Number(r.diff)>=1000).length,x.a.length)}</td><td>${pct(x.b.filter(r=>Number(r.diff)>=1000).length,x.b.length)}</td></tr>`).join('')}</table>`:'<div class="empty">機種比較データなし</div>';
+ const pr=ev.slice().sort((a,b)=>(Number(b.big||0)+Number(b.reg||0))-(Number(a.big||0)+Number(a.reg||0))).slice(0,8);$('pekaRecords').innerHTML=pr.length?pr.map((r,i)=>`<div class="row"><div class="rowtop"><div><b>${i+1}. ${r.date} ${r.machine}番 ${esc(MODELS[r.model]||r.model)}</b><div class="tiny">BB${r.big||0} + RB${r.reg||0}</div></div><div class="right"><b style="font-size:20px">${Number(r.big||0)+Number(r.reg||0)}ペカ</b><div class="tiny">${signed(r.diff)}枚</div></div></div></div>`).join(''):'<div class="empty">22日のペカ記録はまだなし。</div>'}
+function ifAnalysis(a){const date=a.date,machine=String(a.machine||'');if(!date||!machine)return null;const final=latestSnapshot(date,machine);if(!final)return {kind:'nodata'};const endTs=Number(a.endedAt||a.id||a.history?.at(-1)?.ts||0);const near=endTs?nearestSnapshot(date,machine,endTs):null;if(near&&Number.isFinite(Number(near.diff))&&Number.isFinite(Number(final.diff))){const after=Number(final.diff)-Number(near.diff);return {kind:'snap',near,final,after}}if(a.diffCoins!==''&&Number.isFinite(Number(a.diffCoins))&&Number.isFinite(Number(final.diff))){return {kind:'finalonly',final,after:Number(final.diff)-Number(a.diffCoins)}}return {kind:'final',final}}
+function renderIF(){
+ const a=turkeyArchives().slice().sort((x,y)=>Number(y.endedAt||y.id||0)-Number(x.endedAt||x.id||0));if(!a.length){$('ifList').innerHTML='<div class="empty">PEKALOGで「ターキー」と店名を入れて実戦保存すると、ここに出てくるよ。</div>';$('reasonStats').innerHTML='';return}
+ let down=0,up=0,flat=0,valid=0;const reasonMap={};
+ $('ifList').innerHTML=a.map(x=>{const z=ifAnalysis(x),model=MODELS[x.model]||x.model||'',reason=x.endReason||'未記録';let body='';if(!z||z.kind==='nodata')body='<span class="pill warn">LABデータ待ち</span> 同日の台データがまだない。';else if(z.kind==='snap'){valid++;if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;(reasonMap[reason]??=[]).push(z.after);body=`ヤメ時刻付近 <b>${signed(z.near.diff)}枚</b> → 閉店 <b>${signed(z.final.diff)}枚</b><br>その後 <b class="${z.after>0?'pos':'neg'}">${signed(z.after)}枚</b> ${z.after>=500?'😇 その後伸びた':z.after<=-500?'🏃 撤退成功寄り':'➖ ほぼ横ばい'}`;}else if(z.kind==='finalonly'){valid++;if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;(reasonMap[reason]??=[]).push(z.after);body=`PEKALOG記録 <b>${signed(x.diffCoins)}枚</b> → 店最終 <b>${signed(z.final.diff)}枚</b><br>差 <b class="${z.after>0?'pos':'neg'}">${signed(z.after)}枚</b> <span class="tiny">※時刻スナップショットなしの簡易比較</span>`;}else body=`店最終：<b>${signed(z.final.diff)}枚</b>。PEKALOG側の差枚か時刻スナップショットがあるとIF比較できる。`;
+ return `<div class="row"><div class="rowtop"><div><b>${esc(x.date||'-')} ${esc(x.machine||'-')}番 ${esc(model)}</b><div class="tiny">PEKALOG ${fmt(x.totalG)}G / BB${fmt(x.big)} RB${fmt(x.reg)} ／ ヤメ理由：${esc(reason)}</div></div><span class="pill">${x.diffCoins!==''?signed(x.diffCoins)+'枚':'差枚未入力'}</span></div><div class="smalltext" style="margin-top:8px">${body}</div></div>`}).join('');
+ $('decisionSummary').innerHTML=valid?`IF比較できた実戦 <strong>${valid}件</strong>。その後 +500枚以上 ${up}件 ／ -500枚以下 ${down}件 ／ 横ばい ${flat}件。<br><span class="tiny">「勝ってた/負けてた」ではなく、その後実績として判断ルールを検証する。</span>`:'実戦とLABデータが一致すると判断クセ集計を開始する。';
+ const rs=Object.entries(reasonMap).map(([reason,vals])=>({reason,n:vals.length,av:vals.reduce((a,b)=>a+b,0)/vals.length,up:vals.filter(v=>v>=500).length,down:vals.filter(v=>v<=-500).length})).sort((a,b)=>b.n-a.n);
+ $('reasonStats').innerHTML=rs.length?rs.map(r=>`<div class="row"><div class="rowtop"><div><b>${esc(r.reason)}</b><div class="tiny">n=${r.n} ／ その後+500 ${r.up} ／ -500 ${r.down}</div></div><div class="right"><b class="${r.av>=0?'pos':'neg'}">平均 ${signed(Math.round(r.av))}枚</b></div></div></div>`).join(''):'<div class="empty">ヤメ理由つき実戦が貯まると理由別に比較する。</div>';
+}
+async function loadRemote(silent=false){try{const r=await fetch('./daily.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error(r.status);const j=await r.json();mergeData(j);if(!silent)alert('daily.jsonを読み込んだよ')}catch(e){if(!silent)alert('daily.jsonはまだ接続されてないよ。今はJSON読込かデモで試せる。')}renderAll()}
+function mergeData(j){const incoming=Array.isArray(j)?j:(j.snapshots||[]);if(!Array.isArray(incoming))return;const map=new Map((lab.snapshots||[]).map(s=>[(s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s]));for(const s of incoming)map.set((s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s);lab.snapshots=[...map.values()];persist()}
+function demoData(){if(!confirm('分析画面確認用のDEMOデータを追加する？（実データではありません）'))return;const models=['gogo3','gogo3','gogo3','my5','my5','neoim'];const machines=['301','302','303','311','312','321'];const dates=['2026-06-22','2026-07-22','2026-08-22','2026-09-10','2026-09-11'];let arr=[];dates.forEach((d,di)=>machines.forEach((m,i)=>{let g=4200+((di*777+i*433)%3500),big=14+((di*7+i*5)%20),reg=10+((di*5+i*3)%18),diff=((di*911+i*733)%4200)-1500;if(d.endsWith('-22')){g+=1300;big+=7;reg+=6;diff+=700}arr.push({date:d,ts:new Date(d+'T22:35:00+09:00').getTime(),machine:m,model:models[i],totalG:g,big,reg,diff,demo:true})}));
+ // one unmistakable 72-peka DEMO record, explicitly demo only
+ arr.push({date:'2026-08-22',ts:new Date('2026-08-22T22:36:00+09:00').getTime(),machine:'399-DEMO',model:'gogo3',totalG:8000,big:39,reg:33,diff:2600,demo:true});mergeData({snapshots:arr});renderAll()}
+function renderData(){const demos=(lab.snapshots||[]).filter(x=>x.demo).length;$('dataStatus').innerHTML=`スナップショット <strong>${(lab.snapshots||[]).length}件</strong>${demos?`（DEMO ${demos}件）`:''}。<br>自動分析の入口は <code>./daily.json</code>。CSV/JSONでも同じ分析エンジンに入る。外部サイト側のCAPTCHAや利用条件を回避する自動取得は行わず、許可された取得方法が確認できたらコネクタを接続する。`}
+function exportData(){const blob=new Blob([JSON.stringify({version:'0.1',exportedAt:new Date().toISOString(),snapshots:lab.snapshots,hypotheses},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pekalog_lab_backup.json';a.click();URL.revokeObjectURL(a.href)}
+function importFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(j.snapshots)mergeData(j);if(Array.isArray(j.hypotheses)){hypotheses=j.hypotheses;persist()}renderAll();alert('LABデータを読み込んだよ')}catch(e){alert('JSONを読み込めなかったよ')}ev.target.value=''};r.readAsText(f)}
+function parseCSVLine(line){const out=[];let cur='',q=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'){if(q&&line[i+1]==='"'){cur+='"';i++}else q=!q}else if(c===','&&!q){out.push(cur.trim());cur=''}else cur+=c}out.push(cur.trim());return out}
+function importCSVText(){const text=$('csvPaste').value.trim();if(!text)return alert('CSVを貼ってね');const lines=text.split(/\r?\n/).filter(Boolean),first=parseCSVLine(lines[0]);const expected=['date','ts','machine','model','totalG','big','reg','diff'];let start=0,headers=expected;if(first.some(x=>expected.includes(x))){headers=first;start=1}let arr=[];for(let i=start;i<lines.length;i++){const vals=parseCSVLine(lines[i]),o={};headers.forEach((h,j)=>o[h]=vals[j]);['ts','totalG','big','reg','diff'].forEach(k=>{if(o[k]!==undefined&&o[k]!=='')o[k]=Number(o[k])});if(o.date&&o.machine)arr.push(o)}if(!arr.length)return alert('取り込める行がなかったよ');mergeData({snapshots:arr});$('csvPaste').value='';renderAll();alert(`${arr.length}件取り込んだよ`)}
+function saveEventConfig(){const d=Number($('eventDay').value||22);if(d<1||d>31)return alert('特定日は1〜31で入れてね');cfg.eventDay=d;cfg.extraEvents=$('extraEvents').value.split(',').map(x=>x.trim()).filter(Boolean);persist();renderAll();alert('イベント設定を保存したよ 🔥')}
+function renderConfig(){if($('eventDay'))$('eventDay').value=cfg.eventDay||22;if($('extraEvents'))$('extraEvents').value=(cfg.extraEvents||[]).join(',')}
+function renderAll(){renderDash();renderHyp();renderEvent();renderIF();renderData();renderConfig()}
+nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('exportBtn').onclick=exportData;$('reloadRemote').onclick=()=>loadRemote(false);$('demoBtn').onclick=demoData;$('csvImportBtn').onclick=importCSVText;$('saveEventCfg').onclick=saveEventConfig;$('hDate').value=new Date().toISOString().slice(0,10);renderAll();loadRemote(true);
+</script>
+
+</body>
+</html>

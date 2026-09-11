@@ -35,7 +35,6 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 @media(max-width:560px){.grid4{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:1fr}.modelBtn{padding:13px 8px}h1{font-size:24px}.wrap{padding-left:9px;padding-right:9px}}
 </style>
 
-<link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -45,7 +44,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.0</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.1 LAB LINK</div>
 </header>
 
 <div class="card">
@@ -63,6 +62,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
   <div><label>差枚（任意）</label><input id="diffCoins" inputmode="numeric" placeholder="+1937 / -850"></div>
  </div>
  <div style="margin-top:9px"><label>実戦メモ</label><input id="sessionMemo" placeholder="朝イチ / 据え置きっぽい / 🐻と並び打ち等"></div>
+ <div style="margin-top:9px"><label>ヤメ理由（LABで理由別分析）</label><select id="endReason"><option value="">未選択</option><option>REGが弱くなった</option><option>合算が悪化</option><option>ハマり</option><option>持ち玉終了</option><option>時間・予定</option><option>目標枚数到達</option><option>台移動</option><option>直感・違和感</option><option>その他</option></select></div>
 </div>
 
 <div class="card">
@@ -147,6 +147,8 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
  </div>
 </div>
 
+<div class="card"><h3>🧪 PEKALOG LAB</h3><div class="notice">ターキーの傾向・22日・「その後どうなった？」を検証。</div><button class="btn cyan wide" style="margin-top:9px" onclick="location.href='./lab.html'">LABを開く</button></div>
+
 <div class="card">
  <h3>保存・バックアップ</h3>
  <div class="grid2">
@@ -207,11 +209,11 @@ let state=JSON.parse(localStorage.getItem(KEY)||'null')||blankState();
 if(!MODELS[state.model]) state.model='gogo3';
 let pendingType=null,lastReport='';
 
-function blankState(){return {model:'gogo3',date:new Date().toISOString().slice(0,10),shop:'',machine:'',diffCoins:'',sessionMemo:'',totalG:0,currentG:0,big:0,reg:0,cherry:0,history:[]}}
+function blankState(){return {model:'gogo3',date:new Date().toISOString().slice(0,10),shop:'',machine:'',diffCoins:'',sessionMemo:'',endReason:'',startedAt:Date.now(),totalG:0,currentG:0,big:0,reg:0,cherry:0,history:[]}}
 function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function specs(){const a=MODELS[state.model].spec;return [0,1,2,3,4,5].map(i=>({s:i+1,bb:a[i*3],rb:a[i*3+1],all:a[i*3+2]}))}
 function rate(n){return n>0&&state.totalG>0?'1/'+(state.totalG/n).toFixed(1):'-'}
-function saveMeta(){state.date=$('date').value;state.shop=$('shop').value;state.machine=$('machine').value;state.diffCoins=$('diffCoins').value;state.sessionMemo=$('sessionMemo').value;persist()}
+function saveMeta(){state.date=$('date').value;state.shop=$('shop').value;state.machine=$('machine').value;state.diffCoins=$('diffCoins').value;state.sessionMemo=$('sessionMemo').value;state.endReason=$('endReason').value;persist()}
 function persist(){localStorage.setItem(KEY,JSON.stringify(state))}
 function renderModelPicker(){
  const picker=$('modelPicker');
@@ -227,7 +229,7 @@ function updatePremiumOptions(){
 function render(){
  renderModelPicker();
  const sp=specs();$('modelSpec').textContent=`${MODELS[state.model].name}｜設定1 合算 1/${sp[0].all} → 設定6 1/${sp[5].all}`;
- $('date').value=state.date||new Date().toISOString().slice(0,10);$('shop').value=state.shop||'';$('machine').value=state.machine||'';$('diffCoins').value=state.diffCoins||'';$('sessionMemo').value=state.sessionMemo||'';
+ $('date').value=state.date||new Date().toISOString().slice(0,10);$('shop').value=state.shop||'';$('machine').value=state.machine||'';$('diffCoins').value=state.diffCoins||'';$('sessionMemo').value=state.sessionMemo||'';$('endReason').value=state.endReason||'';
  $('totalG').textContent=state.totalG;$('currentG').textContent=state.currentG;$('bigCount').textContent=state.big;$('regCount').textContent=state.reg;
  $('bigRate').textContent=rate(state.big);$('regRate').textContent=rate(state.reg);$('allRate').textContent=rate(state.big+state.reg);$('maxHamar').textContent=Math.max(0,state.currentG,...state.history.map(x=>x.g));
  $('cherryCount').textContent=state.cherry;
@@ -288,30 +290,23 @@ REG ${state.reg}（${rate(state.reg)}）
 チェリー参考数 ${state.cherry}
 🍒重複 BIG ${cb} / REG ${cr}
 プレミア ${p.length}回
-${state.diffCoins!==''?`差枚 ${state.diffCoins}枚\n`:''}${state.sessionMemo?`メモ：${state.sessionMemo}\n`:''}
+${state.diffCoins!==''?`差枚 ${state.diffCoins}枚\n`:''}${state.endReason?`ヤメ理由：${state.endReason}\n`:''}${state.sessionMemo?`メモ：${state.sessionMemo}\n`:''}
 履歴：
 ${state.history.map(x=>`${x.g}G ${x.type} / ${x.trigger}${x.premium?` / ✨${x.premium}`:''}${x.memo?` / ${x.memo}`:''}`).join('\n')}`
 }
 async function copySummary(){try{await navigator.clipboard.writeText(summaryText());alert('詳細結果をコピーしたよ！')}catch(e){prompt('この内容をコピーしてね',summaryText())}}
-function archiveSession(){if(!state.totalG&&!state.history.length)return alert('まだ保存する実戦データがないよ');let a=JSON.parse(localStorage.getItem(ARCH)||'[]');a.unshift({...state,id:Date.now()});localStorage.setItem(ARCH,JSON.stringify(a.slice(0,60)));renderArchives();alert('実戦を保存したよ！')}
+function archiveSession(){if(!state.totalG&&!state.history.length)return alert('まだ保存する実戦データがないよ');let a=JSON.parse(localStorage.getItem(ARCH)||'[]');const now=Date.now();a.unshift({...state,id:now,endedAt:now});localStorage.setItem(ARCH,JSON.stringify(a.slice(0,60)));renderArchives();alert('実戦を保存したよ！')}
 function renderArchives(){
  const a=JSON.parse(localStorage.getItem(ARCH)||'[]');
- $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">${esc(x.shop||'')} 台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}</div></div><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button></div></div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'
+ $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">${esc(x.shop||'')} 台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}${x.endReason?` / ${esc(x.endReason)}`:''}</div></div><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button></div></div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'
 }
 function loadArchive(id){const a=JSON.parse(localStorage.getItem(ARCH)||'[]'),x=a.find(v=>v.id===id);if(!x)return;if(!confirm('この実戦を現在の画面に読み込む？'))return;const {id:_,...rest}=x;state=rest;updatePremiumOptions();render();window.scrollTo({top:0,behavior:'smooth'})}
 function downloadJSON(){const payload={version:'3.0',current:state,archives:JSON.parse(localStorage.getItem(ARCH)||'[]')};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_${state.date||'data'}_${state.machine||'machine'}.json`;a.click();URL.revokeObjectURL(a.href)}
 function importJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);if(p.current)state=p.current;if(Array.isArray(p.archives))localStorage.setItem(ARCH,JSON.stringify(p.archives));updatePremiumOptions();render();alert('データを読み込んだよ！')}catch(e){alert('JSONを読み込めなかったよ')}};r.readAsText(f);ev.target.value=''}
 function newSession(){if(!confirm('現在の実戦をリセットして、新しい実戦を始める？\n必要なら先に「実戦を保存」してね。'))return;const m=state.model;state=blankState();state.model=m;closeBonus();render();window.scrollTo({top:0,behavior:'smooth'})}
-['date','shop','machine','diffCoins','sessionMemo'].forEach(id=>$(id).addEventListener('input',saveMeta));
+['date','shop','machine','diffCoins','sessionMemo','endReason'].forEach(id=>$(id).addEventListener('input',saveMeta));
 updatePremiumOptions();render();
 </script>
 
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(()=>{});
-  });
-}
-</script>
 
 </body></html>
