@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d10">
+<title>ペカログ JUGGLER EDITION v3.4 SMART SYNC</title>
+<style>
+:root{
+ --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
+ --big:#ff6b7d;--reg:#ffd166;--ch:#ff8fa3;--green:#58e39a;--blue:#6ca8ff;--violet:#b68cff;--cyan:#7de3ff;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;
+background:radial-gradient(circle at top right,#182131 0,#0e1117 35%,#0b0d10 72%);color:var(--text)}
+.wrap{max-width:860px;margin:auto;padding:14px 12px 54px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin:6px 2px 14px}
+h1{font-size:28px;margin:0}.ver{font-size:12px;color:var(--muted)}.sub{font-size:13px;color:var(--muted);margin-top:3px}
+.card{background:rgba(21,25,34,.98);border:1px solid var(--line);border-radius:19px;padding:14px;margin:11px 0;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+h2,h3{margin:0 0 10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:var(--panel2);border:1px solid #252c37;border-radius:14px;padding:10px;min-height:72px}.k{font-size:11px;color:var(--muted)}.v{font-size:21px;font-weight:800;margin-top:4px}
+.tiny{font-size:11px;color:var(--muted);line-height:1.5}label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
+input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid #323a48;border-radius:12px;padding:11px;font-size:16px}textarea{resize:vertical}
+.btn{border:0;border-radius:16px;padding:15px 11px;font-size:17px;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent}.btn:active{transform:scale(.985)}
+.big{background:var(--big);color:#1a0b0e}.reg{background:var(--reg);color:#1a1505}.cherry{background:var(--ch);color:#25070e}.green{background:var(--green);color:#07150e}.blue{background:var(--blue);color:#fff}.violet{background:var(--violet);color:#140b20}.dark{background:#252c37;color:#fff}.cyan{background:var(--cyan);color:#082029}.small{padding:10px 9px;font-size:14px}.wide{width:100%}
+.modelBtn{background:#202631;color:white;border:1px solid #343d4b;min-height:54px}.modelBtn.active{background:var(--cyan);color:#082029;border-color:transparent}
+.hist{display:flex;flex-direction:column;gap:8px;max-height:380px;overflow:auto}.item{background:var(--panel2);border:1px solid #252c37;border-radius:13px;padding:10px;display:flex;justify-content:space-between;gap:8px}
+.tags{margin-top:5px}.tag{display:inline-block;font-size:11px;background:#2a313d;border-radius:999px;padding:3px 7px;margin:0 4px 3px 0}.premium{background:#352a46}.chTag{background:#49212d}.unknown{background:#35383f}
+.bar{height:10px;border-radius:999px;background:#252c37;overflow:hidden;margin-top:4px}.fill{height:100%;background:linear-gradient(90deg,#6ca8ff,#58e39a)}
+.settingRow{display:grid;grid-template-columns:48px 1fr 54px;align-items:center;gap:8px;margin:7px 0}.notice{font-size:12px;line-height:1.55;color:#b8c0cc;background:#10151c;border:1px solid #29313d;border-radius:12px;padding:10px}
+.archiveItem{background:#101319;border:1px solid #272e39;border-radius:13px;padding:10px;margin:7px 0}.archiveTop{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.shareBox{white-space:pre-wrap;background:#0f1319;border:1px solid #2a313d;border-radius:13px;padding:11px;font-size:13px;line-height:1.6;max-height:260px;overflow:auto}
+.footer{text-align:center;color:#778292;font-size:11px;margin-top:20px;line-height:1.6}.hidden{display:none}
+@media(max-width:560px){.grid4{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:1fr}.modelBtn{padding:13px 8px}h1{font-size:24px}.wrap{padding-left:9px;padding-right:9px}}
+
+.syncOverlay{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:18px}
+.syncOverlay.hidden{display:none}
+.syncDialog{width:min(430px,100%);background:#151922;border:1px solid #36404e;border-radius:22px;padding:20px;box-shadow:0 24px 70px rgba(0,0,0,.55)}
+.syncDialog h3{font-size:21px;margin:0 0 8px}.syncDialog p{color:#b8c0cc;font-size:13px;line-height:1.65;margin:0 0 14px}
+.syncProgress{height:8px;background:#252c37;border-radius:999px;overflow:hidden;margin:12px 0}.syncProgress>div{height:100%;background:linear-gradient(90deg,#7de3ff,#58e39a);width:0}
+
+</style>
+
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ペカログ">
+
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.4 SMART SYNC</div>
+</header>
+
+<div class="card">
+ <h3>今日は何ジャグ？</h3>
+ <div id="modelPicker" class="grid3"></div>
+ <div class="tiny" style="margin-top:8px">6機種対応。今後は機種データを追加するだけで選択肢も自動増殖。</div>
+ <div class="tiny" id="modelSpec" style="margin-top:8px"></div>
+</div>
+
+<div class="card">
+ <div class="grid2">
+  <div><label>日付</label><input id="date" type="date"></div>
+  <div><label>店名</label><input id="shop" placeholder="例：ターキー"></div>
+  <div><label>台番号</label><input id="machine" inputmode="numeric" placeholder="658"></div>
+  <div><label>差枚（任意）</label><input id="diffCoins" inputmode="numeric" placeholder="+1937 / -850"></div>
+ </div>
+ <div style="margin-top:9px"><label>実戦メモ</label><input id="sessionMemo" placeholder="朝イチ / 据え置きっぽい / 🐻と並び打ち等"></div>
+ <div style="margin-top:9px"><label>ヤメ理由（LABで理由別分析）</label><select id="endReason"><option value="">未選択</option><option>REGが弱くなった</option><option>合算が悪化</option><option>ハマり</option><option>持ち玉終了</option><option>時間・予定</option><option>目標枚数到達</option><option>台移動</option><option>直感・違和感</option><option>その他</option></select></div>
+</div>
+
+<div class="card">
+ <div class="grid4">
+  <div class="stat"><div class="k">総回転</div><div class="v" id="totalG">0</div></div>
+  <div class="stat"><div class="k">現在G</div><div class="v" id="currentG">0</div></div>
+  <div class="stat"><div class="k">BIG</div><div class="v" id="bigCount">0</div></div>
+  <div class="stat"><div class="k">REG</div><div class="v" id="regCount">0</div></div>
+  <div class="stat"><div class="k">BIG確率</div><div class="v" id="bigRate">-</div></div>
+  <div class="stat"><div class="k">REG確率</div><div class="v" id="regRate">-</div></div>
+  <div class="stat"><div class="k">合算</div><div class="v" id="allRate">-</div></div>
+  <div class="stat"><div class="k">最大ハマり</div><div class="v" id="maxHamar">0</div></div>
+ </div>
+</div>
+
+<div class="card">
+ <h3>回転数</h3>
+ <div class="grid4">
+  <button class="btn dark small" onclick="addG(1)">+1G</button>
+  <button class="btn dark small" onclick="addG(10)">+10G</button>
+  <button class="btn dark small" onclick="addG(50)">+50G</button>
+  <button class="btn dark small" onclick="addG(100)">+100G</button>
+ </div>
+ <div class="grid2" style="margin-top:9px">
+  <input id="manualG" inputmode="numeric" placeholder="現在Gを直接入力">
+  <button class="btn blue small" onclick="setCurrentG()">現在Gに反映</button>
+ </div>
+</div>
+
+<div class="card">
+ <div class="grid2">
+  <button class="btn big" onclick="openBonus('BIG')">BIG</button>
+  <button class="btn reg" onclick="openBonus('REG')">REG</button>
+ </div>
+ <button class="btn cherry wide" style="margin-top:9px" onclick="addCherry()">🍒 気づいたチェリー +1</button>
+ <div class="tiny" style="margin-top:7px">チェリー総数は参考値。設定推測には使いません。目押しが曖昧でも気軽にポチでOK。</div>
+</div>
+
+<div class="card hidden" id="bonusPanel">
+ <h3 id="bonusTitle">ボーナス登録</h3>
+ <div class="grid2">
+  <div><label>当選契機</label><select id="trigger"><option value="不明">？ 不明</option><option value="単独">単独</option><option value="チェリー重複">🍒 チェリー重複</option></select></div>
+  <div><label>プレミア</label><select id="premium"></select></div>
+ </div>
+ <div style="margin-top:9px"><label>プレミア詳細・自由メモ</label><textarea id="memo" rows="2" placeholder="例：第三停止で気づいた / 虹っぽかった / トラッピ"></textarea></div>
+ <div class="grid2" style="margin-top:9px"><button class="btn green" onclick="saveBonus()">登録</button><button class="btn dark" onclick="closeBonus()">キャンセル</button></div>
+</div>
+
+<div class="card">
+ <h3>🍒・✨ 集計</h3>
+ <div class="grid4">
+  <div class="stat"><div class="k">チェリー参考数</div><div class="v" id="cherryCount">0</div></div>
+  <div class="stat"><div class="k">🍒BIG</div><div class="v" id="chBig">0</div></div>
+  <div class="stat"><div class="k">🍒REG</div><div class="v" id="chReg">0</div></div>
+  <div class="stat"><div class="k">プレミア</div><div class="v" id="premCount">0</div></div>
+ </div>
+ <div id="premiumList" class="tiny" style="margin-top:9px"></div>
+</div>
+
+<div class="card">
+ <h3>設定推測（参考）</h3>
+ <div id="settingSummary" class="notice">まだデータがありません。</div>
+ <div id="settingBars" style="margin-top:10px"></div>
+ <div class="notice" style="margin-top:10px">選んだ機種のBB・REG確率から参考推定。チェリー参考数は推測から除外。短時間はかなりブレるので「確定」表示はしません。</div>
+</div>
+
+<div class="card">
+ <h3>ボーナス履歴</h3>
+ <div id="history" class="hist"></div>
+</div>
+
+<div class="card">
+ <h3>🐻 稼働報告</h3>
+ <div class="grid2">
+  <button class="btn cyan small" onclick="buildShare('途中')">途中経過を作る</button>
+  <button class="btn violet small" onclick="buildShare('最終')">最終報告を作る</button>
+ </div>
+ <div id="shareBox" class="shareBox" style="margin-top:9px">ここに稼働報告が出るよ。</div>
+ <div class="grid2" style="margin-top:9px">
+  <button class="btn green small" onclick="shareReport()">📣 共有する</button>
+  <button class="btn dark small" onclick="copyReport()">📋 コピー</button>
+ </div>
+</div>
+
+<div class="card">
+ <h3>🧪 PEKALOG LAB</h3>
+ <div class="notice">朝は前日の答え合わせ。打ちに行く日は道中で最新LIVEを取って「今日座るならコレ！」へ。</div>
+ <div id="turkeySyncStatus" class="notice" style="margin-top:9px">🦃 最終収集：確認中…</div>
+ <div id="turkeySyncHint" class="tiny" style="margin-top:6px"></div>
+ <div class="grid2" style="margin-top:9px">
+  <button class="btn cyan small" onclick="startTurkeyCollection()">🦃 最新データを収集</button>
+  <button class="btn violet small" onclick="location.href='./lab.html'">🧪 LABを開く</button>
+ </div>
+</div>
+
+<div class="card">
+ <h3>保存・バックアップ</h3>
+ <div class="grid2">
+  <button class="btn violet small" onclick="archiveSession()">💾 実戦を保存</button>
+  <button class="btn dark small" onclick="copySummary()">📋 詳細をコピー</button>
+  <button class="btn dark small" onclick="downloadJSON()">⬇ JSON保存</button>
+  <label class="btn dark small" style="text-align:center;cursor:pointer">⬆ JSON読込<input id="jsonFile" type="file" accept=".json,application/json" style="display:none" onchange="importJSON(event)"></label>
+  <button class="btn dark small" onclick="undoBonus()">↩ ボーナス1件戻す</button>
+  <button class="btn dark small" onclick="undoCherry()">↩ チェリー1回戻す</button>
+ </div>
+ <button class="btn dark small wide" style="margin-top:9px" onclick="newSession()">🧹 新しい実戦を開始</button>
+</div>
+
+<div class="card"><h3>保存済み実戦</h3><div id="archives"></div></div>
+
+<div class="footer">
+ ペカログは端末ブラウザ内に自動保存。6機種対応。設定推測は参考用です。<br>
+ スマホで使うときはSafari/Chromeで開くと入力・保存・共有が使いやすいです。
+</div>
+</div>
+
+
+<div id="turkeySyncModal" class="syncOverlay hidden">
+ <div class="syncDialog">
+  <div style="font-size:34px;margin-bottom:4px">🦃📡</div>
+  <h3 id="turkeySyncTitle">ターキーを同期しますか？</h3>
+  <p id="turkeySyncText">P's CUBEを開いて認証したあと、いつものPEKALOG収集で22台を集めます。</p>
+  <div id="turkeySyncProgress" class="syncProgress hidden"><div id="turkeySyncProgressBar"></div></div>
+  <div id="turkeySyncButtons" class="grid2">
+   <button class="btn cyan" onclick="startTurkeyAutoSync()">収集を始める</button>
+   <button class="btn dark" onclick="closeTurkeySyncPrompt()">今はしない</button>
+  </div>
+  <div id="turkeySyncDoneButtons" class="grid2 hidden">
+   <button class="btn green" onclick="closeTurkeySyncPrompt()">閉じる</button>
+   <button class="btn violet" onclick="location.href='./lab.html'">LABを見る</button>
+  </div>
+ </div>
+</div>
+
+<script>
+const MODELS={
+ gogo3:{
+  name:'ゴーゴージャグラー3', short:'ゴージャグ3',
+  spec:[259.0,354.2,149.6, 258.0,332.7,145.3, 257.0,306.2,139.7, 254.0,268.6,130.5, 247.3,247.3,123.7, 234.9,234.9,117.4],
+  premiums:['なし','レインボー系','無音系','遅れ系','スロースタート系','隠れGOGO系','特殊点灯系','その他']
+ },
+ neoim:{
+  name:'ネオアイムジャグラーEX', short:'ネオアイム',
+  spec:[273.1,439.8,168.5, 269.7,399.6,161.0, 269.7,331.0,148.6, 259.0,315.1,142.2, 259.0,255.0,128.5, 255.0,255.0,127.5],
+  premiums:['なし','告知キャラ点灯','プレミアムボーナス音','軍艦マーチ','第九','運命','みんなのGOGO!CHANCE','特殊点灯系','その他']
+ },
+ my5:{
+  name:'マイジャグラーV', short:'マイジャグV',
+  spec:[273.1,409.6,163.8, 270.8,385.5,159.1, 266.4,336.1,148.6, 254.0,290.0,135.4, 240.1,268.6,126.8, 229.1,229.1,114.6],
+  premiums:['なし','トラッピ','GOGO!ランプ変化','レインボー系','瞬き系','特殊点灯系','プレミアム音','その他']
+ },
+ my6:{
+  name:'マイジャグラーVI', short:'マイジャグVI',
+  spec:[273.1,409.6,163.8, 270.8,385.5,159.1, 266.4,336.1,148.6, 254.0,290.0,135.4, 240.1,268.6,126.8, 229.1,229.1,114.6],
+  premiums:['なし','GOGO!ランプ変化','レインボー系','瞬き系','特殊点灯系','プレミアム音','その他']
+ },
+ happy3:{
+  name:'ハッピージャグラーV III', short:'ハッピーV III',
+  spec:[273.1,397.2,161.8, 270.8,362.1,154.9, 263.2,332.7,146.9, 254.0,300.6,137.7, 239.2,273.1,127.5, 226.0,256.0,120.0],
+  premiums:['なし','GOGO!ランプ変化','告知タイミング変化','特殊点灯系','プレミアム音','その他']
+ },
+ ultra:{
+  name:'ウルトラミラクルジャグラー', short:'ウルトラミラクル',
+  spec:[267.5,425.6,164.3, 261.1,402.1,158.3, 256.0,350.5,147.9, 242.7,322.8,138.6, 233.2,297.9,130.8, 216.3,277.7,121.6],
+  premiums:['なし','GOGO!ランプ変化','プレミアムアクション','特殊告知','特殊点灯系','スペシャルボーナス音','その他']
+ }
+};
+const KEY='pekalog_v2_state',ARCH='pekalog_v2_archives';
+const $=id=>document.getElementById(id);
+let state=JSON.parse(localStorage.getItem(KEY)||'null')||blankState();
+if(!MODELS[state.model]) state.model='gogo3';
+let pendingType=null,lastReport='';
+
+function blankState(){return {model:'gogo3',date:new Date().toISOString().slice(0,10),shop:'',machine:'',diffCoins:'',sessionMemo:'',endReason:'',startedAt:Date.now(),totalG:0,currentG:0,big:0,reg:0,cherry:0,history:[]}}
+function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function specs(){const a=MODELS[state.model].spec;return [0,1,2,3,4,5].map(i=>({s:i+1,bb:a[i*3],rb:a[i*3+1],all:a[i*3+2]}))}
+function rate(n){return n>0&&state.totalG>0?'1/'+(state.totalG/n).toFixed(1):'-'}
+function saveMeta(){state.date=$('date').value;state.shop=$('shop').value;state.machine=$('machine').value;state.diffCoins=$('diffCoins').value;state.sessionMemo=$('sessionMemo').value;state.endReason=$('endReason').value;persist()}
+function persist(){localStorage.setItem(KEY,JSON.stringify(state))}
+function renderModelPicker(){
+ const picker=$('modelPicker');
+ picker.innerHTML=Object.entries(MODELS).map(([id,m]) =>
+  `<button id="btn-${id}" class="btn modelBtn ${state.model===id?'active':''}" onclick="setModel('${id}')">${m.short||m.name}</button>`
+ ).join('');
+}
+function setModel(m){if(!MODELS[m])return;state.model=m;updatePremiumOptions();render()}
+function updatePremiumOptions(){
+ const p=$('premium'); if(!p)return;
+ p.innerHTML=MODELS[state.model].premiums.map(x=>`<option value="${x==='なし'?'':esc(x)}">${x}</option>`).join('')
+}
+function render(){
+ renderModelPicker();
+ const sp=specs();$('modelSpec').textContent=`${MODELS[state.model].name}｜設定1 合算 1/${sp[0].all} → 設定6 1/${sp[5].all}`;
+ $('date').value=state.date||new Date().toISOString().slice(0,10);$('shop').value=state.shop||'';$('machine').value=state.machine||'';$('diffCoins').value=state.diffCoins||'';$('sessionMemo').value=state.sessionMemo||'';$('endReason').value=state.endReason||'';
+ $('totalG').textContent=state.totalG;$('currentG').textContent=state.currentG;$('bigCount').textContent=state.big;$('regCount').textContent=state.reg;
+ $('bigRate').textContent=rate(state.big);$('regRate').textContent=rate(state.reg);$('allRate').textContent=rate(state.big+state.reg);$('maxHamar').textContent=Math.max(0,state.currentG,...state.history.map(x=>x.g));
+ $('cherryCount').textContent=state.cherry;
+ const cb=state.history.filter(x=>x.type==='BIG'&&x.trigger==='チェリー重複').length,cr=state.history.filter(x=>x.type==='REG'&&x.trigger==='チェリー重複').length,p=state.history.filter(x=>x.premium);
+ $('chBig').textContent=cb;$('chReg').textContent=cr;$('premCount').textContent=p.length;
+ $('premiumList').innerHTML=p.length?'✨ '+p.map(x=>`${x.g}G ${x.type}：${esc(x.premium)}${x.memo?'（'+esc(x.memo)+'）':''}`).join('<br>'):'プレミア記録なし';
+ $('history').innerHTML=state.history.length?state.history.slice().reverse().map((x,i)=>{
+  const tr=x.trigger==='チェリー重複'?'<span class="tag chTag">🍒チェリー重複</span>':x.trigger==='不明'?'<span class="tag unknown">？不明</span>':`<span class="tag">${esc(x.trigger)}</span>`;
+  const pr=x.premium?`<span class="tag premium">✨${esc(x.premium)}</span>`:'';
+  return `<div class="item"><div><b>${x.g}G ${x.type}</b><div class="tags">${tr}${pr}</div>${x.memo?`<div class="tiny">${esc(x.memo)}</div>`:''}</div><div class="tiny">#${state.history.length-i}</div></div>`
+ }).join(''):'<div class="tiny">まだボーナス履歴なし</div>';
+ renderSettings();renderArchives();persist();
+}
+function addG(n){state.currentG+=n;state.totalG+=n;render()}
+function setCurrentG(){const v=parseInt($('manualG').value);if(isNaN(v)||v<0)return;state.totalG+=v-state.currentG;if(state.totalG<0)state.totalG=0;state.currentG=v;$('manualG').value='';render()}
+function addCherry(){state.cherry++;render()}
+function openBonus(t){pendingType=t;$('bonusTitle').textContent=t+' 登録';updatePremiumOptions();$('bonusPanel').classList.remove('hidden');$('bonusPanel').scrollIntoView({behavior:'smooth',block:'center'})}
+function closeBonus(){pendingType=null;$('bonusPanel').classList.add('hidden');$('trigger').value='不明';$('memo').value='';updatePremiumOptions()}
+function saveBonus(){if(!pendingType)return;state.history.push({g:state.currentG,type:pendingType,trigger:$('trigger').value,premium:$('premium').value,memo:$('memo').value.trim(),ts:Date.now()});pendingType==='BIG'?state.big++:state.reg++;state.currentG=0;closeBonus();render()}
+function undoBonus(){const x=state.history.pop();if(!x)return alert('戻せるボーナス履歴がないよ');x.type==='BIG'?state.big--:state.reg--;state.currentG=x.g;render()}
+function undoCherry(){if(state.cherry>0)state.cherry--;render()}
+function poissonLog(k,l){if(l<=0)return -1e99;let f=0;for(let i=2;i<=k;i++)f+=Math.log(i);return k*Math.log(l)-l-f}
+function estimate(){if(state.totalG<1)return specs().map(x=>({s:x.s,p:1/6}));let logs=specs().map(x=>({s:x.s,l:poissonLog(state.big,state.totalG/x.bb)+poissonLog(state.reg,state.totalG/x.rb)}));const mx=Math.max(...logs.map(x=>x.l));const ex=logs.map(x=>({s:x.s,e:Math.exp(x.l-mx)})),sum=ex.reduce((a,b)=>a+b.e,0);return ex.map(x=>({s:x.s,p:x.e/sum}))}
+function renderSettings(){
+ const est=estimate().sort((a,b)=>a.s-b.s),best=[...est].sort((a,b)=>b.p-a.p)[0],sum=$('settingSummary');
+ if(!state.totalG)sum.textContent='まだデータがありません。';
+ else if(state.totalG<1000)sum.textContent=`現在 ${state.totalG}G。まだサンプルが少ないので、推測はかなり揺れます。`;
+ else sum.innerHTML=`${MODELS[state.model].name}では、現時点で <b>設定${best.s}付近</b> が最も近い参考推定。<br>BIG ${rate(state.big)} / REG ${rate(state.reg)} / 合算 ${rate(state.big+state.reg)}。`;
+ $('settingBars').innerHTML=est.map(x=>`<div class="settingRow"><b>設定${x.s}</b><div class="bar"><div class="fill" style="width:${(x.p*100).toFixed(1)}%"></div></div><div class="tiny">${(x.p*100).toFixed(1)}%</div></div>`).join('')
+}
+function shareText(kind){
+ const diff=state.diffCoins!==''?`\n差枚 ${Number(state.diffCoins)>0?'+':''}${state.diffCoins}枚`:'';
+ const p=state.history.filter(x=>x.premium).length;
+ return `🎰 ${kind==='最終'?'本日終了':'稼働途中'} ${kind==='最終'?'🏁':'👀'}
+${MODELS[state.model].name}${state.machine?`｜${state.machine}番台`:''}
+${state.totalG}G
+BIG ${state.big}（${rate(state.big)}）
+REG ${state.reg}（${rate(state.reg)}）
+合算 ${rate(state.big+state.reg)}
+現在 ${state.currentG}G
+✨プレミア ${p}回${diff}
+${state.shop?`📍${state.shop}`:''}
+#ペカログ`;
+}
+function buildShare(kind){lastReport=shareText(kind);$('shareBox').textContent=lastReport}
+async function shareReport(){if(!lastReport)buildShare('途中');if(navigator.share){try{await navigator.share({title:'ペカログ稼働報告',text:lastReport});return}catch(e){}}copyReport()}
+async function copyReport(){if(!lastReport)buildShare('途中');try{await navigator.clipboard.writeText(lastReport);alert('稼働報告をコピーしたよ！')}catch(e){prompt('これをコピーして送ってね',lastReport)}}
+function summaryText(){
+ const cb=state.history.filter(x=>x.type==='BIG'&&x.trigger==='チェリー重複').length,cr=state.history.filter(x=>x.type==='REG'&&x.trigger==='チェリー重複').length,p=state.history.filter(x=>x.premium);
+ return `ペカログ 🎰
+機種: ${MODELS[state.model].name}
+${state.date||'-'} / ${state.shop||'-'} / 台番 ${state.machine||'-'}
+総回転 ${state.totalG}G
+BIG ${state.big}（${rate(state.big)}）
+REG ${state.reg}（${rate(state.reg)}）
+合算 ${rate(state.big+state.reg)}
+最大ハマり ${Math.max(0,state.currentG,...state.history.map(x=>x.g))}G
+チェリー参考数 ${state.cherry}
+🍒重複 BIG ${cb} / REG ${cr}
+プレミア ${p.length}回
+${state.diffCoins!==''?`差枚 ${state.diffCoins}枚\n`:''}${state.endReason?`ヤメ理由：${state.endReason}\n`:''}${state.sessionMemo?`メモ：${state.sessionMemo}\n`:''}
+履歴：
+${state.history.map(x=>`${x.g}G ${x.type} / ${x.trigger}${x.premium?` / ✨${x.premium}`:''}${x.memo?` / ${x.memo}`:''}`).join('\n')}`
+}
+async function copySummary(){try{await navigator.clipboard.writeText(summaryText());alert('詳細結果をコピーしたよ！')}catch(e){prompt('この内容をコピーしてね',summaryText())}}
+function archiveSession(){if(!state.totalG&&!state.history.length)return alert('まだ保存する実戦データがないよ');let a=JSON.parse(localStorage.getItem(ARCH)||'[]');const now=Date.now();a.unshift({...state,id:now,endedAt:now});localStorage.setItem(ARCH,JSON.stringify(a.slice(0,60)));renderArchives();alert('実戦を保存したよ！')}
+function renderArchives(){
+ const a=JSON.parse(localStorage.getItem(ARCH)||'[]');
+ $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">${esc(x.shop||'')} 台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}${x.endReason?` / ${esc(x.endReason)}`:''}</div></div><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button></div></div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'
+}
+function loadArchive(id){const a=JSON.parse(localStorage.getItem(ARCH)||'[]'),x=a.find(v=>v.id===id);if(!x)return;if(!confirm('この実戦を現在の画面に読み込む？'))return;const {id:_,...rest}=x;state=rest;updatePremiumOptions();render();window.scrollTo({top:0,behavior:'smooth'})}
+function downloadJSON(){const payload={version:'3.0',current:state,archives:JSON.parse(localStorage.getItem(ARCH)||'[]')};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_${state.date||'data'}_${state.machine||'machine'}.json`;a.click();URL.revokeObjectURL(a.href)}
+function importJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);if(p.current)state=p.current;if(Array.isArray(p.archives))localStorage.setItem(ARCH,JSON.stringify(p.archives));updatePremiumOptions();render();alert('データを読み込んだよ！')}catch(e){alert('JSONを読み込めなかったよ')}};r.readAsText(f);ev.target.value=''}
+function newSession(){if(!confirm('現在の実戦をリセットして、新しい実戦を始める？\n必要なら先に「実戦を保存」してね。'))return;const m=state.model;state=blankState();state.model=m;closeBonus();render();window.scrollTo({top:0,behavior:'smooth'})}
+['date','shop','machine','diffCoins','sessionMemo','endReason'].forEach(id=>$(id).addEventListener('input',saveMeta));
+updatePremiumOptions();render();
+</script>
+
+
+
+<script>
+const PEKALOG_LAB_KEY='pekalog_lab_v02_data';
+const PEKALOG_SYNC_META_KEY='pekalog_turkey_sync_meta_v1';
+let turkeySyncReturning=false;
+
+function pekaNormMachine(v){
+ const s=String(v??'').trim(),n=Number(s);return Number.isFinite(n)?String(n):s.replace(/^0+/,'')||'0';
+}
+function pekaModelId(name){
+ const n=String(name||'').normalize('NFKC');
+ if(n.includes('ゴーゴー'))return 'gogo3';
+ if(n.includes('ネオアイム'))return 'neoim';
+ if(n.includes('マイジャグラーVI')||n.includes('マイジャグラー6'))return 'my6';
+ if(n.includes('マイジャグラーV'))return 'my5';
+ if(n.includes('ハッピー'))return 'happy3';
+ if(n.includes('ウルトラミラクル'))return 'ultra';
+ return 'unknown';
+}
+function pekaAddDaysISO(date,delta){
+ const p=String(date||'').split('-').map(Number);
+ if(p.length!==3||p.some(x=>!x))return date;
+ const d=new Date(Date.UTC(p[0],p[1]-1,p[2]));d.setUTCDate(d.getUTCDate()+delta);
+ return d.toISOString().slice(0,10);
+}
+function pekaComb(v){
+ const m=String(v||'').match(/1\/([\d.]+)/),n=m?Number(m[1]):null;
+ return Number.isFinite(n)?n:null;
+}
+function pekaSnapshot(rec,date,statKey,graphKey,isFinal){
+ const st=rec?.stats?.[statKey]||{},g=rec?.graphs?.[graphKey]||{};
+ const cap=Date.parse(rec?.capturedAt||'');
+ const ts=isFinal?Date.parse(date+'T23:59:00+09:00'):(Number.isFinite(cap)?cap:Date.now());
+ return {
+  date,ts,machine:pekaNormMachine(rec?.machine),model:pekaModelId(rec?.model),modelName:rec?.model||'',
+  totalG:Number.isFinite(Number(st.totalGEst))?Number(st.totalGEst):null,totalGEstimated:true,
+  big:Number(st.big||0),reg:Number(st.reg||0),comb:pekaComb(st.combined),
+  diff:Number.isFinite(Number(g.currentDiffEst))?Number(g.currentDiffEst):null,
+  maxDiff:Number.isFinite(Number(g.peakDiffEst))?Number(g.peakDiffEst):null,
+  minDiff:Number.isFinite(Number(g.troughDiffEst))?Number(g.troughDiffEst):null,
+  peak1000:!!g.peak1000,peak2000:!!g.peak2000,
+  currentGame:statKey==='today'&&Number.isFinite(Number(rec?.currentGame))?Number(rec.currentGame):null,
+  graphMode:'svg-dom-estimate',diffEstimated:true,updated:rec?.updated||null,
+  source:'pscube-auto-sync',isFinal,snapshotType:isFinal?'historical-final':'live'
+ };
+}
+function importTurkeyBundleDirect(pkg){
+ if(!pkg||pkg.kind!=='pekalog-turkey-bundle')throw new Error('同期データ形式が違います');
+ let lab={snapshots:[]};
+ try{lab=JSON.parse(localStorage.getItem(PEKALOG_LAB_KEY)||'{"snapshots":[]}')}catch{}
+ if(!Array.isArray(lab.snapshots))lab.snapshots=[];
+ const incoming=[];
+ for(const rec of (pkg.machines||[])){
+  if(!rec||!rec.machine||rec.error)continue;
+  incoming.push(pekaSnapshot(rec,pkg.date,'today','today',false));
+  incoming.push(pekaSnapshot(rec,pekaAddDaysISO(pkg.date,-1),'prev1','prev1',true));
+  incoming.push(pekaSnapshot(rec,pekaAddDaysISO(pkg.date,-2),'prev2','prev2',true));
+ }
+ const map=new Map(lab.snapshots.map(s=>[(s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s]));
+ for(const s of incoming)map.set((s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s);
+ lab.snapshots=[...map.values()];
+ localStorage.setItem(PEKALOG_LAB_KEY,JSON.stringify(lab));
+ localStorage.setItem(PEKALOG_SYNC_META_KEY,JSON.stringify({
+  syncedAt:new Date().toISOString(),date:pkg.date,machines:pkg.collected||pkg.machines?.length||0,
+  snapshots:incoming.length,version:pkg.version||''
+ }));
+ updateTurkeySyncStatus();
+ return {machines:pkg.collected||pkg.machines?.length||0,snapshots:incoming.length};
+}
+function decodeB64Url(s){
+ let b64=String(s||'').replace(/-/g,'+').replace(/_/g,'/');
+ while(b64.length%4)b64+='=';
+ const bin=atob(b64),bytes=new Uint8Array(bin.length);
+ for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+ return JSON.parse(new TextDecoder().decode(bytes));
+}
+function updateTurkeySyncStatus(){
+ const el=document.getElementById('turkeySyncStatus');if(!el)return;
+ try{
+  const m=JSON.parse(localStorage.getItem(PEKALOG_SYNC_META_KEY)||'null');
+  if(!m)return;
+  const when=new Date(m.syncedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  el.innerHTML=`✅ 最終同期：${when} ／ ${m.machines}台`;
+ }catch{}
+}
+function openTurkeySyncPrompt(){
+ document.getElementById('turkeySyncModal').classList.remove('hidden');
+ document.getElementById('turkeySyncTitle').textContent='ターキーを同期しますか？';
+ let last='まだ同期データはありません。';
+ try{
+  const m=JSON.parse(localStorage.getItem(PEKALOG_SYNC_META_KEY)||'null');
+  if(m)last='前回：'+new Date(m.syncedAt).toLocaleString('ja-JP')+' ／ '+m.machines+'台';
+ }catch{}
+ document.getElementById('turkeySyncText').innerHTML=`P's CUBEで認証後、いつもの収集ショートカットを使って22台を集めます。<br><span style="color:#8995a5">${last}</span>`;
+ document.getElementById('turkeySyncProgress').classList.add('hidden');
+ document.getElementById('turkeySyncButtons').classList.remove('hidden');
+ document.getElementById('turkeySyncDoneButtons').classList.add('hidden');
+}
+function closeTurkeySyncPrompt(){document.getElementById('turkeySyncModal').classList.add('hidden')}
+function startTurkeyAutoSync(){
+ const url='https://www.pscube.jp/h/a707001/cgi-bin/nc-v06-001.php?cd_dai=0651';
+ document.getElementById('turkeySyncTitle').textContent='🦃 収集を開始します';
+ document.getElementById('turkeySyncText').textContent='P’s CUBEを開きます。認証が出たら手動で通して、その後は「共有 → PEKALOG収集」を使ってください。';
+ document.getElementById('turkeySyncProgress').classList.add('hidden');
+ document.getElementById('turkeySyncButtons').classList.add('hidden');
+ window.location.assign(url);
+}
+function showTurkeySyncResult(ok,text){
+ document.getElementById('turkeySyncModal').classList.remove('hidden');
+ document.getElementById('turkeySyncTitle').textContent=ok?'✅ 同期完了！':'⚠️ 同期できませんでした';
+ document.getElementById('turkeySyncText').textContent=text;
+ document.getElementById('turkeySyncProgress').classList.remove('hidden');
+ document.getElementById('turkeySyncProgressBar').style.width=ok?'100%':'0%';
+ document.getElementById('turkeySyncButtons').classList.add('hidden');
+ document.getElementById('turkeySyncDoneButtons').classList.remove('hidden');
+}
+function handleTurkeySyncReturn(){
+ const h=new URLSearchParams(location.hash.replace(/^#/,''));
+ const data=h.get('pekalogSyncData'),err=h.get('pekalogSyncError'),cancel=h.get('pekalogSyncCancelled');
+ if(!data&&!err&&!cancel)return false;
+ turkeySyncReturning=true;
+ history.replaceState(null,'',location.pathname+location.search);
+ if(data){
+  try{
+   const pkg=decodeB64Url(data),r=importTurkeyBundleDirect(pkg);
+   showTurkeySyncResult(true,`${r.machines}台を取得して、LABへ${r.snapshots}件反映したよ。`);
+  }catch(e){showTurkeySyncResult(false,'データの取込でエラー：'+e.message)}
+ }else if(err){showTurkeySyncResult(false,decodeURIComponent(err))}
+ else if(cancel){showTurkeySyncResult(false,'同期を中止したよ。')}
+ return true;
+}
+window.addEventListener('load',()=>{ updateTurkeySyncStatus(); handleTurkeySyncReturn(); });
+</script>
+
+
+<script id="pekalog-smart-sync-v34">
+const PEKALOG_IMPORT_META_KEY='pekalog_lab_last_import_v09';
+const PEKALOG_LAB_DATA_KEY='pekalog_lab_v02_data';
+
+function pekaHoursSince(iso){
+  const t=Date.parse(iso||'');
+  return Number.isFinite(t)?(Date.now()-t)/3600000:null;
+}
+function pekaTodayJST(){
+  return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo'}).format(new Date());
+}
+function pekaDayOfMonthJST(){
+  return Number(pekaTodayJST().slice(-2));
+}
+function pekaLatestSnapshotTime(){
+  try{
+    const lab=JSON.parse(localStorage.getItem(PEKALOG_LAB_DATA_KEY)||'null');
+    const arr=Array.isArray(lab?.snapshots)?lab.snapshots:[];
+    const ts=arr.map(x=>Number(x.ts)).filter(Number.isFinite);
+    if(!ts.length)return null;
+    return new Date(Math.max(...ts)).toISOString();
+  }catch{return null}
+}
+function pekaSyncMeta(){
+  try{
+    const m=JSON.parse(localStorage.getItem(PEKALOG_IMPORT_META_KEY)||'null');
+    if(m?.importedAt)return m;
+  }catch{}
+  const fallback=pekaLatestSnapshotTime();
+  return fallback?{importedAt:fallback,machines:null,snapshots:null,fallback:true}:null;
+}
+function updateTurkeySyncStatus(){
+  const status=document.getElementById('turkeySyncStatus');
+  const hint=document.getElementById('turkeySyncHint');
+  if(!status)return;
+
+  const m=pekaSyncMeta();
+  const is22=pekaDayOfMonthJST()===22;
+
+  if(!m){
+    status.innerHTML='🦃 <strong>最終収集：未記録</strong>';
+    if(hint)hint.innerHTML=(is22?'🔥 今日は22日！ ':'')+'朝か、打ちに行く前に最新データを収集しよう。';
+    return;
+  }
+
+  const h=pekaHoursSince(m.importedAt);
+  const when=new Date(m.importedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  const count=m.machines?` ／ ${m.machines}台`:'';
+
+  let icon='✅',msg='最新';
+  if(h!==null&&h>=48){icon='🚨';msg='2日以上更新なし';}
+  else if(h!==null&&h>=24){icon='⚠️';msg='昨日から更新なし';}
+  else if(h!==null&&h>=12){icon='🟡';msg='半日以上前';}
+
+  status.innerHTML=`${icon} <strong>最終収集：${when}</strong>${count} ／ ${msg}`;
+
+  if(hint){
+    if(is22 && h!==null && h>4){
+      hint.innerHTML='🔥 <strong>今日は22日。</strong> できれば今のデータを取り直してからLABを見るのがおすすめ。';
+    }else if(h!==null && h>=48){
+      hint.innerHTML='朝の答え合わせ用データが古くなってるよ。今日どこかで収集すると履歴がつながる。';
+    }else if(h!==null && h>=24){
+      hint.innerHTML='そろそろ1回収集すると安心。打ちに行く日なら道中で取ればそのまま実戦用LIVEになる。';
+    }else{
+      hint.innerHTML='朝＝前日の閉店確定。道中＝「今から候補」更新。必要な時だけ収集でOK。';
+    }
+  }
+}
+
+function startTurkeyCollection(){
+  const url='https://www.pscube.jp/h/a707001/cgi-bin/nc-v06-001.php?cd_dai=0651';
+  window.location.assign(url);
+}
+window.addEventListener('load',updateTurkeySyncStatus);
+</script>
+
+</body></html>
