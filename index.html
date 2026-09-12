@@ -88,7 +88,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.5.1 PHOTO + QUICK</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.5.2 PHOTO PICKER</div>
 </header>
 
 <div class="card">
@@ -115,9 +115,14 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
  <div class="photoGrid" style="margin-top:10px">
   <div class="photoSlot">
    <b>▶️ 開始写真</b>
-   <label class="btn cyan small wide" style="margin-top:8px;text-align:center;cursor:pointer">📷 写真を選ぶ
-    <input id="startPhotoFile" type="file" accept="image/*" capture="environment" style="display:none" onchange="loadLampPhoto('start',event)">
-   </label>
+   <div class="grid2" style="margin-top:8px">
+    <label class="btn cyan small" style="text-align:center;cursor:pointer">📷 今撮る
+      <input id="startPhotoCamera" type="file" accept="image/*" capture="environment" style="display:none" onchange="loadLampPhoto('start',event)">
+    </label>
+    <label class="btn dark small" style="text-align:center;cursor:pointer">🖼️ 写真から選ぶ
+      <input id="startPhotoLibrary" type="file" accept="image/*" style="display:none" onchange="loadLampPhoto('start',event)">
+    </label>
+   </div>
    <img id="startPhotoPreview" class="photoPreview" alt="">
    <div class="photoFields">
     <div><label>台番</label><input id="startMachine" inputmode="numeric" onclick="setPhotoTarget('start','machine')"></div>
@@ -134,9 +139,14 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 
   <div class="photoSlot">
    <b>🏁 終了写真</b>
-   <label class="btn violet small wide" style="margin-top:8px;text-align:center;cursor:pointer">📷 写真を選ぶ
-    <input id="endPhotoFile" type="file" accept="image/*" capture="environment" style="display:none" onchange="loadLampPhoto('end',event)">
-   </label>
+   <div class="grid2" style="margin-top:8px">
+    <label class="btn violet small" style="text-align:center;cursor:pointer">📷 今撮る
+      <input id="endPhotoCamera" type="file" accept="image/*" capture="environment" style="display:none" onchange="loadLampPhoto('end',event)">
+    </label>
+    <label class="btn dark small" style="text-align:center;cursor:pointer">🖼️ 写真から選ぶ
+      <input id="endPhotoLibrary" type="file" accept="image/*" style="display:none" onchange="loadLampPhoto('end',event)">
+    </label>
+   </div>
    <img id="endPhotoPreview" class="photoPreview" alt="">
    <div class="photoFields">
     <div><label>台番</label><input id="endMachine" inputmode="numeric" onclick="setPhotoTarget('end','machine')"></div>
