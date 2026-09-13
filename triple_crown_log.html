@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fff7ef">
+<title>トリクラログ 🌺</title>
+<style>
+:root{
+  --bg:#fff7ef; --card:#ffffff; --ink:#2b241f; --muted:#7f7268;
+  --accent:#e44d72; --accent2:#ffb23f; --green:#41a36f; --blue:#477fca;
+  --line:#eadfd6; --danger:#c63e3e; --soft:#f7f1eb;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(#fff7ef,#fffdf9);color:var(--ink);
+font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Hiragino Sans","Yu Gothic",sans-serif}
+.wrap{max-width:760px;margin:auto;padding:18px 14px 96px}
+h1{font-size:26px;margin:8px 0 4px}.sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;margin:12px 0;
+box-shadow:0 7px 24px rgba(88,56,31,.06)}
+.card h2{font-size:17px;margin:0 0 12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:13px;padding:12px;
+font-size:16px;background:#fff;color:var(--ink);outline:none}
+textarea{min-height:82px;resize:vertical}
+button{border:0;border-radius:14px;padding:12px 14px;font-weight:700;font-size:15px;cursor:pointer}
+.primary{background:var(--accent);color:#fff}
+.bb{background:#ffebe9;color:#b52b31}
+.reg{background:#eaf1ff;color:#2d62b4}
+.soft{background:var(--soft);color:#51473f}
+.green{background:#e7f6ec;color:#26794d}
+.gold{background:#fff2d6;color:#9a6300}
+.purple{background:#f4eaff;color:#7041b5}
+.danger{background:#ffeded;color:var(--danger)}
+.bigbtn{padding:16px 12px;font-size:18px}
+.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}
+.photo{border:1px dashed #d7c8bc;border-radius:16px;padding:10px;text-align:center;background:#fffcf8}
+.photo img{width:100%;max-height:240px;object-fit:contain;border-radius:12px;display:none;margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:#faf6f2;border-radius:14px;padding:10px;text-align:center}
+.stat b{display:block;font-size:18px;margin-top:3px}.stat span{font-size:11px;color:var(--muted)}
+.log{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;align-items:flex-start;gap:8px;background:#faf7f4;padding:10px;border-radius:12px}
+.badge{min-width:52px;text-align:center;padding:6px 8px;border-radius:10px;font-weight:800;font-size:13px}
+.badge.bb{background:#ffe1de}.badge.reg{background:#dfeaff}
+.item .txt{flex:1;font-size:14px;line-height:1.45}.item small{color:var(--muted)}
+.x{background:transparent;color:#9f9186;padding:4px 7px}
+.counter{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.counter button{min-height:58px}
+.countnum{font-size:20px;display:block}
+.hint{font-size:12px;color:var(--muted);line-height:1.55;margin-top:8px}
+.setting{font-size:13px;line-height:1.6;background:#fffaf0;border-radius:12px;padding:10px;white-space:pre-wrap}
+.sticky{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.93);
+backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom));z-index:20}
+.stickyin{max-width:760px;margin:auto;display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:8px}
+.notechip{display:inline-block;padding:5px 8px;background:#f4eee8;border-radius:999px;font-size:12px;margin:3px 4px 0 0}
+.lightgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.lightbtn{min-height:60px;background:#f6efe9;color:#554a40}
+.lightbtn b{display:block;font-size:16px;margin-bottom:4px}
+.mode{font-size:12px;color:#7a6e64}
+.chiprow{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:10px 12px;border-radius:999px;background:#f6efe9;color:#4d433b;border:1px solid #eadfd6;font-size:14px}
+.chip.active{background:#2b241f;color:#fff;border-color:#2b241f}
+.chance-red.active{background:#df4b56;border-color:#df4b56}
+.chance-blue.active{background:#487cc9;border-color:#487cc9}
+.chance-green.active{background:#43a16a;border-color:#43a16a}
+.chance-yellow.active{background:#e2ad25;border-color:#e2ad25;color:#4a3b07}
+.chance-purple.active{background:#8758d1;border-color:#8758d1}
+.chance-rainbow.active{background:linear-gradient(90deg,#df4b56,#e2ad25,#43a16a,#487cc9,#8758d1);color:#fff;border-color:#8758d1}
+section hr{border:none;border-top:1px solid var(--line);margin:12px 0}
+.detailsline{font-size:12px;color:#685d54;margin-top:4px}
+@media(max-width:540px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .grid4{grid-template-columns:repeat(2,1fr)}
+  .counter{grid-template-columns:repeat(2,1fr)}
+  .stickyin{grid-template-columns:1fr 1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>トリクラログ 🌺👑👑👑</h1>
+  <div class="sub">沖縄実戦用・タップ中心。入力内容はこの端末に自動保存。</div>
+
+  <section class="card">
+    <h2>① 台データ</h2>
+    <div class="grid2">
+      <div><label>日付</label><input id="date" type="date"></div>
+      <div><label>店舗</label><input id="shop" placeholder="例：○○店"></div>
+      <div><label>台番</label><input id="machineNo" inputmode="numeric" placeholder="例：123"></div>
+      <div><label>機種</label>
+        <select id="model">
+          <option value="unknown">トリプルクラウン（機種未定）</option>
+          <option value="lb">LBトリプルクラウン</option>
+          <option value="seven">LBトリプルクラウンセブン</option>
+          <option value="classic">クラシック系 / ZERO系</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:10px">
+      <div><label>開始時 総G</label><input id="startG" inputmode="numeric" placeholder="0"></div>
+      <div><label>開始時 BB</label><input id="startBB" inputmode="numeric" placeholder="0"></div>
+      <div><label>開始時 REG</label><input id="startREG" inputmode="numeric" placeholder="0"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>② データランプ写真</h2>
+    <div class="grid2">
+      <div class="photo">
+        <b>開始 📸</b>
+        <input id="startPhoto" type="file" accept="image/*">
+        <img id="startPreview" alt="">
+      </div>
+      <div class="photo">
+        <b>終了 📸</b>
+        <input id="endPhoto" type="file" accept="image/*">
+        <img id="endPreview" alt="">
+      </div>
+    </div>
+    <div class="hint">「写真を選ぶ」からiPhoneの写真ライブラリも選べます。画像は軽く圧縮して端末内保存。</div>
+  </section>
+
+  <section class="card">
+    <h2>③ 当たりをタップ</h2>
+    <label>当選までのゲーム数（例：88）</label>
+    <div class="row">
+      <input id="hitG" inputmode="numeric" pattern="[0-9]*" placeholder="88">
+      <button class="bb bigbtn" onclick="addHit('BB')">BB</button>
+      <button class="reg bigbtn" onclick="addHit('REG')">REG</button>
+    </div>
+
+    <div class="lightgrid">
+      <button id="leftLightBtn" class="lightbtn" onclick="cycleLight('left')"><b>左</b><span class="mode" id="leftMode">なし</span></button>
+      <button id="centerLightBtn" class="lightbtn" onclick="cycleLight('center')"><b>👑 中央</b><span class="mode" id="centerMode">なし</span></button>
+      <button id="rightLightBtn" class="lightbtn" onclick="cycleLight('right')"><b>右</b><span class="mode" id="rightMode">なし</span></button>
+    </div>
+    <div class="hint">各ボタンは「なし → 点灯 → 点滅」で切り替わります。</div>
+
+    <hr>
+    <label>CHANCE の色</label>
+    <div class="chiprow" id="chanceRow">
+      <button class="chip active" data-value="なし" onclick="setChance('なし', this)">なし</button>
+      <button class="chip chance-red" data-value="赤" onclick="setChance('赤', this)">赤</button>
+      <button class="chip chance-blue" data-value="青" onclick="setChance('青', this)">青</button>
+      <button class="chip chance-green" data-value="緑" onclick="setChance('緑', this)">緑</button>
+      <button class="chip chance-yellow" data-value="黄" onclick="setChance('黄', this)">黄</button>
+      <button class="chip chance-purple" data-value="紫" onclick="setChance('紫', this)">紫</button>
+      <button class="chip chance-rainbow" data-value="虹" onclick="setChance('虹', this)">虹</button>
+    </div>
+
+    <div class="grid3" style="margin-top:12px">
+      <div>
+        <label>パネ消灯</label>
+        <select id="panelOff">
+          <option value="なし">なし</option>
+          <option value="1消灯">1消灯</option>
+          <option value="2消灯">2消灯</option>
+          <option value="3消灯">3消灯</option>
+          <option value="全消灯">全消灯</option>
+        </select>
+      </div>
+      <div>
+        <label>楽曲変化</label>
+        <select id="musicChange">
+          <option value="なし">なし</option>
+          <option value="あり">あり</option>
+          <option value="特殊楽曲">特殊楽曲</option>
+        </select>
+      </div>
+      <div>
+        <label>当たり個別メモ</label>
+        <input id="hitNote" placeholder="曲名 / 違和感 / 下パネなど">
+      </div>
+    </div>
+
+    <div class="hint">BB/REG を押すと、このランプ・CHANCE色・パネ消灯・個別メモも一緒に保存され、その後リセットされます。</div>
+    <div id="hitLog" class="log" style="margin-top:12px"></div>
+  </section>
+
+  <section class="card">
+    <h2>④ 小役・気になるやつ</h2>
+    <div class="counter">
+      <button class="soft" onclick="bump('cherry')">🍒 チェリー<span id="cherryN" class="countnum">0</span></button>
+      <button class="green" onclick="bump('plum')">🍏 プラム<span id="plumN" class="countnum">0</span></button>
+      <button class="purple" onclick="bump('replay')">🔁 リプレイ入賞<span id="replayN" class="countnum">0</span></button>
+      <button class="gold" onclick="bump('premium')">✨ プレミア<span id="premiumN" class="countnum">0</span></button>
+    </div>
+    <div class="grid2" style="margin-top:10px">
+      <button class="soft" onclick="quickNote('フリーズ')">🧊 フリーズ</button>
+      <button class="soft" onclick="quickNote('特殊告知')">💡 特殊告知</button>
+      <button class="soft" onclick="quickNote('楽曲変化')">🎵 楽曲変化</button>
+      <button class="soft" onclick="quickNote('設定示唆あり')">👀 設定示唆</button>
+      <button class="soft" onclick="quickNote('下パネル点灯')">💡 下パネル点灯</button>
+      <button class="soft" onclick="quickNote('パネ消灯あり')">🌑 パネ消灯あり</button>
+    </div>
+    <div id="quickNotes" style="margin-top:8px"></div>
+    <label style="margin-top:10px">自由メモ</label>
+    <textarea id="memo" placeholder="例：REG後ランプ、告知タイミング、隣の状況など"></textarea>
+  </section>
+
+  <section class="card">
+    <h2>⑤ 収支</h2>
+    <div class="grid3">
+      <div><label>投資（円）</label><input id="invest" inputmode="numeric" placeholder="0"></div>
+      <div><label>回収（円）</label><input id="returnYen" inputmode="numeric" placeholder="0"></div>
+      <div><label>終了時 総G</label><input id="endG" inputmode="numeric" placeholder="0"></div>
+    </div>
+    <div class="stats" style="margin-top:12px">
+      <div class="stat"><span>自分BB</span><b id="sBB">0</b></div>
+      <div class="stat"><span>自分REG</span><b id="sREG">0</b></div>
+      <div class="stat"><span>自分合算</span><b id="sRate">-</b></div>
+      <div class="stat"><span>収支</span><b id="sMoney">±0</b></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>⑥ 機種別ざっくり目安</h2>
+    <div id="settingGuide" class="setting">機種を選ぶと表示します。</div>
+    <div class="hint">これは参考メモ。短時間の実戦だけで設定を断定するものではありません。</div>
+  </section>
+
+  <section class="card">
+    <h2>⑦ 保存・リセット</h2>
+    <div class="grid2">
+      <button class="soft" onclick="copySummary()">📋 まとめをコピー</button>
+      <button class="danger" onclick="resetAll()">🗑 全消去</button>
+    </div>
+  </section>
+</div>
+
+<div class="sticky">
+  <div class="stickyin">
+    <button class="primary" onclick="shareSummary()">📤 実践報告</button>
+    <button class="bb" onclick="focusHit()">＋ BB</button>
+    <button class="reg" onclick="focusHit()">＋ REG</button>
+  </div>
+</div>
+
+<script>
+const KEY='trikura_log_v3';
+const ids=['date','shop','machineNo','model','startG','startBB','startREG','memo','invest','returnYen','endG','panelOff','musicChange','hitNote'];
+const $=id=>document.getElementById(id);
+let state={
+  hits:[], cherry:0, plum:0, replay:0, premium:0, notes:[],
+  startPhotoData:'', endPhotoData:'',
+  currentLights:{left:0, center:0, right:0}, currentChance:'なし'
+};
+
+function todayLocal(){
+  const d=new Date(), z=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`;
+}
+function num(v){ const n=parseInt(String(v||'').replace(/,/g,''),10); return isNaN(n)?0:n; }
+function save(){
+  const data={...state};
+  ids.forEach(id=>data[id]=$(id).value);
+  try{ localStorage.setItem(KEY, JSON.stringify(data)); }
+  catch(e){
+    const slim={...data,startPhotoData:'',endPhotoData:''};
+    localStorage.setItem(KEY, JSON.stringify(slim));
+  }
+  render();
+}
+function load(){
+  const raw=localStorage.getItem(KEY);
+  if(raw){
+    try{
+      const d=JSON.parse(raw);
+      state.hits=d.hits||[]; state.cherry=d.cherry||0; state.plum=d.plum||0;
+      state.replay=d.replay||0; state.premium=d.premium||0; state.notes=d.notes||[];
+      state.startPhotoData=d.startPhotoData||''; state.endPhotoData=d.endPhotoData||'';
+      state.currentLights=d.currentLights||{left:0,center:0,right:0};
+      state.currentChance=d.currentChance||'なし';
+      ids.forEach(id=>{ if(d[id]!==undefined) $(id).value=d[id]; });
+    }catch(e){}
+  }
+  if(!$('date').value) $('date').value=todayLocal();
+  showPhoto('startPreview',state.startPhotoData);
+  showPhoto('endPreview',state.endPhotoData);
+  render();
+}
+ids.forEach(id=>{
+  $(id).addEventListener(id==='memo' ? 'input' : 'change', save);
+  if(['startG','startBB','startREG','invest','returnYen','endG','hitNote'].includes(id)) $(id).addEventListener('input', save);
+});
+
+const lightMap=['なし','点灯','点滅'];
+function cycleLight(side){
+  state.currentLights[side]=(state.currentLights[side]+1)%3;
+  save();
+}
+function resetCurrentHitOptions(){
+  state.currentLights={left:0,center:0,right:0};
+  state.currentChance='なし';
+  $('panelOff').value='なし';
+  $('musicChange').value='なし';
+  $('hitNote').value='';
+}
+function setChance(value, el){
+  state.currentChance=value;
+  document.querySelectorAll('#chanceRow .chip').forEach(btn=>btn.classList.remove('active'));
+  if(el) el.classList.add('active');
+  save();
+}
+function syncChanceButtons(){
+  document.querySelectorAll('#chanceRow .chip').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.value===state.currentChance);
+  });
+}
+function lightSummary(l){
+  const parts=[];
+  if(l.left) parts.push(`左${lightMap[l.left]}`);
+  if(l.center) parts.push(`👑${lightMap[l.center]}`);
+  if(l.right) parts.push(`右${lightMap[l.right]}`);
+  return parts.join(' / ');
+}
+function detailParts(hit){
+  const parts=[];
+  const ls=lightSummary(hit.lights||{left:0,center:0,right:0});
+  if(ls) parts.push(ls);
+  if(hit.chance && hit.chance!=='なし') parts.push(`CHANCE ${hit.chance}`);
+  if(hit.panelOff && hit.panelOff!=='なし') parts.push(`パネ ${hit.panelOff}`);
+  if(hit.musicChange && hit.musicChange!=='なし') parts.push(`🎵 ${hit.musicChange}`);
+  if(hit.note) parts.push(hit.note);
+  return parts;
+}
+function addHit(type){
+  const g=num($('hitG').value);
+  if(!g && $('hitG').value.trim()!=='0'){ $('hitG').focus(); return; }
+  state.hits.push({
+    g, type, t:Date.now(),
+    lights:{...state.currentLights},
+    chance:state.currentChance,
+    panelOff:$('panelOff').value || 'なし',
+    musicChange:$('musicChange').value || 'なし',
+    note:$('hitNote').value.trim()
+  });
+  $('hitG').value='';
+  resetCurrentHitOptions();
+  save();
+  $('hitG').focus();
+}
+function removeHit(i){ state.hits.splice(i,1); save(); }
+function bump(k){ state[k]++; save(); }
+function quickNote(txt){ state.notes.push({txt,t:Date.now()}); save(); }
+function removeNote(i){ state.notes.splice(i,1); save(); }
+function focusHit(){ $('hitG').scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(()=>$('hitG').focus(),250); }
+
+function render(){
+  $('cherryN').textContent=state.cherry;
+  $('plumN').textContent=state.plum;
+  $('replayN').textContent=state.replay;
+  $('premiumN').textContent=state.premium;
+
+  $('leftMode').textContent=lightMap[state.currentLights.left];
+  $('centerMode').textContent=lightMap[state.currentLights.center];
+  $('rightMode').textContent=lightMap[state.currentLights.right];
+  syncChanceButtons();
+
+  $('hitLog').innerHTML = state.hits.map((h,i)=>{
+    const details=detailParts(h);
+    return `<div class="item">
+      <span class="badge ${h.type==='BB'?'bb':'reg'}">${h.type}</span>
+      <div class="txt"><b>${h.g}G</b> <small>#${i+1}</small>${details.length?`<div class="detailsline">${details.join(' ／ ')}</div>`:''}</div>
+      <button class="x" onclick="removeHit(${i})">✕</button>
+    </div>`;
+  }).join('') || '<div class="hint">まだ当たりなし。まずは当選Gを入れて BB / REG をタップ！</div>';
+
+  $('quickNotes').innerHTML=state.notes.map((n,i)=>
+    `<span class="notechip">${n.txt} <button class="x" style="padding:0 2px" onclick="removeNote(${i})">×</button></span>`
+  ).join('');
+
+  const bb=state.hits.filter(h=>h.type==='BB').length;
+  const reg=state.hits.filter(h=>h.type==='REG').length;
+  const played=state.hits.reduce((a,h)=>a+num(h.g),0);
+  const total=bb+reg;
+  $('sBB').textContent=bb;
+  $('sREG').textContent=reg;
+  $('sRate').textContent=total && played ? `1/${Math.round(played/total)}` : '-';
+  const money=num($('returnYen').value)-num($('invest').value);
+  $('sMoney').textContent=(money>=0?'+':'')+money.toLocaleString()+'円';
+  renderGuide();
+}
+
+function renderGuide(){
+  const m=$('model').value;
+  let s='機種を選ぶと表示します。';
+  if(m==='lb') s=
+`LBトリプルクラウン
+設定1  BB 1/276.5  REG 1/414.8  合算 1/165.9
+設定2  BB 1/273.1  REG 1/392.4  合算 1/161.0
+設定5  BB 1/251.1  REG 1/346.8  合算 1/145.6
+設定6  BB 1/227.6  REG 1/302.0  合算 1/129.8
+チェリー・プラム系にも設定差あり。ランプやCHANCE色もメモ推奨。`;
+  if(m==='seven') s=
+`LBトリプルクラウンセブン
+設定1  BB 1/258.0  RB 1/590.4  合算 1/179.6
+設定2  BB 1/253.0  RB 1/580.0  合算 1/176.2
+設定5  BB 1/230.0  RB 1/524.3  合算 1/159.8
+設定6  BB 1/203.5  RB 1/464.8  合算 1/141.5
+ベイブルース点灯/点滅・クラウン・CHANCE色・パネ消灯・RB後示唆は要メモ。`;
+  if(m==='classic') s=
+`クラシック / ZERO系
+機種ごとに示唆が違うので、ここでは共通メモ用。
+「当選G・BB/REG・左右/中央ランプ・CHANCE色・パネ消灯・小役」を残すと見返しやすい。`;
+  $('settingGuide').textContent=s;
+}
+
+function compressImage(file, cb){
+  const r=new FileReader();
+  r.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const max=960, scale=Math.min(1, max/Math.max(img.width,img.height));
+      const c=document.createElement('canvas');
+      c.width=Math.round(img.width*scale); c.height=Math.round(img.height*scale);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      cb(c.toDataURL('image/jpeg',0.62));
+    };
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+function showPhoto(id,data){
+  const img=$(id);
+  if(data){ img.src=data; img.style.display='block'; }
+  else{ img.removeAttribute('src'); img.style.display='none'; }
+}
+$('startPhoto').addEventListener('change', e=>{
+  const f=e.target.files&&e.target.files[0]; if(!f) return;
+  compressImage(f, d=>{ state.startPhotoData=d; showPhoto('startPreview',d); save(); });
+});
+$('endPhoto').addEventListener('change', e=>{
+  const f=e.target.files&&e.target.files[0]; if(!f) return;
+  compressImage(f, d=>{ state.endPhotoData=d; showPhoto('endPreview',d); save(); });
+});
+
+function hitToText(h){
+  const details=detailParts(h);
+  return `${h.g}${h.type}${details.length?`［${details.join(' / ')}］`:''}`;
+}
+function summary(){
+  const bb=state.hits.filter(h=>h.type==='BB').length;
+  const reg=state.hits.filter(h=>h.type==='REG').length;
+  const played=state.hits.reduce((a,h)=>a+num(h.g),0);
+  const total=bb+reg;
+  const rate=total&&played?`1/${Math.round(played/total)}`:'-';
+  const money=num($('returnYen').value)-num($('invest').value);
+  const modelText=$('model').options[$('model').selectedIndex].text;
+  const hits=state.hits.map(hitToText).join(' → ') || 'なし';
+  const notes=state.notes.map(n=>n.txt).join(' / ') || 'なし';
+  return `🌺トリクラ実践ログ👑
+${$('date').value||''} ${$('shop').value||''} ${$('machineNo').value?$('machineNo').value+'番台':''}
+${modelText}
+
+開始：総G ${num($('startG').value)} / BB ${num($('startBB').value)} / REG ${num($('startREG').value)}
+自分：BB ${bb} / REG ${reg} / 合算 ${rate}
+当たり：${hits}
+
+🍒 ${state.cherry}  🍏 ${state.plum}  🔁 ${state.replay}  ✨ ${state.premium}
+メモタグ：${notes}
+${$('memo').value?`メモ：${$('memo').value}
+`:''}投資 ${num($('invest').value).toLocaleString()}円 / 回収 ${num($('returnYen').value).toLocaleString()}円
+収支 ${(money>=0?'+':'')+money.toLocaleString()}円`;
+}
+async function copySummary(){
+  const text=summary();
+  try{ await navigator.clipboard.writeText(text); alert('実践まとめをコピーしたよ！'); }
+  catch(e){ prompt('コピーしてね', text); }
+}
+async function shareSummary(){
+  const text=summary();
+  if(navigator.share){
+    try{ await navigator.share({title:'トリクラ実践ログ', text}); }catch(e){}
+  }else copySummary();
+}
+function resetAll(){
+  if(!confirm('今日のログを全部消す？')) return;
+  localStorage.removeItem(KEY);
+  state={
+    hits:[], cherry:0, plum:0, replay:0, premium:0, notes:[],
+    startPhotoData:'', endPhotoData:'',
+    currentLights:{left:0,center:0,right:0}, currentChance:'なし'
+  };
+  ids.forEach(id=>$(id).value='');
+  $('date').value=todayLocal();
+  $('panelOff').value='なし';
+  $('musicChange').value='なし';
+  showPhoto('startPreview',''); showPhoto('endPreview','');
+  render(); save();
+}
+
+load();
+</script>
+</body>
+</html>
