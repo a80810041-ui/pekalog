@@ -32,6 +32,7 @@ label{display:block;color:#a9c1b0;font-size:11px;margin-bottom:5px}input,select,
 .storebox{display:none;margin-top:10px}.storebox.show{display:block}.storeHead{display:flex;justify-content:space-between;gap:8px;align-items:center}.storeStats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:9px}.storeStats div{background:#07120c;border:1px solid #274331;border-radius:11px;padding:8px;text-align:center}.storeStats small{display:block;color:#8ca194;font-size:9px}.storeStats b{font-size:16px}
 .archive{display:flex;flex-direction:column;gap:8px}.archiveItem{background:#09150f;border:1px solid #294735;border-radius:12px;padding:10px}.archiveTop{display:flex;justify-content:space-between;gap:8px;align-items:center}
 .sticky{position:fixed;left:0;right:0;bottom:0;background:rgba(4,12,8,.91);backdrop-filter:blur(12px);border-top:1px solid #284334;padding:9px max(12px,env(safe-area-inset-right)) calc(9px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));z-index:20}.stickyIn{max-width:760px;margin:auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.sticky .btn{padding:12px 7px}
+.photoGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.photoBox{background:#09150f;border:1px solid #294735;border-radius:15px;padding:10px;min-width:0}.photoTitle{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.photoTitle b{font-size:14px}.photoPreview{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:11px;border:1px solid #31503b;background:#06100b;display:none}.photoPreview.show{display:block}.photoEmpty{aspect-ratio:4/3;border:1px dashed #355b43;border-radius:11px;display:flex;align-items:center;justify-content:center;text-align:center;color:#8fa99a;font-size:12px;padding:10px;background:#07120c}.photoActions{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:8px}.photoActions .btn{padding:10px 8px;font-size:12px}.photoActions .xbtn{min-width:48px}.photoHint{margin-top:8px;font-size:10px;color:#87a08f;line-height:1.45}
 hr{border:0;border-top:1px solid #294534;margin:13px 0}.hidden{display:none!important}
 @media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}.grid4{grid-template-columns:repeat(2,1fr)}.signalGrid{grid-template-columns:1fr}.storeStats{grid-template-columns:repeat(2,1fr)}.coins{grid-template-columns:1fr 1fr}.coins>div:last-child{grid-column:1/-1}.head h1{font-size:27px}}
 </style>
@@ -40,8 +41,33 @@ hr{border:0;border-top:1px solid #294534;margin:13px 0}.hidden{display:none!impo
 <div class="wrap">
   <div class="head">
     <div><h1>🌺 HANA LOG</h1><div class="sub">HANA HANA / QUICK SESSION LOGGER</div></div>
-    <div class="ver">v1.0 TURKEY 687</div>
+    <div class="ver">v1.1 PHOTO / TURKEY 687</div>
   </div>
+
+  <section class="card" id="photoCard">
+    <div class="storeHead"><div><h3 style="margin-bottom:2px">📸 実戦写真</h3><div class="tiny">最初に着席時、帰る前に撤退時。数字の答え合わせにも使える。</div></div><span class="badge info">TOP</span></div>
+    <div class="photoGrid" style="margin-top:10px">
+      <div class="photoBox">
+        <div class="photoTitle"><b>🪑 着席時</b><span id="startPhotoStatus" class="tiny">未登録</span></div>
+        <div id="startPhotoEmpty" class="photoEmpty">データカウンタや<br>P’s CUBEを1枚 📷</div>
+        <img id="startPhotoPreview" class="photoPreview" alt="着席時写真">
+        <div class="photoActions">
+          <label class="btn green" style="text-align:center;cursor:pointer">＋ 写真を選ぶ<input id="startPhotoInput" type="file" accept="image/*" style="display:none" onchange="handlePhoto(event,'start')"></label>
+          <button class="btn dark xbtn" type="button" onclick="clearPhoto('start')">削除</button>
+        </div>
+      </div>
+      <div class="photoBox">
+        <div class="photoTitle"><b>🚪 撤退時</b><span id="endPhotoStatus" class="tiny">未登録</span></div>
+        <div id="endPhotoEmpty" class="photoEmpty">やめG・BB/RB・グラフが<br>見える1枚 📷</div>
+        <img id="endPhotoPreview" class="photoPreview" alt="撤退時写真">
+        <div class="photoActions">
+          <label class="btn blue" style="text-align:center;cursor:pointer">＋ 写真を選ぶ<input id="endPhotoInput" type="file" accept="image/*" style="display:none" onchange="handlePhoto(event,'end')"></label>
+          <button class="btn dark xbtn" type="button" onclick="clearPhoto('end')">削除</button>
+        </div>
+      </div>
+    </div>
+    <div class="photoHint">写真は端末内のHANA LOGデータに圧縮保存。ページを閉じても残るよ。写真を差し替える時は、そのまま「写真を選ぶ」でOK。</div>
+  </section>
 
   <section class="card">
     <h3>今日の台</h3>
@@ -160,12 +186,31 @@ const SIDES=['未確認','青','黄','緑','赤','虹'];
 const SYMBOLS=['未確認','白7','ピンク7'];
 const TAGS=['通常','バイブ','リーチ目','プレミア点滅','BGM変化','チェリー重複'];
 function today(){const d=new Date();return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(d)}
-function blank(){return {date:today(),shop:'ターキー',machine:'687',model:'newkingv',startCurrentG:'',startBig:'',startReg:'',startTotalG:'',currentG:'',hits:[],maxCoins:'',currentCoins:'',drawdownLimit:'300',invest:'',returnYen:'',sessionMemo:'',pscube:null,latestIndex:null}}
+function blank(){return {date:today(),shop:'ターキー',machine:'687',model:'newkingv',startCurrentG:'',startBig:'',startReg:'',startTotalG:'',currentG:'',hits:[],maxCoins:'',currentCoins:'',drawdownLimit:'300',invest:'',returnYen:'',sessionMemo:'',pscube:null,latestIndex:null,startPhotoData:'',endPhotoData:''}}
 let state=blank();
 try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x&&x.hits)state={...blank(),...x}}catch(e){}
-function persist(){syncFieldsToState();localStorage.setItem(KEY,JSON.stringify(state))}
+function persist(){syncFieldsToState();try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){if(String(e&&e.name).includes('Quota')||String(e).includes('quota')){alert('写真データが大きくて保存容量がいっぱいみたい。写真を1枚削除するか、実戦を保存してから古い記録を整理してね。')}else{console.warn(e)}}}
 function syncFieldsToState(){['date','shop','machine','model','startCurrentG','startBig','startReg','startTotalG','currentG','maxCoins','currentCoins','drawdownLimit','invest','returnYen','sessionMemo'].forEach(id=>{if($(id))state[id]=$(id).value})}
 function syncStateToFields(){['date','shop','machine','model','startCurrentG','startBig','startReg','startTotalG','currentG','maxCoins','currentCoins','drawdownLimit','invest','returnYen','sessionMemo'].forEach(id=>{if($(id))$(id).value=state[id]??''})}
+function compressPhoto(file,cb){
+  const r=new FileReader();
+  r.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const maxSide=1100,scale=Math.min(1,maxSide/Math.max(img.width,img.height));
+      const c=document.createElement('canvas');
+      c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));
+      const ctx=c.getContext('2d');ctx.drawImage(img,0,0,c.width,c.height);
+      cb(c.toDataURL('image/jpeg',0.68));
+    };
+    img.onerror=()=>alert('写真を読み込めなかったよ');
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+function handlePhoto(ev,kind){const f=ev.target.files&&ev.target.files[0];if(!f)return;compressPhoto(f,d=>{if(kind==='start')state.startPhotoData=d;else state.endPhotoData=d;persist();renderPhotos();ev.target.value=''});}
+function clearPhoto(kind){const key=kind==='start'?'startPhotoData':'endPhotoData';if(!state[key])return;if(!confirm(kind==='start'?'着席時写真を削除する？':'撤退時写真を削除する？'))return;state[key]='';persist();renderPhotos()}
+function renderPhotos(){[['start','startPhotoData'],['end','endPhotoData']].forEach(([kind,key])=>{const data=state[key]||'',img=$(kind+'PhotoPreview'),empty=$(kind+'PhotoEmpty'),status=$(kind+'PhotoStatus');if(data){img.src=data;img.classList.add('show');empty.classList.add('hidden');status.textContent='保存済み ✓'}else{img.removeAttribute('src');img.classList.remove('show');empty.classList.remove('hidden');status.textContent='未登録'}})}
 function selfGForNewHit(g){if(state.hits.length)return g;const start=num(state.startCurrentG);return start>0&&g>=start?g-start:g}
 function addHit(type){syncFieldsToState();const raw=$('hitG').value.trim();if(raw===''){ $('hitG').focus();return }const g=num(raw);const h={id:Date.now(),g,selfG:selfGForNewHit(g),type,symbol:'未確認',suika:0,side:'未確認',flower:'未確認',tags:[],note:'',ts:Date.now()};state.hits.push(h);state.latestIndex=state.hits.length-1;state.currentG='';$('currentG').value='';$('hitG').value='';persist();render();setTimeout(()=>{const c=$('latestCard');if(c)c.scrollIntoView({behavior:'smooth',block:'center'})},80)}
 function removeHit(i){if(!confirm('この当たりを削除する？'))return;state.hits.splice(i,1);if(state.latestIndex===i)state.latestIndex=null;else if(state.latestIndex>i)state.latestIndex--;persist();render()}
@@ -198,16 +243,16 @@ function importPaste(){try{importBundleObject(JSON.parse($('bundlePaste').value.
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function setCurrentZero(){state.currentG='0';$('currentG').value='0';persist();render()}
 function focusHit(){$('hitG').scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>$('hitG').focus(),180)}
-function summary(){syncFieldsToState();const g=playedNow(),bb=state.hits.filter(h=>h.type==='BB').length,rb=state.hits.filter(h=>h.type==='RB').length,flowers=countBy('flower',FLOWERS),sides=countBy('side',SIDES),suika=state.hits.reduce((s,h)=>s+num(h.suika),0),money=num(state.returnYen)-num(state.invest);const ftxt=Object.entries(flowers).filter(([k,v])=>k!=='未確認'&&v).map(([k,v])=>`${k}${v}`).join(' / ')||'なし';const stxt=Object.entries(sides).filter(([k,v])=>k!=='未確認'&&v).map(([k,v])=>`${k}${v}`).join(' / ')||'なし';const hist=state.hits.map(h=>`${h.g}${h.type}${h.flower&&h.flower!=='未確認'?`🌺${h.flower}`:''}${h.side&&h.side!=='未確認'?`/S${h.side}`:''}${h.suika?`/🍉${h.suika}`:''}`).join(' → ');return `🌺 HANA LOG\n${state.date} ${state.shop} ${state.machine}番 ${$('model').options[$('model').selectedIndex]?.text||''}\n自分 ${g}G / BB${bb} RB${rb} / 合算 ${rate(g,bb+rb)}\n当たり：${hist||'なし'}\n終了花：${ftxt}\nサイド：${stxt}\nBIG中スイカ：${suika}\n最高持ち ${num(state.maxCoins)}枚 / 終了 ${num(state.currentCoins)}枚\n投資 ${num(state.invest).toLocaleString()}円 / 回収 ${num(state.returnYen).toLocaleString()}円 / 収支 ${(money>=0?'+':'')+money.toLocaleString()}円${state.sessionMemo?`\nメモ：${state.sessionMemo}`:''}`}
+function summary(){syncFieldsToState();const g=playedNow(),bb=state.hits.filter(h=>h.type==='BB').length,rb=state.hits.filter(h=>h.type==='RB').length,flowers=countBy('flower',FLOWERS),sides=countBy('side',SIDES),suika=state.hits.reduce((s,h)=>s+num(h.suika),0),money=num(state.returnYen)-num(state.invest);const ftxt=Object.entries(flowers).filter(([k,v])=>k!=='未確認'&&v).map(([k,v])=>`${k}${v}`).join(' / ')||'なし';const stxt=Object.entries(sides).filter(([k,v])=>k!=='未確認'&&v).map(([k,v])=>`${k}${v}`).join(' / ')||'なし';const hist=state.hits.map(h=>`${h.g}${h.type}${h.flower&&h.flower!=='未確認'?`🌺${h.flower}`:''}${h.side&&h.side!=='未確認'?`/S${h.side}`:''}${h.suika?`/🍉${h.suika}`:''}`).join(' → ');return `🌺 HANA LOG\n${state.date} ${state.shop} ${state.machine}番 ${$('model').options[$('model').selectedIndex]?.text||''}\n自分 ${g}G / BB${bb} RB${rb} / 合算 ${rate(g,bb+rb)}\n当たり：${hist||'なし'}\n終了花：${ftxt}\nサイド：${stxt}\nBIG中スイカ：${suika}\n写真：着席${state.startPhotoData?'あり':'なし'} / 撤退${state.endPhotoData?'あり':'なし'}\n最高持ち ${num(state.maxCoins)}枚 / 終了 ${num(state.currentCoins)}枚\n投資 ${num(state.invest).toLocaleString()}円 / 回収 ${num(state.returnYen).toLocaleString()}円 / 収支 ${(money>=0?'+':'')+money.toLocaleString()}円${state.sessionMemo?`\nメモ：${state.sessionMemo}`:''}`}
 async function shareSummary(){const t=summary();try{if(navigator.share){await navigator.share({title:'HANA LOG',text:t});return}}catch(e){}try{await navigator.clipboard.writeText(t);alert('実戦まとめをコピーしたよ🌺')}catch(e){prompt('コピーしてね',t)}}
-function saveSession(){syncFieldsToState();const a=archives();a.unshift({...JSON.parse(JSON.stringify(state)),id:Date.now(),savedAt:Date.now(),playedG:playedNow(),bb:state.hits.filter(h=>h.type==='BB').length,rb:state.hits.filter(h=>h.type==='RB').length});localStorage.setItem(ARCH,JSON.stringify(a.slice(0,80)));renderArchives();alert('実戦を保存したよ🌺')}
+function saveSession(){syncFieldsToState();const rec={...JSON.parse(JSON.stringify(state)),id:Date.now(),savedAt:Date.now(),playedG:playedNow(),bb:state.hits.filter(h=>h.type==='BB').length,rb:state.hits.filter(h=>h.type==='RB').length};const a=archives();a.unshift(rec);try{localStorage.setItem(ARCH,JSON.stringify(a.slice(0,30)));renderArchives();alert('実戦を保存したよ🌺')}catch(e){const slim={...rec,startPhotoData:'',endPhotoData:'',photoArchiveOmitted:true};const b=archives();b.unshift(slim);try{localStorage.setItem(ARCH,JSON.stringify(b.slice(0,30)));renderArchives();alert('実戦は保存したよ🌺\n写真だけ容量節約のため履歴には入れなかったよ。現在画面の写真はそのまま残ってる。')}catch(e2){alert('保存容量がいっぱいみたい。JSONバックアップを取って、古い実戦を整理してね。')}}}
 function archives(){try{return JSON.parse(localStorage.getItem(ARCH)||'[]')}catch(e){return []}}
-function renderArchives(){$('archives').innerHTML=archives().length?archives().map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date)} ${esc(x.machine)}番</b><div class="tiny">${esc(x.shop)} ／ ${x.playedG||0}G ／ BB${x.bb||0} RB${x.rb||0}</div></div><button class="btn dark" onclick="loadArchive(${x.id})">開く</button></div></div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'}
+function renderArchives(){$('archives').innerHTML=archives().length?archives().map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date)} ${esc(x.machine)}番</b><div class="tiny">${esc(x.shop)} ／ ${x.playedG||0}G ／ BB${x.bb||0} RB${x.rb||0}${x.startPhotoData?' ／ 📷着席':''}${x.endPhotoData?' ／ 📷撤退':''}</div></div><button class="btn dark" onclick="loadArchive(${x.id})">開く</button></div></div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'}
 function loadArchive(id){const x=archives().find(v=>v.id===id);if(!x)return;if(!confirm('この実戦を現在画面に読み込む？'))return;const {id:_,savedAt:__,playedG:___,bb:____,rb:_____,...rest}=x;state={...blank(),...rest};persist();syncStateToFields();render();window.scrollTo({top:0,behavior:'smooth'})}
-function downloadJSON(){syncFieldsToState();const p={version:'1.0',current:state,archives:archives()};const blob=new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`hana_log_${state.date}_${state.machine}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function downloadJSON(){syncFieldsToState();const p={version:'1.1',current:state,archives:archives()};const blob=new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`hana_log_${state.date}_${state.machine}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function importJSON(ev){const f=ev.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);if(p.current)state={...blank(),...p.current};if(Array.isArray(p.archives))localStorage.setItem(ARCH,JSON.stringify(p.archives));persist();syncStateToFields();render();alert('HANA LOGデータを読み込んだよ🌺')}catch(e){alert('JSONを読めなかったよ')}ev.target.value=''};r.readAsText(f)}
 function newSession(){if(!confirm('現在の実戦をリセットして新しく始める？\n必要なら先に「実戦を保存」してね。'))return;const keep={shop:state.shop||'ターキー',machine:state.machine||'687',model:state.model||'newkingv',drawdownLimit:state.drawdownLimit||'300'};state={...blank(),...keep};persist();syncStateToFields();render();window.scrollTo({top:0,behavior:'smooth'})}
-function render(){syncFieldsToState();renderLatest();renderLogAndStatsOnly();renderStore();renderArchives()}
+function render(){syncFieldsToState();renderPhotos();renderLatest();renderLogAndStatsOnly();renderStore();renderArchives()}
 ['date','shop','machine','model','startCurrentG','startBig','startReg','startTotalG','currentG','maxCoins','currentCoins','drawdownLimit','invest','returnYen','sessionMemo'].forEach(id=>$(id).addEventListener('input',()=>{syncFieldsToState();persist();renderLogAndStatsOnly()}));
 syncStateToFields();render();
 </script>
