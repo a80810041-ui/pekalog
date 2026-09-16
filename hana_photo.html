@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07160f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HANA LOG">
+<title>HANA LOG 🌺</title>
+<style>
+:root{
+  --bg:#07100c;--card:#0d1b14;--card2:#10261a;--line:#244431;--text:#f5fff8;--muted:#9cb5a4;
+  --green:#54e28d;--pink:#ff77ae;--yellow:#ffd466;--blue:#6ac7ff;--purple:#b99cff;--red:#ff7d7d;
+  --shadow:0 14px 40px rgba(0,0,0,.28)
+}
+*{box-sizing:border-box}html,body{margin:0;background:linear-gradient(180deg,#04100a,#08140e 38%,#07100c);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{padding-bottom:110px}.wrap{max-width:760px;margin:auto;padding:14px}.head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:10px 2px 8px}.head h1{margin:0;font-size:30px;letter-spacing:.02em}.sub{font-size:12px;color:var(--muted);margin-top:2px}.ver{font-size:11px;color:#b8d6c0;background:#13251a;border:1px solid #2b5038;border-radius:999px;padding:6px 9px;white-space:nowrap}
+.card{background:linear-gradient(180deg,rgba(17,40,27,.98),rgba(11,27,19,.98));border:1px solid var(--line);border-radius:18px;padding:14px;margin:10px 0;box-shadow:var(--shadow)}
+.card h2,.card h3{margin:0 0 10px}.card h3{font-size:16px}.tiny{font-size:11px;color:var(--muted);line-height:1.5}.notice{background:#0a1710;border:1px solid #2b4c36;border-radius:12px;padding:10px;color:#c9dfcf;font-size:12px;line-height:1.55}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+label{display:block;color:#a9c1b0;font-size:11px;margin-bottom:5px}input,select,textarea{width:100%;border:1px solid #31503b;background:#09130e;color:#f8fff9;border-radius:12px;padding:11px;font-size:16px;outline:none}input:focus,select:focus,textarea:focus{border-color:#69de93;box-shadow:0 0 0 2px rgba(84,226,141,.12)}
+.btn{border:1px solid #365743;background:#173122;color:#effff3;border-radius:13px;padding:12px 10px;font-weight:800;font-size:14px;cursor:pointer}.btn:active{transform:scale(.98)}.btn.green{background:#1f7b49;border-color:#2ba85f}.btn.pink{background:#7b3153;border-color:#c64b7d}.btn.blue{background:#234b6a;border-color:#397eb2}.btn.yellow{background:#66551e;border-color:#a78d2f}.btn.dark{background:#111b15}.btn.danger{background:#532228;border-color:#8a3b44}.btn.wide{width:100%}.btn.big{font-size:24px;padding:18px 10px}.btn.active{outline:2px solid #dfffea;outline-offset:1px}.btn.ghost{background:transparent}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{background:#09150f;border:1px solid #264431;border-radius:13px;padding:10px;text-align:center}.stat .k{font-size:10px;color:#91aa99}.stat .v{font-size:20px;font-weight:900;margin-top:2px}.stat .v.small{font-size:16px}.pos{color:#73f4a1}.neg{color:#ff9090}
+.hitbar{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:9px;align-items:stretch}.hitbar input{height:58px;font-size:22px;text-align:center;font-weight:900}.hitbar .btn{font-size:22px}
+.latest{border-color:#3d6d4c;background:linear-gradient(180deg,#143722,#0e2718)}.latestTitle{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}.badge{display:inline-flex;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:900}.badge.bb{background:#5b2340;color:#ffddeb}.badge.rb{background:#1d4c32;color:#d9ffe8}.badge.info{background:#1c3e55;color:#dff5ff}.badge.warn{background:#59451d;color:#fff1b8}
+.chiprow{display:flex;flex-wrap:wrap;gap:7px}.chip{border:1px solid #3a5945;background:#12251a;color:#d8efde;border-radius:999px;padding:8px 10px;font-size:12px;font-weight:800}.chip.active{box-shadow:0 0 0 2px rgba(255,255,255,.16) inset;border-color:#e7fff0}.chip.white.active{background:#f2f4f1;color:#162019}.chip.blue.active{background:#2f7da8}.chip.yellow.active{background:#8b7220}.chip.green.active{background:#237f48}.chip.red.active{background:#9c3740}.chip.purple.active{background:#664d94}.chip.rainbow.active{background:linear-gradient(90deg,#c34b4b,#bf8a2d,#5e9d48,#3f8ea8,#7653a0)}
+.counter{display:flex;align-items:center;gap:8px}.counter .n{min-width:56px;text-align:center;font-size:25px;font-weight:900}.counter button{width:48px;height:42px;padding:0;font-size:20px}
+.log{display:flex;flex-direction:column;gap:8px}.item{display:flex;align-items:flex-start;gap:9px;background:#09150f;border:1px solid #284534;border-radius:13px;padding:10px}.item .main{flex:1}.item .top{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.item .g{font-size:18px;font-weight:900}.item .meta{font-size:11px;color:#a9c1b0;margin-top:4px;line-height:1.6}.x{border:0;background:transparent;color:#819487;font-size:18px;padding:2px 4px}.linkbtn{border:0;background:transparent;color:#79dca0;text-decoration:underline;font-size:12px;padding:0}
+.signalGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.signalBox{background:#09150f;border:1px solid #284534;border-radius:13px;padding:10px}.signalBox b{display:block;margin-bottom:6px}.signalList{display:flex;flex-wrap:wrap;gap:6px}.sig{font-size:12px;background:#14271b;border:1px solid #31503b;border-radius:999px;padding:5px 8px}
+.coins{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.drawdown{margin-top:9px;padding:11px;border-radius:12px;background:#0a1710;border:1px solid #294b34}.drawdown.alert{background:#32191c;border-color:#8e444b}.drawdown.good{background:#10281a;border-color:#34754a}
+.storebox{display:none;margin-top:10px}.storebox.show{display:block}.storeHead{display:flex;justify-content:space-between;gap:8px;align-items:center}.storeStats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:9px}.storeStats div{background:#07120c;border:1px solid #274331;border-radius:11px;padding:8px;text-align:center}.storeStats small{display:block;color:#8ca194;font-size:9px}.storeStats b{font-size:16px}
+.archive{display:flex;flex-direction:column;gap:8px}.archiveItem{background:#09150f;border:1px solid #294735;border-radius:12px;padding:10px}.archiveTop{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.sticky{position:fixed;left:0;right:0;bottom:0;background:rgba(4,12,8,.91);backdrop-filter:blur(12px);border-top:1px solid #284334;padding:9px max(12px,env(safe-area-inset-right)) calc(9px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));z-index:20}.stickyIn{max-width:760px;margin:auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.sticky .btn{padding:12px 7px}
+.photoGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.photoBox{background:#09150f;border:1px solid #294735;border-radius:15px;padding:10px;min-width:0}.photoTitle{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.photoTitle b{font-size:14px}.photoPreview{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:11px;border:1px solid #31503b;background:#06100b;display:none}.photoPreview.show{display:block}.photoEmpty{aspect-ratio:4/3;border:1px dashed #355b43;border-radius:11px;display:flex;align-items:center;justify-content:center;text-align:center;color:#8fa99a;font-size:12px;padding:10px;background:#07120c}.photoActions{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:8px}.photoActions .btn{padding:10px 8px;font-size:12px}.photoActions .xbtn{min-width:48px}.photoHint{margin-top:8px;font-size:10px;color:#87a08f;line-height:1.45}
+hr{border:0;border-top:1px solid #294534;margin:13px 0}.hidden{display:none!important}
+@media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}.grid4{grid-template-columns:repeat(2,1fr)}.signalGrid{grid-template-columns:1fr}.storeStats{grid-template-columns:repeat(2,1fr)}.coins{grid-template-columns:1fr 1fr}.coins>div:last-child{grid-column:1/-1}.head h1{font-size:27px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div><h1>🌺 HANA LOG</h1><div class="sub">HANA HANA / QUICK SESSION LOGGER</div></div>
+    <div class="ver">v1.1 PHOTO / TURKEY 687</div>
+  </div>
+
+  <section class="card" id="photoCard">
+    <div class="storeHead"><div><h3 style="margin-bottom:2px">📸 実戦写真</h3><div class="tiny">最初に着席時、帰る前に撤退時。数字の答え合わせにも使える。</div></div><span class="badge info">TOP</span></div>
+    <div class="photoGrid" style="margin-top:10px">
+      <div class="photoBox">
+        <div class="photoTitle"><b>🪑 着席時</b><span id="startPhotoStatus" class="tiny">未登録</span></div>
+        <div id="startPhotoEmpty" class="photoEmpty">データカウンタや<br>P’s CUBEを1枚 📷</div>
+        <img id="startPhotoPreview" class="photoPreview" alt="着席時写真">
+        <div class="photoActions">
+          <label class="btn green" style="text-align:center;cursor:pointer">＋ 写真を選ぶ<input id="startPhotoInput" type="file" accept="image/*" style="display:none" onchange="handlePhoto(event,'start')"></label>
+          <button class="btn dark xbtn" type="button" onclick="clearPhoto('start')">削除</button>
+        </div>
+      </div>
+      <div class="photoBox">
+        <div class="photoTitle"><b>🚪 撤退時</b><span id="endPhotoStatus" class="tiny">未登録</span></div>
+        <div id="endPhotoEmpty" class="photoEmpty">やめG・BB/RB・グラフが<br>見える1枚 📷</div>
+        <img id="endPhotoPreview" class="photoPreview" alt="撤退時写真">
+        <div class="photoActions">
+          <label class="btn blue" style="text-align:center;cursor:pointer">＋ 写真を選ぶ<input id="endPhotoInput" type="file" accept="image/*" style="display:none" onchange="handlePhoto(event,'end')"></label>
+          <button class="btn dark xbtn" type="button" onclick="clearPhoto('end')">削除</button>
+        </div>
+      </div>
+    </div>
+    <div class="photoHint">写真は端末内のHANA LOGデータに圧縮保存。ページを閉じても残るよ。写真を差し替える時は、そのまま「写真を選ぶ」でOK。</div>
+  </section>
+
+  <section class="card">
+    <h3>今日の台</h3>
+    <div class="grid2">
+      <div><label>日付</label><input id="date" type="date"></div>
+      <div><label>店名</label><input id="shop" value="ターキー"></div>
+      <div><label>台番号</label><input id="machine" inputmode="numeric" value="687"></div>
+      <div><label>機種</label><select id="model"><option value="newkingv">ニューキングハナハナV</option><option value="king">キングハナハナ</option><option value="other">その他ハナハナ</option></select></div>
+    </div>
+    <hr>
+    <div class="grid4">
+      <div><label>着席時 現在G</label><input id="startCurrentG" inputmode="numeric" placeholder="110"></div>
+      <div><label>着席時 BB</label><input id="startBig" inputmode="numeric" placeholder="4"></div>
+      <div><label>着席時 RB</label><input id="startReg" inputmode="numeric" placeholder="4"></div>
+      <div><label>着席時 総G</label><input id="startTotalG" inputmode="numeric" placeholder="任意"></div>
+    </div>
+    <div class="tiny" style="margin-top:7px">最初の当たりだけ「当選G − 着席時現在G」で自分の回転数を計算。途中から座っても実戦Gがズレにくい。</div>
+  </section>
+
+  <section class="card">
+    <div class="stats">
+      <div class="stat"><div class="k">自分G</div><div class="v" id="sPlayed">0</div></div>
+      <div class="stat"><div class="k">BB</div><div class="v" id="sBB">0</div></div>
+      <div class="stat"><div class="k">RB</div><div class="v" id="sRB">0</div></div>
+      <div class="stat"><div class="k">合算</div><div class="v" id="sComb">-</div></div>
+      <div class="stat"><div class="k">BB確率</div><div class="v small" id="sBBRate">-</div></div>
+      <div class="stat"><div class="k">RB確率</div><div class="v small" id="sRBRate">-</div></div>
+      <div class="stat"><div class="k">最大ハマり</div><div class="v" id="sMaxGap">0</div></div>
+      <div class="stat"><div class="k">BIG中スイカ</div><div class="v" id="sSuika">0</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>⚡ 当たりを記録</h3>
+    <div class="notice">データランプの当選Gを入れて <b>BB / RB</b> をタップ。ボーナス終了後の花色やビタ押しサイド色は、下の「いまのボーナス詳細」で後から足せる。</div>
+    <div class="hitbar" style="margin-top:10px">
+      <input id="hitG" inputmode="numeric" placeholder="当選G">
+      <button class="btn pink big" onclick="addHit('BB')">BB</button>
+      <button class="btn green big" onclick="addHit('RB')">RB</button>
+    </div>
+    <div class="grid2" style="margin-top:9px">
+      <div><label>いまの現在G（当たり待ち）</label><input id="currentG" inputmode="numeric" placeholder="0"></div>
+      <div style="display:flex;align-items:end"><button class="btn dark wide" onclick="setCurrentZero()">ボーナス後 0Gにする</button></div>
+    </div>
+  </section>
+
+  <section class="card latest hidden" id="latestCard">
+    <div class="latestTitle"><div><span id="latestBadge" class="badge bb">BB</span> <b id="latestLabel">いまのボーナス詳細</b></div><button class="btn dark" onclick="closeLatest()">完了</button></div>
+    <div id="bbOnly">
+      <label>図柄</label><div class="chiprow" id="symbolRow"></div>
+      <div style="margin-top:11px"><label>BIG中スイカ</label><div class="counter"><button class="btn dark" onclick="bumpSuika(-1)">−</button><div class="n" id="latestSuika">0</div><button class="btn green" onclick="bumpSuika(1)">＋</button></div></div>
+      <div style="margin-top:11px"><label>ビタ成功時 サイドランプ</label><div class="chiprow" id="sideRow"></div></div>
+    </div>
+    <div style="margin-top:11px"><label>終了時の花</label><div class="chiprow" id="flowerRow"></div></div>
+    <div style="margin-top:11px"><label>当たり・違和感タグ</label><div class="chiprow" id="tagRow"></div></div>
+    <div style="margin-top:11px"><label>メモ</label><input id="latestNote" placeholder="BAR-7-BAR / 99Gで曲変化 など" oninput="updateLatestNote()"></div>
+  </section>
+
+  <section class="card">
+    <h3>🌈 設定示唆メモ</h3>
+    <div class="signalGrid">
+      <div class="signalBox"><b>終了花</b><div id="flowerSummary" class="signalList"></div></div>
+      <div class="signalBox"><b>サイドランプ</b><div id="sideSummary" class="signalList"></div></div>
+    </div>
+    <div class="tiny" style="margin-top:8px">ここは「出た事実」を集計するだけ。設定の断定や自動判定はしない仕様。</div>
+  </section>
+
+  <section class="card">
+    <h3>💰 勝ち逃げメーター</h3>
+    <div class="coins">
+      <div><label>最高持ち枚</label><input id="maxCoins" inputmode="numeric" placeholder="1600"></div>
+      <div><label>現在持ち枚</label><input id="currentCoins" inputmode="numeric" placeholder="1300"></div>
+      <div><label>警戒ライン（最高から−）</label><input id="drawdownLimit" inputmode="numeric" value="300"></div>
+    </div>
+    <div id="drawdownBox" class="drawdown">最高持ち枚と現在持ち枚を入れると、最高から何枚減ったか表示するよ。</div>
+  </section>
+
+  <section class="card">
+    <div class="storeHead"><div><h3 style="margin-bottom:2px">📡 P's CUBE 共通収集</h3><div class="tiny">23台収集コードから、この台だけ抜き出す。</div></div><span class="badge info">687専用</span></div>
+    <div class="grid2" style="margin-top:10px">
+      <button class="btn blue" onclick="importClipboard()">📋 クリップボードから</button>
+      <button class="btn dark" onclick="togglePaste()">✍️ JSONを貼る</button>
+    </div>
+    <textarea id="bundlePaste" class="hidden" rows="5" style="margin-top:9px" placeholder="pekalog-turkey-bundle を貼り付け"></textarea>
+    <button id="pasteBtn" class="btn green wide hidden" style="margin-top:8px" onclick="importPaste()">このJSONを読む</button>
+    <div id="storeBox" class="storebox"></div>
+  </section>
+
+  <section class="card">
+    <h3>履歴</h3>
+    <div id="hitLog" class="log"></div>
+  </section>
+
+  <section class="card">
+    <h3>🗃 保存・共有</h3>
+    <div class="grid2">
+      <div><label>投資（円）</label><input id="invest" inputmode="numeric" placeholder="0"></div>
+      <div><label>回収（円）</label><input id="returnYen" inputmode="numeric" placeholder="0"></div>
+    </div>
+    <div style="margin-top:9px"><label>実戦メモ</label><textarea id="sessionMemo" rows="3" placeholder="例：最後の1000円で502BB→復活。計画的撤退。"></textarea></div>
+    <div class="grid2" style="margin-top:10px"><button class="btn green" onclick="saveSession()">💾 実戦を保存</button><button class="btn blue" onclick="shareSummary()">📤 まとめを共有</button></div>
+    <div class="grid2" style="margin-top:8px"><button class="btn dark" onclick="downloadJSON()">⬇ JSONバックアップ</button><label class="btn dark" style="text-align:center;cursor:pointer">⬆ JSON読込<input type="file" accept="application/json,.json" style="display:none" onchange="importJSON(event)"></label></div>
+    <button class="btn danger wide" style="margin-top:8px" onclick="newSession()">🆕 新しい実戦</button>
+    <hr><div id="archives" class="archive"></div>
+  </section>
+</div>
+
+<div class="sticky"><div class="stickyIn"><button class="btn pink" onclick="focusHit()">＋ BB</button><button class="btn green" onclick="focusHit()">＋ RB</button><button class="btn dark" onclick="shareSummary()">📤 報告</button></div></div>
+
+<script>
+const KEY='hana_log_v1_current', ARCH='hana_log_v1_archives';
+const $=id=>document.getElementById(id); const num=v=>{const n=Number(String(v??'').replace(/,/g,''));return Number.isFinite(n)?n:0};
+const COLORS=['未確認','白','青','黄','緑','赤','紫','虹'];
+const FLOWERS=['未確認','白','青','黄','緑','紫','虹'];
+const SIDES=['未確認','青','黄','緑','赤','虹'];
+const SYMBOLS=['未確認','白7','ピンク7'];
+const TAGS=['通常','バイブ','リーチ目','プレミア点滅','BGM変化','チェリー重複'];
+function today(){const d=new Date();return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(d)}
+function blank(){return {date:today(),shop:'ターキー',machine:'687',model:'newkingv',startCurrentG:'',startBig:'',startReg:'',startTotalG:'',currentG:'',hits:[],maxCoins:'',currentCoins:'',drawdownLimit:'300',invest:'',returnYen:'',sessionMemo:'',pscube:null,latestIndex:null,startPhotoData:'',endPhotoData:''}}
+let state=blank();
+try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x&&x.hits)state={...blank(),...x}}catch(e){}
+function persist(){syncFieldsToState();try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){if(String(e&&e.name).includes('Quota')||String(e).includes('quota')){alert('写真データが大きくて保存容量がいっぱいみたい。写真を1枚削除するか、実戦を保存してから古い記録を整理してね。')}else{console.warn(e)}}}
+function syncFieldsToState(){['date','shop','machine','model','startCurrentG','startBig','startReg','startTotalG','currentG','maxCoins','currentCoins','drawdownLimit','invest','returnYen','sessionMemo'].forEach(id=>{if($(id))state[id]=$(id).value})}
+function syncStateToFields(){['date','shop','machine','model','startCurrentG','startBig','startReg','startTotalG','currentG','maxCoins','currentCoins','drawdownLimit','invest','returnYen','sessionMemo'].forEach(id=>{if($(id))$(id).value=state[id]??''})}
+function compressPhoto(file,cb){
+  const r=new FileReader();
+  r.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const maxSide=1100,scale=Math.min(1,maxSide/Math.max(img.width,img.height));
+      const c=document.createElement('canvas');
+      c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));
+      const ctx=c.getContext('2d');ctx.drawImage(img,0,0,c.width,c.height);
+      cb(c.toDataURL('image/jpeg',0.68));
+    };
+    img.onerror=()=>alert('写真を読み込めなかったよ');
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+function handlePhoto(ev,kind){const f=ev.target.files&&ev.target.files[0];if(!f)return;compressPhoto(f,d=>{if(kind==='start')state.startPhotoData=d;else state.endPhotoData=d;persist();renderPhotos();ev.target.value=''});}
+function clearPhoto(kind){const key=kind==='start'?'startPhotoData':'endPhotoData';if(!state[key])return;if(!confirm(kind==='start'?'着席時写真を削除する？':'撤退時写真を削除する？'))return;state[key]='';persist();renderPhotos()}
+function renderPhotos(){[['start','startPhotoData'],['end','endPhotoData']].forEach(([kind,key])=>{const data=state[key]||'',img=$(kind+'PhotoPreview'),empty=$(kind+'PhotoEmpty'),status=$(kind+'PhotoStatus');if(data){img.src=data;img.classList.add('show');empty.classList.add('hidden');status.textContent='保存済み ✓'}else{img.removeAttribute('src');img.classList.remove('show');empty.classList.remove('hidden');status.textContent='未登録'}})}
+function selfGForNewHit(g){if(state.hits.length)return g;const start=num(state.startCurrentG);return start>0&&g>=start?g-start:g}
+function addHit(type){syncFieldsToState();const raw=$('hitG').value.trim();if(raw===''){ $('hitG').focus();return }const g=num(raw);const h={id:Date.now(),g,selfG:selfGForNewHit(g),type,symbol:'未確認',suika:0,side:'未確認',flower:'未確認',tags:[],note:'',ts:Date.now()};state.hits.push(h);state.latestIndex=state.hits.length-1;state.currentG='';$('currentG').value='';$('hitG').value='';persist();render();setTimeout(()=>{const c=$('latestCard');if(c)c.scrollIntoView({behavior:'smooth',block:'center'})},80)}
+function removeHit(i){if(!confirm('この当たりを削除する？'))return;state.hits.splice(i,1);if(state.latestIndex===i)state.latestIndex=null;else if(state.latestIndex>i)state.latestIndex--;persist();render()}
+function editHit(i){state.latestIndex=i;persist();render();$('latestCard').scrollIntoView({behavior:'smooth',block:'center'})}
+function latest(){return state.latestIndex==null?null:state.hits[state.latestIndex]}
+function closeLatest(){state.latestIndex=null;persist();render()}
+function setHitProp(k,v){const h=latest();if(!h)return;h[k]=v;persist();render()}
+function toggleTag(v){const h=latest();if(!h)return;if(v==='通常'){h.tags=[]}else{h.tags=h.tags||[];const i=h.tags.indexOf(v);i>=0?h.tags.splice(i,1):h.tags.push(v)}persist();render()}
+function bumpSuika(d){const h=latest();if(!h||h.type!=='BB')return;h.suika=Math.max(0,num(h.suika)+d);persist();render()}
+function updateLatestNote(){const h=latest();if(!h)return;h.note=$('latestNote').value;persist();renderLogAndStatsOnly()}
+function clsColor(v){return v==='白'?'white':v==='青'?'blue':v==='黄'?'yellow':v==='緑'?'green':v==='赤'?'red':v==='紫'?'purple':v==='虹'?'rainbow':''}
+function chips(values,current,onclick){return values.map(v=>`<button class="chip ${clsColor(v)} ${current===v?'active':''}" onclick="${onclick}('${v.replaceAll("'","\\'")}')">${v}</button>`).join('')}
+function renderLatest(){const h=latest(),c=$('latestCard');if(!h){c.classList.add('hidden');return}c.classList.remove('hidden');$('latestBadge').className='badge '+(h.type==='BB'?'bb':'rb');$('latestBadge').textContent=h.type;$('latestLabel').textContent=`${h.g}G ${h.type} の詳細`;$('bbOnly').classList.toggle('hidden',h.type!=='BB');$('symbolRow').innerHTML=chips(SYMBOLS,h.symbol,'setSymbol');$('sideRow').innerHTML=chips(SIDES,h.side,'setSide');$('flowerRow').innerHTML=chips(FLOWERS,h.flower,'setFlower');$('tagRow').innerHTML=TAGS.map(v=>`<button class="chip ${(v!=='通常'&&(h.tags||[]).includes(v))||(v==='通常'&&!(h.tags||[]).length)?'active':''}" onclick="toggleTag('${v}')">${v}</button>`).join('');$('latestSuika').textContent=h.suika||0;$('latestNote').value=h.note||''}
+function setSymbol(v){setHitProp('symbol',v)}function setSide(v){setHitProp('side',v)}function setFlower(v){setHitProp('flower',v)}
+function rate(g,n){return n&&g?`1/${Math.round(g/n)}`:'-'}
+function playedNow(){const done=state.hits.reduce((s,h)=>s+num(h.selfG),0);return done+num(state.currentG)}
+function renderLogAndStatsOnly(){syncFieldsToState();const g=playedNow(),bb=state.hits.filter(h=>h.type==='BB').length,rb=state.hits.filter(h=>h.type==='RB').length,total=bb+rb,suika=state.hits.reduce((s,h)=>s+num(h.suika),0);$('sPlayed').textContent=g.toLocaleString();$('sBB').textContent=bb;$('sRB').textContent=rb;$('sComb').textContent=rate(g,total);$('sBBRate').textContent=rate(g,bb);$('sRBRate').textContent=rate(g,rb);const gaps=[...state.hits.map(h=>num(h.selfG)),num(state.currentG)];$('sMaxGap').textContent=Math.max(0,...gaps).toLocaleString();$('sSuika').textContent=suika;
+ $('hitLog').innerHTML=state.hits.length?state.hits.map((h,i)=>{const d=[];if(h.type==='BB'&&h.symbol&&h.symbol!=='未確認')d.push(h.symbol);if(h.type==='BB'&&h.suika)d.push(`スイカ×${h.suika}`);if(h.side&&h.side!=='未確認')d.push(`サイド${h.side}`);if(h.flower&&h.flower!=='未確認')d.push(`花${h.flower}`);if(h.tags?.length)d.push(h.tags.join('・'));if(h.note)d.push(h.note);return `<div class="item"><span class="badge ${h.type==='BB'?'bb':'rb'}">${h.type}</span><div class="main"><div class="top"><span class="g">${h.g}G</span><span class="tiny">自分 ${h.selfG}G</span></div><div class="meta">${d.length?d.join(' ／ '):'詳細なし'}</div><button class="linkbtn" onclick="editHit(${i})">詳細を編集</button></div><button class="x" onclick="removeHit(${i})">×</button></div>`}).join(''):'<div class="tiny">まだ当たりなし。上の当選G → BB / RBからスタート🌺</div>';
+ renderSignals();renderDrawdown();}
+function countBy(prop,vals){const m={};vals.forEach(v=>m[v]=0);state.hits.forEach(h=>{const v=h[prop];if(v&&v!=='未確認'&&m[v]!==undefined)m[v]++});return m}
+function renderSignals(){const f=countBy('flower',FLOWERS),s=countBy('side',SIDES);$('flowerSummary').innerHTML=Object.entries(f).filter(([k,v])=>k!=='未確認'&&v).map(([k,v])=>`<span class="sig">${k} × ${v}</span>`).join('')||'<span class="tiny">まだなし</span>';$('sideSummary').innerHTML=Object.entries(s).filter(([k,v])=>k!=='未確認'&&v).map(([k,v])=>`<span class="sig">${k} × ${v}</span>`).join('')||'<span class="tiny">まだなし</span>'}
+function renderDrawdown(){const max=num(state.maxCoins),cur=num(state.currentCoins),lim=num(state.drawdownLimit),box=$('drawdownBox');box.className='drawdown';if(!max&&!cur){box.textContent='最高持ち枚と現在持ち枚を入れると、最高から何枚減ったか表示するよ。';return}const dd=Math.max(0,max-cur),remain=lim-dd;box.innerHTML=`最高 <b>${max.toLocaleString()}枚</b> → 現在 <b>${cur.toLocaleString()}枚</b> ／ 最高から <b class="${dd>=lim?'neg':''}">−${dd.toLocaleString()}枚</b>${lim?`<br><span class="tiny">自分で決めた警戒ライン：−${lim.toLocaleString()}枚 ${dd>=lim?'⚠️ 到達':`（あと${Math.max(0,remain).toLocaleString()}枚）`}</span>`:''}`;if(lim&&dd>=lim)box.classList.add('alert');else box.classList.add('good')}
+function renderStore(){const b=$('storeBox'),s=state.pscube;if(!s){b.className='storebox';b.innerHTML='';return}b.className='storebox show';const st=s.stats?.today||{};b.innerHTML=`<div class="storeHead"><b>${s.machine}番 ${esc(s.model||'')}</b><span class="tiny">${esc(s.updated||s.capturedAt||'')}</span></div><div class="storeStats"><div><small>BB</small><b>${st.big??'-'}</b></div><div><small>RB</small><b>${st.reg??'-'}</b></div><div><small>合算</small><b>${esc(st.combined||'-')}</b></div><div><small>現在G</small><b>${s.currentGame??'-'}</b></div></div><button class="btn green wide" style="margin-top:9px" onclick="applySnapshotStart()">この値を着席時データへ入れる</button><div class="tiny" style="margin-top:7px">推定総G：${st.totalGEst??'-'} ／ 履歴 ${Array.isArray(s.historyRows)?s.historyRows.length:0}件</div>`}
+function applySnapshotStart(){const s=state.pscube;if(!s)return;const st=s.stats?.today||{};state.startCurrentG=s.currentGame??'';state.startBig=st.big??'';state.startReg=st.reg??'';state.startTotalG=st.totalGEst??'';persist();syncStateToFields();render()}
+function norm(v){const n=Number(String(v??'').replace(/^0+/,''));return Number.isFinite(n)?String(n):String(v??'')}
+function importBundleObject(j){if(!j||j.kind!=='pekalog-turkey-bundle')throw new Error('共通収集コードではないよ');const m=norm(state.machine||'687');const rec=(j.machines||[]).find(x=>norm(x.machine)===m);if(!rec)throw new Error(`${m}番台が収集コードに入っていないよ`);state.pscube=rec;persist();render();return rec}
+async function importClipboard(){try{const t=await navigator.clipboard.readText();importBundleObject(JSON.parse(t));alert(`${state.machine}番台のP's CUBEデータを読み込んだよ🌺`)}catch(e){alert('クリップボードから読めなかったよ：'+e.message+'\n「JSONを貼る」からでも入れられるよ。')}}
+function togglePaste(){$('bundlePaste').classList.toggle('hidden');$('pasteBtn').classList.toggle('hidden')}
+function importPaste(){try{importBundleObject(JSON.parse($('bundlePaste').value.trim()));$('bundlePaste').value='';alert('読み込んだよ🌺')}catch(e){alert('読めなかったよ：'+e.message)}}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function setCurrentZero(){state.currentG='0';$('currentG').value='0';persist();render()}
+function focusHit(){$('hitG').scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>$('hitG').focus(),180)}
+function summary(){syncFieldsToState();const g=playedNow(),bb=state.hits.filter(h=>h.type==='BB').length,rb=state.hits.filter(h=>h.type==='RB').length,flowers=countBy('flower',FLOWERS),sides=countBy('side',SIDES),suika=state.hits.reduce((s,h)=>s+num(h.suika),0),money=num(state.returnYen)-num(state.invest);const ftxt=Object.entries(flowers).filter(([k,v])=>k!=='未確認'&&v).map(([k,v])=>`${k}${v}`).join(' / ')||'なし';const stxt=Object.entries(sides).filter(([k,v])=>k!=='未確認'&&v).map(([k,v])=>`${k}${v}`).join(' / ')||'なし';const hist=state.hits.map(h=>`${h.g}${h.type}${h.flower&&h.flower!=='未確認'?`🌺${h.flower}`:''}${h.side&&h.side!=='未確認'?`/S${h.side}`:''}${h.suika?`/🍉${h.suika}`:''}`).join(' → ');return `🌺 HANA LOG\n${state.date} ${state.shop} ${state.machine}番 ${$('model').options[$('model').selectedIndex]?.text||''}\n自分 ${g}G / BB${bb} RB${rb} / 合算 ${rate(g,bb+rb)}\n当たり：${hist||'なし'}\n終了花：${ftxt}\nサイド：${stxt}\nBIG中スイカ：${suika}\n写真：着席${state.startPhotoData?'あり':'なし'} / 撤退${state.endPhotoData?'あり':'なし'}\n最高持ち ${num(state.maxCoins)}枚 / 終了 ${num(state.currentCoins)}枚\n投資 ${num(state.invest).toLocaleString()}円 / 回収 ${num(state.returnYen).toLocaleString()}円 / 収支 ${(money>=0?'+':'')+money.toLocaleString()}円${state.sessionMemo?`\nメモ：${state.sessionMemo}`:''}`}
+async function shareSummary(){const t=summary();try{if(navigator.share){await navigator.share({title:'HANA LOG',text:t});return}}catch(e){}try{await navigator.clipboard.writeText(t);alert('実戦まとめをコピーしたよ🌺')}catch(e){prompt('コピーしてね',t)}}
+function saveSession(){syncFieldsToState();const rec={...JSON.parse(JSON.stringify(state)),id:Date.now(),savedAt:Date.now(),playedG:playedNow(),bb:state.hits.filter(h=>h.type==='BB').length,rb:state.hits.filter(h=>h.type==='RB').length};const a=archives();a.unshift(rec);try{localStorage.setItem(ARCH,JSON.stringify(a.slice(0,30)));renderArchives();alert('実戦を保存したよ🌺')}catch(e){const slim={...rec,startPhotoData:'',endPhotoData:'',photoArchiveOmitted:true};const b=archives();b.unshift(slim);try{localStorage.setItem(ARCH,JSON.stringify(b.slice(0,30)));renderArchives();alert('実戦は保存したよ🌺\n写真だけ容量節約のため履歴には入れなかったよ。現在画面の写真はそのまま残ってる。')}catch(e2){alert('保存容量がいっぱいみたい。JSONバックアップを取って、古い実戦を整理してね。')}}}
+function archives(){try{return JSON.parse(localStorage.getItem(ARCH)||'[]')}catch(e){return []}}
+function renderArchives(){$('archives').innerHTML=archives().length?archives().map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date)} ${esc(x.machine)}番</b><div class="tiny">${esc(x.shop)} ／ ${x.playedG||0}G ／ BB${x.bb||0} RB${x.rb||0}${x.startPhotoData?' ／ 📷着席':''}${x.endPhotoData?' ／ 📷撤退':''}</div></div><button class="btn dark" onclick="loadArchive(${x.id})">開く</button></div></div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'}
+function loadArchive(id){const x=archives().find(v=>v.id===id);if(!x)return;if(!confirm('この実戦を現在画面に読み込む？'))return;const {id:_,savedAt:__,playedG:___,bb:____,rb:_____,...rest}=x;state={...blank(),...rest};persist();syncStateToFields();render();window.scrollTo({top:0,behavior:'smooth'})}
+function downloadJSON(){syncFieldsToState();const p={version:'1.1',current:state,archives:archives()};const blob=new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`hana_log_${state.date}_${state.machine}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function importJSON(ev){const f=ev.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);if(p.current)state={...blank(),...p.current};if(Array.isArray(p.archives))localStorage.setItem(ARCH,JSON.stringify(p.archives));persist();syncStateToFields();render();alert('HANA LOGデータを読み込んだよ🌺')}catch(e){alert('JSONを読めなかったよ')}ev.target.value=''};r.readAsText(f)}
+function newSession(){if(!confirm('現在の実戦をリセットして新しく始める？\n必要なら先に「実戦を保存」してね。'))return;const keep={shop:state.shop||'ターキー',machine:state.machine||'687',model:state.model||'newkingv',drawdownLimit:state.drawdownLimit||'300'};state={...blank(),...keep};persist();syncStateToFields();render();window.scrollTo({top:0,behavior:'smooth'})}
+function render(){syncFieldsToState();renderPhotos();renderLatest();renderLogAndStatsOnly();renderStore();renderArchives()}
+['date','shop','machine','model','startCurrentG','startBig','startReg','startTotalG','currentG','maxCoins','currentCoins','drawdownLimit','invest','returnYen','sessionMemo'].forEach(id=>$(id).addEventListener('input',()=>{syncFieldsToState();persist();renderLogAndStatsOnly()}));
+syncStateToFields();render();
+</script>
+</body>
+</html>
