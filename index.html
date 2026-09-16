@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.5.1.1 PHOTO + QUICK</title>
+<title>ペカログ JUGGLER EDITION v3.5.3 LAB SEAT SKIP</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -88,7 +88,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.5.2 PHOTO PICKER</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.5.3 LAB SEAT SKIP</div>
 </header>
 
 <div class="card">
@@ -264,7 +264,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
  <div id="turkeySyncHint" class="tiny" style="margin-top:6px"></div>
  <div class="grid2" style="margin-top:9px">
   <button class="btn cyan small" onclick="startTurkeyCollection()">🦃 最新データを収集</button>
-  <button class="btn violet small" onclick="location.href='./lab.html'">🧪 LABを開く</button>
+  <button class="btn violet small" onclick="location.href='./pekalog_lab_v010_seat_skip.html'">🧪 LABを開く</button>
  </div>
 </div>
 
@@ -294,7 +294,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
  <div class="syncDialog">
   <div style="font-size:34px;margin-bottom:4px">🦃📡</div>
   <h3 id="turkeySyncTitle">ターキーを同期しますか？</h3>
-  <p id="turkeySyncText">P's CUBEを開いて認証したあと、いつものPEKALOG収集で22台を集めます。</p>
+  <p id="turkeySyncText">P's CUBEを開いて認証したあと、いつものPEKALOG収集で23台（ジャグ22台＋ハナ687）を集めます。</p>
   <div id="turkeySyncProgress" class="syncProgress hidden"><div id="turkeySyncProgressBar"></div></div>
   <div id="turkeySyncButtons" class="grid2">
    <button class="btn cyan" onclick="startTurkeyAutoSync()">収集を始める</button>
@@ -302,7 +302,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
   </div>
   <div id="turkeySyncDoneButtons" class="grid2 hidden">
    <button class="btn green" onclick="closeTurkeySyncPrompt()">閉じる</button>
-   <button class="btn violet" onclick="location.href='./lab.html'">LABを見る</button>
+   <button class="btn violet" onclick="location.href='./pekalog_lab_v010_seat_skip.html'">LABを見る</button>
   </div>
  </div>
 </div>
@@ -721,7 +721,7 @@ function openTurkeySyncPrompt(){
   const m=JSON.parse(localStorage.getItem(PEKALOG_SYNC_META_KEY)||'null');
   if(m)last='前回：'+new Date(m.syncedAt).toLocaleString('ja-JP')+' ／ '+m.machines+'台';
  }catch{}
- document.getElementById('turkeySyncText').innerHTML=`P's CUBEで認証後、いつもの収集ショートカットを使って22台を集めます。<br><span style="color:#8995a5">${last}</span>`;
+ document.getElementById('turkeySyncText').innerHTML=`P's CUBEで認証後、いつもの収集ショートカットを使って23台（ジャグ22台＋ハナ687）を集めます。<br><span style="color:#8995a5">${last}</span>`;
  document.getElementById('turkeySyncProgress').classList.add('hidden');
  document.getElementById('turkeySyncButtons').classList.remove('hidden');
  document.getElementById('turkeySyncDoneButtons').classList.add('hidden');
