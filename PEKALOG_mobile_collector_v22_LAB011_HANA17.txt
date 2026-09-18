@@ -1,0 +1,289 @@
+(()=>{try{
+const MACHINES=['651','652','653','655','656','657','658','660','661','662','663','707','708','710','711','712','713','715','716','717','718','720','687'];
+
+const bodyText=(document.body?.innerText||'').replace(/\r/g,'');
+const machine=(bodyText.match(/台番号\s*0?(\d{3,4})/)||[])[1]||'';
+if(!machine) throw new Error('台番号を読み取れませんでした。台詳細画面で実行してください。');
+
+const model=(document.title.split('｜').pop()||'').trim();
+const updated=(bodyText.match(/(\d{4}\/\d{2}\/\d{2}\s+\d{2}:\d{2})\s*更新/)||[])[1]||'';
+const date=(updated.match(/^(\d{4}\/\d{2}\/\d{2})/)||[])[1]?.replaceAll('/','-')||
+  new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+
+const tables=[...document.querySelectorAll('table')];
+
+function rowMap(table){
+  const out={};
+  if(!table) return out;
+  for(const tr of table.querySelectorAll('tr')){
+    const c=[...tr.querySelectorAll('th,td')].map(x=>x.innerText.trim());
+    if(c.length>=2) out[c[0]]=c[1];
+  }
+  return out;
+}
+function parseStat(table){
+  const m=rowMap(table);
+  const big=Number(m.BIG)||0, reg=Number(m.REG)||0;
+  const combined=m['合成確率']||m['合算']||'';
+  const den=Number((combined.match(/1\/([\d.]+)/)||[])[1])||null;
+  return {big,reg,combined,totalGEst:den?Math.round((big+reg)*den):null};
+}
+function uniq(a){return [...new Set(a.map(x=>Math.round(x*100)/100))];}
+function fit(xs,ys){
+  const n=Math.min(xs.length,ys.length); if(n<2)return null;
+  let sx=0,sy=0,sxx=0,sxy=0;
+  for(let i=0;i<n;i++){sx+=xs[i];sy+=ys[i];sxx+=xs[i]*xs[i];sxy+=xs[i]*ys[i];}
+  const d=n*sxx-sx*sx; if(!d)return null;
+  return {a:(n*sxy-sx*sy)/d,b:(sy-((n*sxy-sx*sy)/d)*sx)/n};
+}
+const r10=v=>Math.round(v/10)*10;
+
+function parseGraph(svg){
+  if(!svg)return null;
+  const graph=[...svg.querySelectorAll('path.amcharts-graph-stroke')]
+    .sort((a,b)=>(b.getAttribute('d')||'').length-(a.getAttribute('d')||'').length)[0];
+  if(!graph)return null;
+  const plot=svg.querySelector('.amcharts-plot-area');
+  let pb={x:0,y:0,width:9999,height:9999};
+  try{if(plot){const b=plot.getBBox();pb={x:b.x,y:b.y,width:b.width,height:b.height};}}catch(e){}
+  const ys=uniq([...svg.querySelectorAll('.amcharts-axis-grid,.amcharts-axis-zero-grid')]
+    .map(el=>{try{const b=el.getBBox();return b.width>100&&b.height<2?b.y:null}catch(e){return null}})
+    .filter(v=>v!==null)).sort((a,b)=>a-b);
+  const vals=uniq([...svg.querySelectorAll('text')]
+    .map(t=>t.textContent.trim()).filter(s=>/^-?\d[\d,]*$/.test(s))
+    .map(s=>Number(s.replace(/,/g,''))).filter(Number.isFinite)).sort((a,b)=>b-a);
+  const n=Math.min(ys.length,vals.length), f=fit(ys.slice(0,n),vals.slice(0,n));
+  const pts=[...(graph.getAttribute('d')||'').matchAll(/[ML]\s*(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g)]
+    .map(m=>({x:+m[1],y:+m[2]}))
+    .filter(p=>p.x>=pb.x-1&&p.x<=pb.x+pb.width+1&&p.y>=pb.y-1&&p.y<=pb.y+pb.height+1&&!(p.x===0&&p.y===0));
+  if(!f||!pts.length)return null;
+  const vv=pts.map(p=>f.a*p.y+f.b);
+  const cur=vv[vv.length-1],peak=Math.max(...vv),trough=Math.min(...vv);
+  return {
+    currentDiffEst:r10(cur),
+    peakDiffEst:r10(peak),
+    troughDiffEst:r10(trough),
+    current1000:cur>=1000,
+    current2000:cur>=2000,
+    peak1000:peak>=1000,
+    peak2000:peak>=2000
+  };
+}
+
+const stats={
+  today:parseStat(tables[4]),
+  prev1:parseStat(tables[5]),
+  prev2:parseStat(tables[6])
+};
+
+const currentGame=(()=>{
+  const s=tables[7]?.innerText||'';
+  const m=s.match(/^\s*(\d+)\s*\n\s*最終ゲーム/m);
+  return m?+m[1]:null;
+})();
+
+const historyRows=[];
+if(tables[10]){
+  for(const tr of tables[10].querySelectorAll('tr')){
+    const c=[...tr.querySelectorAll('th,td')].map(x=>x.innerText.trim());
+    if(c.length>=4&&/^\d+$/.test(c[0])&&/^\d{1,2}:\d{2}$/.test(c[1])&&/^\d+$/.test(c[2])&&/^(BIG|REG)$/.test(c[3])){
+      historyRows.push({count:+c[0],time:c[1],game:+c[2],status:c[3]});
+    }
+  }
+}
+
+const svgs=[...document.querySelectorAll('svg')].filter(svg=>{
+  const tt=[...svg.querySelectorAll('text')].map(t=>t.textContent.trim());
+  return tt.includes('12:00')&&tt.includes('18:00');
+});
+const graphs={today:parseGraph(svgs[0]),prev1:parseGraph(svgs[1]),prev2:parseGraph(svgs[2])};
+
+
+function showCompletePanel(bundleJSON,done,total){
+  const old=document.getElementById('pekalog-complete-panel');
+  if(old) old.remove();
+
+  const wrap=document.createElement('div');
+  wrap.id='pekalog-complete-panel';
+  wrap.style.cssText=[
+    'position:fixed','inset:0','z-index:2147483647',
+    'background:rgba(0,0,0,.78)','display:flex','align-items:center','justify-content:center',
+    'padding:18px','font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif'
+  ].join(';');
+
+  const card=document.createElement('div');
+  card.style.cssText=[
+    'width:min(440px,100%)','background:#111820','color:white',
+    'border:1px solid #3a4655','border-radius:22px','padding:20px',
+    'box-shadow:0 24px 70px rgba(0,0,0,.55)'
+  ].join(';');
+
+  card.innerHTML=`
+    <div style="font-size:38px">🎉</div>
+    <div style="font-size:22px;font-weight:900;margin-top:3px">23台コンプリート！</div>
+    <div style="font-size:13px;color:#aeb8c5;line-height:1.55;margin-top:6px">
+      ${done}/${total}台のコードが完成したよ。<br>
+      下のボタン1回で全文コピーできます。
+    </div>
+    <button id="pekalog-copy-all" style="width:100%;margin-top:15px;padding:14px;border:0;border-radius:14px;background:#65dff3;color:#071017;font-size:16px;font-weight:900">
+      📋 コンプリートコードを全コピー
+    </button>
+    <button id="pekalog-copy-lab" style="width:100%;margin-top:9px;padding:13px;border:0;border-radius:14px;background:#8d7cff;color:white;font-size:15px;font-weight:800">
+      🧪 コピーしてLABを開く
+    </button>
+    <button id="pekalog-copy-hana" style="width:100%;margin-top:9px;padding:13px;border:0;border-radius:14px;background:#2b9a59;color:white;font-size:15px;font-weight:800">
+      🌺 コピーしてHANA LOGを開く
+    </button>
+    <div id="pekalog-copy-status" style="min-height:20px;margin-top:10px;text-align:center;font-size:12px;color:#9eabb9"></div>
+    <details style="margin-top:10px">
+      <summary style="font-size:12px;color:#8f9aaa">コードを確認する</summary>
+      <textarea id="pekalog-complete-code" readonly style="box-sizing:border-box;width:100%;height:120px;margin-top:8px;background:#090d12;color:#bdefff;border:1px solid #303b48;border-radius:10px;padding:8px;font-size:10px">${bundleJSON.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>
+    </details>
+  `;
+
+  wrap.appendChild(card);
+  (document.body||document.documentElement).appendChild(wrap);
+
+  const status=card.querySelector('#pekalog-copy-status');
+
+  async function copyAll(){
+    let ok=false;
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        await navigator.clipboard.writeText(bundleJSON);
+        ok=true;
+      }
+    }catch(e){}
+    if(!ok){
+      try{
+        const ta=card.querySelector('#pekalog-complete-code');
+        ta.focus(); ta.select(); ta.setSelectionRange(0,ta.value.length);
+        ok=document.execCommand('copy');
+      }catch(e){}
+    }
+    status.textContent=ok?'✅ 全文コピーしたよ！':'⚠️ コピーできなかったので、下のコードを長押ししてコピーしてね。';
+    return ok;
+  }
+
+  card.querySelector('#pekalog-copy-all').addEventListener('click',copyAll);
+  card.querySelector('#pekalog-copy-lab').addEventListener('click',async()=>{
+    const ok=await copyAll();
+    if(ok){
+      status.textContent='✅ コピー完了。LABを開きます…';
+      setTimeout(()=>{ location.href='https://a80810041-ui.github.io/pekalog/pekalog_lab_v011_weekday_time.html'; },250);
+    }
+  });
+  card.querySelector('#pekalog-copy-hana').addEventListener('click',async()=>{
+    const ok=await copyAll();
+    if(ok){
+      status.textContent='✅ コピー完了。HANA LOGを開きます…';
+      setTimeout(()=>{ location.href='https://a80810041-ui.github.io/pekalog/hana_photo_v17_date_fix.html'; },250);
+    }
+  });
+}
+
+const snapshot={
+  machine:String(Number(machine)),
+  model,
+  updated,
+  capturedAt:new Date().toISOString(),
+  stats,
+  currentGame,
+  graphs,
+  historyRows
+};
+
+const key='pekalog_turkey_collect_'+date;
+const runHistoryKey='pekalog_turkey_collect_runs_'+date;
+let store={date,runId:Date.now(),startedAt:new Date().toISOString(),machines:{}};
+try{
+  const old=JSON.parse(localStorage.getItem(key)||'null');
+  if(old&&old.date===date&&old.machines){
+    const cur=String(Number(machine));
+    const first=String(Number(MACHINES[0]));
+    const oldDone=MACHINES.filter(m=>old.machines[String(Number(m))]).length;
+
+    // 同じ日に複数回（昼→閉店後など）23台を取り直せるようにする。
+    // 651番台から再スタートした時、すでに651が保存済みなら新しい周回として扱う。
+    if(cur===first && old.machines[first]){
+      let startNew=true;
+      if(oldDone<MACHINES.length){
+        startNew=confirm(`同日の収集データが ${oldDone}/${MACHINES.length}台 残っています。\n\nOK：新しい23台収集を開始\nキャンセル：前回の続きから再開`);
+      }
+      if(startNew){
+        try{
+          const hist=JSON.parse(localStorage.getItem(runHistoryKey)||'[]');
+          hist.push(old);
+          while(hist.length>6) hist.shift();
+          localStorage.setItem(runHistoryKey,JSON.stringify(hist));
+        }catch(e){}
+        store={date,runId:Date.now(),startedAt:new Date().toISOString(),machines:{}};
+      }else{
+        store=old;
+      }
+    }else{
+      store=old;
+    }
+  }
+}catch(e){}
+store.machines[snapshot.machine]=snapshot;
+store.updatedAt=new Date().toISOString();
+localStorage.setItem(key,JSON.stringify(store));
+
+const done=MACHINES.filter(m=>store.machines[String(Number(m))]).length;
+const remaining=MACHINES.filter(m=>!store.machines[String(Number(m))]);
+const next=remaining[0]||null;
+
+if(!next){
+  const bundle={
+    kind:'pekalog-turkey-bundle',
+    version:'2.2-multirun-lab011-hana17',
+    date,
+    collected:done,
+    total:MACHINES.length,
+    completed:true,
+    machines:MACHINES.map(m=>store.machines[String(Number(m))]).filter(Boolean)
+  };
+  const bundleJSON=JSON.stringify(bundle);
+  showCompletePanel(bundleJSON,done,MACHINES.length);
+  completion(JSON.stringify({
+    kind:'pekalog-mobile-complete',
+    version:'2.2-multirun-lab011-hana17',
+    date,
+    collected:done,
+    total:MACHINES.length,
+    completed:true,
+    note:'23台完了！（ジャグ22台＋ハナ687）同じ日でも651番台から始めれば新しい周回として再収集できます。'
+  }));
+  return;
+}
+
+const nextURL=new URL(location.href);
+nextURL.searchParams.set('cd_dai',String(next).padStart(4,'0'));
+
+const summary={
+  kind:'pekalog-mobile-progress',
+  version:'2.2-multirun-lab011-hana17',
+  date,
+  saved:snapshot.machine,
+  collected:done,
+  total:MACHINES.length,
+  next,
+  nextURL:nextURL.toString(),
+  note:'完了を押すと次台へ移動します。閉店後など同日に取り直す時は651番台から開始してください。'
+};
+
+try{
+  location.href=nextURL.toString();
+}catch(e){}
+
+completion(JSON.stringify(summary));
+
+}catch(e){
+completion(JSON.stringify({
+  kind:'pekalog-mobile-error',
+  version:'2.2-multirun-lab011-hana17',
+  error:String(e&&e.message||e),
+  url:location.href
+}));
+}})();

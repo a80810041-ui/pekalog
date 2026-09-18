@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d10">
+<title>PEKALOG LAB v0.11 WEEKDAY + TIME</title>
+<style>
+:root{
+ --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
+ --big:#ff6b7d;--reg:#ffd166;--green:#58e39a;--blue:#6ca8ff;--violet:#b68cff;--cyan:#7de3ff;--orange:#ffae57;--red:#ff6b7d;
+}
+*{box-sizing:border-box} html{background:var(--bg)}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;background:radial-gradient(circle at top right,#182131 0,#0e1117 35%,#0b0d10 72%);color:var(--text)}
+.wrap{max-width:980px;margin:auto;padding:14px 12px 90px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin:6px 2px 12px}
+h1{font-size:28px;margin:0}.ver{font-size:12px;color:var(--muted)}.sub{font-size:13px;color:var(--muted);margin-top:3px}
+.card{background:rgba(21,25,34,.98);border:1px solid var(--line);border-radius:19px;padding:14px;margin:11px 0;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+h2,h3{margin:0 0 10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:var(--panel2);border:1px solid #252c37;border-radius:14px;padding:10px;min-height:72px}.k{font-size:11px;color:var(--muted)}.v{font-size:21px;font-weight:800;margin-top:4px}.tiny{font-size:11px;color:var(--muted);line-height:1.55}.smalltext{font-size:13px;line-height:1.55}
+label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid #323a48;border-radius:12px;padding:11px;font-size:16px} textarea{resize:vertical}
+.btn{border:0;border-radius:16px;padding:13px 11px;font-size:15px;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent}.btn:active{transform:scale(.985)}.green{background:var(--green);color:#07150e}.blue{background:var(--blue);color:#fff}.violet{background:var(--violet);color:#140b20}.dark{background:#252c37;color:#fff}.cyan{background:var(--cyan);color:#082029}.orange{background:var(--orange);color:#241300}.red{background:var(--red);color:#1a0b0e}.small{padding:9px 9px;font-size:13px}.wide{width:100%}
+.nav{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;position:sticky;top:0;z-index:50;background:rgba(11,13,16,.88);backdrop-filter:blur(12px);padding:7px 0}.nav .btn{padding:10px 5px;font-size:12px;border:1px solid #343d4b}.nav .active{background:var(--cyan);color:#082029;border-color:transparent}.view{display:none}.view.active{display:block}
+.notice{font-size:12px;line-height:1.6;color:#b8c0cc;background:#10151c;border:1px solid #29313d;border-radius:12px;padding:10px}.notice strong{color:#fff}
+.pill{display:inline-block;font-size:11px;background:#2a313d;border-radius:999px;padding:4px 8px;margin:0 4px 4px 0}.hit1000{background:#5a4b16;color:#ffe887}.hit2000{background:#6e2c19;color:#ffbd8d}.hit3000{background:#57245f;color:#f5bcff}.event{background:#21375a;color:#aee0ff}.good{background:#183e2a;color:#8ff7bc}.bad{background:#4a2027;color:#ffb0bb}.warn{background:#493b19;color:#ffe69a}
+.list{display:flex;flex-direction:column;gap:8px}.row{background:var(--panel2);border:1px solid #252c37;border-radius:13px;padding:11px}.rowtop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.right{text-align:right}.muted{color:var(--muted)}
+.bar{height:10px;border-radius:999px;background:#252c37;overflow:hidden;margin-top:5px}.fill{height:100%;background:linear-gradient(90deg,#6ca8ff,#58e39a)}
+.tablewrap{overflow:auto;border-radius:13px;border:1px solid #272e39}table{width:100%;border-collapse:collapse;min-width:650px;background:#0f1319}th,td{padding:9px;border-bottom:1px solid #252c37;text-align:right;font-size:12px;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:#9eabba;background:#111720;position:sticky;top:0}.pos{color:#7ff0ad}.neg{color:#ff8998}
+.sectionTitle{display:flex;justify-content:space-between;align-items:center;gap:10px}.score{font-size:28px;font-weight:900}.footer{text-align:center;color:#778292;font-size:11px;margin-top:20px;line-height:1.7}.hidden{display:none!important}.empty{padding:20px 10px;text-align:center;color:#788390;font-size:13px}
+.chipline{display:flex;gap:6px;flex-wrap:wrap}.hr{border:0;border-top:1px solid #2a313d;margin:12px 0}
+.inferScore{font-size:24px;font-weight:900;line-height:1}.inferMeta{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px}.miniBar{height:7px;border-radius:999px;background:#252c37;overflow:hidden;margin-top:7px}.miniBar>div{height:100%;background:linear-gradient(90deg,#6ca8ff,#58e39a)}.rankNo{font-size:12px;color:#8b97a8;margin-right:5px}.heatHot{color:#8ff7bc}.heatWarm{color:#ffe69a}.heatCold{color:#ffb0bb}
+@media(max-width:620px){.grid4{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:1fr}.nav{grid-template-columns:repeat(5,1fr)}.nav .btn{font-size:10px;padding:9px 2px}h1{font-size:24px}.wrap{padding-left:9px;padding-right:9px}.score{font-size:24px}}
+
+.pickHero{background:linear-gradient(180deg,#111923,#0d1218);border:1px solid #314154;border-radius:15px;padding:12px}
+.pickTitle{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pickRank{font-size:13px;font-weight:900;background:#243246;border-radius:999px;padding:5px 9px}
+.pickScore{font-size:27px;font-weight:900;line-height:1}.pickScore small{font-size:11px;color:var(--muted);font-weight:600}
+.reasonList{display:flex;flex-direction:column;gap:4px;margin-top:8px}.reason{font-size:12px;color:#c1cad6;line-height:1.45}
+.pickGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pickSub{font-size:15px;font-weight:900;margin:2px 0 8px}
+.pickConfidence{font-size:10px;color:var(--muted);margin-top:5px}
+@media(max-width:720px){.pickGrid{grid-template-columns:1fr}}
+
+</style>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PEKALOG LAB">
+</head>
+<body>
+<div class="wrap">
+<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.11 WEEKDAY + TIME</div></header>
+<div class="nav" id="nav">
+ <button class="btn dark active" data-view="dash">🏠 LAB</button>
+ <button class="btn dark" data-view="hyp">🧠 仮説</button>
+ <button class="btn dark" data-view="event">🔥 22日</button>
+ <button class="btn dark" data-view="iflab">👻 IF</button>
+ <button class="btn dark" data-view="data">🗃 データ</button>
+</div>
+
+<section id="dash" class="view active">
+ <div class="card">
+  <div class="sectionTitle"><div><h3>今日の研究状況</h3><div class="tiny">PEKALOGは実戦、LABは店と判断を検証。</div></div><span class="pill event">鷺沼ターキー</span></div>
+  <div class="grid4" style="margin-top:10px">
+   <div class="stat"><div class="k">保存日数</div><div class="v" id="daysCount">0</div></div>
+   <div class="stat"><div class="k">台データ</div><div class="v" id="finalCount">0</div></div>
+   <div class="stat"><div class="k">PEKALOG実戦</div><div class="v" id="pekaCount">0</div></div>
+   <div class="stat"><div class="k">仮説</div><div class="v" id="hypCount">0</div></div>
+  </div>
+  <div id="syncNotice" class="notice" style="margin-top:10px"></div>
+ </div>
+
+ <div class="card">
+  <div class="sectionTitle">
+   <div><h3>🎯 今日座るならコレ！</h3><div class="tiny">閉店履歴＋当日LIVEを分けて評価。点数は勝率ではなく、LAB内の「候補優先度」。</div></div>
+   <span class="pill event">NEW</span>
+  </div>
+  <div class="notice" style="margin-top:8px">
+   <strong>朝イチ候補</strong>は過去の投入推定率・直近温度・投入間隔・22日相性・曜日クセから選抜。
+   <strong>今から候補</strong>はそこへ当日のBB/REG/合算を追加して再評価する。<br>
+   <span class="tiny">※「ハマっているからそろそろ当たる」は加点しない。現在ハマりGは当選期待の根拠に使わない。</span>
+  </div>
+  <div id="seatPickStatus" class="notice" style="margin-top:9px"></div>
+  <div class="pickGrid" style="margin-top:10px">
+   <div><div class="pickSub">🌅 朝イチ候補</div><div id="morningPicks" class="list"></div></div>
+   <div><div class="pickSub">🕓 今から候補</div><div id="livePicks" class="list"></div></div>
+  </div>
+ </div>
+
+ <div class="card">
+  <div class="sectionTitle"><div><h3>📅 曜日・時間帯カルテ</h3><div class="tiny">閉店データから曜日の偏り、LIVEスナップショットから「強め候補が見え始める時間帯」を自動集計。</div></div><span class="pill good">AUTO</span></div>
+  <div id="next22Status" class="notice" style="margin-top:8px"></div>
+  <div class="grid2" style="margin-top:10px">
+   <div>
+    <div class="pickSub">📆 曜日別</div>
+    <div class="tablewrap"><table><thead><tr><th>曜日</th><th>日数</th><th>判定台</th><th>強め率</th><th>通常日率</th><th>平均差枚</th></tr></thead><tbody id="weekdayTrendBody"></tbody></table></div>
+   </div>
+   <div>
+    <div class="pickSub">🕰 時間帯別 LIVE</div>
+    <div class="tablewrap"><table><thead><tr><th>時間帯</th><th>取得</th><th>判定</th><th>平均G</th><th>平均score</th><th>強め率</th></tr></thead><tbody id="timeTrendBody"></tbody></table></div>
+   </div>
+  </div>
+  <div class="pickSub" style="margin-top:12px">🎰 対象曜日の台番クセ</div>
+  <div id="weekdayMachinePicks" class="list"></div>
+  <div class="tiny" style="margin-top:8px">※曜日・時間帯は「傾向の観測」。曜日だから当たる、時間だから当たるという意味ではなく、蓄積データの偏りを見つけるためのカルテ。</div>
+ </div>
+
+ <div class="card">
+  <div class="sectionTitle"><h3>🏆 最新取得の1000枚到達</h3><div id="latestDate" class="tiny">-</div></div>
+  <div id="latestHits" class="list"></div>
+ </div>
+
+ <div class="card">
+  <div class="sectionTitle"><div><h3>🎯 台別・設定投入推理</h3><div class="tiny">閉店データだけで台番ごとの「入りやすさ」を学習。</div></div><span class="pill event">NEW</span></div>
+  <div class="notice" style="margin-top:8px">BB・REGを機種別の設定確率と照合し、総回転数で信頼度を調整。差枚は補助材料として小さく加点する。<strong>設定を断定するものではなく「高設定っぽさ」の研究スコア</strong>だよ。LIVEは投入頻度に使わない。</div>
+  <div id="machineInferenceSummary" class="grid3" style="margin-top:10px"></div>
+  <div id="machineProfiles" class="list" style="margin-top:10px"></div>
+ </div>
+
+ <div class="card">
+  <div class="sectionTitle"><h3>🔎 LABが見つけた傾向</h3><span class="pill">自動分析</span></div>
+  <div id="discoveries" class="list"></div>
+ </div>
+</section>
+
+<section id="hyp" class="view">
+ <div class="card">
+  <h3>🧠 仮説を事前登録</h3>
+  <div class="notice">ここだけ人間の仕事。登録した内容は作成時刻付きで保存して、あとから都合よく記憶を書き換えない仕様。</div>
+  <div class="grid2" style="margin-top:10px">
+   <div><label>検証日</label><input id="hDate" type="date"></div>
+   <div><label>機種</label><select id="hModel"><option value="all">全ジャグ</option><option value="gogo3">ゴージャグ3</option><option value="neoim">ネオアイム</option><option value="my5">マイジャグV</option><option value="my6">マイジャグVI</option><option value="happy3">ハッピーV III</option><option value="ultra">ウルトラミラクル</option></select></div>
+  </div>
+  <div style="margin-top:9px"><label>仮説名</label><input id="hTitle" placeholder="例：22日はゴージャグが一番強い"></div>
+  <div class="grid2" style="margin-top:9px">
+   <div><label>対象台（任意・カンマ区切り）</label><input id="hMachines" placeholder="301,302,303"></div>
+   <div><label>HIT基準</label><select id="hMetric"><option value="1000">+1000枚以上</option><option value="2000">+2000枚以上</option><option value="content">内容強め（REG/合算）</option></select></div>
+  </div>
+  <div class="grid2" style="margin-top:9px">
+   <div><label>自信度</label><select id="hConfidence"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
+   <div><label>イベントタグ</label><select id="hEvent"><option value="auto">自動（22日はイベント）</option><option value="event">イベント扱い</option><option value="normal">通常日扱い</option></select></div>
+  </div>
+  <div style="margin-top:9px"><label>成功条件</label><select id="hSuccess"><option value="any">対象に1台以上HIT</option><option value="half">対象の半数以上HIT</option><option value="avg0">対象平均差枚がプラス</option><option value="avg500">対象平均差枚 +500枚以上</option><option value="uplift10">1000枚率が基準より+10pt以上</option></select></div>
+  <div style="margin-top:9px"><label>理由・読み</label><textarea id="hReason" rows="3" placeholder="前日凹み、並び、前回22日の配分など"></textarea></div>
+  <button class="btn violet wide" style="margin-top:10px" id="saveHyp">🔒 仮説を登録</button>
+ </div>
+ <div class="card"><h3>🎯 仮説の答え合わせ</h3><div id="hypList" class="list"></div></div>
+</section>
+
+<section id="event" class="view">
+ <div class="card">
+  <div class="sectionTitle"><div><h3>🔥 22日 EVENT LAB</h3><div class="tiny">通常日とは別リーグで比較。</div></div><div id="eventScore" class="score">-</div></div>
+  <div class="grid4" style="margin-top:10px">
+   <div class="stat"><div class="k">22日サンプル</div><div class="v" id="eventDays">0</div></div>
+   <div class="stat"><div class="k">平均差枚</div><div class="v" id="eventAvgDiff">-</div></div>
+   <div class="stat"><div class="k">1000枚率</div><div class="v" id="event1000">-</div></div>
+   <div class="stat"><div class="k">2000枚率</div><div class="v" id="event2000">-</div></div>
+  </div>
+  <div id="eventCompare" class="notice" style="margin-top:10px"></div>
+  <div id="eventLatestDelta" class="notice" style="margin-top:8px"></div>
+ </div>
+ <div class="card"><h3>📅 22日 × 曜日</h3><div class="tiny" style="margin-bottom:9px">22日が何曜日に当たった時に動きが違うかを分離。サンプルが増えるほど育つ。</div><div id="eventWeekdays" class="tablewrap"></div></div>
+ <div class="card"><h3>📈 22日ごとの変化</h3><div id="eventTrend" class="tablewrap"></div></div>
+ <div class="card"><h3>🎰 機種別 22日 vs 通常日</h3><div id="eventModels" class="tablewrap"></div></div>
+ <div class="card"><h3>✨ EVENT ペカ記録</h3><div class="tiny" style="margin-bottom:9px">BB+REGを「ペカ数」として記録。72ペカ級がどれくらい異常だったか、後から比較できる。</div><div id="pekaRecords" class="list"></div></div>
+</section>
+
+<section id="iflab" class="view">
+ <div class="card">
+  <h3>👻 「その後どうなった？」</h3>
+  <div class="notice"><strong>PEKALOGの保存実戦</strong>を同じブラウザから自動読込。LABに10分前後のスナップショットがあれば、ヤメ時刻付近から閉店までの差枚変化を比較する。<br><span class="tiny">※これは「ヤメた後にその台がどう動いたか」の実績。ジャグラーは抽選なので、実際に自分が続けた場合と同じ結果になる保証はないよ。</span></div>
+  <div id="ifList" class="list" style="margin-top:10px"></div>
+ </div>
+ <div class="card">
+  <h3>🧠 判断クセ</h3>
+  <div id="decisionSummary" class="notice">実戦とスナップショットが貯まると、撤退後に伸びた/落ちた比率を集計する。</div>
+  <div id="reasonStats" class="list" style="margin-top:10px"></div>
+ </div>
+</section>
+
+<section id="data" class="view">
+ <div class="card">
+  <div class="sectionTitle"><div><h3>📦 ターキー収集係 <span class="pill good">v1.5 COPY</span></h3><div class="tiny">GitHub Pagesからの直接取得はP's CUBEのセッション制限でHTMLに差し替わったため、P's CUBE画面上で動く1タップ収集方式に切り替え。</div></div></div>
+  <div class="notice" style="margin-top:9px">
+   <strong>iPhone収集：</strong> P's CUBEの台詳細をSafariで開く → 共有 → <strong>PEKALOG収集</strong>。1台ずつ高速保存し、22台目で全台JSONを返す。<br>
+   <span class="tiny">完成JSONは <code>pekalog-turkey-bundle</code>。本日LIVEに加えて「1日前・2日前」の閉店データも同時にLABへ取り込む。</span>
+  </div>
+  <div class="notice" style="margin-top:9px"><strong>今の運用：</strong> 22台収集が終わったら「コピーしてLABを開く」→ 下の「クリップボードから取込」を1回押すだけ。</div>
+  <div class="grid2" style="margin-top:9px">
+   <button class="btn cyan" id="collectorClipboardBtn">📋 クリップボードから取込</button>
+   <label class="btn green" style="text-align:center;cursor:pointer">⬆ 収集JSONを読み込む<input id="collectorFile" type="file" accept=".json,application/json" style="display:none"></label>
+   <button class="btn dark" id="collectorPasteBtn">✍️ 貼り付けJSONを取込</button>
+  </div>
+  <textarea id="collectorPaste" rows="5" style="margin-top:9px" placeholder="22台収集の最後に出た {&quot;kind&quot;:&quot;pekalog-turkey-bundle&quot;,...} をそのまま貼り付け"></textarea>
+  <div id="collectorStatus" class="notice" style="margin-top:10px">まだ収集JSONは読み込まれていないよ。</div>
+ </div>
+ <div class="card">
+  <h3>🗃 LABデータ</h3>
+  <div id="dataStatus" class="notice"></div>
+  <div class="grid2" style="margin-top:10px">
+   <label class="btn blue" style="text-align:center;cursor:pointer">⬆ JSON読込<input id="jsonFile" type="file" accept=".json,application/json" style="display:none"></label>
+   <button class="btn dark" id="exportBtn">⬇ LABデータ保存</button>
+   <button class="btn cyan" id="reloadRemote">🔄 daily.json再読込</button>
+   <button class="btn violet" id="demoBtn">🧪 デモデータ</button>
+  </div>
+  <div class="tiny" style="margin-top:9px">収集JSON・LABバックアップ・CSV・daily.jsonは全部同じ分析エンジンに入る。</div>
+ </div>
+ <div class="card">
+  <h3>必要データ形式</h3>
+  <pre class="notice" style="overflow:auto;white-space:pre-wrap">{
+  "snapshots": [
+    {"date":"2026-09-22","ts":1790089200000,"machine":"301","model":"gogo3","totalG":7200,"big":38,"reg":34,"diff":2100}
+  ]
+}</pre>
+ </div>
+
+ <div class="card">
+  <h3>📥 CSV貼り付け取込</h3>
+  <div class="notice">自動収集が完成するまでの現実データ入口。<br>1行目を <code>date,ts,machine,model,totalG,big,reg,diff</code> にして貼れば、そのままLABに追加できる。</div>
+  <textarea id="csvPaste" rows="6" style="margin-top:9px" placeholder="2026-09-22,1790084100000,301,gogo3,6500,31,29,1800"></textarea>
+  <button class="btn green wide" style="margin-top:9px" id="csvImportBtn">CSVを取り込む</button>
+ </div>
+ <div class="card">
+  <h3>🔥 イベント日設定</h3>
+  <div class="grid2"><div><label>毎月の特定日</label><input id="eventDay" type="number" min="1" max="31" value="22"></div><div><label>追加イベント日（カンマ区切り）</label><input id="extraEvents" placeholder="2026-10-10,2026-11-11"></div></div>
+  <button class="btn orange wide" style="margin-top:9px" id="saveEventCfg">イベント設定を保存</button>
+ </div>
+</section>
+
+<div class="footer">PEKALOG LABは公開データと自分の仮説を検証する研究ツール。高設定っぽさ・投入推定は統計的な参考値で、設定・勝利を保証するものではありません。<br>同一GitHub Pagesドメイン配下ならPEKALOGのlocalStorageを直接連携できます。</div>
+</div>
+<script>
+const IMPORT_META_KEY='pekalog_lab_last_import_v09';
+const LAB_KEY='pekalog_lab_v02_data', HYP_KEY='pekalog_lab_v02_hypotheses', CFG_KEY='pekalog_lab_v02_config';
+const PEKA_ARCH='pekalog_v2_archives';
+const MODELS={gogo3:'ゴージャグ3',neoim:'ネオアイム',my5:'マイジャグV',my6:'マイジャグVI',happy3:'ハッピーV III',ultra:'ウルトラミラクル'};
+const SETTING_SPECS={
+ gogo3:[259.0,354.2,149.6,258.0,332.7,145.3,257.0,306.2,139.7,254.0,268.6,130.5,247.3,247.3,123.7,234.9,234.9,117.4],
+ neoim:[273.1,439.8,168.5,269.7,399.6,161.0,269.7,331.0,148.6,259.0,315.1,142.2,259.0,255.0,128.5,255.0,255.0,127.5],
+ my5:[273.1,409.6,163.8,270.8,385.5,159.1,266.4,336.1,148.6,254.0,290.0,135.4,240.1,268.6,126.8,229.1,229.1,114.6],
+ my6:[273.1,409.6,163.8,270.8,385.5,159.1,266.4,336.1,148.6,254.0,290.0,135.4,240.1,268.6,126.8,229.1,229.1,114.6],
+ happy3:[273.1,397.2,161.8,270.8,362.1,154.9,263.2,332.7,146.9,254.0,300.6,137.7,239.2,273.1,127.5,226.0,256.0,120.0],
+ ultra:[267.5,425.6,164.3,261.1,402.1,158.3,256.0,350.5,147.9,242.7,322.8,138.6,233.2,297.9,130.8,216.3,277.7,121.6]
+};
+const TURKEY_LIVE={
+ base:'https://www.pscube.jp/h/a707001/cgi-bin/',
+ endpoints:{basic:'nc-m06-001.php',history:'nc-m06-008.php',graph:'nc-m06-003.php'},
+ defaultMachines:['651','652','653','655','656','657','658','660','661','662','663','707','708','710','711','712','713','715','716','717','718','720']
+};
+let liveTimer=null, liveBusy=false, lastLiveDebug=null;
+function normMachine(v){const s=String(v??'').trim();if(!s)return '';const n=Number(s);return Number.isFinite(n)?String(n):s.replace(/^0+/,'')||'0'}
+function apiMachine(v){const s=normMachine(v);return /^\d+$/.test(s)?s.padStart(4,'0'):s}
+function ymd8(date){return String(date||'').replace(/-/g,'')}
+function date10(ymd){const s=String(ymd||'');return s.length===8?s.slice(0,4)+'-'+s.slice(4,6)+'-'+s.slice(6,8):s}
+function todayJST(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
+function modelIdFromName(name){const n=String(name||'').normalize('NFKC');if(n.includes('ゴーゴー'))return 'gogo3';if(n.includes('ネオアイム'))return 'neoim';if(n.includes('マイジャグラーVI')||n.includes('マイジャグラー6'))return 'my6';if(n.includes('マイジャグラーV'))return 'my5';if(n.includes('ハッピー'))return 'happy3';if(n.includes('ウルトラミラクル'))return 'ultra';return 'unknown'}
+function deepGetArrays(root){const out=[];const seen=new Set();function walk(v,path=''){if(!v||typeof v!=='object'||seen.has(v))return;seen.add(v);if(Array.isArray(v)){out.push({path,value:v});v.forEach((x,i)=>walk(x,path+'['+i+']'));return}for(const [k,x] of Object.entries(v))walk(x,path?path+'.'+k:k)}walk(root);return out}
+function deepObjects(root){const out=[];const seen=new Set();function walk(v,path=''){if(!v||typeof v!=='object'||seen.has(v))return;seen.add(v);if(!Array.isArray(v))out.push({path,value:v});if(Array.isArray(v))v.forEach((x,i)=>walk(x,path+'['+i+']'));else for(const [k,x] of Object.entries(v))walk(x,path?path+'.'+k:k)}walk(root);return out}
+function nval(v){if(v===null||v===undefined||v===false||v==='')return null;const n=Number(String(v).replace(/,/g,''));return Number.isFinite(n)?n:null}
+function titleText(v){return String(v??'').normalize('NFKC').replace(/\s/g,'').toUpperCase()}
+function firstNumeric(arr){if(!Array.isArray(arr))return nval(arr);for(const x of arr){const n=nval(x);if(n!==null)return n}return null}
+function parseBasicJSON(j,requestedDate,machine){
+ const root=Array.isArray(j)?(j[0]||{}):(j||{}), data=Array.isArray(root.Data)?root.Data:(Array.isArray(root.data)?root.data:[]);
+ let big=null,reg=null,comb=null,totalG=null;
+ for(const row of data){if(!row||typeof row!=='object')continue;const t=titleText(row.title);const a=row.item??row.Item??row.value??row.values;const v=firstNumeric(a);if(t.includes('BIG'))big=v;else if(t.includes('REG'))reg=v;else if(t.includes('合成')||t.includes('合算'))comb=v;else if(t.includes('総ゲーム')||t.includes('総回転')||t==='GAME'||t.includes('ゲーム数'))totalG=v;}
+ big=big??0;reg=reg??0;if(totalG===null&&comb!==null&&(big+reg)>0)totalG=Math.round(comb*(big+reg));if(totalG===null&&big===0&&reg===0)totalG=0;
+ const modelName=root?.Ki?.name||root?.KI?.name||root?.K?.name||'';
+ const date=date10(root.YMD_biz||ymd8(requestedDate));
+ let ts=Date.now();const u=root?.up_YMDhms?.YMDhms||root?.up_YMDhms?.ymdhms||null;if(u){const parsed=Date.parse(String(u).replace(' ','T')+'+09:00');if(Number.isFinite(parsed))ts=parsed}
+ return {date,ts,machine:normMachine(root?.Dai?.cd_dai||machine),model:modelIdFromName(modelName),modelName,big,reg,totalG,comb,basicRawMeta:{kisyu:root?.Ki?.cd_kisyu||root?.KI?.cd_kisyu||null,updated:u||null}};
+}
+function parseHistoryJSON(j){const root=Array.isArray(j)?(j[0]||{}):(j||{}), hs=Array.isArray(root.histories)?root.histories:(Array.isArray(root.Histories)?root.Histories:[]);const bonuses=hs.filter(x=>x&&['BIG','REG'].includes(String(x.nmk_status||x.status||'').toUpperCase())).map(x=>({time:x.hhmm||null,game:nval(x.game),status:String(x.nmk_status||x.status||'').toUpperCase(),dedama:nval(x.dedama)}));const head=hs.find(x=>x&&!(x.nmk_status||x.status));return {historyCount:bonuses.length,lastBonus:bonuses[0]||null,currentGame:head?nval(head.game):null};}
+function parseGraphJSON(j,requestedDate){const root=Array.isArray(j)?(j[0]||{}):(j||{}), target=ymd8(requestedDate);const objs=deepObjects(root);const metas=[];for(const o of objs){const v=o.value;if(v&&typeof v==='object'&&v.xField&&v.yField){metas.push({xField:String(v.xField),yField:String(v.yField),ymd:String(v.YMD_biz||v.ymd||''),path:o.path})}}
+ const exact=[];for(const m of metas){if(m.ymd&&m.ymd!==target)continue;for(const o of objs){const v=o.value;if(Object.prototype.hasOwnProperty.call(v,m.xField)&&Object.prototype.hasOwnProperty.call(v,m.yField)){const x=nval(v[m.xField]),y=nval(v[m.yField]);if(y!==null)exact.push({x,y,path:o.path,meta:m})}}}
+ if(exact.length){exact.sort((a,b)=>(a.x??0)-(b.x??0));const ys=exact.map(p=>p.y);return {diff:ys.at(-1),maxDiff:Math.max(...ys),minDiff:Math.min(...ys),pointCount:ys.length,graphMode:'field-points'};}
+ // generic fallback: arrays of point-like objects with a numeric value/y/diff member
+ let best=null;for(const a of deepGetArrays(root)){if(a.value.length<2)continue;let pts=[];for(const v of a.value){if(!v||typeof v!=='object'||Array.isArray(v))continue;const keys=Object.keys(v);const yk=keys.find(k=>/(^|[-_])(value|diff|y)([-_]|$)/i.test(k)||/^value\d*$/i.test(k));if(!yk)continue;const y=nval(v[yk]);if(y===null)continue;const xk=keys.find(k=>/(^|[-_])(out|x|game|time)([-_]|$)/i.test(k));pts.push({x:xk?nval(v[xk]):pts.length,y})}if(pts.length>=3&&(!best||pts.length>best.pts.length))best={pts,path:a.path};}
+ if(best){best.pts.sort((a,b)=>(a.x??0)-(b.x??0));const ys=best.pts.map(p=>p.y);return {diff:ys.at(-1),maxDiff:Math.max(...ys),minDiff:Math.min(...ys),pointCount:ys.length,graphMode:'generic-points'};}
+ return {diff:null,maxDiff:null,minDiff:null,pointCount:0,graphMode:'unparsed',metaCount:metas.length};
+}
+async function turkeyFetch(endpoint,machine,date){const u=new URL(TURKEY_LIVE.base+endpoint);u.searchParams.set('cd_dai',apiMachine(machine));u.searchParams.set('YMD_biz',ymd8(date));u.searchParams.set('_',String(Date.now()));const r=await fetch(u.toString(),{method:'GET',cache:'no-store',mode:'cors',credentials:'omit'});if(!r.ok)throw new Error(`${endpoint}: HTTP ${r.status}`);const text=await r.text();try{return JSON.parse(text)}catch(e){throw new Error(`${endpoint}: JSONではない応答 (${text.slice(0,60).replace(/\s+/g,' ')})`)}}
+async function turkeyOne(machine,date,{full=true,captureRaw=false}={}){const basicJ=await turkeyFetch(TURKEY_LIVE.endpoints.basic,machine,date);const s=parseBasicJSON(basicJ,date,machine);let hist=null,graph=null;if(full){const results=await Promise.allSettled([turkeyFetch(TURKEY_LIVE.endpoints.history,machine,date),turkeyFetch(TURKEY_LIVE.endpoints.graph,machine,date)]);if(results[0].status==='fulfilled')hist=parseHistoryJSON(results[0].value);if(results[1].status==='fulfilled')graph=parseGraphJSON(results[1].value,date);if(captureRaw)lastLiveDebug={capturedAt:new Date().toISOString(),machine:normMachine(machine),date,basic:basicJ,history:results[0].status==='fulfilled'?results[0].value:{error:String(results[0].reason)},graph:results[1].status==='fulfilled'?results[1].value:{error:String(results[1].reason)}}}else if(captureRaw)lastLiveDebug={capturedAt:new Date().toISOString(),machine:normMachine(machine),date,basic:basicJ};Object.assign(s,hist||{});if(graph){s.diff=graph.diff;s.maxDiff=graph.maxDiff;s.minDiff=graph.minDiff;s.graphMode=graph.graphMode;s.graphPoints=graph.pointCount}else{s.diff=null;s.graphMode='not-fetched'}s.source='pscube-live';return s}
+function liveMachineList(){const v=($('liveMachines')?.value||'').split(',').map(normMachine).filter(Boolean);return [...new Set(v)]}
+function saveLiveSnapshot(s){mergeData({snapshots:[s]})}
+function liveRowHtml(s){const diff=Number.isFinite(Number(s.diff))?`<b class="${Number(s.diff)>=0?'pos':'neg'}">${signed(Math.round(s.diff))}枚</b>`:'<span class="pill warn">差枚解析待ち</span>';return `<div class="row"><div class="rowtop"><div><b>${esc(s.machine)}番 ${esc(MODELS[s.model]||s.modelName||s.model)}</b><div class="tiny">${fmt(s.totalG)}G / BB${fmt(s.big)} RB${fmt(s.reg)} / 合算 ${s.comb?`1/${s.comb}`:'-'}</div></div><div class="right">${diff}<div class="tiny">${esc(s.graphMode||'')}</div></div></div></div>`}
+async function liveTest(){if(liveBusy)return;liveBusy=true;const date=$('liveDate').value||todayJST();$('liveStatus').innerHTML='0711番へ接続中…';$('liveRows').innerHTML='';try{const s=await turkeyOne('711',date,{full:true,captureRaw:true});saveLiveSnapshot(s);$('liveStatus').innerHTML=`✅ <strong>接続成功</strong>。${esc(s.machine)}番 ${esc(MODELS[s.model]||s.modelName||s.model)} / BB${fmt(s.big)} RB${fmt(s.reg)} / ${fmt(s.totalG)}G。<br>${Number.isFinite(Number(s.diff))?`差枚も取得できた：<strong>${signed(Math.round(s.diff))}枚</strong>`:`基本データ・履歴は取得。グラフJSONは取れたが、差枚の点列はまだ自動判読できていない（${esc(s.graphMode)}）。`}<br><span class="tiny">取得時刻：${new Date(s.ts).toLocaleString('ja-JP')}</span>`;$('liveRows').innerHTML=liveRowHtml(s)}catch(e){$('liveStatus').innerHTML=`❌ <strong>接続できなかった</strong>：${esc(e.message)}<br><span class="tiny">GitHub Pages→P's CUBEの直接通信がCORS/セッション等で拒否された可能性がある。この場合は回避せず、次段階の収集係方式に切り替える。</span>`}finally{liveBusy=false;renderAll()}}
+async function liveScan(){if(liveBusy)return;const machines=liveMachineList();if(!machines.length)return alert('対象台を入れてね');liveBusy=true;const date=$('liveDate').value||todayJST(),ok=[],ng=[];$('liveRows').innerHTML='';for(let i=0;i<machines.length;i++){const m=machines[i];$('liveStatus').innerHTML=`📡 ${i+1}/${machines.length}台 取得中… <strong>${m}番</strong>`;try{const s=await turkeyOne(m,date,{full:true});saveLiveSnapshot(s);ok.push(s);$('liveRows').insertAdjacentHTML('beforeend',liveRowHtml(s))}catch(e){ng.push({m,e:e.message});$('liveRows').insertAdjacentHTML('beforeend',`<div class="row"><b>${esc(m)}番</b> <span class="pill bad">取得失敗</span><div class="tiny">${esc(e.message)}</div></div>`)}await new Promise(r=>setTimeout(r,180))}liveBusy=false;$('liveStatus').innerHTML=`✅ 取得完了：<strong>${ok.length}/${machines.length}台</strong>${ng.length?` ／ 失敗 ${ng.length}台`:''}。<br>${ok.some(s=>Number.isFinite(Number(s.diff)))?'差枚まで読めた台は1000/2000枚分析へ自動反映。':'BB/REG/合算は保存済み。差枚はグラフ解析が通った時点から自動反映する。'}`;renderAll()}
+function saveLiveDebug(){if(!lastLiveDebug)return alert('先に0711の接続テストをしてね');const blob=new Blob([JSON.stringify(lastLiveDebug,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_0711_debug_${lastLiveDebug.date||'today'}.json`;a.click();URL.revokeObjectURL(a.href)}
+function setupLiveAuto(){if(liveTimer){clearInterval(liveTimer);liveTimer=null}const mins=Number($('liveAuto')?.value||0);cfg.liveAuto=mins||'off';persist();if(mins>0)liveTimer=setInterval(()=>{if(!liveBusy)liveScan()},mins*60*1000)}
+function initLiveUI(){if(!$('liveDate'))return;$('liveDate').value=todayJST();$('liveAuto').value=String(cfg.liveAuto||'off');if(cfg.liveMachines?.length)$('liveMachines').value=cfg.liveMachines.join(',');$('liveTestBtn').onclick=liveTest;$('liveScanBtn').onclick=liveScan;$('liveDebugBtn').onclick=saveLiveDebug;$('liveAuto').onchange=setupLiveAuto;$('liveMachines').onchange=()=>{cfg.liveMachines=liveMachineList();persist()};setupLiveAuto()}
+const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+let lab=loadLab(), hypotheses=JSON.parse(localStorage.getItem(HYP_KEY)||'[]'), cfg=loadCfg();
+function loadCfg(){try{return {...{eventDay:22,extraEvents:[]},...JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}}catch(e){return {eventDay:22,extraEvents:[]}}}
+function loadLab(){try{return JSON.parse(localStorage.getItem(LAB_KEY)||'{"snapshots":[]}')}catch(e){return {snapshots:[]}}}
+function persist(){localStorage.setItem(LAB_KEY,JSON.stringify(lab));localStorage.setItem(HYP_KEY,JSON.stringify(hypotheses));localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}
+function fmt(n){if(n===null||n===undefined||Number.isNaN(Number(n)))return '-';return Number(n).toLocaleString('ja-JP')}
+function pct(n,d){return d?((n/d)*100).toFixed(1)+'%':'-'}
+function signed(n){if(n===null||n===undefined||n==='')return '-';n=Number(n);return `${n>0?'+':''}${fmt(n)}`}
+function isEventDate(d){const day=Number(String(d).slice(8,10));return day===Number(cfg.eventDay||22)||(cfg.extraEvents||[]).includes(String(d))}
+function finalRows(){const map=new Map();for(const s of lab.snapshots||[]){if(!s.date||!s.machine)continue;const k=s.date+'|'+s.machine;const old=map.get(k);if(!old||Number(s.ts||0)>=Number(old.ts||0))map.set(k,s)}return [...map.values()].sort((a,b)=>(a.date+a.machine).localeCompare(b.date+b.machine))}
+function rowsByDate(){const m={};for(const r of finalRows())(m[r.date]??=[]).push(r);return m}
+function latestSnapshot(date,machine){return (lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===normMachine(machine)).sort((a,b)=>Number(a.ts||0)-Number(b.ts||0)).at(-1)||null}
+function nearestSnapshot(date,machine,ts){const a=(lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===normMachine(machine)&&x.ts).sort((x,y)=>Math.abs(x.ts-ts)-Math.abs(y.ts-ts));return a[0]||null}
+function tags(r){let out=[];if(isEventDate(r.date))out.push('<span class="pill event">22日</span>');if(r.isFinal===true)out.push('<span class="pill good">閉店</span>');else if(r.isFinal===false)out.push('<span class="pill">LIVE</span>');const d=Number(r.diff);if(d>=3000)out.push('<span class="pill hit3000">🚀3000</span>');else if(d>=2000)out.push('<span class="pill hit2000">🔥2000</span>');else if(d>=1000)out.push('<span class="pill hit1000">🟡1000</span>');return out.join('')}
+function archiveData(){try{return JSON.parse(localStorage.getItem(PEKA_ARCH)||'[]')}catch(e){return []}}
+function turkeyArchives(){return archiveData().filter(a=>/ターキー|turkey/i.test(a.shop||''))}
+function nav(){document.querySelectorAll('#nav .btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav .btn').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.view).classList.add('active');renderAll()})}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function poissonLogLab(k,l){if(l<=0)return -1e99;let f=0;for(let i=2;i<=k;i++)f+=Math.log(i);return k*Math.log(l)-l-f}
+function settingSpecRows(model){const a=SETTING_SPECS[model];if(!a)return [];const out=[];for(let i=0;i<6;i++)out.push({s:i+1,bb:a[i*3],rb:a[i*3+1],comb:a[i*3+2]});return out}
+function settingEvidence(r){
+ const g=Number(r.totalG||0),bb=Number(r.big||0),rb=Number(r.reg||0),spec=settingSpecRows(r.model);
+ if(!g||g<100||!spec.length)return null;
+ const logs=spec.map(x=>({s:x.s,l:poissonLogLab(bb,g/x.bb)+poissonLogLab(rb,g/x.rb)}));
+ const mx=Math.max(...logs.map(x=>x.l));const ex=logs.map(x=>({s:x.s,e:Math.exp(x.l-mx)})),sum=ex.reduce((a,b)=>a+b.e,0)||1;
+ const probs=ex.map(x=>({s:x.s,p:x.e/sum}));
+ const pHigh=probs.filter(x=>x.s>=4).reduce((a,b)=>a+b.p,0),p56=probs.filter(x=>x.s>=5).reduce((a,b)=>a+b.p,0),mean=probs.reduce((a,b)=>a+b.s*b.p,0);
+ const conf=clamp((g-500)/4500,0,1);
+ let score=50+(pHigh-.5)*100*conf;
+ const diff=Number(r.diff),peak=Number(r.maxDiff);
+ if(Number.isFinite(diff))score+=clamp(diff/2500,-1,1)*7*conf;
+ if(Number.isFinite(peak)&&peak>=2000)score+=2.5*conf;else if(Number.isFinite(peak)&&peak>=1000)score+=1.2*conf;
+ score=clamp(score,0,100);
+ const eligible=g>=1500;
+ const strong=eligible&&score>=62&&pHigh>=.55;
+ return {score,pHigh,p56,mean,conf,eligible,strong,g,bb,rb,regRate:rb?g/rb:null,combRate:(bb+rb)?g/(bb+rb):null,probs};
+}
+function scoreLabel(e){if(!e)return '判定不可';if(e.g<1000)return '材料少';if(e.score>=72)return 'かなり強め';if(e.score>=62)return '強め候補';if(e.score>=52)return '中間〜上も';if(e.score>=42)return '判別保留';return '低め寄り'}
+function scoreClass(e){if(!e||e.g<1000)return 'warn';if(e.score>=62)return 'good';if(e.score<42)return 'bad';return ''}
+function dateGap(a,b){const x=new Date(a+'T00:00:00Z'),y=new Date(b+'T00:00:00Z');return Math.round((y-x)/86400000)}
+const JP_WEEK=['日','月','火','水','木','金','土'];
+function weekdayIndex(date){const p=String(date||'').split('-').map(Number);if(p.length!==3||p.some(x=>!x))return null;return new Date(Date.UTC(p[0],p[1]-1,p[2])).getUTCDay()}
+function weekdayName(date){const i=weekdayIndex(date);return i===null?'-':JP_WEEK[i]+'曜'}
+function nextConfiguredEventDate(from=todayJST()){
+ const p=String(from).split('-').map(Number);if(p.length!==3||p.some(x=>!x))return null;
+ const wanted=Number(cfg.eventDay||22);
+ for(let add=0;add<15;add++){
+  const d=new Date(Date.UTC(p[0],p[1]-1+add,1));const y=d.getUTCFullYear(),m=d.getUTCMonth();
+  const last=new Date(Date.UTC(y,m+1,0)).getUTCDate();if(wanted>last)continue;
+  const cand=new Date(Date.UTC(y,m,wanted)).toISOString().slice(0,10);if(cand>=from)return cand;
+ }
+ return null;
+}
+function weekdaySummary(){
+ const rows=finalRows().filter(r=>r.isFinal!==false&&SETTING_SPECS[r.model]);
+ return JP_WEEK.map((name,wi)=>{
+  const a=rows.filter(r=>weekdayIndex(r.date)===wi),eligible=a.map(r=>({r,e:settingEvidence(r)})).filter(x=>x.e?.eligible),strong=eligible.filter(x=>x.e.strong);
+  const normal=eligible.filter(x=>!isEventDate(x.r.date)),normalStrong=normal.filter(x=>x.e.strong);
+  const diffs=a.map(r=>Number(r.diff)).filter(Number.isFinite);return {wi,name,days:new Set(a.map(r=>r.date)).size,n:eligible.length,hits:strong.length,rate:eligible.length?strong.length/eligible.length:null,normalN:normal.length,normalRate:normal.length?normalStrong.length/normal.length:null,avgDiff:diffs.length?diffs.reduce((x,y)=>x+y,0)/diffs.length:null};
+ })
+}
+function machineWeekdayStats(machine,targetDate){
+ const wi=weekdayIndex(targetDate);if(wi===null)return {n:0,hits:0,rate:null};
+ const a=finalRows().filter(r=>r.isFinal!==false&&String(r.machine)===String(machine)&&weekdayIndex(r.date)===wi&&SETTING_SPECS[r.model]).map(r=>({r,e:settingEvidence(r)})).filter(x=>x.e?.eligible);
+ const h=a.filter(x=>x.e.strong);return {n:a.length,hits:h.length,rate:a.length?h.length/a.length:null,weekday:JP_WEEK[wi]};
+}
+function hourJST(ts){if(!Number.isFinite(Number(ts)))return null;const parts=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',hour:'2-digit',hour12:false}).formatToParts(new Date(Number(ts)));const h=Number(parts.find(x=>x.type==='hour')?.value);return Number.isFinite(h)?h%24:null}
+function timeBandInfo(ts){const h=hourJST(ts);if(h===null)return null;if(h<12)return {id:'morning',label:'朝〜11:59'};if(h<15)return {id:'noon',label:'昼12〜14:59'};if(h<18)return {id:'evening',label:'夕15〜17:59'};if(h<21)return {id:'night',label:'夜18〜20:59'};return {id:'late',label:'閉店前21〜'} }
+function timeBandSummary(){
+ const order=[['morning','朝〜11:59'],['noon','昼12〜14:59'],['evening','夕15〜17:59'],['night','夜18〜20:59'],['late','閉店前21〜']];
+ const rows=(lab.snapshots||[]).filter(r=>r.isFinal!==true&&r.date&&r.machine&&Number.isFinite(Number(r.ts))&&SETTING_SPECS[r.model]);
+ return order.map(([id,label])=>{const a=rows.filter(r=>timeBandInfo(r.ts)?.id===id),ev=a.map(r=>settingEvidence(r)).filter(e=>e&&e.g>=800),strong=ev.filter(e=>e.score>=62),gs=ev.map(e=>e.g),scores=ev.map(e=>e.score);return {id,label,captures:new Set(a.map(r=>`${r.date}|${Math.floor(Number(r.ts)/900000)}`)).size,n:ev.length,avgG:gs.length?gs.reduce((x,y)=>x+y,0)/gs.length:null,avgScore:scores.length?scores.reduce((x,y)=>x+y,0)/scores.length:null,strongRate:ev.length?strong.length/ev.length:null};})
+}
+function currentTimeBandStat(){const band=timeBandInfo(Date.now());if(!band)return null;return timeBandSummary().find(x=>x.id===band.id)||null}
+function renderPatternLab(){
+ const wb=$('weekdayTrendBody'),tb=$('timeTrendBody'),mp=$('weekdayMachinePicks'),n22=$('next22Status');if(!wb||!tb||!mp||!n22)return;
+ const ws=weekdaySummary();wb.innerHTML=ws.map(x=>`<tr><td>${x.name}</td><td>${x.days}</td><td>${x.n}</td><td>${x.rate===null?'-':(x.rate*100).toFixed(1)+'%'}</td><td>${x.normalRate===null?'-':(x.normalRate*100).toFixed(1)+'%'}</td><td class="${(x.avgDiff??0)>=0?'pos':'neg'}">${x.avgDiff===null?'-':signed(Math.round(x.avgDiff))}</td></tr>`).join('');
+ const ts=timeBandSummary();tb.innerHTML=ts.map(x=>`<tr><td>${x.label}</td><td>${x.captures}</td><td>${x.n}</td><td>${x.avgG===null?'-':fmt(Math.round(x.avgG))}</td><td>${x.avgScore===null?'-':Math.round(x.avgScore)+'/100'}</td><td>${x.strongRate===null?'-':(x.strongRate*100).toFixed(1)+'%'}</td></tr>`).join('');
+ const target=latestLabDate(),wi=weekdayIndex(target),machines=[...new Set(finalRows().map(r=>String(r.machine)).filter(Boolean))];
+ const ranked=machines.map(machine=>{const st=machineWeekdayStats(machine,target),p=profileMap().get(machine),model=p?.model||finalRows().filter(r=>String(r.machine)===machine).at(-1)?.model||'';const shrunk=st.rate===null?0:(st.rate-.20)*(st.n/(st.n+4));return {machine,model,...st,shrunk}}).filter(x=>x.n>0).sort((a,b)=>b.shrunk-a.shrunk||b.n-a.n).slice(0,6);
+ mp.innerHTML=ranked.length?ranked.map((x,i)=>`<div class="row"><div class="rowtop"><div><b>${JP_WEEK[wi]||'-'}曜 #${i+1}　${esc(x.machine)}番 ${esc(MODELS[x.model]||x.model)}</b><div class="tiny">同じ曜日の閉店判定 n=${x.n} ／ 強め候補 ${x.hits}回</div></div><span class="pill ${x.rate!==null&&x.rate>=.35?'good':'warn'}">${x.rate===null?'-':(x.rate*100).toFixed(1)+'%'}</span></div></div>`).join(''):'<div class="empty">同じ曜日の閉店データが貯まると台番ごとの曜日クセを出すよ。</div>';
+ const next=nextConfiguredEventDate(),nextWi=next?weekdayIndex(next):null,eventRows=finalRows().filter(r=>r.isFinal!==false&&isEventDate(r.date)&&SETTING_SPECS[r.model]);const sameWeek=eventRows.filter(r=>weekdayIndex(r.date)===nextWi),sameEligible=sameWeek.map(r=>settingEvidence(r)).filter(e=>e?.eligible),sameStrong=sameEligible.filter(e=>e.strong);
+ const liveNow=currentTimeBandStat();const liveTxt=liveNow&&liveNow.n?`現在の時間帯「${liveNow.label}」は過去LIVE判定 n=${liveNow.n}、強め候補観測 ${(liveNow.strongRate*100).toFixed(1)}%。`:'時間帯データはこれから蓄積。';
+ n22.innerHTML=next?`🔥 次の<strong>${cfg.eventDay||22}日</strong>は <strong>${esc(next)}（${JP_WEEK[nextWi]}曜）</strong>。同じ曜日に当たった過去イベントの判定は <strong>n=${sameEligible.length}</strong>${sameEligible.length?`、強め候補率 <strong>${(sameStrong.length/sameEligible.length*100).toFixed(1)}%</strong>`:''}。<br><span class="tiny">${liveTxt} 曜日・時間は予言ではなく、過去データの偏りを可視化して候補選びの補助に使う。</span>`:'次回イベント日を計算できなかったよ。';
+}
+function machineInferenceProfiles(){
+ const rows=finalRows().filter(r=>r.isFinal!==false&&r.machine&&SETTING_SPECS[r.model]);
+ const by={};for(const r of rows)(by[r.machine]??=[]).push(r);
+ const out=[];
+ for(const [machine,arr0] of Object.entries(by)){
+  const arr=arr0.slice().sort((a,b)=>a.date.localeCompare(b.date));
+  const scored=arr.map(r=>({r,e:settingEvidence(r)})).filter(x=>x.e);
+  const eligible=scored.filter(x=>x.e.eligible),hits=eligible.filter(x=>x.e.strong);
+  const hitRate=eligible.length?hits.length/eligible.length:null;
+  const intervals=[];for(let i=1;i<hits.length;i++)intervals.push(dateGap(hits[i-1].r.date,hits[i].r.date));
+  const avgInterval=intervals.length?intervals.reduce((a,b)=>a+b,0)/intervals.length:null;
+  let repN=0,repHit=0;
+  const map=new Map(eligible.map(x=>[x.r.date,x]));
+  for(const x of hits){const d=new Date(x.r.date+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+1);const nd=d.toISOString().slice(0,10);if(map.has(nd)){repN++;if(map.get(nd).e.strong)repHit++;}}
+  const repeatRate=repN?repHit/repN:null;
+  const recent=eligible.slice(-3);const w=[.2,.3,.5].slice(3-recent.length);const ws=w.reduce((a,b)=>a+b,0)||1;const temp=recent.length?recent.reduce((s,x,i)=>s+x.e.score*w[i],0)/ws:null;
+  const ev=eligible.filter(x=>isEventDate(x.r.date)),normal=eligible.filter(x=>!isEventDate(x.r.date));
+  const evRate=ev.length?ev.filter(x=>x.e.strong).length/ev.length:null,normRate=normal.length?normal.filter(x=>x.e.strong).length/normal.length:null;
+  let type='観察中';
+  if(eligible.length>=5){
+   if(ev.length>=3&&normal.length>=3&&evRate-normRate>=.20)type='🔥22日型';
+   else if(repN>=3&&repeatRate>=.5)type='🔁連投型';
+   else if(hits.length>=2&&avgInterval!==null&&avgInterval<=3)type='⚡周期短め';
+   else if(hitRate!==null&&hitRate>=.35)type='📈投入多め';
+   else type='🎯単発型';
+  }
+  const latest=eligible.at(-1)||scored.at(-1)||null,lastStrong=hits.at(-1)||null;
+  out.push({machine,model:arr.at(-1)?.model||'',observed:arr.length,n:eligible.length,hits:hits.length,hitRate,avgInterval,repeatRate,repN,temp,type,latest,lastStrong,evRate,normRate});
+ }
+ return out;
+}
+function renderMachineInference(){
+ const box=$('machineProfiles'),sum=$('machineInferenceSummary');if(!box||!sum)return;
+ const ps=machineInferenceProfiles();const eligible=ps.filter(x=>x.n>0),with5=ps.filter(x=>x.n>=5),hot=eligible.filter(x=>x.hitRate!==null&&x.hitRate>=.35);
+ sum.innerHTML=`<div class="stat"><div class="k">判定可能台</div><div class="v">${eligible.length}</div><div class="tiny">1500G以上の閉店データあり</div></div><div class="stat"><div class="k">学習進行</div><div class="v">${with5.length}</div><div class="tiny">n=5以上の台</div></div><div class="stat"><div class="k">投入多め候補</div><div class="v">${hot.length}</div><div class="tiny">暫定35%以上</div></div>`;
+ if(!ps.length){box.innerHTML='<div class="empty">閉店データが入ると台番ごとの推理を開始するよ。</div>';return}
+ ps.sort((a,b)=>((b.hitRate??-1)-(a.hitRate??-1))||((b.temp??-1)-(a.temp??-1))||a.machine.localeCompare(b.machine));
+ box.innerHTML=ps.map((p,i)=>{
+   const rate=p.hitRate===null?'-':(p.hitRate*100).toFixed(1)+'%';const temp=p.temp===null?'-':Math.round(p.temp);const interval=p.avgInterval===null?'-':p.avgInterval.toFixed(1)+'日';const repeat=p.repeatRate===null?'-':(p.repeatRate*100).toFixed(1)+'%';
+   const last=p.lastStrong?p.lastStrong.r.date:'まだなし';const latest=p.latest?.e;const latestTxt=latest?`${Math.round(latest.score)}/100 ${scoreLabel(latest)}`:'-';const cls=p.n<5?'warn':(p.hitRate??0)>=.35?'good':'';
+   return `<div class="row"><div class="rowtop"><div><b><span class="rankNo">#${i+1}</span>${esc(p.machine)}番 ${esc(MODELS[p.model]||p.model)}</b><div class="tiny">閉店判定 n=${p.n} ／ 観測 ${p.observed}日 ／ 最終投入候補 ${esc(last)}</div></div><span class="pill ${cls}">${esc(p.type)}</span></div><div class="inferMeta"><span class="pill">投入推定率 <b>${rate}</b> (${p.hits}/${p.n})</span><span class="pill">直近温度 <b>${temp}</b></span><span class="pill">平均間隔 <b>${interval}</b></span><span class="pill">連投率 <b>${repeat}</b>${p.repN?` (${Math.round((p.repeatRate||0)*p.repN)}/${p.repN})`:''}</span></div><div class="miniBar"><div style="width:${p.hitRate===null?0:clamp(p.hitRate*100,0,100)}%"></div></div><div class="tiny" style="margin-top:7px">直近の閉店スコア：<strong>${latestTxt}</strong>${p.n<5?' ／ まだサンプル少。率は参考値。':''}</div></div>`;
+ }).join('');
+}
+
+function profileMap(){return new Map(machineInferenceProfiles().map(p=>[String(p.machine),p]))}
+function latestLabDate(){const a=finalRows().map(r=>r.date).filter(Boolean).sort();return a.at(-1)||todayJST()}
+function daysSince(date,target){if(!date||!target)return null;return dateGap(date,target)}
+function confidenceLabel(n){if(n>=10)return '参考度 高め';if(n>=5)return '学習中';if(n>=3)return '観察中';return '材料少'}
+function candidateReasons(p,targetDate,isLive=false,liveRow=null,liveEvidence=null){
+ const rs=[];
+ if(p){
+  if(p.hitRate!==null)rs.push(`投入推定率 ${(p.hitRate*100).toFixed(1)}%（${p.hits}/${p.n}）`);
+  if(p.temp!==null)rs.push(`直近温度 ${Math.round(p.temp)}/100`);
+  const last=p.lastStrong?.r?.date||null, gap=last?daysSince(last,targetDate):null;
+  if(gap!==null&&p.avgInterval!==null)rs.push(`前回強日から${gap}日 / 平均間隔 ${p.avgInterval.toFixed(1)}日`);
+  else if(gap!==null)rs.push(`前回強日から${gap}日`);
+  if(isEventDate(targetDate)&&p.evRate!==null)rs.push(`22日系投入率 ${(p.evRate*100).toFixed(1)}%`);
+  if(p.repeatRate!==null&&gap===1)rs.push(`連投率 ${(p.repeatRate*100).toFixed(1)}%`);
+  const wd=machineWeekdayStats(p.machine,targetDate);if(wd.n>=2&&wd.rate!==null)rs.push(`${wd.weekday}曜の強め候補率 ${(wd.rate*100).toFixed(1)}%（${wd.hits}/${wd.n}）`);
+ }
+ if(isLive&&liveRow&&liveEvidence){
+  const g=Number(liveRow.totalG)||0;
+  const rr=liveEvidence.regRate?`REG 1/${Math.round(liveEvidence.regRate)}`:'REG材料なし';
+  const cr=liveEvidence.combRate?`合算 1/${Math.round(liveEvidence.combRate)}`:'合算材料なし';
+  rs.unshift(`${fmt(g)}G時点 / ${rr} / ${cr}`);
+  rs.push(`当日内容スコア ${Math.round(liveEvidence.score)}/100`);
+ }
+ return rs.slice(0,4);
+}
+function morningCandidate(p,targetDate){
+ let raw=50;
+ const n=p?.n||0;
+ if(p){
+  if(p.hitRate!==null)raw+=(p.hitRate-.20)*48;
+  if(p.temp!==null)raw+=(p.temp-50)*.30;
+  const last=p.lastStrong?.r?.date||null, gap=last?daysSince(last,targetDate):null;
+  if(gap!==null&&p.avgInterval!==null){
+   const d=Math.abs(gap-p.avgInterval);
+   raw+=clamp(10-d*3.4,-5,10);
+   if(gap>p.avgInterval+3)raw+=2;
+  }
+  if(gap===1&&p.repeatRate!==null)raw+=(p.repeatRate-.25)*18;
+  if(isEventDate(targetDate)&&p.evRate!==null){
+   const base=p.normRate??p.hitRate??.20;
+   raw+=clamp((p.evRate-base)*30,-5,10);
+  }
+  const wd=machineWeekdayStats(p.machine,targetDate);
+  if(wd.n>=2&&wd.rate!==null){const base=p.hitRate??.20;const weight=wd.n/(wd.n+4);raw+=clamp((wd.rate-base)*12*weight,-3,4)}
+ }
+ const conf=n/(n+5);
+ const score=clamp(50+(raw-50)*Math.max(.22,conf),0,100);
+ return {score,confidence:confidenceLabel(n),reasons:candidateReasons(p,targetDate,false),n};
+}
+function liveCandidate(row,p,targetDate){
+ const base=morningCandidate(p,targetDate);
+ const e=settingEvidence(row);
+ if(!e)return {...base,live:false,row};
+ const g=Number(row.totalG)||0;
+ const liveWeight=clamp(g/3000,.18,.62);
+ const liveAdjusted=50+(e.score-50)*clamp(g/2200,.18,1);
+ let score=base.score*(1-liveWeight)+liveAdjusted*liveWeight;
+ // REGをやや重く、ただし小サンプルは抑える
+ if(e.regRate&&g>=800){
+  const spec=settingSpecRows(row.model);
+  if(spec.length){
+   const s4=spec[3]?.reg||null;
+   if(s4&&e.regRate<=s4)score+=3*clamp(g/2500,.2,1);
+  }
+ }
+ score=clamp(score,0,100);
+ return {score,confidence:confidenceLabel(Math.max(p?.n||0,Math.floor(g/1200))),reasons:candidateReasons(p,targetDate,true,row,e),n:p?.n||0,row,e,live:true};
+}
+function pickBadge(score,index){
+ if(index===0&&score>=55)return '🥇 本命';
+ if(index===1&&score>=52)return '🥈 対抗';
+ if(index===2)return '🕳 穴';
+ return `#${index+1}`;
+}
+function pickClass(score){return score>=65?'good':score>=55?'event':score<48?'bad':'warn'}
+const SEAT_SKIP_KEY='pekalog_live_occupied_v1';
+function seatSkipStore(){try{return JSON.parse(localStorage.getItem(SEAT_SKIP_KEY)||'{}')||{}}catch(e){return {}}}
+function occupiedMachines(date){const s=seatSkipStore(),a=s[String(date)]||[];return new Set(a.map(String))}
+function setOccupiedMachine(date,machine,on=true){
+ const s=seatSkipStore(),d=String(date),m=String(machine),set=new Set((s[d]||[]).map(String));
+ if(on)set.add(m);else set.delete(m);
+ s[d]=[...set];
+ try{localStorage.setItem(SEAT_SKIP_KEY,JSON.stringify(s))}catch(e){}
+ renderSeatPicks();
+}
+function markOccupied(machine){const d=latestLabDate();setOccupiedMachine(d,machine,true)}
+function unmarkOccupied(machine){const d=latestLabDate();setOccupiedMachine(d,machine,false)}
+function clearOccupied(){
+ const d=latestLabDate(),s=seatSkipStore();delete s[String(d)];
+ try{localStorage.setItem(SEAT_SKIP_KEY,JSON.stringify(s))}catch(e){}
+ renderSeatPicks();
+}
+function pickHtml(c,index,model,machine,isLive=false){
+ const reasons=(c.reasons||[]).map(x=>`<div class="reason">・${esc(x)}</div>`).join('');
+ const seatBtn=isLive?`<button class="btn dark small" style="margin-top:10px;width:100%" onclick="markOccupied('${esc(machine)}')">🚫 座られてる → 次の候補</button>`:'';
+ return `<div class="pickHero"><div class="rowtop"><div><div class="pickTitle"><span class="pickRank">${pickBadge(c.score,index)}</span><b>${esc(machine)}番 ${esc(MODELS[model]||model||'')}</b></div><div class="pickConfidence">${esc(c.confidence)}${c.n?` / 閉店n=${c.n}`:''}</div></div><div class="right"><div class="pickScore">${Math.round(c.score)}<small>/100</small></div><span class="pill ${pickClass(c.score)}">${c.score>=65?'強め候補':c.score>=55?'候補':c.score>=48?'観察':'薄め'}</span></div></div><div class="reasonList">${reasons||'<div class="reason">・まだデータ不足</div>'}</div>${seatBtn}</div>`;
+}
+function renderSeatPicks(){
+ const mbox=$('morningPicks'),lbox=$('livePicks'),status=$('seatPickStatus');if(!mbox||!lbox||!status)return;
+ const target=latestLabDate(),pm=profileMap(),occupied=occupiedMachines(target);
+ const machines=[...new Set(finalRows().map(r=>String(r.machine)).filter(Boolean))];
+ const morning=machines.map(machine=>{
+   const p=pm.get(machine),model=p?.model||finalRows().filter(r=>String(r.machine)===machine).at(-1)?.model||'';
+   const c=morningCandidate(p,target);return {machine,model,...c};
+ }).sort((a,b)=>b.score-a.score);
+ const topM=morning.slice(0,3);
+ mbox.innerHTML=topM.length?topM.map((c,i)=>pickHtml(c,i,c.model,c.machine,false)).join(''):'<div class="empty">閉店データが入ると朝イチ候補を出すよ。</div>';
+
+ const liveRows=finalRows().filter(r=>r.date===target&&r.isFinal===false&&r.machine);
+ const live=liveRows.map(r=>{
+   const p=pm.get(String(r.machine)),c=liveCandidate(r,p,target);
+   return {machine:String(r.machine),model:r.model,...c};
+ }).sort((a,b)=>b.score-a.score);
+ const available=live.filter(c=>!occupied.has(String(c.machine)));
+ const topL=available.slice(0,3);
+ lbox.innerHTML=topL.length?topL.map((c,i)=>pickHtml(c,i,c.model,c.machine,true)).join(''):(live.length?'<div class="empty">候補台は全部「座られてる」指定中。空いた台があれば下から戻せるよ。</div>':'<div class="empty">今日のLIVEデータを取り込むと「今から候補」を出すよ。</div>');
+
+ const best=available[0]||morning[0];
+ let msg=`対象日 <strong>${esc(target)}</strong>。`;
+ if(best){
+   if(best.score<55)msg+=` 今は突出した候補が薄いので、LAB判定は <strong>🚫無理に選ばず様子見寄り</strong>。`;
+   else msg+=` 現在の最上位は <strong>${esc(best.machine)}番 ${esc(MODELS[best.model]||best.model||'')}</strong>、候補優先度 <strong>${Math.round(best.score)}/100</strong>。`;
+ }
+ if(occupied.size){
+   const chips=[...occupied].map(m=>`<button class="btn dark small" style="margin:4px 4px 0 0" onclick="unmarkOccupied('${esc(m)}')">↩ ${esc(m)}番を戻す</button>`).join('');
+   msg+=`<div style="margin-top:9px"><b>🚫 座られてる：${occupied.size}台</b><br>${chips}<button class="btn dark small" style="margin-top:4px" onclick="clearOccupied()">全部解除</button></div>`;
+ }
+ msg+=` <br><span class="tiny">「座られてる」を押した台は今日の今から候補から一時除外し、次点を自動で繰り上げる。除外は当日だけ保存。点数は設定・勝利・期待収支を保証するものではなく、保存データ内での比較順位。</span>`;
+ status.innerHTML=msg;
+}
+
+function latestPeak(r){const a=[Number(r.diff),Number(r.maxDiff)].filter(Number.isFinite);return a.length?Math.max(...a):null}
+function reachedTags(r){let out=[];if(isEventDate(r.date))out.push('<span class="pill event">22日</span>');if(r.isFinal===true)out.push('<span class="pill good">閉店</span>');else if(r.isFinal===false)out.push('<span class="pill">LIVE</span>');const d=Number(r.diff),p=latestPeak(r);if(Number.isFinite(p)&&p>=2000){out.push(`<span class="pill hit2000">🔥${d>=2000?'現在2000':'2000到達'}</span>`)}else if(Number.isFinite(p)&&p>=1000){out.push(`<span class="pill hit1000">🟡${d>=1000?'現在1000':'1000到達'}</span>`)}return out.join('')}
+function renderDash(){const rows=finalRows(),dates=[...new Set(rows.map(r=>r.date))].sort();$('daysCount').textContent=dates.length;$('finalCount').textContent=rows.length;$('pekaCount').textContent=turkeyArchives().length;$('hypCount').textContent=hypotheses.length;
+ $('syncNotice').innerHTML=`PEKALOG連携：<strong>${turkeyArchives().length}件</strong> ／ LABスナップショット：<strong>${(lab.snapshots||[]).length}件</strong>${location.protocol==='file:'?'<br>⚠️ ローカルファイルで開いているため、公開PEKALOGのlocalStorageとは別物です。同じGitHub Pages配下に置くと直接連携します。':''}`;
+ const latest=dates.at(-1);$('latestDate').textContent=latest||'-';const hits=rows.filter(r=>r.date===latest&&((Number.isFinite(latestPeak(r))&&latestPeak(r)>=1000)||r.peak1000)).sort((a,b)=>(latestPeak(b)||0)-(latestPeak(a)||0));$('latestHits').innerHTML=hits.length?hits.map(r=>{const peak=latestPeak(r),cur=Number(r.diff);return `<div class="row"><div class="rowtop"><div><b>${esc(r.machine)}番 ${esc(MODELS[r.model]||r.model||'')}</b><div class="tiny">${fmt(r.totalG)}G / BB${fmt(r.big)} RB${fmt(r.reg)} / ${fmt(Number(r.big||0)+Number(r.reg||0))}ペカ</div></div><div class="right"><b class="${cur>=0?'pos':'neg'}">現在 ${signed(cur)}枚</b><div class="tiny">最高 ${Number.isFinite(peak)?signed(Math.round(peak)):'-'}枚</div><div>${reachedTags(r)}</div></div></div></div>`}).join(''):'<div class="empty">まだ1000枚到達データなし。</div>';
+ renderSeatPicks();renderMachineInference();renderDiscoveries();}
+function featureRows(rows,fn){return rows.filter(fn)}
+function discoveryLine(title,sub,rate,base,n){const delta=rate-base;const cls=n<5?'warn':delta>=10?'good':delta<=-5?'bad':'';return `<div class="row"><div class="rowtop"><div><b>${esc(title)}</b><div class="tiny">${esc(sub)}</div></div><span class="pill ${cls}">${n<5?'観察中':delta>=10?'有望':delta<=-5?'弱め':'差小'}</span></div><div class="smalltext" style="margin-top:7px">1000枚率 <b>${rate.toFixed(1)}%</b> ／ 基準 ${base.toFixed(1)}% ／ n=${n}</div></div>`}
+function renderDiscoveries(){const rows=finalRows().filter(r=>r.isFinal!==false);if(rows.length<2){$('discoveries').innerHTML='<div class="empty">データが貯まると、22日・機種・前日凹みなどを自動比較するよ。</div>';return}const base=rows.filter(r=>Number.isFinite(Number(r.diff)));const baseRate=base.length?base.filter(r=>Number(r.diff)>=1000).length/base.length*100:0;let ds=[];
+ const ev=base.filter(r=>isEventDate(r.date));if(ev.length)ds.push(['22日イベント','通常日と分離して検証',ev.filter(r=>Number(r.diff)>=1000).length/ev.length*100,baseRate,ev.length]);
+ for(const [id,name] of Object.entries(MODELS)){const a=base.filter(r=>r.model===id);if(a.length>=3)ds.push([name,`${name}全日`,a.filter(r=>Number(r.diff)>=1000).length/a.length*100,baseRate,a.length])}
+ // previous-day features
+ const byMachine={};for(const r of base){(byMachine[r.machine]??=[]).push(r)}let prevDeep=[],prevBoom=[];for(const arr of Object.values(byMachine)){arr.sort((a,b)=>a.date.localeCompare(b.date));for(let i=1;i<arr.length;i++){if(Number(arr[i-1].diff)<=-1000)prevDeep.push(arr[i]);if(Number(arr[i-1].diff)>=2000)prevBoom.push(arr[i])}}
+ if(prevDeep.length)ds.push(['前日-1000枚以下','翌日の1000枚OVER率',prevDeep.filter(r=>Number(r.diff)>=1000).length/prevDeep.length*100,baseRate,prevDeep.length]);if(prevBoom.length)ds.push(['前日+2000枚以上','爆出台翌日の1000枚OVER率',prevBoom.filter(r=>Number(r.diff)>=1000).length/prevBoom.length*100,baseRate,prevBoom.length]);
+ ds.sort((a,b)=>(b[2]-b[3])-(a[2]-a[3]));$('discoveries').innerHTML=ds.slice(0,6).map(x=>discoveryLine(...x)).join('')||'<div class="empty">分析条件に必要なサンプルがまだ少ないよ。</div>'}
+function evaluateHyp(h){
+ let rows=finalRows().filter(r=>r.date===h.date);if(h.model!=='all')rows=rows.filter(r=>r.model===h.model);if(h.machines?.length)rows=rows.filter(r=>h.machines.includes(String(r.machine)));if(!rows.length)return {status:'pending',text:'まだ結果データなし',rows:[]};
+ let hits=0;if(h.metric==='1000')hits=rows.filter(r=>Number(r.diff)>=1000).length;else if(h.metric==='2000')hits=rows.filter(r=>Number(r.diff)>=2000).length;else hits=rows.filter(r=>{const g=Number(r.totalG||0),reg=Number(r.reg||0),all=Number(r.big||0)+reg;return g>=5000&&((reg&&g/reg<=320)||(all&&g/all<=135))}).length;
+ const hitRate=rows.length?hits/rows.length*100:0, av=avg(rows,'diff')||0;
+ const baselineRows=finalRows().filter(r=>r.date===h.date && (!h.machines?.length || !h.machines.includes(String(r.machine))));
+ const baseHit=baselineRows.length?baselineRows.filter(r=>Number(r.diff)>=1000).length/baselineRows.length*100:null;
+ let ok=false, rule=h.success||'any';
+ if(rule==='any')ok=hits>=1; else if(rule==='half')ok=hits/rows.length>=.5; else if(rule==='avg0')ok=av>0; else if(rule==='avg500')ok=av>=500; else if(rule==='uplift10')ok=baseHit!==null && hitRate>=baseHit+10;
+ const baseText=baseHit===null?'':` ／ 当日基準1000率 ${baseHit.toFixed(1)}%`;
+ return {status:ok?'hit':'miss',text:`${hits}/${rows.length}台 HIT (${hitRate.toFixed(1)}%) ／ 平均 ${signed(Math.round(av))}枚${baseText}`,rows,hitRate,av,baseHit}
+}
+function renderHyp(){if(!hypotheses.length){$('hypList').innerHTML='<div class="empty">仮説はまだなし。次の22日の読みから入れよう🧪</div>';return}$('hypList').innerHTML=hypotheses.slice().sort((a,b)=>b.createdAt-a.createdAt).map(h=>{const e=evaluateHyp(h),cls=e.status==='hit'?'good':e.status==='miss'?'bad':'warn';return `<div class="row"><div class="rowtop"><div><b>${esc(h.date)} ${esc(h.title)}</b><div class="tiny">${h.model==='all'?'全ジャグ':esc(MODELS[h.model]||h.model)} ${h.machines?.length?'／ 台 '+h.machines.join(', '):''}</div></div><span class="pill ${cls}">${e.status==='hit'?'🎯 HIT':e.status==='miss'?'❌ MISS':'⏳ 待ち'}</span></div><div class="smalltext" style="margin-top:7px">${esc(e.text)} ／ 自信度 ${'★'.repeat(Number(h.confidence||1))}</div><div class="tiny" style="margin-top:5px">理由：${esc(h.reason||'-')}<br>登録：${new Date(h.createdAt).toLocaleString('ja-JP')}</div></div>`}).join('')}
+function saveHyp(){const title=$('hTitle').value.trim(),date=$('hDate').value;if(!title||!date)return alert('検証日と仮説名を入れてね');const machines=$('hMachines').value.split(',').map(x=>x.trim()).filter(Boolean);hypotheses.unshift({id:Date.now(),createdAt:Date.now(),date,title,model:$('hModel').value,machines,metric:$('hMetric').value,confidence:Number($('hConfidence').value),event:$('hEvent').value,success:$('hSuccess').value,reason:$('hReason').value.trim()});persist();$('hTitle').value='';$('hMachines').value='';$('hReason').value='';renderAll();alert('仮説をロックしたよ 🔒')}
+function avg(a,key){const b=a.map(x=>Number(x[key])).filter(Number.isFinite);return b.length?b.reduce((s,x)=>s+x,0)/b.length:null}
+function renderEvent(){const rows=finalRows().filter(r=>r.isFinal!==false&&Number.isFinite(Number(r.diff))),ev=rows.filter(r=>isEventDate(r.date)),norm=rows.filter(r=>!isEventDate(r.date));const evDates=[...new Set(ev.map(r=>r.date))];$('eventDays').textContent=evDates.length;$('eventAvgDiff').textContent=ev.length?signed(Math.round(avg(ev,'diff'))) : '-';$('event1000').textContent=pct(ev.filter(r=>Number(r.diff)>=1000).length,ev.length);$('event2000').textContent=pct(ev.filter(r=>Number(r.diff)>=2000).length,ev.length);
+ const er=ev.length?ev.filter(r=>Number(r.diff)>=1000).length/ev.length:0,nr=norm.length?norm.filter(r=>Number(r.diff)>=1000).length/norm.length:0;const ratio=nr?er/nr:null;let score='-';if(ev.length>=3){let raw=(er*2)+(ev.filter(r=>Number(r.diff)>=2000).length/ev.length*1.5)+Math.max(0,Math.min(.3,(avg(ev,'diff')||0)/5000));score=Math.max(1,Math.min(5,1+raw*4)).toFixed(1)}$('eventScore').textContent=score==='-'?'-':score+'/5';$('eventCompare').innerHTML=ev.length?`22日の1000枚OVER率は <strong>${(er*100).toFixed(1)}%</strong>。通常日は <strong>${(nr*100).toFixed(1)}%</strong>${ratio?`、約 <strong>${ratio.toFixed(2)}倍</strong>`:''}。<br><span class="tiny">※サンプルが少ない間は「強い」と断定せず観察。</span>`:'22日データが入ると通常日との比較を開始する。';
+ const by=rowsByDate(),trend=evDates.sort().map(d=>{const a=(by[d]||[]).filter(r=>Number.isFinite(Number(r.diff)));return {d,n:a.length,av:avg(a,'diff'),r1:a.filter(r=>Number(r.diff)>=1000).length,r2:a.filter(r=>Number(r.diff)>=2000).length,peka:Math.max(0,...a.map(r=>Number(r.big||0)+Number(r.reg||0)))}});$('eventTrend').innerHTML=trend.length?`<table><tr><th>22日</th><th>曜日</th><th>台数</th><th>平均差枚</th><th>1000</th><th>2000</th><th>最高ペカ</th></tr>${trend.map(x=>`<tr><td>${x.d}</td><td>${weekdayName(x.d)}</td><td>${x.n}</td><td class="${x.av>=0?'pos':'neg'}">${signed(Math.round(x.av||0))}</td><td>${pct(x.r1,x.n)}</td><td>${pct(x.r2,x.n)}</td><td>${x.peka}</td></tr>`).join('')}</table>`:'<div class="empty">22日データなし</div>';
+ const last2=trend.slice(-2);if(last2.length>=2){const p=last2[0],c=last2[1],d=Math.round((c.av||0)-(p.av||0)),pp=(c.n?c.r1/c.n*100:0)-(p.n?p.r1/p.n*100:0);$('eventLatestDelta').innerHTML=`最新22日 <strong>${c.d}</strong> は前回 ${p.d} 比で、平均差枚 <strong class="${d>=0?'pos':'neg'}">${signed(d)}枚</strong>、1000枚率 <strong>${pp>=0?'+':''}${pp.toFixed(1)}pt</strong>。`; }else $('eventLatestDelta').textContent='22日が2回以上貯まると「前回から強くなった/弱くなった」を表示する。';
+ const ew=JP_WEEK.map((name,wi)=>{const a=ev.filter(r=>weekdayIndex(r.date)===wi),dates=new Set(a.map(r=>r.date)),diffs=a.map(r=>Number(r.diff)).filter(Number.isFinite);return {name,days:dates.size,n:a.length,av:diffs.length?diffs.reduce((x,y)=>x+y,0)/diffs.length:null,r1:a.filter(r=>Number(r.diff)>=1000).length}}).filter(x=>x.n);$('eventWeekdays').innerHTML=ew.length?`<table><tr><th>曜日</th><th>イベント日数</th><th>台数</th><th>平均差枚</th><th>1000枚率</th></tr>${ew.map(x=>`<tr><td>${x.name}曜</td><td>${x.days}</td><td>${x.n}</td><td class="${(x.av??0)>=0?'pos':'neg'}">${x.av===null?'-':signed(Math.round(x.av))}</td><td>${pct(x.r1,x.n)}</td></tr>`).join('')}</table>`:'<div class="empty">22日の曜日別データはまだなし。</div>';
+ const mr=Object.entries(MODELS).map(([id,name])=>{const a=ev.filter(r=>r.model===id),b=norm.filter(r=>r.model===id);return {name,a,b}}).filter(x=>x.a.length||x.b.length);$('eventModels').innerHTML=mr.length?`<table><tr><th>機種</th><th>22日平均</th><th>通常平均</th><th>22日1000率</th><th>通常1000率</th></tr>${mr.map(x=>`<tr><td>${x.name}</td><td>${x.a.length?signed(Math.round(avg(x.a,'diff'))):'-'}</td><td>${x.b.length?signed(Math.round(avg(x.b,'diff'))):'-'}</td><td>${pct(x.a.filter(r=>Number(r.diff)>=1000).length,x.a.length)}</td><td>${pct(x.b.filter(r=>Number(r.diff)>=1000).length,x.b.length)}</td></tr>`).join('')}</table>`:'<div class="empty">機種比較データなし</div>';
+ const pr=ev.slice().sort((a,b)=>(Number(b.big||0)+Number(b.reg||0))-(Number(a.big||0)+Number(a.reg||0))).slice(0,8);$('pekaRecords').innerHTML=pr.length?pr.map((r,i)=>`<div class="row"><div class="rowtop"><div><b>${i+1}. ${r.date} ${r.machine}番 ${esc(MODELS[r.model]||r.model)}</b><div class="tiny">BB${r.big||0} + RB${r.reg||0}</div></div><div class="right"><b style="font-size:20px">${Number(r.big||0)+Number(r.reg||0)}ペカ</b><div class="tiny">${signed(r.diff)}枚</div></div></div></div>`).join(''):'<div class="empty">22日のペカ記録はまだなし。</div>'}
+function ifAnalysis(a){const date=a.date,machine=String(a.machine||'');if(!date||!machine)return null;const final=latestSnapshot(date,machine);if(!final)return {kind:'nodata'};const endTs=Number(a.endedAt||a.id||a.history?.at(-1)?.ts||0);const near=endTs?nearestSnapshot(date,machine,endTs):null;if(near&&Number.isFinite(Number(near.diff))&&Number.isFinite(Number(final.diff))){const after=Number(final.diff)-Number(near.diff);return {kind:'snap',near,final,after}}if(a.diffCoins!==''&&Number.isFinite(Number(a.diffCoins))&&Number.isFinite(Number(final.diff))){return {kind:'finalonly',final,after:Number(final.diff)-Number(a.diffCoins)}}return {kind:'final',final}}
+function renderIF(){
+ const a=turkeyArchives().slice().sort((x,y)=>Number(y.endedAt||y.id||0)-Number(x.endedAt||x.id||0));if(!a.length){$('ifList').innerHTML='<div class="empty">PEKALOGで「ターキー」と店名を入れて実戦保存すると、ここに出てくるよ。</div>';$('reasonStats').innerHTML='';return}
+ let down=0,up=0,flat=0,valid=0;const reasonMap={};
+ $('ifList').innerHTML=a.map(x=>{const z=ifAnalysis(x),model=MODELS[x.model]||x.model||'',reason=x.endReason||'未記録';let body='';if(!z||z.kind==='nodata')body='<span class="pill warn">LABデータ待ち</span> 同日の台データがまだない。';else if(z.kind==='snap'){valid++;if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;(reasonMap[reason]??=[]).push(z.after);body=`ヤメ時刻付近 <b>${signed(z.near.diff)}枚</b> → 閉店 <b>${signed(z.final.diff)}枚</b><br>その後 <b class="${z.after>0?'pos':'neg'}">${signed(z.after)}枚</b> ${z.after>=500?'😇 その後伸びた':z.after<=-500?'🏃 撤退成功寄り':'➖ ほぼ横ばい'}`;}else if(z.kind==='finalonly'){valid++;if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;(reasonMap[reason]??=[]).push(z.after);body=`PEKALOG記録 <b>${signed(x.diffCoins)}枚</b> → 店最終 <b>${signed(z.final.diff)}枚</b><br>差 <b class="${z.after>0?'pos':'neg'}">${signed(z.after)}枚</b> <span class="tiny">※時刻スナップショットなしの簡易比較</span>`;}else body=`店最終：<b>${signed(z.final.diff)}枚</b>。PEKALOG側の差枚か時刻スナップショットがあるとIF比較できる。`;
+ return `<div class="row"><div class="rowtop"><div><b>${esc(x.date||'-')} ${esc(x.machine||'-')}番 ${esc(model)}</b><div class="tiny">PEKALOG ${fmt(x.totalG)}G / BB${fmt(x.big)} RB${fmt(x.reg)} ／ ヤメ理由：${esc(reason)}</div></div><span class="pill">${x.diffCoins!==''?signed(x.diffCoins)+'枚':'差枚未入力'}</span></div><div class="smalltext" style="margin-top:8px">${body}</div></div>`}).join('');
+ $('decisionSummary').innerHTML=valid?`IF比較できた実戦 <strong>${valid}件</strong>。その後 +500枚以上 ${up}件 ／ -500枚以下 ${down}件 ／ 横ばい ${flat}件。<br><span class="tiny">「勝ってた/負けてた」ではなく、その後実績として判断ルールを検証する。</span>`:'実戦とLABデータが一致すると判断クセ集計を開始する。';
+ const rs=Object.entries(reasonMap).map(([reason,vals])=>({reason,n:vals.length,av:vals.reduce((a,b)=>a+b,0)/vals.length,up:vals.filter(v=>v>=500).length,down:vals.filter(v=>v<=-500).length})).sort((a,b)=>b.n-a.n);
+ $('reasonStats').innerHTML=rs.length?rs.map(r=>`<div class="row"><div class="rowtop"><div><b>${esc(r.reason)}</b><div class="tiny">n=${r.n} ／ その後+500 ${r.up} ／ -500 ${r.down}</div></div><div class="right"><b class="${r.av>=0?'pos':'neg'}">平均 ${signed(Math.round(r.av))}枚</b></div></div></div>`).join(''):'<div class="empty">ヤメ理由つき実戦が貯まると理由別に比較する。</div>';
+}
+
+
+function addDaysISO(date,delta){
+ const p=String(date||'').split('-').map(Number);if(p.length!==3||p.some(x=>!x))return date;
+ const d=new Date(Date.UTC(p[0],p[1]-1,p[2]));d.setUTCDate(d.getUTCDate()+delta);return d.toISOString().slice(0,10);
+}
+function combNumber(v){const m=String(v||'').match(/1\/([\d.]+)/);const n=m?Number(m[1]):null;return Number.isFinite(n)?n:null}
+function bundleSnapshot(rec,date,statKey,graphKey,isFinal){
+ const st=rec?.stats?.[statKey]||{}, g=rec?.graphs?.[graphKey]||{};
+ const cap=Date.parse(rec?.capturedAt||'');
+ const ts=isFinal?Date.parse(date+'T23:59:00+09:00'):(Number.isFinite(cap)?cap:Date.now());
+ const hist=statKey==='today'&&Array.isArray(rec?.historyRows)?rec.historyRows:[];
+ return {
+  date,ts,machine:normMachine(rec?.machine),model:modelIdFromName(rec?.model),modelName:rec?.model||'',
+  totalG:Number.isFinite(Number(st.totalGEst))?Number(st.totalGEst):null,totalGEstimated:true,
+  big:Number(st.big||0),reg:Number(st.reg||0),comb:combNumber(st.combined),
+  diff:Number.isFinite(Number(g.currentDiffEst))?Number(g.currentDiffEst):null,
+  maxDiff:Number.isFinite(Number(g.peakDiffEst))?Number(g.peakDiffEst):null,
+  minDiff:Number.isFinite(Number(g.troughDiffEst))?Number(g.troughDiffEst):null,
+  peak1000:!!g.peak1000,peak2000:!!g.peak2000,
+  currentGame:statKey==='today'?nval(rec?.currentGame):null,
+  historyCount:hist.length,lastBonus:hist[0]||null,history:hist,
+  graphMode:'svg-dom-estimate',diffEstimated:true,
+  updated:rec?.updated||null,source:'pscube-dom-collector',
+  isFinal,snapshotType:isFinal?'historical-final':'live'
+ };
+}
+function turkeyBundleToSnapshots(pkg){
+ if(!pkg||pkg.kind!=='pekalog-turkey-bundle')throw new Error('ターキー22台JSONではないよ');
+ const rows=Array.isArray(pkg.machines)?pkg.machines:[], snaps=[];
+ for(const rec of rows){
+  if(!rec||!rec.machine)continue;
+  snaps.push(bundleSnapshot(rec,pkg.date,'today','today',false));
+  snaps.push(bundleSnapshot(rec,addDaysISO(pkg.date,-1),'prev1','prev1',true));
+  snaps.push(bundleSnapshot(rec,addDaysISO(pkg.date,-2),'prev2','prev2',true));
+ }
+ if(snaps.length)mergeData({snapshots:snaps});
+ return {count:snaps.length,machineCount:rows.length,graphOk:snaps.filter(x=>Number.isFinite(Number(x.diff))).length,histOk:rows.filter(x=>Array.isArray(x.historyRows)&&x.historyRows.length).length,errors:0,total:rows.length,bundle:true};
+}
+
+function collectorToSnapshots(pkg){
+ if(pkg?.kind==='pekalog-turkey-bundle')return turkeyBundleToSnapshots(pkg);
+ if(!pkg||pkg.kind!=='pekalog-collector')throw new Error('PEKALOG収集JSONではないよ');
+ const rows=Array.isArray(pkg.machines)?pkg.machines:[];
+ const snaps=[];let graphOk=0,histOk=0,errors=0;
+ for(const rec of rows){
+  if(!rec||!rec.machine||!rec.basic||rec.basic.error){errors++;continue}
+  try{
+   const s=parseBasicJSON(rec.basic,pkg.date||todayJST(),rec.machine);
+   if(rec.history&&!rec.history.error){Object.assign(s,parseHistoryJSON(rec.history));histOk++}
+   if(rec.graph&&!rec.graph.error){const g=parseGraphJSON(rec.graph,pkg.date||s.date);s.diff=g.diff;s.maxDiff=g.maxDiff;s.minDiff=g.minDiff;s.graphMode=g.graphMode;s.graphPoints=g.pointCount;if(Number.isFinite(Number(g.diff)))graphOk++}
+   else{s.diff=null;s.graphMode='collector-no-graph'}
+   const cap=Date.parse(pkg.capturedAt||'');if(Number.isFinite(cap)&&(!s.ts||s.ts>Date.now()+86400000))s.ts=cap;
+   s.source='pscube-collector';snaps.push(s)
+  }catch(e){errors++}
+ }
+ if(snaps.length)mergeData({snapshots:snaps});
+ return {count:snaps.length,graphOk,histOk,errors,total:rows.length};
+}
+function collectorStatusText(r){if(r.bundle)return `✅ <strong>${r.machineCount}台の収集完了</strong>。本日LIVE＋1日前＋2日前を合わせて <strong>${r.count}件</strong> LABへ追加。差枚解析 ${r.graphOk}件 ／ 履歴 ${r.histOk}台。<br><span class="tiny">本日はLIVE、1日前・2日前は閉店データとして保存。翌日の収集で前日の閉店値が自動的に確定していく。</span>`;return `✅ <strong>${r.count}/${r.total}台をLABへ追加</strong>。履歴 ${r.histOk}台${r.graphOk?` ／ 差枚解析 ${r.graphOk}台`:''}${r.errors?` ／ 失敗 ${r.errors}台`:''}。${r.graphOk?'1000/2000枚分析へそのまま反映したよ。':'差枚はグラフ点列の解析が通った台から自動反映する。'}`}
+
+function saveImportMeta(j,r,source){
+ const meta={
+  importedAt:new Date().toISOString(),
+  dataDate:j?.date||null,
+  machines:r?.machineCount??r?.count??null,
+  snapshots:r?.count??null,
+  source:source||'collector',
+  version:j?.version||''
+ };
+ try{localStorage.setItem(IMPORT_META_KEY,JSON.stringify(meta))}catch(e){}
+ return meta;
+}
+function lastImportMeta(){
+ try{return JSON.parse(localStorage.getItem(IMPORT_META_KEY)||'null')}catch(e){return null}
+}
+function importMetaText(){
+ const m=lastImportMeta();if(!m)return '';
+ let when='';
+ try{when=new Date(m.importedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}catch(e){}
+ const dataDate=m.dataDate?` ／ データ日 ${m.dataDate}`:'';
+ return `📥 最終取込：<strong>${when||'不明'}</strong>${m.machines!=null?` ／ ${m.machines}台`:''}${m.snapshots!=null?` ／ ${m.snapshots}件`:''}${dataDate}`;
+}
+
+function importCollectorObject(j,source='collector'){const r=collectorToSnapshots(j);saveImportMeta(j,r,source);const el=$('collectorStatus');if(el)el.innerHTML=collectorStatusText(r)+'<br><span class="tiny">'+importMetaText()+'</span>';renderAll();return r}
+function importCollectorFile(ev){const f=ev.target.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const j=JSON.parse(rd.result);const r=importCollectorObject(j,'file');alert(`${r.machineCount??r.count}台ぶん読み込んだよ！`)}catch(e){alert('収集JSONを読み込めなかったよ：'+e.message)}ev.target.value=''};rd.readAsText(f)}
+function importCollectorPaste(){const t=$('collectorPaste')?.value.trim();if(!t)return alert('収集JSONを貼り付けてね');try{const j=JSON.parse(t);const r=importCollectorObject(j,'paste');$('collectorPaste').value='';alert(`${r.machineCount??r.count}台ぶん読み込んだよ！`)}catch(e){alert('貼り付けJSONを読み込めなかったよ：'+e.message)}}
+async function importCollectorClipboard(){
+ const btn=$('collectorClipboardBtn');
+ const old=btn?.textContent;
+ if(btn){btn.disabled=true;btn.textContent='📋 読み取り中…'}
+ try{
+  if(!navigator.clipboard?.readText)throw new Error('このブラウザではクリップボード読取が使えません');
+  const t=(await navigator.clipboard.readText()).trim();
+  if(!t)throw new Error('クリップボードが空だよ');
+  const j=JSON.parse(t);
+  const r=importCollectorObject(j,'clipboard');
+  if($('collectorPaste'))$('collectorPaste').value='';
+  alert(`✅ ${r.machineCount??r.count}台 ／ ${r.count}件を取り込んだよ！`);
+ }catch(e){
+  const msg=String(e?.message||e);
+  if(/denied|NotAllowed|permission|許可/i.test(msg)){
+   alert('クリップボードの読取が許可されなかったよ。下の貼り付け欄に長押し→「ペースト」で入れればOK！');
+  }else{
+   alert('クリップボードから読み込めなかったよ：'+msg);
+  }
+ }finally{
+  if(btn){btn.disabled=false;btn.textContent=old||'📋 クリップボードから取込'}
+ }
+}
+
+async function loadRemote(silent=false){try{const r=await fetch('./daily.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error(r.status);const j=await r.json();mergeData(j);if(!silent)alert('daily.jsonを読み込んだよ')}catch(e){if(!silent)alert('daily.jsonはまだ接続されてないよ。今はJSON読込かデモで試せる。')}renderAll()}
+function mergeData(j){const incoming=Array.isArray(j)?j:(j.snapshots||[]);if(!Array.isArray(incoming))return;const map=new Map((lab.snapshots||[]).map(s=>[(s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s]));for(const raw of incoming){const s={...raw,machine:normMachine(raw.machine)};map.set((s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s);}lab.snapshots=[...map.values()];persist()}
+function demoData(){if(!confirm('分析画面確認用のDEMOデータを追加する？（実データではありません）'))return;const models=['gogo3','gogo3','gogo3','my5','my5','neoim'];const machines=['301','302','303','311','312','321'];const dates=['2026-06-22','2026-07-22','2026-08-22','2026-09-10','2026-09-11'];let arr=[];dates.forEach((d,di)=>machines.forEach((m,i)=>{let g=4200+((di*777+i*433)%3500),big=14+((di*7+i*5)%20),reg=10+((di*5+i*3)%18),diff=((di*911+i*733)%4200)-1500;if(d.endsWith('-22')){g+=1300;big+=7;reg+=6;diff+=700}arr.push({date:d,ts:new Date(d+'T22:35:00+09:00').getTime(),machine:m,model:models[i],totalG:g,big,reg,diff,demo:true})}));
+ // one unmistakable 72-peka DEMO record, explicitly demo only
+ arr.push({date:'2026-08-22',ts:new Date('2026-08-22T22:36:00+09:00').getTime(),machine:'399-DEMO',model:'gogo3',totalG:8000,big:39,reg:33,diff:2600,demo:true});mergeData({snapshots:arr});renderAll()}
+function renderData(){const demos=(lab.snapshots||[]).filter(x=>x.demo).length,live=(lab.snapshots||[]).filter(x=>['pscube-live','pscube-collector','pscube-dom-collector','pscube-auto-sync'].includes(x.source)).length;let sync='';try{const m=JSON.parse(localStorage.getItem('pekalog_turkey_sync_meta_v1')||'null');if(m)sync=`<br>🦃 最終自動同期：<strong>${new Date(m.syncedAt).toLocaleString('ja-JP')}</strong> ／ ${m.machines}台`;}catch(e){}const imp=importMetaText();$('dataStatus').innerHTML=`スナップショット <strong>${(lab.snapshots||[]).length}件</strong>${live?` ／ P's CUBE ${live}件`:''}${demos?`（DEMO ${demos}件）`:''}。${sync}${imp?`<br>${imp}`:''}<br>収集JSON・<code>daily.json</code>・CSV/JSONは全部同じ分析エンジンに入る。`}
+function exportData(){const blob=new Blob([JSON.stringify({version:'0.11-weekday-time',exportedAt:new Date().toISOString(),snapshots:lab.snapshots,hypotheses},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pekalog_lab_backup.json';a.click();URL.revokeObjectURL(a.href)}
+function importFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(j.kind==='pekalog-collector'||j.kind==='pekalog-turkey-bundle'){const z=importCollectorObject(j);alert(`${z.count}台ぶんの収集JSONを読み込んだよ`)}else{if(j.snapshots)mergeData(j);if(Array.isArray(j.hypotheses)){hypotheses=j.hypotheses;persist()}renderAll();alert('LABデータを読み込んだよ')}}catch(e){alert('JSONを読み込めなかったよ')}ev.target.value=''};r.readAsText(f)}
+function parseCSVLine(line){const out=[];let cur='',q=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'){if(q&&line[i+1]==='"'){cur+='"';i++}else q=!q}else if(c===','&&!q){out.push(cur.trim());cur=''}else cur+=c}out.push(cur.trim());return out}
+function importCSVText(){const text=$('csvPaste').value.trim();if(!text)return alert('CSVを貼ってね');const lines=text.split(/\r?\n/).filter(Boolean),first=parseCSVLine(lines[0]);const expected=['date','ts','machine','model','totalG','big','reg','diff'];let start=0,headers=expected;if(first.some(x=>expected.includes(x))){headers=first;start=1}let arr=[];for(let i=start;i<lines.length;i++){const vals=parseCSVLine(lines[i]),o={};headers.forEach((h,j)=>o[h]=vals[j]);['ts','totalG','big','reg','diff'].forEach(k=>{if(o[k]!==undefined&&o[k]!=='')o[k]=Number(o[k])});if(o.date&&o.machine)arr.push(o)}if(!arr.length)return alert('取り込める行がなかったよ');mergeData({snapshots:arr});$('csvPaste').value='';renderAll();alert(`${arr.length}件取り込んだよ`)}
+function saveEventConfig(){const d=Number($('eventDay').value||22);if(d<1||d>31)return alert('特定日は1〜31で入れてね');cfg.eventDay=d;cfg.extraEvents=$('extraEvents').value.split(',').map(x=>x.trim()).filter(Boolean);persist();renderAll();alert('イベント設定を保存したよ 🔥')}
+function renderConfig(){if($('eventDay'))$('eventDay').value=cfg.eventDay||22;if($('extraEvents'))$('extraEvents').value=(cfg.extraEvents||[]).join(',')}
+function renderAll(){renderDash();renderPatternLab();renderHyp();renderEvent();renderIF();renderData();renderConfig()}
+nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collectorFile').onchange=importCollectorFile;$('collectorPasteBtn').onclick=importCollectorPaste;$('collectorClipboardBtn').onclick=importCollectorClipboard;$('exportBtn').onclick=exportData;$('reloadRemote').onclick=()=>loadRemote(false);$('demoBtn').onclick=demoData;$('csvImportBtn').onclick=importCSVText;$('saveEventCfg').onclick=saveEventConfig;$('hDate').value=todayJST();initLiveUI();renderAll();loadRemote(true);
+</script>
+
+</body>
+</html>

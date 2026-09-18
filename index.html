@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.5.3 LAB SEAT SKIP</title>
+<title>ペカログ JUGGLER EDITION v3.5.4 LAB WEEKDAY + TIME</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -88,7 +88,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.5.3 LAB SEAT SKIP</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.5.4 LAB WEEKDAY + TIME</div>
 </header>
 
 <div class="card">
@@ -259,12 +259,12 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 
 <div class="card">
  <h3>🧪 PEKALOG LAB</h3>
- <div class="notice">朝は前日の答え合わせ。打ちに行く日は道中で最新LIVEを取って「今日座るならコレ！」へ。</div>
+ <div class="notice">朝は前日の答え合わせ。曜日・時間帯カルテも自動更新。打ちに行く日は道中で最新LIVEを取って「今日座るならコレ！」へ。</div>
  <div id="turkeySyncStatus" class="notice" style="margin-top:9px">🦃 最終収集：確認中…</div>
  <div id="turkeySyncHint" class="tiny" style="margin-top:6px"></div>
  <div class="grid2" style="margin-top:9px">
   <button class="btn cyan small" onclick="startTurkeyCollection()">🦃 最新データを収集</button>
-  <button class="btn violet small" onclick="location.href='./pekalog_lab_v010_seat_skip.html'">🧪 LABを開く</button>
+  <button class="btn violet small" onclick="location.href='./pekalog_lab_v011_weekday_time.html'">🧪 LABを開く</button>
  </div>
 </div>
 
@@ -302,7 +302,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
   </div>
   <div id="turkeySyncDoneButtons" class="grid2 hidden">
    <button class="btn green" onclick="closeTurkeySyncPrompt()">閉じる</button>
-   <button class="btn violet" onclick="location.href='./pekalog_lab_v010_seat_skip.html'">LABを見る</button>
+   <button class="btn violet" onclick="location.href='./pekalog_lab_v011_weekday_time.html'">LABを見る</button>
   </div>
  </div>
 </div>
