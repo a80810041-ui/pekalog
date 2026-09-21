@@ -1035,6 +1035,138 @@ nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collecto
   turkeyArchives=function(){return archiveData()};
   renderAll();
 })();
+</script><script id="pekalog-lab-v013-hold-trait-patch">
+/* =========================================================
+   PEKALOG LAB v0.13 据えクセ PATCH
+   - 「連投型」と「据えっぽい連続挙動」を分けて観測
+   - 据えクセ = 前日が強め候補だった機会のうち、
+     翌日も強め候補かつスコア差が小さい日が多い台
+   - 設定据え置きを断定するものではない
+   - 朝イチ候補の理由欄にも据え傾向を表示
+   - 保存データ形式は変更しない
+   ========================================================= */
+(function(){
+
+  function holdTrait(machine,targetDate=todayJST()){
+    const rows=finalRows()
+      .filter(r=>
+        r.isFinal!==false &&
+        String(r.machine)===String(machine) &&
+        String(r.date||'') < String(targetDate||'') &&
+        SETTING_SPECS[r.model]
+      )
+      .map(r=>({r,e:settingEvidence(r)}))
+      .filter(x=>x.e?.eligible)
+      .sort((a,b)=>a.r.date.localeCompare(b.r.date));
+
+    let opp=0, sameStrong=0, nextStrong=0;
+    for(let i=1;i<rows.length;i++){
+      const prev=rows[i-1],cur=rows[i];
+      if(dateGap(prev.r.date,cur.r.date)!==1)continue;
+      if(!prev.e.strong)continue;
+
+      opp++;
+      if(cur.e.strong){
+        nextStrong++;
+        // 「据えっぽさ」は単なる連投より一段厳しく、
+        // 翌日も強め + LABスコアが大きく変わっていないことを見る
+        if(Math.abs(Number(cur.e.score)-Number(prev.e.score))<=12){
+          sameStrong++;
+        }
+      }
+    }
+
+    const rate=opp?sameStrong/opp:null;
+    const repeat=opp?nextStrong/opp:null;
+
+    // 明日の朝イチ用：直前日が強めだったか
+    const prevDayRows=rows.filter(x=>dateGap(x.r.date,targetDate)===1);
+    const yesterday=prevDayRows.at(-1)||null;
+    const yesterdayStrong=!!yesterday?.e?.strong;
+
+    let label='';
+    if(opp>=3 && rate>=.50) label='🧱据えクセあり';
+    else if(opp>=2 && rate>=.50) label='🧱据え観察中';
+
+    return {
+      opp,
+      sameStrong,
+      nextStrong,
+      rate,
+      repeat,
+      label,
+      yesterdayStrong,
+      yesterdayScore:yesterday?.e?.score??null,
+      yesterdayDate:yesterday?.r?.date??null
+    };
+  }
+
+  // 台別プロフィールに「据えクセ」を追加
+  const originalMachineInferenceProfiles=machineInferenceProfiles;
+  machineInferenceProfiles=function(){
+    const ps=originalMachineInferenceProfiles();
+    for(const p of ps){
+      const h=holdTrait(p.machine,todayJST());
+      p.holdOpp=h.opp;
+      p.holdHits=h.sameStrong;
+      p.holdRate=h.rate;
+      p.holdRepeatRate=h.repeat;
+      p.holdLabel=h.label;
+
+      if(h.label && !String(p.type||'').includes('据え')){
+        p.type=`${p.type} / ${h.label}`;
+      }
+    }
+    return ps;
+  };
+
+  // 朝イチ候補の理由に据え傾向を追加
+  const originalCandidateReasons=candidateReasons;
+  candidateReasons=function(p,targetDate,isLive=false,liveRow=null,liveEvidence=null){
+    const rs=originalCandidateReasons(p,targetDate,isLive,liveRow,liveEvidence);
+    const machine=p?.machine ?? liveRow?.machine;
+    if(!machine)return rs;
+
+    const h=holdTrait(machine,targetDate);
+    if(h.opp>=2 && h.rate!==null){
+      const pct=(h.rate*100).toFixed(0);
+      if(h.yesterdayStrong){
+        rs.unshift(`🧱 前日強め。翌日も似た強さ ${pct}%（${h.sameStrong}/${h.opp}）`);
+      }else if(h.label){
+        rs.push(`🧱 据え傾向 ${pct}%（${h.sameStrong}/${h.opp}）`);
+      }
+    }
+    return rs.slice(0,5);
+  };
+
+  // 説明を一度だけ追加
+  function addHoldLegend(){
+    const box=document.getElementById('machineProfiles');
+    if(!box || document.getElementById('holdTraitLegend'))return;
+
+    const note=document.createElement('div');
+    note.id='holdTraitLegend';
+    note.className='notice';
+    note.style.marginTop='10px';
+    note.innerHTML=
+      '<strong>🧱 据えクセ</strong>：前日が「強め候補」だった機会のうち、'+
+      '翌日も強め候補で、LABスコア差が12以内に収まった割合を見る。'+
+      '<br><span class="tiny">※設定据え置きを確定するものではなく、'+
+      '「連日かなり似た強さが続きやすい台」の観測ラベル。'+
+      '2機会で観察中、3機会以上かつ50%以上で「据えクセあり」。</span>';
+
+    box.parentElement?.insertBefore(note,box);
+  }
+
+  // 表示バージョン更新
+  document.title='PEKALOG LAB v0.13 MORNING + HOLD';
+  const ver=document.querySelector('.ver');
+  if(ver)ver.textContent='v0.13 MORNING + HOLD';
+
+  renderAll();
+  addHoldLegend();
+
+})();
 </script>
 </body>
 </html>
