@@ -630,6 +630,13 @@ function renderConfig(){if($('eventDay'))$('eventDay').value=cfg.eventDay||22;if
 function renderAll(){renderDash();renderHyp();renderEvent();renderIF();renderData();renderConfig()}
 nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collectorFile').onchange=importCollectorFile;$('collectorPasteBtn').onclick=importCollectorPaste;$('collectorClipboardBtn').onclick=importCollectorClipboard;$('exportBtn').onclick=exportData;$('reloadRemote').onclick=()=>loadRemote(false);$('demoBtn').onclick=demoData;$('csvImportBtn').onclick=importCSVText;$('saveEventCfg').onclick=saveEventConfig;$('hDate').value=todayJST();initLiveUI();renderAll();loadRemote(true);
 </script>
-
+<script id="pekalog-lab-turkey-archive-patch">
+(function(){
+  // PEKALOGはターキー専用運用なので、店名の有無にかかわらず
+  // 保存済み実戦をすべてLAB連携対象として扱う。
+  turkeyArchives=function(){return archiveData()};
+  renderAll();
+})();
+</script>
 </body>
 </html>
