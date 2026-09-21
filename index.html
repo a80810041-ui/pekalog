@@ -838,5 +838,126 @@ function startTurkeyCollection(){
 }
 window.addEventListener('load',updateTurkeySyncStatus);
 </script>
+<script id="pekalog-v360-turkey-edit-patch">
+(function(){
+  const DEFAULT_SHOP='鷺沼ターキー';
+  let editingArchiveId=null;
 
+  function archiveArray(){
+    try{const a=JSON.parse(localStorage.getItem(ARCH)||'[]');return Array.isArray(a)?a:[]}catch(e){return []}
+  }
+  function normalizeTurkeyArchives(){
+    const a=archiveArray();let changed=false;
+    for(const x of a){if(!String(x.shop||'').trim()){x.shop=DEFAULT_SHOP;changed=true}}
+    if(changed)localStorage.setItem(ARCH,JSON.stringify(a));
+  }
+  function hideShopUI(){
+    const shop=$('shop');if(!shop)return;
+    shop.value=DEFAULT_SHOP;
+    const holder=shop.closest('div');if(holder)holder.style.display='none';
+    const diff=$('diffCoins');if(diff?.parentElement)diff.parentElement.style.gridColumn='1 / -1';
+  }
+  function editSaveButton(){return document.querySelector('button[onclick="archiveSession()"]')}
+  function ensureCancelEditButton(){
+    if(document.getElementById('cancelArchiveEditBtn'))return;
+    const saveBtn=editSaveButton();if(!saveBtn)return;
+    const btn=document.createElement('button');
+    btn.id='cancelArchiveEditBtn';btn.type='button';btn.className='btn dark small hidden';
+    btn.textContent='✖ 編集をやめる';btn.onclick=cancelArchiveEdit;
+    saveBtn.insertAdjacentElement('afterend',btn);
+  }
+  function updateEditUI(){
+    ensureCancelEditButton();
+    const saveBtn=editSaveButton(),cancelBtn=document.getElementById('cancelArchiveEditBtn');
+    if(saveBtn)saveBtn.textContent=editingArchiveId?'💾 編集内容を保存':'💾 実戦を保存';
+    if(cancelBtn)cancelBtn.classList.toggle('hidden',!editingArchiveId);
+    let note=document.getElementById('archiveEditNotice');
+    const saveCard=saveBtn?.closest('.card');
+    if(editingArchiveId){
+      if(!note&&saveCard){note=document.createElement('div');note.id='archiveEditNotice';note.className='notice';note.style.marginTop='9px';saveCard.appendChild(note)}
+      if(note)note.innerHTML='✏️ <strong>保存済み実戦を編集中</strong>。上の入力や履歴を直したら「編集内容を保存」を押してね。';
+    }else if(note){note.remove()}
+  }
+
+  const originalBlankState=blankState;
+  blankState=function(){const s=originalBlankState();s.shop=DEFAULT_SHOP;return s};
+
+  const originalRender=render;
+  render=function(){
+    if(!String(state.shop||'').trim())state.shop=DEFAULT_SHOP;
+    originalRender();hideShopUI();updateEditUI();
+  };
+
+  saveMeta=function(){
+    state.date=$('date').value;state.shop=DEFAULT_SHOP;state.machine=$('machine').value;
+    state.diffCoins=$('diffCoins').value;state.sessionMemo=$('sessionMemo').value;
+    state.endReason=$('endReason').value;persist();
+  };
+
+  archiveSession=function(){
+    if(!state.totalG&&!state.history.length)return alert('まだ保存する実戦データがないよ');
+    state.shop=DEFAULT_SHOP;const a=archiveArray(),now=Date.now();
+    if(editingArchiveId){
+      const idx=a.findIndex(x=>Number(x.id)===Number(editingArchiveId));
+      if(idx<0){editingArchiveId=null;updateEditUI();return alert('編集元の実戦が見つからなかったよ。もう一度一覧から開いてね。')}
+      const old=a[idx];
+      a[idx]={...state,id:old.id,endedAt:old.endedAt||old.id||now,editedAt:now,shop:DEFAULT_SHOP};
+      localStorage.setItem(ARCH,JSON.stringify(a.slice(0,60)));
+      editingArchiveId=null;renderArchives();updateEditUI();alert('編集内容を保存したよ！ ✏️');return;
+    }
+    a.unshift({...state,shop:DEFAULT_SHOP,id:now,endedAt:now});
+    localStorage.setItem(ARCH,JSON.stringify(a.slice(0,60)));renderArchives();alert('実戦を保存したよ！');
+  };
+
+  renderArchives=function(){
+    const a=archiveArray();
+    $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div style="min-width:0"><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}${x.endReason?` / ${esc(x.endReason)}`:''}</div></div><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button><button class="btn cyan small" onclick="editArchive(${x.id})">✏️ 編集</button></div></div></div>`).join(''):'<div class="tiny">保存済み実戦なし</div>';
+  };
+
+  loadArchive=function(id){
+    const a=archiveArray(),x=a.find(v=>Number(v.id)===Number(id));if(!x)return;
+    if(!confirm('この実戦を現在の画面に読み込む？'))return;
+    editingArchiveId=null;const {id:_,editedAt:__,...rest}=x;state={...rest,shop:DEFAULT_SHOP};
+    if(!state.quickFlags)state.quickFlags={cherry:false,premium:false};
+    if(!state.lamp)state.lamp={start:null,end:null};
+    updatePremiumOptions();render();window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  window.editArchive=function(id){
+    const a=archiveArray(),x=a.find(v=>Number(v.id)===Number(id));if(!x)return;
+    editingArchiveId=id;const {id:_,editedAt:__,...rest}=x;state={...rest,shop:DEFAULT_SHOP};
+    if(!state.quickFlags)state.quickFlags={cherry:false,premium:false};
+    if(!state.lamp)state.lamp={start:null,end:null};
+    updatePremiumOptions();render();window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  window.cancelArchiveEdit=function(){
+    if(!editingArchiveId)return;
+    if(!confirm('編集モードをやめる？ 未保存の変更は現在画面には残るよ。'))return;
+    editingArchiveId=null;updateEditUI();
+  };
+
+  const originalNewSession=newSession;
+  newSession=function(){editingArchiveId=null;originalNewSession();state.shop=DEFAULT_SHOP;persist();render()};
+
+  shareText=function(kind){
+    const diff=state.diffCoins!==''?`\n差枚 ${Number(state.diffCoins)>0?'+':''}${state.diffCoins}枚`:'';
+    const p=state.history.filter(x=>x.premium).length;
+    return `🎰 ${kind==='最終'?'本日終了':'稼働途中'} ${kind==='最終'?'🏁':'👀'}\n${MODELS[state.model].name}${state.machine?`｜${state.machine}番台`:''}\n${state.totalG}G\nBIG ${state.big}（${rate(state.big)}）\nREG ${state.reg}（${rate(state.reg)}）\n合算 ${rate(state.big+state.reg)}\n現在 ${state.currentG}G\n✨プレミア ${p}回${diff}\n#ペカログ`;
+  };
+
+  summaryText=function(){
+    const cb=state.history.filter(x=>x.type==='BIG'&&x.trigger==='チェリー重複').length;
+    const cr=state.history.filter(x=>x.type==='REG'&&x.trigger==='チェリー重複').length;
+    const p=state.history.filter(x=>x.premium);
+    return `ペカログ 🎰\n機種: ${MODELS[state.model].name}\n${state.date||'-'} / 台番 ${state.machine||'-'}\n総回転 ${state.totalG}G\nBIG ${state.big}（${rate(state.big)}）\nREG ${state.reg}（${rate(state.reg)}）\n合算 ${rate(state.big+state.reg)}\n最大ハマり ${Math.max(0,state.currentG,...state.history.map(x=>x.g))}G\nチェリー参考数 ${state.cherry}\n🍒重複 BIG ${cb} / REG ${cr}\nプレミア ${p.length}回\n${state.diffCoins!==''?`差枚 ${state.diffCoins}枚\n`:''}${state.endReason?`ヤメ理由：${state.endReason}\n`:''}${state.sessionMemo?`メモ：${state.sessionMemo}\n`:''}${state.lamp?.start?.confirmed&&state.lamp?.end?.confirmed?`写真差分: ${photoDeltaData()?.totalG??'-'}G / BB+${photoDeltaData()?.big??'-'} / RB+${photoDeltaData()?.reg??'-'}\n`:''}履歴：\n${state.history.map(x=>`${x.g}G ${x.type} / ${x.trigger}${x.premium?` / ✨${x.premium}`:''}${x.memo?` / ${x.memo}`:''}`).join('\n')}`;
+  };
+
+  normalizeTurkeyArchives();
+  if(!String(state.shop||'').trim())state.shop=DEFAULT_SHOP;
+  document.title='ペカログ JUGGLER EDITION v3.6 TURKEY + EDIT';
+  const ver=document.querySelector('.ver');if(ver)ver.textContent='v3.6 TURKEY + EDIT';
+  render();
+})();
+</script>
 </body></html>
