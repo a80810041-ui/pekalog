@@ -1028,6 +1028,13 @@ nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collecto
   renderAll();
 
 })();
+</script><script id="pekalog-lab-turkey-archive-patch">
+(function(){
+  // PEKALOGはターキー専用運用なので、店名の有無にかかわらず
+  // 保存済み実戦をすべてLAB連携対象として扱う。
+  turkeyArchives=function(){return archiveData()};
+  renderAll();
+})();
 </script>
 </body>
 </html>
