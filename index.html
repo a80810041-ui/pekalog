@@ -960,4 +960,220 @@ window.addEventListener('load',updateTurkeySyncStatus);
   render();
 })();
 </script>
+<script id="pekalog-v361-save-fix">
+(function(){
+  const DEFAULT_SHOP='鷺沼ターキー';
+  const DB_NAME='pekalog_photo_db_v1';
+  const STORE='archivePhotos';
+  let editId=null;
+
+  function archives(){
+    try{
+      const a=JSON.parse(localStorage.getItem(ARCH)||'[]');
+      return Array.isArray(a)?a:[];
+    }catch(e){ return []; }
+  }
+
+  function openDB(){
+    return new Promise((resolve,reject)=>{
+      const req=indexedDB.open(DB_NAME,1);
+      req.onupgradeneeded=()=>{
+        const db=req.result;
+        if(!db.objectStoreNames.contains(STORE)){
+          db.createObjectStore(STORE,{keyPath:'id'});
+        }
+      };
+      req.onsuccess=()=>resolve(req.result);
+      req.onerror=()=>reject(req.error||new Error('写真DBを開けませんでした'));
+    });
+  }
+
+  async function putPhotos(id,lamp){
+    const start=lamp?.start?.img||null;
+    const end=lamp?.end?.img||null;
+    if(!start&&!end)return;
+    const db=await openDB();
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction(STORE,'readwrite');
+      tx.objectStore(STORE).put({id:Number(id),start,end,updatedAt:Date.now()});
+      tx.oncomplete=resolve;
+      tx.onerror=()=>reject(tx.error||new Error('写真を保存できませんでした'));
+      tx.onabort=()=>reject(tx.error||new Error('写真保存が中断されました'));
+    });
+    db.close();
+  }
+
+  async function getPhotos(id){
+    const db=await openDB();
+    const row=await new Promise((resolve,reject)=>{
+      const req=db.transaction(STORE,'readonly').objectStore(STORE).get(Number(id));
+      req.onsuccess=()=>resolve(req.result||null);
+      req.onerror=()=>reject(req.error||new Error('写真を読み込めませんでした'));
+    });
+    db.close();
+    return row;
+  }
+
+  function stripImages(lamp){
+    const out={start:null,end:null};
+    for(const k of ['start','end']){
+      const src=lamp?.[k];
+      if(!src)continue;
+      const {img,...rest}=src;
+      out[k]={...rest,photoStored:!!img||!!rest.photoStored};
+    }
+    return out;
+  }
+
+  async function hydrateLamp(id,lamp){
+    const out=stripImages(lamp||{start:null,end:null});
+    try{
+      const p=await getPhotos(id);
+      if(p?.start)out.start={...(out.start||{}),img:p.start,photoStored:true};
+      if(p?.end)out.end={...(out.end||{}),img:p.end,photoStored:true};
+    }catch(e){}
+    return out;
+  }
+
+  function ensureCancelButton(){
+    const saveBtn=document.querySelector('button[onclick="archiveSession()"]');
+    if(!saveBtn)return;
+    let btn=document.getElementById('cancelArchiveEditBtn2');
+    if(!btn){
+      btn=document.createElement('button');
+      btn.id='cancelArchiveEditBtn2';
+      btn.type='button';
+      btn.className='btn dark small hidden';
+      btn.textContent='✖ 編集をやめる';
+      btn.onclick=()=>cancelArchiveEdit();
+      saveBtn.insertAdjacentElement('afterend',btn);
+    }
+    saveBtn.textContent=editId?'💾 編集内容を保存':'💾 実戦を保存';
+    btn.classList.toggle('hidden',!editId);
+  }
+
+  async function migrateOldArchivePhotos(){
+    const a=archives();
+    let changed=false;
+    for(const x of a){
+      if(x?.lamp?.start?.img || x?.lamp?.end?.img){
+        await putPhotos(x.id,x.lamp);
+        x.lamp=stripImages(x.lamp);
+        changed=true;
+      }
+    }
+    if(changed)localStorage.setItem(ARCH,JSON.stringify(a));
+  }
+
+  window.archiveSession=async function(){
+    if(!state.totalG&&!state.history.length){
+      return alert('まだ保存する実戦データがないよ');
+    }
+    state.shop=DEFAULT_SHOP;
+    const a=archives();
+    const now=Date.now();
+    const id=editId||now;
+
+    try{
+      await putPhotos(id,state.lamp);
+
+      const clean={
+        ...state,
+        shop:DEFAULT_SHOP,
+        lamp:stripImages(state.lamp)
+      };
+
+      if(editId){
+        const idx=a.findIndex(x=>Number(x.id)===Number(editId));
+        if(idx<0){
+          editId=null;
+          ensureCancelButton();
+          return alert('編集元の実戦が見つからなかったよ');
+        }
+        const old=a[idx];
+        a[idx]={
+          ...clean,
+          id:old.id,
+          endedAt:old.endedAt||old.id||now,
+          editedAt:now
+        };
+      }else{
+        a.unshift({...clean,id:now,endedAt:now});
+      }
+
+      localStorage.setItem(ARCH,JSON.stringify(a.slice(0,60)));
+
+      const wasEdit=!!editId;
+      editId=null;
+      renderArchives();
+      ensureCancelButton();
+      alert(wasEdit?'編集内容を保存したよ！ ✏️':'実戦を保存したよ！');
+    }catch(e){
+      alert(
+        '保存できなかったよ。\n\n'+
+        'ブラウザ保存容量がいっぱいの可能性があります。'+
+        'まず「JSON保存」でバックアップしてね。\n\n'+
+        String(e?.message||e)
+      );
+    }
+  };
+
+  window.loadArchive=async function(id){
+    const a=archives();
+    const x=a.find(v=>Number(v.id)===Number(id));
+    if(!x)return;
+    if(!confirm('この実戦を現在の画面に読み込む？'))return;
+
+    editId=null;
+    const {id:_,editedAt:__,...rest}=x;
+    state={
+      ...rest,
+      shop:DEFAULT_SHOP,
+      lamp:await hydrateLamp(x.id,rest.lamp)
+    };
+    if(!state.quickFlags)state.quickFlags={cherry:false,premium:false};
+    if(!state.lamp)state.lamp={start:null,end:null};
+    updatePremiumOptions();
+    render();
+    ensureCancelButton();
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  window.editArchive=async function(id){
+    const a=archives();
+    const x=a.find(v=>Number(v.id)===Number(id));
+    if(!x)return;
+
+    editId=id;
+    const {id:_,editedAt:__,...rest}=x;
+    state={
+      ...rest,
+      shop:DEFAULT_SHOP,
+      lamp:await hydrateLamp(x.id,rest.lamp)
+    };
+    if(!state.quickFlags)state.quickFlags={cherry:false,premium:false};
+    if(!state.lamp)state.lamp={start:null,end:null};
+    updatePremiumOptions();
+    render();
+    ensureCancelButton();
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  window.cancelArchiveEdit=function(){
+    if(!editId)return;
+    if(!confirm('編集モードをやめる？'))return;
+    editId=null;
+    ensureCancelButton();
+  };
+
+  migrateOldArchivePhotos()
+    .then(()=>renderArchives())
+    .catch(()=>{});
+
+  document.title='ペカログ JUGGLER EDITION v3.6.1 SAVE FIX';
+  const ver=document.querySelector('.ver');
+  if(ver)ver.textContent='v3.6.1 SAVE FIX';
+  ensureCancelButton();
+})();
+</script>
 </body></html>
