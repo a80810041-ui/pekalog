@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="HANA LOG">
-<title>HANA LOG 🌺 v1.6 LAB MINI</title>
+<title>HANA LOG 🌺 v2.0 SETTING TREND + ARCHIVE JUDGE</title>
 <style>
 :root{
   --bg:#07100c;--card:#0d1b14;--card2:#10261a;--line:#244431;--text:#f5fff8;--muted:#9cb5a4;
@@ -22,6 +22,7 @@ body{padding-bottom:110px}.wrap{max-width:760px;margin:auto;padding:14px}.head{d
 label{display:block;color:#a9c1b0;font-size:11px;margin-bottom:5px}input,select,textarea{width:100%;border:1px solid #31503b;background:#09130e;color:#f8fff9;border-radius:12px;padding:11px;font-size:16px;outline:none}input:focus,select:focus,textarea:focus{border-color:#69de93;box-shadow:0 0 0 2px rgba(84,226,141,.12)}
 .btn{border:1px solid #365743;background:#173122;color:#effff3;border-radius:13px;padding:12px 10px;font-weight:800;font-size:14px;cursor:pointer}.btn:active{transform:scale(.98)}.btn.green{background:#1f7b49;border-color:#2ba85f}.btn.pink{background:#7b3153;border-color:#c64b7d}.btn.blue{background:#234b6a;border-color:#397eb2}.btn.yellow{background:#66551e;border-color:#a78d2f}.btn.dark{background:#111b15}.btn.danger{background:#532228;border-color:#8a3b44}.btn.wide{width:100%}.btn.big{font-size:24px;padding:18px 10px}.btn.active{outline:2px solid #dfffea;outline-offset:1px}.btn.ghost{background:transparent}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{background:#09150f;border:1px solid #264431;border-radius:13px;padding:10px;text-align:center}.stat .k{font-size:10px;color:#91aa99}.stat .v{font-size:20px;font-weight:900;margin-top:2px}.stat .v.small{font-size:16px}.pos{color:#73f4a1}.neg{color:#ff9090}
+.judgeGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.judgeCell{background:#09150f;border:1px solid #264431;border-radius:12px;padding:9px 6px;text-align:center}.judgeCell .set{font-size:11px;color:#9cb5a4}.judgeCell .pct{font-size:18px;font-weight:900;margin-top:2px}.judgeBar{height:6px;background:#14291d;border-radius:99px;overflow:hidden;margin-top:6px}.judgeBar>i{display:block;height:100%;background:linear-gradient(90deg,#54e28d,#ffd466);border-radius:99px}.judgeLead{font-size:17px;font-weight:900}.judgeMeta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.judgeTag{display:inline-block;padding:5px 8px;border:1px solid #31503b;border-radius:999px;background:#0a1710;color:#cfe7d5;font-size:11px}.judgeTag.hot{border-color:#c38f2a;background:#362b0e;color:#ffe39a}.judgeTag.odd{border-color:#397eb2;background:#10283b;color:#b9e4ff}.judgeTag.even{border-color:#b79226;background:#3b3213;color:#ffe89b}.judgeTag.high{border-color:#8c63c8;background:#291b3d;color:#e4cdff}
 .hitbar{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:9px;align-items:stretch}.hitbar input{height:58px;font-size:22px;text-align:center;font-weight:900}.hitbar .btn{font-size:22px}
 .latest{border-color:#3d6d4c;background:linear-gradient(180deg,#143722,#0e2718)}.latestTitle{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}.badge{display:inline-flex;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:900}.badge.bb{background:#5b2340;color:#ffddeb}.badge.rb{background:#1d4c32;color:#d9ffe8}.badge.info{background:#1c3e55;color:#dff5ff}.badge.warn{background:#59451d;color:#fff1b8}
 .chiprow{display:flex;flex-wrap:wrap;gap:7px}.chip{border:1px solid #3a5945;background:#12251a;color:#d8efde;border-radius:999px;padding:8px 10px;font-size:12px;font-weight:800}.chip.active{box-shadow:0 0 0 2px rgba(255,255,255,.16) inset;border-color:#e7fff0}.chip.white.active{background:#f2f4f1;color:#162019}.chip.blue.active{background:#2f7da8}.chip.yellow.active{background:#8b7220}.chip.green.active{background:#237f48}.chip.red.active{background:#9c3740}.chip.purple.active{background:#664d94}.chip.rainbow.active{background:linear-gradient(90deg,#c34b4b,#bf8a2d,#5e9d48,#3f8ea8,#7653a0)}
@@ -30,11 +31,11 @@ label{display:block;color:#a9c1b0;font-size:11px;margin-bottom:5px}input,select,
 .signalGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.signalBox{background:#09150f;border:1px solid #284534;border-radius:13px;padding:10px}.signalBox b{display:block;margin-bottom:6px}.signalList{display:flex;flex-wrap:wrap;gap:6px}.sig{font-size:12px;background:#14271b;border:1px solid #31503b;border-radius:999px;padding:5px 8px}
 .coins{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.drawdown{margin-top:9px;padding:11px;border-radius:12px;background:#0a1710;border:1px solid #294b34}.drawdown.alert{background:#32191c;border-color:#8e444b}.drawdown.good{background:#10281a;border-color:#34754a}
 .storebox{display:none;margin-top:10px}.storebox.show{display:block}.storeHead{display:flex;justify-content:space-between;gap:8px;align-items:center}.storeStats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:9px}.storeStats div{background:#07120c;border:1px solid #274331;border-radius:11px;padding:8px;text-align:center}.storeStats small{display:block;color:#8ca194;font-size:9px}.storeStats b{font-size:16px}
-.archive{display:flex;flex-direction:column;gap:8px}.archiveItem{background:#09150f;border:1px solid #294735;border-radius:12px;padding:10px}.archiveTop{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.archive{display:flex;flex-direction:column;gap:8px}.archiveItem{background:#09150f;border:1px solid #294735;border-radius:12px;padding:10px}.archiveTop{display:flex;justify-content:space-between;gap:8px;align-items:center}.archiveJudge{margin-top:8px;padding:8px 9px;border-radius:10px;background:#0c1c13;border:1px solid #31513b}.archiveJudge b{font-size:12px}.archiveJudge .mini{font-size:10px;color:var(--muted);line-height:1.5;margin-top:3px}.archiveJudge .jtag{display:inline-block;margin:5px 4px 0 0;padding:3px 7px;border-radius:999px;background:#173122;border:1px solid #365743;font-size:10px;color:#dfffea}.archiveJudge .weak{background:#332f17;border-color:#5c5427;color:#ffeaa1}.archiveJudge .hot{background:#183c2a;border-color:#2f7450;color:#8ff7bc}.trendGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.trendStat{background:#07130d;border:1px solid #2d503a;border-radius:13px;padding:10px;text-align:center}.trendStat small{display:block;color:#8ea596;font-size:9px;line-height:1.35}.trendStat b{display:block;font-size:18px;margin-top:3px}.trendRow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid #213d2d}.trendRow:last-child{border-bottom:0}.trendMove{font-size:12px;font-weight:900;border-radius:999px;padding:5px 8px;border:1px solid #345b43;background:#10251a;white-space:nowrap}.trendMove.up{border-color:#34754a;background:#10281a;color:#8ff7bc}.trendMove.down{border-color:#8a3b44;background:#32191c;color:#ffb1b7}.trendMove.flat{border-color:#5c5427;background:#332f17;color:#ffeaa1}.trendMove.low{opacity:.72}.settingDot{display:inline-block;padding:2px 6px;border-radius:999px;background:#173122;border:1px solid #365743;font-size:10px;margin-left:4px}.around22{background:#1f1a0e;border-color:#5c4a24}
 .sticky{position:fixed;left:0;right:0;bottom:0;background:rgba(4,12,8,.91);backdrop-filter:blur(12px);border-top:1px solid #284334;padding:9px max(12px,env(safe-area-inset-right)) calc(9px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));z-index:20}.stickyIn{max-width:760px;margin:auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.sticky .btn{padding:12px 7px}
 .photoGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.photoBox{background:#09150f;border:1px solid #294735;border-radius:15px;padding:10px;min-width:0}.photoTitle{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.photoTitle b{font-size:14px}.photoPreview{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:11px;border:1px solid #31503b;background:#06100b;display:none}.photoPreview.show{display:block}.photoEmpty{aspect-ratio:4/3;border:1px dashed #355b43;border-radius:11px;display:flex;align-items:center;justify-content:center;text-align:center;color:#8fa99a;font-size:12px;padding:10px;background:#07120c}.photoActions{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:8px}.photoActions .btn{padding:10px 8px;font-size:12px}.photoActions .xbtn{min-width:48px}.photoHint{margin-top:8px;font-size:10px;color:#87a08f;line-height:1.45}
 hr{border:0;border-top:1px solid #294534;margin:13px 0}.hidden{display:none!important}
-@media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}.grid4{grid-template-columns:repeat(2,1fr)}.signalGrid{grid-template-columns:1fr}.storeStats{grid-template-columns:repeat(2,1fr)}.coins{grid-template-columns:1fr 1fr}.coins>div:last-child{grid-column:1/-1}.head h1{font-size:27px}}
+@media(max-width:560px){.trendGrid{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:repeat(2,1fr)}.judgeGrid{grid-template-columns:repeat(5,1fr);gap:4px}.judgeCell{padding:8px 3px}.judgeCell .pct{font-size:15px}.grid4{grid-template-columns:repeat(2,1fr)}.signalGrid{grid-template-columns:1fr}.storeStats{grid-template-columns:repeat(2,1fr)}.coins{grid-template-columns:1fr 1fr}.coins>div:last-child{grid-column:1/-1}.head h1{font-size:27px}}
 
 .navTabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 10px}.navTabs .btn{font-size:15px}.navTabs .btn.activeTab{background:#2a7d4c;border-color:#5ee392;box-shadow:0 0 0 2px rgba(94,227,146,.12) inset}
 .labHero{background:linear-gradient(135deg,#102a1b,#102432 70%,#231c37);border-color:#3d6d57}.labGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.labStat{background:#07130d;border:1px solid #2d503a;border-radius:13px;padding:10px;text-align:center}.labStat small{display:block;color:#8ea596;font-size:9px}.labStat b{display:block;font-size:18px;margin-top:2px}.labTable{width:100%;border-collapse:collapse;font-size:11px}.labTable th,.labTable td{padding:8px 5px;border-bottom:1px solid #244431;text-align:right;white-space:nowrap}.labTable th:first-child,.labTable td:first-child{text-align:left}.labTable th{color:#9fb5a6;font-weight:700}.labCard{background:#09150f;border:1px solid #294735;border-radius:13px;padding:10px}.labRow{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #213d2d}.labRow:last-child{border-bottom:0}.labPill{display:inline-flex;border:1px solid #345b43;background:#10251a;border-radius:999px;padding:4px 8px;font-size:10px;color:#cde3d3}.labBar{height:8px;background:#07100b;border:1px solid #294735;border-radius:999px;overflow:hidden;margin-top:5px}.labBar>i{display:block;height:100%;background:linear-gradient(90deg,#5adf8e,#73c8ff);border-radius:999px}.sectionTools{display:flex;gap:7px;flex-wrap:wrap}.sectionTools .btn{padding:9px 10px;font-size:11px}@media(max-width:560px){.labGrid{grid-template-columns:repeat(2,1fr)}.labTable{font-size:10px}.labTable th,.labTable td{padding:7px 3px}}
@@ -44,7 +45,7 @@ hr{border:0;border-top:1px solid #294534;margin:13px 0}.hidden{display:none!impo
 <div class="wrap">
   <div class="head">
     <div><h1>🌺 HANA LOG</h1><div class="sub">HANA HANA / QUICK SESSION LOGGER</div></div>
-    <div class="ver">v1.6 LAB MINI / TURKEY 687</div>
+    <div class="ver">v2.0 SETTING TREND / ARCHIVE JUDGE / 687</div>
   </div>
 
   <div class="navTabs">
@@ -111,6 +112,15 @@ hr{border:0;border-top:1px solid #294534;margin:13px 0}.hidden{display:none!impo
   </section>
 
   <section class="card">
+    <div class="storeHead"><div><h3 style="margin-bottom:2px">🧠 設定判別</h3><div class="tiny">ニューキングハナハナVのBB/RB確率を基準に、設定1・2・3・4・Vとの整合度を計算。</div></div><span class="badge info">参考値</span></div>
+    <div id="settingLead" class="notice" style="margin-top:8px">実戦データが入ると判別するよ🌺</div>
+    <div id="settingGrid" class="judgeGrid" style="margin-top:9px"></div>
+    <div id="settingSignals" class="notice" style="margin-top:9px"></div>
+    <div id="storeSettingJudge" class="notice" style="margin-top:9px"></div>
+    <div class="tiny" style="margin-top:8px">確率部分はBB/RBのみで計算。サイドランプ・終了花・BIG中スイカは公開されている示唆方向を別表示し、未知の出現率を勝手に数値化しない。短時間はブレが大きいので参考用。</div>
+  </section>
+
+  <section class="card">
     <h3>⚡ 当たりを記録</h3>
     <div class="notice">データランプの当選Gを入れて <b>BB / RB</b> をタップ。ボーナス終了後の花色やビタ押しサイド色は、下の「いまのボーナス詳細」で後から足せる。</div>
     <div class="hitbar" style="margin-top:10px">
@@ -142,7 +152,7 @@ hr{border:0;border-top:1px solid #294534;margin:13px 0}.hidden{display:none!impo
       <div class="signalBox"><b>終了花</b><div id="flowerSummary" class="signalList"></div></div>
       <div class="signalBox"><b>サイドランプ</b><div id="sideSummary" class="signalList"></div></div>
     </div>
-    <div class="tiny" style="margin-top:8px">ここは「出た事実」を集計するだけ。設定の断定や自動判定はしない仕様。</div>
+    <div class="tiny" style="margin-top:8px">ここは「出た事実」の集計。上の設定判別では、終了花・サイドランプを数値確率には混ぜず、示唆方向として別表示する。</div>
   </section>
 
   <section class="card">
@@ -181,7 +191,7 @@ hr{border:0;border-top:1px solid #294534;margin:13px 0}.hidden{display:none!impo
     <div class="grid2" style="margin-top:10px"><button class="btn green" onclick="saveSession()">💾 実戦を保存</button><button class="btn blue" onclick="shareSummary()">📤 まとめを共有</button></div>
     <div class="grid2" style="margin-top:8px"><button class="btn dark" onclick="downloadJSON()">⬇ JSONバックアップ</button><label class="btn dark" style="text-align:center;cursor:pointer">⬆ JSON読込<input type="file" accept="application/json,.json" style="display:none" onchange="importJSON(event)"></label></div>
     <button class="btn danger wide" style="margin-top:8px" onclick="newSession()">🆕 新しい実戦</button>
-    <hr><div id="archives" class="archive"></div>
+    <hr><div class="storeHead" style="margin-bottom:8px"><div><b>🗂 保存済み実戦・自動再判別</b><div class="tiny">過去ログも開かずにBB/RBから再判別。色・スイカの記録があれば示唆メモも表示。</div></div><span class="badge info">AUTO</span></div><div id="archives" class="archive"></div>
   </section>
 </div>
 
@@ -206,6 +216,14 @@ hr{border:0;border-top:1px solid #294534;margin:13px 0}.hidden{display:none!impo
     <section class="card">
       <div class="storeHead"><div><h3 style="margin-bottom:2px">🔥 22日 vs その他</h3><div class="tiny">ターキーの22日を687番台だけで比較。</div></div></div>
       <div id="event22Box" class="grid2" style="margin-top:9px"></div>
+    </section>
+
+    <section class="card">
+      <div class="storeHead"><div><h3 style="margin-bottom:2px">🔄 設定推移カルテ</h3><div class="tiny">日別BB/RBの「設定スペックとの整合重心」をつないで、上げ・下げ・据え寄りのクセを見る。</div></div><span class="badge warn">TREND</span></div>
+      <div class="notice" style="margin-top:8px"><b>これは設定変更の確定判定ではないよ。</b><br>1000G以上ある連続日を中心に、BB/RBがどの設定スペックへ寄ったかの変化を追跡。短い日は「材料少」として参考表示だけする。</div>
+      <div id="trendStats" class="trendGrid" style="margin-top:10px"></div>
+      <div style="margin-top:12px"><b>📈 最近の前日→翌日</b><div id="settingTransitionList" class="labCard" style="margin-top:7px"></div></div>
+      <div style="margin-top:12px"><b>🔥 22日前後の上げ下げ</b><div id="around22List" class="labCard around22" style="margin-top:7px"></div></div>
     </section>
 
     <section class="card">
@@ -243,6 +261,7 @@ const FLOWERS=['未確認','白','青','黄','緑','紫','虹'];
 const SIDES=['未確認','青','黄','緑','赤','虹'];
 const SYMBOLS=['未確認','白7','ピンク7'];
 const TAGS=['通常','バイブ','リーチ目','プレミア点滅','BGM変化','チェリー重複'];
+const NEWKINGV_SETTINGS=[{s:'1',bb:299,rb:496,comb:186},{s:'2',bb:291,rb:471,comb:180},{s:'3',bb:281,rb:442,comb:172},{s:'4',bb:268,rb:409,comb:162},{s:'V',bb:253,rb:372,comb:150}];
 function today(){const d=new Date();return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(d)}
 function blank(){return {date:today(),shop:'ターキー',machine:'687',model:'newkingv',startCurrentG:'',startBig:'',startReg:'',startTotalG:'',currentG:'',hits:[],maxCoins:'',currentCoins:'',drawdownLimit:'300',invest:'',returnYen:'',sessionMemo:'',pscube:null,latestIndex:null,startPhotoData:'',endPhotoData:'',seatMarkedAt:null,seatSnapshot:null}}
 let state=blank();
@@ -283,11 +302,40 @@ function clsColor(v){return v==='白'?'white':v==='青'?'blue':v==='黄'?'yellow
 function chips(values,current,onclick){return values.map(v=>`<button class="chip ${clsColor(v)} ${current===v?'active':''}" onclick="${onclick}('${v.replaceAll("'","\\'")}')">${v}</button>`).join('')}
 function renderLatest(){const h=latest(),c=$('latestCard');if(!h){c.classList.add('hidden');return}c.classList.remove('hidden');$('latestBadge').className='badge '+(h.type==='BB'?'bb':'rb');$('latestBadge').textContent=h.type;$('latestLabel').textContent=`${h.g}G ${h.type} の詳細`;$('bbOnly').classList.toggle('hidden',h.type!=='BB');$('symbolRow').innerHTML=chips(SYMBOLS,h.symbol,'setSymbol');$('sideRow').innerHTML=chips(SIDES,h.side,'setSide');$('flowerRow').innerHTML=chips(FLOWERS,h.flower,'setFlower');$('tagRow').innerHTML=TAGS.map(v=>`<button class="chip ${(v!=='通常'&&(h.tags||[]).includes(v))||(v==='通常'&&!(h.tags||[]).length)?'active':''}" onclick="toggleTag('${v}')">${v}</button>`).join('');$('latestSuika').textContent=h.suika||0;$('latestNote').value=h.note||''}
 function setSymbol(v){setHitProp('symbol',v)}function setSide(v){setHitProp('side',v)}function setFlower(v){setHitProp('flower',v)}
+function logFact(n){let x=0;for(let i=2;i<=n;i++)x+=Math.log(i);return x}
+function poisLog(k,lambda){if(lambda<=0)return -1e99;return k*Math.log(lambda)-lambda-logFact(k)}
+function settingLikelihoodFor(g,bb,rb,model='newkingv'){
+ if(!g||g<100||model!=='newkingv')return null;
+ const logs=NEWKINGV_SETTINGS.map(x=>({s:x.s,l:poisLog(bb,g/x.bb)+poisLog(rb,g/x.rb),spec:x}));
+ const mx=Math.max(...logs.map(x=>x.l));const ex=logs.map(x=>({...x,e:Math.exp(x.l-mx)}));const sum=ex.reduce((a,b)=>a+b.e,0)||1;
+ return ex.map(x=>({...x,p:x.e/sum})).sort((a,b)=>b.p-a.p);
+}
+function settingLikelihood(g,bb,rb){return settingLikelihoodFor(g,bb,rb,state.model)}
+function judgeConfidence(g){if(g>=5000)return '参考度 高め';if(g>=2500)return '学習中';if(g>=1000)return '観察中';return '材料少'}
+function fmtPct(p){return (p*100).toFixed(p>=.1?0:1)+'%'}
+function settingGridHtml(arr){if(!arr)return '<div class="tiny" style="grid-column:1/-1">ニューキングハナハナVで100G以上から表示するよ。</div>';const by=[...arr].sort((a,b)=>['1','2','3','4','V'].indexOf(a.s)-['1','2','3','4','V'].indexOf(b.s));return by.map(x=>`<div class="judgeCell"><div class="set">設定${x.s}</div><div class="pct">${fmtPct(x.p)}</div><div class="judgeBar"><i style="width:${Math.max(2,x.p*100)}%"></i></div></div>`).join('')}
+function signalJudgeText(){
+ const s=countBy('side',SIDES),f=countBy('flower',FLOWERS),bb=state.hits.filter(h=>h.type==='BB').length,suika=state.hits.reduce((a,h)=>a+num(h.suika),0);
+ const odd=[];if(s['青'])odd.push(`青×${s['青']}（奇数弱）`);if(s['緑'])odd.push(`緑×${s['緑']}（奇数強）`);
+ const even=[];if(s['黄'])even.push(`黄×${s['黄']}（偶数弱）`);if(s['赤'])even.push(`赤×${s['赤']}（偶数強）`);
+ const hi=[];if(s['虹'])hi.push(`サイド虹×${s['虹']}（高設定示唆）`);['青','黄','緑','紫','虹'].forEach(c=>{if(f[c])hi.push(`終了花${c}×${f[c]}`)});
+ let tags=[];if(odd.length)tags.push(`<span class="judgeTag odd">奇数示唆 ${odd.join(' / ')}</span>`);if(even.length)tags.push(`<span class="judgeTag even">偶数示唆 ${even.join(' / ')}</span>`);if(hi.length)tags.push(`<span class="judgeTag high">高設定方向 ${hi.join(' / ')}</span>`);if(bb||suika)tags.push(`<span class="judgeTag">BIG中スイカ ${suika}回 / BB${bb}回</span>`);
+ return tags.length?`<b>示唆メモ</b><div class="judgeMeta">${tags.join('')}</div><div class="tiny" style="margin-top:6px">終了花は 白→青→黄→緑→紫→虹 の順に高設定期待度UP。スイカは高設定ほど出やすいが、取りこぼしがある日は補助材料として見る。</div>`:'<span class="tiny">サイド色・終了花・スイカを入れると、ここに示唆方向も出るよ。</span>';
+}
+function renderSettingJudge(){
+ const box=$('settingGrid'),lead=$('settingLead'),sig=$('settingSignals'),store=$('storeSettingJudge');if(!box||!lead||!sig||!store)return;
+ if(state.model!=='newkingv'){lead.innerHTML='<b>この機種は数値判別未登録</b><br><span class="tiny">いまはニューキングハナハナVだけ対応。</span>';box.innerHTML='';sig.innerHTML='';store.innerHTML='';return}
+ const g=playedNow(),bb=state.hits.filter(h=>h.type==='BB').length,rb=state.hits.filter(h=>h.type==='RB').length,arr=settingLikelihood(g,bb,rb);
+ box.innerHTML=settingGridHtml(arr);sig.innerHTML=signalJudgeText();
+ if(arr){const top=arr[0],second=arr[1];lead.innerHTML=`<span class="judgeLead">自分区間：設定${top.s}との整合度が最大</span><br>次点 設定${second.s} ／ ${g.toLocaleString()}G・BB${bb}・RB${rb} ／ <b>${judgeConfidence(g)}</b><br><span class="tiny">表示％は「設定の確率」ではなく、BB/RB実績が各設定スペックにどれくらい合うかを同じ事前条件で比較した相対値。</span>`}else lead.innerHTML=`<b>自分区間：${g.toLocaleString()}G</b><br><span class="tiny">100G以上になるとBB/RBベース判別を開始。</span>`;
+ const st=state.pscube?.stats?.today||{},sg=num(st.totalGEst),sbb=num(st.big),srb=num(st.reg),sa=settingLikelihood(sg,sbb,srb);
+ if(sa){store.innerHTML=`<b>📡 店全体687：設定${sa[0].s}との整合度が最大</b> ／ 次点 設定${sa[1].s}<br>${sg.toLocaleString()}G・BB${sbb}・RB${srb} ／ ${judgeConfidence(sg)}<br><span class="tiny">P’s CUBEの当日全体データ。自分区間と並べて見る用。</span>`}else store.innerHTML='<span class="tiny">P’s CUBEを読み込むと「店全体687」の判別も並べるよ。</span>';
+}
 function rate(g,n){return n&&g?`1/${Math.round(g/n)}`:'-'}
 function playedNow(){const done=state.hits.reduce((s,h)=>s+num(h.selfG),0);return done+num(state.currentG)}
 function renderLogAndStatsOnly(){syncFieldsToState();const g=playedNow(),bb=state.hits.filter(h=>h.type==='BB').length,rb=state.hits.filter(h=>h.type==='RB').length,total=bb+rb,suika=state.hits.reduce((s,h)=>s+num(h.suika),0);$('sPlayed').textContent=g.toLocaleString();$('sBB').textContent=bb;$('sRB').textContent=rb;$('sComb').textContent=rate(g,total);$('sBBRate').textContent=rate(g,bb);$('sRBRate').textContent=rate(g,rb);const gaps=[...state.hits.map(h=>num(h.selfG)),num(state.currentG)];$('sMaxGap').textContent=Math.max(0,...gaps).toLocaleString();$('sSuika').textContent=suika;
  $('hitLog').innerHTML=state.hits.length?state.hits.map((h,i)=>{const d=[];if(h.type==='BB'&&h.symbol&&h.symbol!=='未確認')d.push(h.symbol);if(h.type==='BB'&&h.suika)d.push(`スイカ×${h.suika}`);if(h.side&&h.side!=='未確認')d.push(`サイド${h.side}`);if(h.flower&&h.flower!=='未確認')d.push(`花${h.flower}`);if(h.tags?.length)d.push(h.tags.join('・'));if(h.note)d.push(h.note);return `<div class="item"><span class="badge ${h.type==='BB'?'bb':'rb'}">${h.type}</span><div class="main"><div class="top"><span class="g">${h.g}G</span><span class="tiny">自分 ${h.selfG}G</span></div><div class="meta">${d.length?d.join(' ／ '):'詳細なし'}</div><button class="linkbtn" onclick="editHit(${i})">詳細を編集</button></div><button class="x" onclick="removeHit(${i})">×</button></div>`}).join(''):'<div class="tiny">まだ当たりなし。上の当選G → BB / RBからスタート🌺</div>';
- renderSignals();renderDrawdown();}
+ renderSignals();renderSettingJudge();renderDrawdown();}
 function countBy(prop,vals){const m={};vals.forEach(v=>m[v]=0);state.hits.forEach(h=>{const v=h[prop];if(v&&v!=='未確認'&&m[v]!==undefined)m[v]++});return m}
 function renderSignals(){const f=countBy('flower',FLOWERS),s=countBy('side',SIDES);$('flowerSummary').innerHTML=Object.entries(f).filter(([k,v])=>k!=='未確認'&&v).map(([k,v])=>`<span class="sig">${k} × ${v}</span>`).join('')||'<span class="tiny">まだなし</span>';$('sideSummary').innerHTML=Object.entries(s).filter(([k,v])=>k!=='未確認'&&v).map(([k,v])=>`<span class="sig">${k} × ${v}</span>`).join('')||'<span class="tiny">まだなし</span>'}
 function renderDrawdown(){const max=num(state.maxCoins),cur=num(state.currentCoins),lim=num(state.drawdownLimit),box=$('drawdownBox');box.className='drawdown';if(!max&&!cur){box.textContent='最高持ち枚と現在持ち枚を入れると、最高から何枚減ったか表示するよ。';return}const dd=Math.max(0,max-cur),remain=lim-dd;box.innerHTML=`最高 <b>${max.toLocaleString()}枚</b> → 現在 <b>${cur.toLocaleString()}枚</b> ／ 最高から <b class="${dd>=lim?'neg':''}">−${dd.toLocaleString()}枚</b>${lim?`<br><span class="tiny">自分で決めた警戒ライン：−${lim.toLocaleString()}枚 ${dd>=lim?'⚠️ 到達':`（あと${Math.max(0,remain).toLocaleString()}枚）`}</span>`:''}`;if(lim&&dd>=lim)box.classList.add('alert');else box.classList.add('good')}
@@ -379,6 +427,43 @@ function dayName(d){return ['日','月','火','水','木','金','土'][new Date(
 function fmtRate(g,n){return g&&n?`1/${Math.round(g/n)}`:'-'}
 function signedN(v){if(v==null||!Number.isFinite(Number(v)))return '-';v=Math.round(Number(v));return `${v>0?'+':''}${v.toLocaleString()}`}
 function groupMetrics(arr){const g=arr.reduce((s,x)=>s+num(x.totalG),0),bb=arr.reduce((s,x)=>s+num(x.big),0),rb=arr.reduce((s,x)=>s+num(x.reg),0),ds=arr.map(x=>x.diff).filter(x=>x!=null&&Number.isFinite(Number(x)));return {days:arr.length,g,avgG:arr.length?Math.round(g/arr.length):0,bb,rb,comb:fmtRate(g,bb+rb),avgDiff:ds.length?Math.round(ds.reduce((a,b)=>a+Number(b),0)/ds.length):null,diffN:ds.length}}
+function settingNum(s){return s==='V'?5:Number(s||0)}
+function dateGapDays(a,b){const x=new Date(String(a)+'T00:00:00Z'),y=new Date(String(b)+'T00:00:00Z');return Math.round((y-x)/86400000)}
+function labSettingProfile(x){
+ const g=num(x?.totalG),bb=num(x?.big),rb=num(x?.reg),arr=settingLikelihoodFor(g,bb,rb,'newkingv');
+ if(!arr)return null;
+ const mean=arr.reduce((q,v)=>q+settingNum(v.s)*v.p,0),top=arr[0],second=arr[1];
+ const band=mean>=3.7?'強め':mean<=2.3?'弱め':'中間';
+ return {date:x.date,g,bb,rb,arr,mean,top,second,band,usable:g>=1000,confidence:judgeConfidence(g)};
+}
+function transitionMove(a,b){
+ if(!a||!b)return null;const delta=b.mean-a.mean;
+ const dir=delta>=.55?'up':delta<=-.55?'down':'flat';
+ return {a,b,delta,dir,label:dir==='up'?'↑ 上げ方向':dir==='down'?'↓ 下げ方向':'→ 据え寄り'};
+}
+function settingBandTag(p){if(!p)return '';return `<span class="settingDot">${p.band} / 最大整合 設定${p.top.s}</span>`}
+function transitionHtml(t,low=false){
+ const a=t.a,b=t.b,cls=`trendMove ${t.dir}${low?' low':''}`;
+ return `<div class="trendRow"><div><b>${esc(a.date)} → ${esc(b.date)}</b><div class="tiny">${a.g.toLocaleString()}G ${settingBandTag(a)} → ${b.g.toLocaleString()}G ${settingBandTag(b)}${low?'<br>※どちらかが1000G未満。参考表示。':''}</div></div><span class="${cls}">${t.label}</span></div>`;
+}
+function renderSettingTrend(days){
+ const stats=$('trendStats'),list=$('settingTransitionList'),around=$('around22List');if(!stats||!list||!around)return;
+ const ps=days.map(x=>({x,p:labSettingProfile(x)})).filter(z=>z.p).sort((a,b)=>a.x.date.localeCompare(b.x.date));
+ const allPairs=[];for(let i=1;i<ps.length;i++){if(dateGapDays(ps[i-1].x.date,ps[i].x.date)===1){const t=transitionMove(ps[i-1].p,ps[i].p);if(t)allPairs.push(t)}}
+ const usable=allPairs.filter(t=>t.a.usable&&t.b.usable);
+ const strongPrev=usable.filter(t=>t.a.mean>=3.7),strongDown=strongPrev.filter(t=>t.dir==='down'||t.b.mean<3.2);
+ const weakPrev=usable.filter(t=>t.a.mean<=2.3),weakUp=weakPrev.filter(t=>t.dir==='up'||t.b.mean>2.8);
+ const flat=usable.filter(t=>t.dir==='flat');
+ const pct=(a,b)=>b?Math.round(a/b*100)+'%':'-';
+ stats.innerHTML=`<div class="trendStat"><small>判別可能な連続日</small><b>${usable.length}</b></div><div class="trendStat"><small>強め翌日↓</small><b>${pct(strongDown.length,strongPrev.length)}</b><small>${strongDown.length}/${strongPrev.length||0}</small></div><div class="trendStat"><small>弱め翌日↑</small><b>${pct(weakUp.length,weakPrev.length)}</b><small>${weakUp.length}/${weakPrev.length||0}</small></div><div class="trendStat"><small>判別据え寄り</small><b>${pct(flat.length,usable.length)}</b><small>${flat.length}/${usable.length||0}</small></div>`;
+ list.innerHTML=allPairs.length?allPairs.slice().reverse().slice(0,10).map(t=>transitionHtml(t,!(t.a.usable&&t.b.usable))).join(''):'<div class="tiny">連続する日付のデータがまだないよ。</div>';
+ const aroundPairs=allPairs.filter(t=>{const ad=Number(t.a.date.slice(8,10)),bd=Number(t.b.date.slice(8,10));return (ad===21&&bd===22)||(ad===22&&bd===23)});
+ const d22=ps.filter(z=>Number(z.x.date.slice(8,10))===22).slice().reverse();
+ let h='';
+ if(aroundPairs.length)h+=aroundPairs.slice().reverse().map(t=>transitionHtml(t,!(t.a.usable&&t.b.usable))).join('');
+ if(d22.length){h+=d22.slice(0,4).map(z=>`<div class="trendRow"><div><b>🔥 ${esc(z.x.date)} 22日</b><div class="tiny">${z.p.g.toLocaleString()}G / BB${z.p.bb} RB${z.p.rb} / ${z.p.confidence} ${settingBandTag(z.p)}</div></div><span class="trendMove ${z.p.band==='強め'?'up':z.p.band==='弱め'?'down':'flat'}">22日単体</span></div>`).join('')}
+ around.innerHTML=h||'<div class="tiny">21・22・23日の組み合わせが貯まると、22日前後の上げ下げをここに出すよ🔥</div>';
+}
 function allArchiveHits(){return archives().flatMap(a=>(a.hits||[]).map(h=>({...h,_date:a.date,_session:a.id}))) }
 function renderLab(){
  const days=labDays(),m=groupMetrics(days),ars=archives();
@@ -391,6 +476,7 @@ function renderLab(){
  const d22=days.filter(x=>Number(String(x.date).slice(8,10))===22),other=days.filter(x=>Number(String(x.date).slice(8,10))!==22),a22=groupMetrics(d22),ao=groupMetrics(other);
  function eventBox(title,z){return `<div class="labCard"><b>${title}</b><div class="tiny" style="margin-top:5px">${z.days}日 / 平均${z.avgG.toLocaleString()}G</div><div style="font-size:22px;font-weight:900;margin-top:6px">${z.comb}</div><div class="tiny">BB ${fmtRate(z.g,z.bb)} ／ RB ${fmtRate(z.g,z.rb)}<br>平均差枚 ${z.avgDiff==null?'-':signedN(z.avgDiff)+'枚'}${z.diffN?`（${z.diffN}日）`:''}</div></div>`}
  $('event22Box').innerHTML=eventBox('🔥 22日',a22)+eventBox('通常日',ao);
+ renderSettingTrend(days);
  const selfG=ars.reduce((s,a)=>s+num(a.playedG),0),selfBB=ars.reduce((s,a)=>s+num(a.bb),0),selfRB=ars.reduce((s,a)=>s+num(a.rb),0),suika=ars.reduce((s,a)=>s+(a.hits||[]).reduce((q,h)=>q+num(h.suika),0),0),money=ars.reduce((s,a)=>s+(num(a.returnYen)-num(a.invest)),0);
  $('selfLabStats').innerHTML=`<div class="labStat"><small>自分G</small><b>${selfG.toLocaleString()}</b></div><div class="labStat"><small>自分合算</small><b>${fmtRate(selfG,selfBB+selfRB)}</b></div><div class="labStat"><small>BB / RB</small><b>${selfBB} / ${selfRB}</b></div><div class="labStat"><small>累計収支</small><b class="${money>=0?'pos':'neg'}">${money>=0?'+':''}${money.toLocaleString()}円</b></div><div class="labStat"><small>BIG中スイカ</small><b>${suika}</b></div><div class="labStat"><small>スイカ / BIG</small><b>${selfBB?(suika/selfBB).toFixed(2):'-'}</b></div><div class="labStat"><small>最高持ち平均</small><b>${ars.length?Math.round(ars.reduce((s,a)=>s+num(a.maxCoins),0)/ars.length).toLocaleString():'-'}</b></div><div class="labStat"><small>保存実戦</small><b>${ars.length}</b></div>`;
  const fh={},sh={};FLOWERS.filter(x=>x!=='未確認').forEach(x=>fh[x]=0);SIDES.filter(x=>x!=='未確認').forEach(x=>sh[x]=0);ars.forEach(a=>(a.hits||[]).forEach(h=>{if(fh[h.flower]!=null)fh[h.flower]++;if(sh[h.side]!=null)sh[h.side]++}));
@@ -400,11 +486,11 @@ function renderLab(){
  $('recentLabDays').innerHTML=days.slice().reverse().slice(0,14).map(x=>`<div class="labRow"><div><b>${esc(x.date)}（${dayName(x.date)}）</b><div class="tiny">${num(x.totalG).toLocaleString()}G / BB${x.big} RB${x.reg} / ${fmtRate(x.totalG,x.big+x.reg)}</div></div><div style="text-align:right"><b>${x.diff==null?'-':signedN(x.diff)+'枚'}</b><div class="tiny">${x.currentGame}Gヤメ時点</div></div></div>`).join('')||'<div class="tiny">まだ日別データなし</div>';
 }
 function showView(v){const lab=v==='lab';$('logView').classList.toggle('hidden',lab);$('labView').classList.toggle('hidden',!lab);$('tabLog').classList.toggle('activeTab',!lab);$('tabLab').classList.toggle('activeTab',lab);$('stickyBar').classList.toggle('hidden',lab);try{localStorage.setItem(VIEWKEY,v)}catch(e){}if(lab)renderLab();window.scrollTo({top:0,behavior:'smooth'})}
-function exportLabJSON(){const p={version:'1.6-lab',days:labStore(),archives:archives()};const blob=new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`hana_lab_${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportLabJSON(){const p={version:'2.0-setting-trend-lab',days:labStore(),archives:archives()};const blob=new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`hana_lab_${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function clearLabData(){if(!confirm('HANA LABの日別P’s CUBEデータを全部消す？\n実戦ログの保存データは消えないよ。'))return;localStorage.removeItem(LABKEY);renderLab();alert('HANA LABの日別データだけ消したよ🌺')}
 
 function norm(v){const n=Number(String(v??'').replace(/^0+/,''));return Number.isFinite(n)?String(n):String(v??'')}
-function importBundleObject(j){if(!j||j.kind!=='pekalog-turkey-bundle')throw new Error('共通収集コードではないよ');const m=norm(state.machine||'687');const rec=(j.machines||[]).find(x=>norm(x.machine)===m);if(!rec)throw new Error(`${m}番台が収集コードに入っていないよ`);state.pscube=rec;saveLabSnapshot(rec,j.date||'');persist();render();let auto=null;if(state.seatMarkedAt&&String(state.startBig)!==''&&String(state.startReg)!==''){auto=applySnapshotSession(true)}return {rec,auto}}
+function importBundleObject(j){if(!j||j.kind!=='pekalog-turkey-bundle')throw new Error('共通収集コードではないよ');const m=norm(state.machine||'687');const rec=(j.machines||[]).find(x=>norm(x.machine)===m);if(!rec)throw new Error(`${m}番台が収集コードに入っていないよ`);state.pscube=rec;if(j.date){state.date=String(j.date).replaceAll('/','-');if($('date'))$('date').value=state.date}saveLabSnapshot(rec,j.date||'');persist();render();let auto=null;if(state.seatMarkedAt&&String(state.startBig)!==''&&String(state.startReg)!==''){auto=applySnapshotSession(true)}return {rec,auto}}
 async function importClipboard(){try{const t=await navigator.clipboard.readText();const z=importBundleObject(JSON.parse(t));alert(z.auto?`${state.machine}番台を読み込んで、実戦も自動反映したよ🌺\nBB${z.auto.bb} / RB${z.auto.rb}`:`${state.machine}番台のP's CUBEデータを読み込んだよ🌺\n\n過去実戦なら下の『最初の当たり』を1回タップ。次回からは『今ここから打つ』で完全自動！`)}catch(e){alert('クリップボードから読めなかったよ：'+e.message+'\n「JSONを貼る」からでも入れられるよ。')}}
 function togglePaste(){$('bundlePaste').classList.toggle('hidden');$('pasteBtn').classList.toggle('hidden')}
 function importPaste(){try{const z=importBundleObject(JSON.parse($('bundlePaste').value.trim()));$('bundlePaste').value='';alert(z.auto?`読み込み＋実戦自動反映したよ🌺\nBB${z.auto.bb} / RB${z.auto.rb}`:'読み込んだよ🌺')}catch(e){alert('読めなかったよ：'+e.message)}}
@@ -413,12 +499,19 @@ function setCurrentZero(){state.currentG='0';$('currentG').value='0';persist();r
 function focusHit(){$('hitG').scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>$('hitG').focus(),180)}
 function summary(){syncFieldsToState();const g=playedNow(),bb=state.hits.filter(h=>h.type==='BB').length,rb=state.hits.filter(h=>h.type==='RB').length,flowers=countBy('flower',FLOWERS),sides=countBy('side',SIDES),suika=state.hits.reduce((s,h)=>s+num(h.suika),0),money=num(state.returnYen)-num(state.invest);const ftxt=Object.entries(flowers).filter(([k,v])=>k!=='未確認'&&v).map(([k,v])=>`${k}${v}`).join(' / ')||'なし';const stxt=Object.entries(sides).filter(([k,v])=>k!=='未確認'&&v).map(([k,v])=>`${k}${v}`).join(' / ')||'なし';const hist=state.hits.map(h=>`${h.g}${h.type}${h.flower&&h.flower!=='未確認'?`🌺${h.flower}`:''}${h.side&&h.side!=='未確認'?`/S${h.side}`:''}${h.suika?`/🍉${h.suika}`:''}`).join(' → ');return `🌺 HANA LOG\n${state.date} ${state.shop} ${state.machine}番 ${$('model').options[$('model').selectedIndex]?.text||''}\n自分 ${g}G / BB${bb} RB${rb} / 合算 ${rate(g,bb+rb)}\n当たり：${hist||'なし'}\n終了花：${ftxt}\nサイド：${stxt}\nBIG中スイカ：${suika}\n写真：着席${state.startPhotoData?'あり':'なし'} / 撤退${state.endPhotoData?'あり':'なし'}\n最高持ち ${num(state.maxCoins)}枚 / 終了 ${num(state.currentCoins)}枚\n投資 ${num(state.invest).toLocaleString()}円 / 回収 ${num(state.returnYen).toLocaleString()}円 / 収支 ${(money>=0?'+':'')+money.toLocaleString()}円${state.sessionMemo?`\nメモ：${state.sessionMemo}`:''}`}
 async function shareSummary(){const t=summary();try{if(navigator.share){await navigator.share({title:'HANA LOG',text:t});return}}catch(e){}try{await navigator.clipboard.writeText(t);alert('実戦まとめをコピーしたよ🌺')}catch(e){prompt('コピーしてね',t)}}
-function saveSession(){syncFieldsToState();const rec={...JSON.parse(JSON.stringify(state)),id:Date.now(),savedAt:Date.now(),playedG:playedNow(),bb:state.hits.filter(h=>h.type==='BB').length,rb:state.hits.filter(h=>h.type==='RB').length};const a=archives();a.unshift(rec);try{localStorage.setItem(ARCH,JSON.stringify(a.slice(0,30)));renderArchives();renderLab();alert('実戦を保存したよ🌺')}catch(e){const slim={...rec,startPhotoData:'',endPhotoData:'',photoArchiveOmitted:true};const b=archives();b.unshift(slim);try{localStorage.setItem(ARCH,JSON.stringify(b.slice(0,30)));renderArchives();renderLab();alert('実戦は保存したよ🌺\n写真だけ容量節約のため履歴には入れなかったよ。現在画面の写真はそのまま残ってる。')}catch(e2){alert('保存容量がいっぱいみたい。JSONバックアップを取って、古い実戦を整理してね。')}}}
+function pscubeSessionDate(obj){const s=obj?.pscube||obj||{};const raw=String(s.updated||s.capturedAt||'');const m=raw.match(/(\d{4})[\/-](\d{2})[\/-](\d{2})/);return m?`${m[1]}-${m[2]}-${m[3]}`:''}
+function jstDateFromMs(ms){if(!ms)return '';try{return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(Number(ms)))}catch(e){return ''}}
+function archiveDate(x){return pscubeSessionDate(x)||x.sessionDate||x.date||jstDateFromMs(x.savedAt)||'-'}
+function saveSession(){syncFieldsToState();const sessionDate=pscubeSessionDate(state)||state.date||today();state.date=sessionDate;if($('date'))$('date').value=sessionDate;const rec={...JSON.parse(JSON.stringify(state)),sessionDate,id:Date.now(),savedAt:Date.now(),playedG:playedNow(),bb:state.hits.filter(h=>h.type==='BB').length,rb:state.hits.filter(h=>h.type==='RB').length};const a=archives();a.unshift(rec);try{localStorage.setItem(ARCH,JSON.stringify(a.slice(0,30)));renderArchives();renderLab();alert('実戦を保存したよ🌺')}catch(e){const slim={...rec,startPhotoData:'',endPhotoData:'',photoArchiveOmitted:true};const b=archives();b.unshift(slim);try{localStorage.setItem(ARCH,JSON.stringify(b.slice(0,30)));renderArchives();renderLab();alert('実戦は保存したよ🌺\n写真だけ容量節約のため履歴には入れなかったよ。現在画面の写真はそのまま残ってる。')}catch(e2){alert('保存容量がいっぱいみたい。JSONバックアップを取って、古い実戦を整理してね。')}}}
 function archives(){try{return JSON.parse(localStorage.getItem(ARCH)||'[]')}catch(e){return []}}
-function renderArchives(){const a=archives();$('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date)} ${esc(x.machine)}番</b><div class="tiny">${esc(x.shop)} ／ ${x.playedG||0}G ／ BB${x.bb||0} RB${x.rb||0}${x.startPhotoData?' ／ 📷着席':''}${x.endPhotoData?' ／ 📷撤退':''}</div></div><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="btn dark" onclick="loadArchive(${x.id})">開く</button><button class="btn danger" onclick="deleteArchive(${x.id})">削除</button></div></div></div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'}
-function deleteArchive(id){const a=archives(),x=a.find(v=>v.id===id);if(!x)return;const label=`${x.date||''} ${x.machine||''}番 / BB${x.bb||0} RB${x.rb||0}`;if(!confirm(`この保存データを削除する？\n\n${label}\n\n※この操作は元に戻せないよ。`))return;const next=a.filter(v=>v.id!==id);localStorage.setItem(ARCH,JSON.stringify(next));renderArchives();renderLab();alert('保存データを削除したよ🌺')}
+function archivePlayedG(x){if(num(x.playedG)>0)return num(x.playedG);const hs=Array.isArray(x.hits)?x.hits:[];return hs.reduce((s,h)=>s+num(h.selfG),0)+num(x.currentG)}
+function archiveCounts(x){const hs=Array.isArray(x.hits)?x.hits:[];return {bb:Number.isFinite(Number(x.bb))?num(x.bb):hs.filter(h=>h.type==='BB').length,rb:Number.isFinite(Number(x.rb))?num(x.rb):hs.filter(h=>h.type==='RB').length}}
+function archiveSignalMini(x){const hs=Array.isArray(x.hits)?x.hits:[];const cnt=(prop,val)=>hs.filter(h=>h&&h[prop]===val).length;const odd=cnt('side','青')+cnt('side','緑'),even=cnt('side','黄')+cnt('side','赤'),hi=['青','黄','緑','紫','虹'].reduce((n,c)=>n+cnt('flower',c),0)+cnt('side','虹');const suika=hs.reduce((n,h)=>n+num(h?.suika),0);const a=[];if(odd)a.push(`奇数示唆${odd}`);if(even)a.push(`偶数示唆${even}`);if(hi)a.push(`高設定方向${hi}`);if(suika)a.push(`🍉${suika}`);return a.join(' / ')}
+function archiveJudgeHtml(x){const g=archivePlayedG(x),c=archiveCounts(x),arr=settingLikelihoodFor(g,c.bb,c.rb,x.model||'newkingv');if(!arr)return `<div class="archiveJudge"><b>🧠 判別：${g<100?'材料待ち':'この機種は数値判別未登録'}</b><div class="mini">${g.toLocaleString()}G / BB${c.bb} RB${c.rb}</div></div>`;const top=arr[0],second=arr[1],conf=judgeConfidence(g),sig=archiveSignalMini(x),cls=g>=2500?'hot':'weak';return `<div class="archiveJudge"><b>🧠 最大整合：設定${top.s} ／ 次点 設定${second.s}</b><div class="mini">${g.toLocaleString()}G / BB 1/${c.bb?Math.round(g/c.bb):'-'} / RB 1/${c.rb?Math.round(g/c.rb):'-'} / ${conf}</div><span class="jtag ${cls}">相対整合 ${fmtPct(top.p)}</span>${sig?`<span class="jtag">${esc(sig)}</span>`:''}<div class="mini">※設定確率ではなく、BB/RBが各設定スペックにどれだけ合うかの相対比較。</div></div>`}
+function renderArchives(){const a=archives();$('archives').innerHTML=a.length?a.map(x=>{const g=archivePlayedG(x),c=archiveCounts(x);return `<div class="archiveItem"><div class="archiveTop"><div><b>${esc(archiveDate(x))} ${esc(x.machine)}番</b><div class="tiny">${esc(x.shop)} ／ ${g}G ／ BB${c.bb} RB${c.rb}${x.startPhotoData?' ／ 📷着席':''}${x.endPhotoData?' ／ 📷撤退':''}</div></div><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="btn dark" onclick="loadArchive(${x.id})">開く</button><button class="btn danger" onclick="deleteArchive(${x.id})">削除</button></div></div>${archiveJudgeHtml(x)}</div>`}).join(''):'<div class="tiny">保存済み実戦なし</div>'}
+function deleteArchive(id){const a=archives(),x=a.find(v=>v.id===id);if(!x)return;const label=`${archiveDate(x)} ${x.machine||''}番 / BB${x.bb||0} RB${x.rb||0}`;if(!confirm(`この保存データを削除する？\n\n${label}\n\n※この操作は元に戻せないよ。`))return;const next=a.filter(v=>v.id!==id);localStorage.setItem(ARCH,JSON.stringify(next));renderArchives();renderLab();alert('保存データを削除したよ🌺')}
 function loadArchive(id){const x=archives().find(v=>v.id===id);if(!x)return;if(!confirm('この実戦を現在画面に読み込む？'))return;const {id:_,savedAt:__,playedG:___,bb:____,rb:_____,...rest}=x;state={...blank(),...rest};persist();syncStateToFields();render();window.scrollTo({top:0,behavior:'smooth'})}
-function downloadJSON(){syncFieldsToState();const p={version:'1.6',current:state,archives:archives(),labDays:labStore()};const blob=new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`hana_log_${state.date}_${state.machine}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function downloadJSON(){syncFieldsToState();const p={version:'2.0-setting-trend',current:state,archives:archives(),labDays:labStore()};const blob=new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`hana_log_${state.date}_${state.machine}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function importJSON(ev){const f=ev.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);if(p.current)state={...blank(),...p.current};if(Array.isArray(p.archives))localStorage.setItem(ARCH,JSON.stringify(p.archives));if(p.labDays&&typeof p.labDays==='object')localStorage.setItem(LABKEY,JSON.stringify(p.labDays));persist();syncStateToFields();render();alert('HANA LOGデータを読み込んだよ🌺')}catch(e){alert('JSONを読めなかったよ')}ev.target.value=''};r.readAsText(f)}
 function newSession(){if(!confirm('現在の実戦をリセットして新しく始める？\n必要なら先に「実戦を保存」してね。'))return;const keep={shop:state.shop||'ターキー',machine:state.machine||'687',model:state.model||'newkingv',drawdownLimit:state.drawdownLimit||'300'};state={...blank(),...keep};persist();syncStateToFields();render();window.scrollTo({top:0,behavior:'smooth'})}
 function render(){syncFieldsToState();renderPhotos();renderLatest();renderLogAndStatsOnly();renderStore();renderArchives();renderLab()}
