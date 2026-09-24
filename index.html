@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.5.5 ARCHIVE JUDGE + LAB</title>
+<title>ペカログ JUGGLER EDITION v3.6.0 LAYOUT TAGS + ARCHIVE JUDGE</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -91,7 +91,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.5.5 ARCHIVE JUDGE + LAB</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.6.0 LAYOUT TAGS + ARCHIVE JUDGE</div>
 </header>
 
 <div class="card">
@@ -108,6 +108,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
   <div><label>台番号</label><input id="machine" inputmode="numeric" placeholder="658"></div>
   <div><label>差枚（任意）</label><input id="diffCoins" inputmode="numeric" placeholder="+1937 / -850"></div>
  </div>
+ <div id="machinePosition" class="tiny" style="margin-top:7px"></div>
  <div style="margin-top:9px"><label>実戦メモ</label><input id="sessionMemo" placeholder="朝イチ / 据え置きっぽい / 🐻と並び打ち等"></div>
  <div style="margin-top:9px"><label>ヤメ理由（LABで理由別分析）</label><select id="endReason"><option value="">未選択</option><option>REGが弱くなった</option><option>合算が悪化</option><option>ハマり</option><option>持ち玉終了</option><option>時間・予定</option><option>目標枚数到達</option><option>台移動</option><option>直感・違和感</option><option>その他</option></select></div>
 </div>
@@ -343,6 +344,15 @@ const MODELS={
   premiums:['なし','GOGO!ランプ変化','プレミアムアクション','特殊告知','特殊点灯系','スペシャルボーナス音','その他']
  }
 };
+
+const TURKEY_LAYOUT_ROLES={
+ '651':['角','マイ角'],'652':['角2'],'656':['マイ機種端2'],'657':['マイ機種端','機種境界'],
+ '658':['角2','GO'],'660':['角','GO角'],'661':['角','アイム角'],'662':['角2'],
+ '720':['角','マイ角'],'718':['角2'],'715':['マイ機種端2'],'713':['マイ機種端','機種境界'],
+ '712':['角2','GO','機種境界'],'711':['角','GO角'],'710':['角','アイム角'],'708':['角2']
+};
+function turkeyRoleTags(machine){const m=String(Number(machine)||machine||'');return TURKEY_LAYOUT_ROLES[m]||[]}
+function turkeyRoleHtml(machine){const a=turkeyRoleTags(machine);return a.length?`<div class="judgeTags" style="margin-top:4px">${a.map(x=>`<span class="judgeTag">${esc(x)}</span>`).join('')}</div>`:''}
 const KEY='pekalog_v2_state',ARCH='pekalog_v2_archives';
 const $=id=>document.getElementById(id);
 let state=JSON.parse(localStorage.getItem(KEY)||'null')||blankState();
@@ -372,6 +382,7 @@ function render(){
  renderModelPicker();
  const sp=specs();$('modelSpec').textContent=`${MODELS[state.model].name}｜設定1 合算 1/${sp[0].all} → 設定6 1/${sp[5].all}`;
  $('date').value=state.date||new Date().toISOString().slice(0,10);$('shop').value=state.shop||'';$('machine').value=state.machine||'';$('diffCoins').value=state.diffCoins||'';$('sessionMemo').value=state.sessionMemo||'';$('endReason').value=state.endReason||'';
+ const pos=$('machinePosition');if(pos){const rr=turkeyRoleTags(state.machine);pos.innerHTML=rr.length?`🗺 ターキー配置：${rr.map(x=>`<span class="judgeTag">${esc(x)}</span>`).join(' ')}`:''}
  $('totalG').textContent=state.totalG;$('currentG').textContent=state.currentG;$('bigCount').textContent=state.big;$('regCount').textContent=state.reg;
  $('bigRate').textContent=rate(state.big);$('regRate').textContent=rate(state.reg);$('allRate').textContent=rate(state.big+state.reg);$('maxHamar').textContent=Math.max(0,state.currentG,...state.history.map(x=>x.g));
  $('cherryCount').textContent=state.cherry;
@@ -636,13 +647,13 @@ function archiveJudgeHtml(x){
 function archiveSession(){if(!state.totalG&&!state.history.length)return alert('まだ保存する実戦データがないよ');let a=JSON.parse(localStorage.getItem(ARCH)||'[]');const now=Date.now();a.unshift({...state,id:now,endedAt:now});localStorage.setItem(ARCH,JSON.stringify(a.slice(0,60)));renderArchives();alert('実戦を保存したよ！')}
 function renderArchives(){
  const a=JSON.parse(localStorage.getItem(ARCH)||'[]');
- $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">${esc(x.shop||'')} 台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}${x.endReason?` / ${esc(x.endReason)}`:''}</div></div><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button></div>${archiveJudgeHtml(x)}</div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'
+ $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">${esc(x.shop||'')} 台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}${x.endReason?` / ${esc(x.endReason)}`:''}</div>${turkeyRoleHtml(x.machine)}</div><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button></div>${archiveJudgeHtml(x)}</div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'
 }
 function loadArchive(id){const a=JSON.parse(localStorage.getItem(ARCH)||'[]'),x=a.find(v=>v.id===id);if(!x)return;if(!confirm('この実戦を現在の画面に読み込む？'))return;const {id:_,...rest}=x;state=rest;if(!state.quickFlags)state.quickFlags={cherry:false,premium:false};if(!state.lamp)state.lamp={start:null,end:null};updatePremiumOptions();render();window.scrollTo({top:0,behavior:'smooth'})}
 function downloadJSON(){const payload={version:'3.0',current:state,archives:JSON.parse(localStorage.getItem(ARCH)||'[]')};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_${state.date||'data'}_${state.machine||'machine'}.json`;a.click();URL.revokeObjectURL(a.href)}
 function importJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);if(p.current)state=p.current;if(Array.isArray(p.archives))localStorage.setItem(ARCH,JSON.stringify(p.archives));updatePremiumOptions();render();alert('データを読み込んだよ！')}catch(e){alert('JSONを読み込めなかったよ')}};r.readAsText(f);ev.target.value=''}
 function newSession(){if(!confirm('現在の実戦をリセットして、新しい実戦を始める？\n必要なら先に「実戦を保存」してね。'))return;const m=state.model;state=blankState();state.model=m;closeBonus();render();window.scrollTo({top:0,behavior:'smooth'})}
-['date','shop','machine','diffCoins','sessionMemo','endReason'].forEach(id=>$(id).addEventListener('input',saveMeta));
+['date','shop','machine','diffCoins','sessionMemo','endReason'].forEach(id=>$(id).addEventListener('input',()=>{saveMeta();if(id==='machine'){const rr=turkeyRoleTags(state.machine),pos=$('machinePosition');if(pos)pos.innerHTML=rr.length?`🗺 ターキー配置：${rr.map(x=>`<span class="judgeTag">${esc(x)}</span>`).join(' ')}`:''}}));
 updatePremiumOptions();render();
 </script>
 
