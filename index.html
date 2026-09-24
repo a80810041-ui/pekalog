@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.5.4 LAB WEEKDAY + TIME</title>
+<title>ペカログ JUGGLER EDITION v3.5.5 ARCHIVE JUDGE + LAB</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -30,6 +30,9 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 .bar{height:10px;border-radius:999px;background:#252c37;overflow:hidden;margin-top:4px}.fill{height:100%;background:linear-gradient(90deg,#6ca8ff,#58e39a)}
 .settingRow{display:grid;grid-template-columns:48px 1fr 54px;align-items:center;gap:8px;margin:7px 0}.notice{font-size:12px;line-height:1.55;color:#b8c0cc;background:#10151c;border:1px solid #29313d;border-radius:12px;padding:10px}
 .archiveItem{background:#101319;border:1px solid #272e39;border-radius:13px;padding:10px;margin:7px 0}.archiveTop{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.archiveJudge{margin-top:9px;background:#0c1117;border:1px solid #2a3441;border-radius:11px;padding:9px;line-height:1.55}
+.archiveJudgeTop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.archiveJudge b{font-size:13px}.judgeTags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}.judgeTag{display:inline-flex;border:1px solid #384555;background:#18202a;color:#dce8f6;border-radius:999px;padding:3px 7px;font-size:10px}.judgeTag.good{border-color:#39785d;background:#153326;color:#bdf5d3}.judgeTag.warn{border-color:#765f36;background:#312718;color:#ffe1a3}
 .shareBox{white-space:pre-wrap;background:#0f1319;border:1px solid #2a313d;border-radius:13px;padding:11px;font-size:13px;line-height:1.6;max-height:260px;overflow:auto}
 .footer{text-align:center;color:#778292;font-size:11px;margin-top:20px;line-height:1.6}.hidden{display:none}
 @media(max-width:560px){.grid4{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:1fr}.modelBtn{padding:13px 8px}h1{font-size:24px}.wrap{padding-left:9px;padding-right:9px}}
@@ -88,7 +91,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.5.4 LAB WEEKDAY + TIME</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.5.5 ARCHIVE JUDGE + LAB</div>
 </header>
 
 <div class="card">
@@ -281,7 +284,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
  <button class="btn dark small wide" style="margin-top:9px" onclick="newSession()">🧹 新しい実戦を開始</button>
 </div>
 
-<div class="card"><h3>保存済み実戦</h3><div id="archives"></div></div>
+<div class="card"><h3>保存済み実戦 🧠</h3><div class="notice" style="margin-bottom:9px">保存一覧だけで設定判別を確認。BB・REG確率による相対整合度なので、短時間は「材料少」として見る。</div><div id="archives"></div></div>
 
 <div class="footer">
  ペカログは端末ブラウザ内に自動保存。6機種対応。設定推測は参考用です。<br>
@@ -614,10 +617,26 @@ ${state.lamp?.start?.confirmed&&state.lamp?.end?.confirmed?`写真差分: ${phot
 ${state.history.map(x=>`${x.g}G ${x.type} / ${x.trigger}${x.premium?` / ✨${x.premium}`:''}${x.memo?` / ${x.memo}`:''}`).join('\n')}`
 }
 async function copySummary(){try{await navigator.clipboard.writeText(summaryText());alert('詳細結果をコピーしたよ！')}catch(e){prompt('この内容をコピーしてね',summaryText())}}
+function specsForModel(model){const m=MODELS[model]||MODELS.gogo3,a=m.spec||[];return [0,1,2,3,4,5].map(i=>({s:i+1,bb:a[i*3],rb:a[i*3+1],all:a[i*3+2]})).filter(x=>x.bb&&x.rb)}
+function estimateArchive(x){
+ const g=Number(x?.totalG)||0,big=Number(x?.big)||0,reg=Number(x?.reg)||0,sp=specsForModel(x?.model);
+ if(!g||!sp.length)return [];
+ const logs=sp.map(z=>({s:z.s,l:poissonLog(big,g/z.bb)+poissonLog(reg,g/z.rb)}));
+ const mx=Math.max(...logs.map(z=>z.l)),ex=logs.map(z=>({s:z.s,e:Math.exp(z.l-mx)})),sum=ex.reduce((a,b)=>a+b.e,0)||1;
+ return ex.map(z=>({s:z.s,p:z.e/sum})).sort((a,b)=>b.p-a.p);
+}
+function archiveJudgeConfidence(g){if(g>=5000)return '参考度高め';if(g>=2500)return '学習中';if(g>=1000)return '観察中';return '材料少'}
+function archiveJudgeHtml(x){
+ const g=Number(x?.totalG)||0,big=Number(x?.big)||0,reg=Number(x?.reg)||0,arr=estimateArchive(x);
+ if(!g||!arr.length)return '<div class="archiveJudge"><b>🧠 設定判別：材料待ち</b></div>';
+ const top=arr[0],second=arr[1]||arr[0],conf=archiveJudgeConfidence(g),cls=g>=2500?'good':'warn';
+ const br=big?`1/${Math.round(g/big)}`:'-',rr=reg?`1/${Math.round(g/reg)}`:'-',cr=(big+reg)?`1/${Math.round(g/(big+reg))}`:'-';
+ return `<div class="archiveJudge"><div class="archiveJudgeTop"><b>🧠 最大整合：設定${top.s} ／ 次点 設定${second.s}</b><span class="judgeTag ${cls}">${conf}</span></div><div class="tiny">BB ${br} ／ REG ${rr} ／ 合算 ${cr}</div><div class="judgeTags"><span class="judgeTag">相対整合 ${(top.p*100).toFixed(1)}%</span>${x.diffCoins!==''&&x.diffCoins!=null?`<span class="judgeTag">差枚 ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚</span>`:''}</div><div class="tiny" style="margin-top:5px">※設定確率ではなく、保存時のBB/RBが各設定スペックにどれだけ合うかの相対比較。</div></div>`;
+}
 function archiveSession(){if(!state.totalG&&!state.history.length)return alert('まだ保存する実戦データがないよ');let a=JSON.parse(localStorage.getItem(ARCH)||'[]');const now=Date.now();a.unshift({...state,id:now,endedAt:now});localStorage.setItem(ARCH,JSON.stringify(a.slice(0,60)));renderArchives();alert('実戦を保存したよ！')}
 function renderArchives(){
  const a=JSON.parse(localStorage.getItem(ARCH)||'[]');
- $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">${esc(x.shop||'')} 台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}${x.endReason?` / ${esc(x.endReason)}`:''}</div></div><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button></div></div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'
+ $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">${esc(x.shop||'')} 台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}${x.endReason?` / ${esc(x.endReason)}`:''}</div></div><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button></div>${archiveJudgeHtml(x)}</div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'
 }
 function loadArchive(id){const a=JSON.parse(localStorage.getItem(ARCH)||'[]'),x=a.find(v=>v.id===id);if(!x)return;if(!confirm('この実戦を現在の画面に読み込む？'))return;const {id:_,...rest}=x;state=rest;if(!state.quickFlags)state.quickFlags={cherry:false,premium:false};if(!state.lamp)state.lamp={start:null,end:null};updatePremiumOptions();render();window.scrollTo({top:0,behavior:'smooth'})}
 function downloadJSON(){const payload={version:'3.0',current:state,archives:JSON.parse(localStorage.getItem(ARCH)||'[]')};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_${state.date||'data'}_${state.machine||'machine'}.json`;a.click();URL.revokeObjectURL(a.href)}
@@ -838,342 +857,5 @@ function startTurkeyCollection(){
 }
 window.addEventListener('load',updateTurkeySyncStatus);
 </script>
-<script id="pekalog-v360-turkey-edit-patch">
-(function(){
-  const DEFAULT_SHOP='鷺沼ターキー';
-  let editingArchiveId=null;
 
-  function archiveArray(){
-    try{const a=JSON.parse(localStorage.getItem(ARCH)||'[]');return Array.isArray(a)?a:[]}catch(e){return []}
-  }
-  function normalizeTurkeyArchives(){
-    const a=archiveArray();let changed=false;
-    for(const x of a){if(!String(x.shop||'').trim()){x.shop=DEFAULT_SHOP;changed=true}}
-    if(changed)localStorage.setItem(ARCH,JSON.stringify(a));
-  }
-  function hideShopUI(){
-    const shop=$('shop');if(!shop)return;
-    shop.value=DEFAULT_SHOP;
-    const holder=shop.closest('div');if(holder)holder.style.display='none';
-    const diff=$('diffCoins');if(diff?.parentElement)diff.parentElement.style.gridColumn='1 / -1';
-  }
-  function editSaveButton(){return document.querySelector('button[onclick="archiveSession()"]')}
-  function ensureCancelEditButton(){
-    if(document.getElementById('cancelArchiveEditBtn'))return;
-    const saveBtn=editSaveButton();if(!saveBtn)return;
-    const btn=document.createElement('button');
-    btn.id='cancelArchiveEditBtn';btn.type='button';btn.className='btn dark small hidden';
-    btn.textContent='✖ 編集をやめる';btn.onclick=cancelArchiveEdit;
-    saveBtn.insertAdjacentElement('afterend',btn);
-  }
-  function updateEditUI(){
-    ensureCancelEditButton();
-    const saveBtn=editSaveButton(),cancelBtn=document.getElementById('cancelArchiveEditBtn');
-    if(saveBtn)saveBtn.textContent=editingArchiveId?'💾 編集内容を保存':'💾 実戦を保存';
-    if(cancelBtn)cancelBtn.classList.toggle('hidden',!editingArchiveId);
-    let note=document.getElementById('archiveEditNotice');
-    const saveCard=saveBtn?.closest('.card');
-    if(editingArchiveId){
-      if(!note&&saveCard){note=document.createElement('div');note.id='archiveEditNotice';note.className='notice';note.style.marginTop='9px';saveCard.appendChild(note)}
-      if(note)note.innerHTML='✏️ <strong>保存済み実戦を編集中</strong>。上の入力や履歴を直したら「編集内容を保存」を押してね。';
-    }else if(note){note.remove()}
-  }
-
-  const originalBlankState=blankState;
-  blankState=function(){const s=originalBlankState();s.shop=DEFAULT_SHOP;return s};
-
-  const originalRender=render;
-  render=function(){
-    if(!String(state.shop||'').trim())state.shop=DEFAULT_SHOP;
-    originalRender();hideShopUI();updateEditUI();
-  };
-
-  saveMeta=function(){
-    state.date=$('date').value;state.shop=DEFAULT_SHOP;state.machine=$('machine').value;
-    state.diffCoins=$('diffCoins').value;state.sessionMemo=$('sessionMemo').value;
-    state.endReason=$('endReason').value;persist();
-  };
-
-  archiveSession=function(){
-    if(!state.totalG&&!state.history.length)return alert('まだ保存する実戦データがないよ');
-    state.shop=DEFAULT_SHOP;const a=archiveArray(),now=Date.now();
-    if(editingArchiveId){
-      const idx=a.findIndex(x=>Number(x.id)===Number(editingArchiveId));
-      if(idx<0){editingArchiveId=null;updateEditUI();return alert('編集元の実戦が見つからなかったよ。もう一度一覧から開いてね。')}
-      const old=a[idx];
-      a[idx]={...state,id:old.id,endedAt:old.endedAt||old.id||now,editedAt:now,shop:DEFAULT_SHOP};
-      localStorage.setItem(ARCH,JSON.stringify(a.slice(0,60)));
-      editingArchiveId=null;renderArchives();updateEditUI();alert('編集内容を保存したよ！ ✏️');return;
-    }
-    a.unshift({...state,shop:DEFAULT_SHOP,id:now,endedAt:now});
-    localStorage.setItem(ARCH,JSON.stringify(a.slice(0,60)));renderArchives();alert('実戦を保存したよ！');
-  };
-
-  renderArchives=function(){
-    const a=archiveArray();
-    $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div style="min-width:0"><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}${x.endReason?` / ${esc(x.endReason)}`:''}</div></div><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button><button class="btn cyan small" onclick="editArchive(${x.id})">✏️ 編集</button></div></div></div>`).join(''):'<div class="tiny">保存済み実戦なし</div>';
-  };
-
-  loadArchive=function(id){
-    const a=archiveArray(),x=a.find(v=>Number(v.id)===Number(id));if(!x)return;
-    if(!confirm('この実戦を現在の画面に読み込む？'))return;
-    editingArchiveId=null;const {id:_,editedAt:__,...rest}=x;state={...rest,shop:DEFAULT_SHOP};
-    if(!state.quickFlags)state.quickFlags={cherry:false,premium:false};
-    if(!state.lamp)state.lamp={start:null,end:null};
-    updatePremiumOptions();render();window.scrollTo({top:0,behavior:'smooth'});
-  };
-
-  window.editArchive=function(id){
-    const a=archiveArray(),x=a.find(v=>Number(v.id)===Number(id));if(!x)return;
-    editingArchiveId=id;const {id:_,editedAt:__,...rest}=x;state={...rest,shop:DEFAULT_SHOP};
-    if(!state.quickFlags)state.quickFlags={cherry:false,premium:false};
-    if(!state.lamp)state.lamp={start:null,end:null};
-    updatePremiumOptions();render();window.scrollTo({top:0,behavior:'smooth'});
-  };
-
-  window.cancelArchiveEdit=function(){
-    if(!editingArchiveId)return;
-    if(!confirm('編集モードをやめる？ 未保存の変更は現在画面には残るよ。'))return;
-    editingArchiveId=null;updateEditUI();
-  };
-
-  const originalNewSession=newSession;
-  newSession=function(){editingArchiveId=null;originalNewSession();state.shop=DEFAULT_SHOP;persist();render()};
-
-  shareText=function(kind){
-    const diff=state.diffCoins!==''?`\n差枚 ${Number(state.diffCoins)>0?'+':''}${state.diffCoins}枚`:'';
-    const p=state.history.filter(x=>x.premium).length;
-    return `🎰 ${kind==='最終'?'本日終了':'稼働途中'} ${kind==='最終'?'🏁':'👀'}\n${MODELS[state.model].name}${state.machine?`｜${state.machine}番台`:''}\n${state.totalG}G\nBIG ${state.big}（${rate(state.big)}）\nREG ${state.reg}（${rate(state.reg)}）\n合算 ${rate(state.big+state.reg)}\n現在 ${state.currentG}G\n✨プレミア ${p}回${diff}\n#ペカログ`;
-  };
-
-  summaryText=function(){
-    const cb=state.history.filter(x=>x.type==='BIG'&&x.trigger==='チェリー重複').length;
-    const cr=state.history.filter(x=>x.type==='REG'&&x.trigger==='チェリー重複').length;
-    const p=state.history.filter(x=>x.premium);
-    return `ペカログ 🎰\n機種: ${MODELS[state.model].name}\n${state.date||'-'} / 台番 ${state.machine||'-'}\n総回転 ${state.totalG}G\nBIG ${state.big}（${rate(state.big)}）\nREG ${state.reg}（${rate(state.reg)}）\n合算 ${rate(state.big+state.reg)}\n最大ハマり ${Math.max(0,state.currentG,...state.history.map(x=>x.g))}G\nチェリー参考数 ${state.cherry}\n🍒重複 BIG ${cb} / REG ${cr}\nプレミア ${p.length}回\n${state.diffCoins!==''?`差枚 ${state.diffCoins}枚\n`:''}${state.endReason?`ヤメ理由：${state.endReason}\n`:''}${state.sessionMemo?`メモ：${state.sessionMemo}\n`:''}${state.lamp?.start?.confirmed&&state.lamp?.end?.confirmed?`写真差分: ${photoDeltaData()?.totalG??'-'}G / BB+${photoDeltaData()?.big??'-'} / RB+${photoDeltaData()?.reg??'-'}\n`:''}履歴：\n${state.history.map(x=>`${x.g}G ${x.type} / ${x.trigger}${x.premium?` / ✨${x.premium}`:''}${x.memo?` / ${x.memo}`:''}`).join('\n')}`;
-  };
-
-  normalizeTurkeyArchives();
-  if(!String(state.shop||'').trim())state.shop=DEFAULT_SHOP;
-  document.title='ペカログ JUGGLER EDITION v3.6 TURKEY + EDIT';
-  const ver=document.querySelector('.ver');if(ver)ver.textContent='v3.6 TURKEY + EDIT';
-  render();
-})();
-</script>
-<script id="pekalog-v361-save-fix">
-(function(){
-  const DEFAULT_SHOP='鷺沼ターキー';
-  const DB_NAME='pekalog_photo_db_v1';
-  const STORE='archivePhotos';
-  let editId=null;
-
-  function archives(){
-    try{
-      const a=JSON.parse(localStorage.getItem(ARCH)||'[]');
-      return Array.isArray(a)?a:[];
-    }catch(e){ return []; }
-  }
-
-  function openDB(){
-    return new Promise((resolve,reject)=>{
-      const req=indexedDB.open(DB_NAME,1);
-      req.onupgradeneeded=()=>{
-        const db=req.result;
-        if(!db.objectStoreNames.contains(STORE)){
-          db.createObjectStore(STORE,{keyPath:'id'});
-        }
-      };
-      req.onsuccess=()=>resolve(req.result);
-      req.onerror=()=>reject(req.error||new Error('写真DBを開けませんでした'));
-    });
-  }
-
-  async function putPhotos(id,lamp){
-    const start=lamp?.start?.img||null;
-    const end=lamp?.end?.img||null;
-    if(!start&&!end)return;
-    const db=await openDB();
-    await new Promise((resolve,reject)=>{
-      const tx=db.transaction(STORE,'readwrite');
-      tx.objectStore(STORE).put({id:Number(id),start,end,updatedAt:Date.now()});
-      tx.oncomplete=resolve;
-      tx.onerror=()=>reject(tx.error||new Error('写真を保存できませんでした'));
-      tx.onabort=()=>reject(tx.error||new Error('写真保存が中断されました'));
-    });
-    db.close();
-  }
-
-  async function getPhotos(id){
-    const db=await openDB();
-    const row=await new Promise((resolve,reject)=>{
-      const req=db.transaction(STORE,'readonly').objectStore(STORE).get(Number(id));
-      req.onsuccess=()=>resolve(req.result||null);
-      req.onerror=()=>reject(req.error||new Error('写真を読み込めませんでした'));
-    });
-    db.close();
-    return row;
-  }
-
-  function stripImages(lamp){
-    const out={start:null,end:null};
-    for(const k of ['start','end']){
-      const src=lamp?.[k];
-      if(!src)continue;
-      const {img,...rest}=src;
-      out[k]={...rest,photoStored:!!img||!!rest.photoStored};
-    }
-    return out;
-  }
-
-  async function hydrateLamp(id,lamp){
-    const out=stripImages(lamp||{start:null,end:null});
-    try{
-      const p=await getPhotos(id);
-      if(p?.start)out.start={...(out.start||{}),img:p.start,photoStored:true};
-      if(p?.end)out.end={...(out.end||{}),img:p.end,photoStored:true};
-    }catch(e){}
-    return out;
-  }
-
-  function ensureCancelButton(){
-    const saveBtn=document.querySelector('button[onclick="archiveSession()"]');
-    if(!saveBtn)return;
-    let btn=document.getElementById('cancelArchiveEditBtn2');
-    if(!btn){
-      btn=document.createElement('button');
-      btn.id='cancelArchiveEditBtn2';
-      btn.type='button';
-      btn.className='btn dark small hidden';
-      btn.textContent='✖ 編集をやめる';
-      btn.onclick=()=>cancelArchiveEdit();
-      saveBtn.insertAdjacentElement('afterend',btn);
-    }
-    saveBtn.textContent=editId?'💾 編集内容を保存':'💾 実戦を保存';
-    btn.classList.toggle('hidden',!editId);
-  }
-
-  async function migrateOldArchivePhotos(){
-    const a=archives();
-    let changed=false;
-    for(const x of a){
-      if(x?.lamp?.start?.img || x?.lamp?.end?.img){
-        await putPhotos(x.id,x.lamp);
-        x.lamp=stripImages(x.lamp);
-        changed=true;
-      }
-    }
-    if(changed)localStorage.setItem(ARCH,JSON.stringify(a));
-  }
-
-  window.archiveSession=async function(){
-    if(!state.totalG&&!state.history.length){
-      return alert('まだ保存する実戦データがないよ');
-    }
-    state.shop=DEFAULT_SHOP;
-    const a=archives();
-    const now=Date.now();
-    const id=editId||now;
-
-    try{
-      await putPhotos(id,state.lamp);
-
-      const clean={
-        ...state,
-        shop:DEFAULT_SHOP,
-        lamp:stripImages(state.lamp)
-      };
-
-      if(editId){
-        const idx=a.findIndex(x=>Number(x.id)===Number(editId));
-        if(idx<0){
-          editId=null;
-          ensureCancelButton();
-          return alert('編集元の実戦が見つからなかったよ');
-        }
-        const old=a[idx];
-        a[idx]={
-          ...clean,
-          id:old.id,
-          endedAt:old.endedAt||old.id||now,
-          editedAt:now
-        };
-      }else{
-        a.unshift({...clean,id:now,endedAt:now});
-      }
-
-      localStorage.setItem(ARCH,JSON.stringify(a.slice(0,60)));
-
-      const wasEdit=!!editId;
-      editId=null;
-      renderArchives();
-      ensureCancelButton();
-      alert(wasEdit?'編集内容を保存したよ！ ✏️':'実戦を保存したよ！');
-    }catch(e){
-      alert(
-        '保存できなかったよ。\n\n'+
-        'ブラウザ保存容量がいっぱいの可能性があります。'+
-        'まず「JSON保存」でバックアップしてね。\n\n'+
-        String(e?.message||e)
-      );
-    }
-  };
-
-  window.loadArchive=async function(id){
-    const a=archives();
-    const x=a.find(v=>Number(v.id)===Number(id));
-    if(!x)return;
-    if(!confirm('この実戦を現在の画面に読み込む？'))return;
-
-    editId=null;
-    const {id:_,editedAt:__,...rest}=x;
-    state={
-      ...rest,
-      shop:DEFAULT_SHOP,
-      lamp:await hydrateLamp(x.id,rest.lamp)
-    };
-    if(!state.quickFlags)state.quickFlags={cherry:false,premium:false};
-    if(!state.lamp)state.lamp={start:null,end:null};
-    updatePremiumOptions();
-    render();
-    ensureCancelButton();
-    window.scrollTo({top:0,behavior:'smooth'});
-  };
-
-  window.editArchive=async function(id){
-    const a=archives();
-    const x=a.find(v=>Number(v.id)===Number(id));
-    if(!x)return;
-
-    editId=id;
-    const {id:_,editedAt:__,...rest}=x;
-    state={
-      ...rest,
-      shop:DEFAULT_SHOP,
-      lamp:await hydrateLamp(x.id,rest.lamp)
-    };
-    if(!state.quickFlags)state.quickFlags={cherry:false,premium:false};
-    if(!state.lamp)state.lamp={start:null,end:null};
-    updatePremiumOptions();
-    render();
-    ensureCancelButton();
-    window.scrollTo({top:0,behavior:'smooth'});
-  };
-
-  window.cancelArchiveEdit=function(){
-    if(!editId)return;
-    if(!confirm('編集モードをやめる？'))return;
-    editId=null;
-    ensureCancelButton();
-  };
-
-  migrateOldArchivePhotos()
-    .then(()=>renderArchives())
-    .catch(()=>{});
-
-  document.title='ペカログ JUGGLER EDITION v3.6.1 SAVE FIX';
-  const ver=document.querySelector('.ver');
-  if(ver)ver.textContent='v3.6.1 SAVE FIX';
-  ensureCancelButton();
-})();
-</script>
 </body></html>
