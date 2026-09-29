@@ -594,5 +594,184 @@ syncStateToFields();if(state.pscube)saveLabSnapshot(state.pscube,state.date);ren
   if(ver)ver.textContent='v2.1 WEEKDAY FIX / 687';
   renderLab();
 })();
+</script><script id="hanalog-v22-weekday-trait">
+(function(){
+  function pct(n,d){return d?Math.round(n/d*100)+'%':'-'}
+  function signed1(v){
+    if(!Number.isFinite(Number(v)))return '-';
+    const n=Number(v);
+    return `${n>0?'+':''}${n.toFixed(2)}`;
+  }
+  function ensureWeekdayTraitUI(){
+    if(document.getElementById('weekdayTraitCard'))return;
+    const weekdayBody=document.getElementById('weekdayBody');
+    const weekdaySection=weekdayBody?.closest('section');
+    if(!weekdaySection)return;
+    const sec=document.createElement('section');
+    sec.className='card';
+    sec.id='weekdayTraitCard';
+    sec.innerHTML=`
+      <div class="storeHead">
+        <div>
+          <h3 style="margin-bottom:2px">🗓 曜日クセ</h3>
+          <div class="tiny">前日→その曜日で、687番台が上げ・据え寄り・下げのどれに動きやすいかを見る。</div>
+        </div>
+        <span class="badge info">WEEKDAY</span>
+      </div>
+      <div id="weekdayTraitLead" class="notice" style="margin-top:9px">
+        連続日のデータがたまると曜日ごとの動きを出すよ🌺
+      </div>
+      <div style="overflow:auto;margin-top:9px">
+        <table class="labTable">
+          <thead>
+            <tr>
+              <th>曜日</th>
+              <th>対象</th>
+              <th>↑上げ</th>
+              <th>→据え</th>
+              <th>↓下げ</th>
+              <th>平均変化</th>
+              <th>強め着地</th>
+              <th>傾向</th>
+            </tr>
+          </thead>
+          <tbody id="weekdayTraitBody"></tbody>
+        </table>
+      </div>
+      <div class="tiny" style="margin-top:7px">
+        ※1000G以上ある連続日を対象。設定変更の確定判定ではなく、BB/RBの設定スペック整合重心の変化。<br>
+        1〜2回＝材料不足、3〜4回＝観察中、5回以上から傾向ラベルを出す。
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <div class="labCard">
+          <b>🌱 前日弱めの翌日</b>
+          <div id="weakNextTrait" class="tiny" style="margin-top:6px">-</div>
+        </div>
+        <div class="labCard">
+          <b>🔥 前日強めの翌日</b>
+          <div id="strongNextTrait" class="tiny" style="margin-top:6px">-</div>
+        </div>
+      </div>`;
+    weekdaySection.insertAdjacentElement('afterend',sec);
+  }
+  function weekdayTraitLabel(z){
+    if(z.n<3)return '材料不足';
+    if(z.n<5)return '観察中';
+    const rates=[
+      ['↑ 上げ傾向',z.up/z.n],
+      ['→ 据え寄り',z.flat/z.n],
+      ['↓ 下げ傾向',z.down/z.n]
+    ].sort((a,b)=>b[1]-a[1]);
+    if(rates[0][1]>=.55&&(rates[0][1]-rates[1][1])>=.15)return rates[0][0];
+    if(z.avgDelta>=.35)return '↑ 上げ寄り';
+    if(z.avgDelta<=-.35)return '↓ 下げ寄り';
+    return '↔ 混合';
+  }
+  function renderWeekdayTrait(){
+    ensureWeekdayTraitUI();
+    const tbody=document.getElementById('weekdayTraitBody');
+    const lead=document.getElementById('weekdayTraitLead');
+    const weakBox=document.getElementById('weakNextTrait');
+    const strongBox=document.getElementById('strongNextTrait');
+    if(!tbody||!lead)return;
+
+    const days=labDays()
+      .map(x=>({x,p:labSettingProfile(x)}))
+      .filter(z=>z.p)
+      .sort((a,b)=>String(a.x.date).localeCompare(String(b.x.date)));
+
+    const pairs=[];
+    for(let i=1;i<days.length;i++){
+      const a=days[i-1],b=days[i];
+      if(dateGapDays(a.x.date,b.x.date)!==1)continue;
+      if(!a.p.usable||!b.p.usable)continue;
+      const t=transitionMove(a.p,b.p);
+      if(!t)continue;
+      pairs.push({
+        a,b,
+        weekday:dayName(b.x.date),
+        dir:t.dir,
+        delta:b.p.mean-a.p.mean,
+        strongLanding:b.p.mean>=3.7,
+        prevWeak:a.p.mean<=2.3,
+        prevStrong:a.p.mean>=3.7,
+        weakUp:(a.p.mean<=2.3)&&(t.dir==='up'||b.p.mean>2.8),
+        strongKeep:(a.p.mean>=3.7)&&(t.dir==='flat'||b.p.mean>=3.2)
+      });
+    }
+
+    const order=['月曜','火曜','水曜','木曜','金曜','土曜','日曜'];
+    const rows=order.map(k=>{
+      const xs=pairs.filter(x=>x.weekday===k);
+      const up=xs.filter(x=>x.dir==='up').length;
+      const flat=xs.filter(x=>x.dir==='flat').length;
+      const down=xs.filter(x=>x.dir==='down').length;
+      const strong=xs.filter(x=>x.strongLanding).length;
+      const avgDelta=xs.length?xs.reduce((s,x)=>s+x.delta,0)/xs.length:0;
+      return {
+        weekday:k,n:xs.length,up,flat,down,strong,avgDelta,
+        label:weekdayTraitLabel({n:xs.length,up,flat,down,avgDelta})
+      };
+    });
+
+    tbody.innerHTML=rows.map(z=>`
+      <tr>
+        <td><b>${z.weekday}</b></td>
+        <td>${z.n||'-'}</td>
+        <td>${z.n?pct(z.up,z.n):'-'}${z.n?`<div class="tiny">${z.up}/${z.n}</div>`:''}</td>
+        <td>${z.n?pct(z.flat,z.n):'-'}${z.n?`<div class="tiny">${z.flat}/${z.n}</div>`:''}</td>
+        <td>${z.n?pct(z.down,z.n):'-'}${z.n?`<div class="tiny">${z.down}/${z.n}</div>`:''}</td>
+        <td>${z.n?signed1(z.avgDelta):'-'}</td>
+        <td>${z.n?pct(z.strong,z.n):'-'}</td>
+        <td><span class="labPill">${z.label}</span></td>
+      </tr>`).join('');
+
+    const enough=rows
+      .filter(z=>z.n>=3)
+      .sort((a,b)=>{
+        const ap=Math.max(a.up,a.flat,a.down)/a.n;
+        const bp=Math.max(b.up,b.flat,b.down)/b.n;
+        return bp-ap||b.n-a.n;
+      });
+
+    if(enough.length){
+      lead.innerHTML=enough.slice(0,3).map(z=>{
+        const main=z.up>=z.flat&&z.up>=z.down
+          ?`上げ ${pct(z.up,z.n)}`
+          :z.down>=z.up&&z.down>=z.flat
+            ?`下げ ${pct(z.down,z.n)}`
+            :`据え寄り ${pct(z.flat,z.n)}`;
+        return `<b>${z.weekday}</b>：${main}（${z.n}回） ／ 平均変化 <b>${signed1(z.avgDelta)}</b> ／ 強め着地 ${pct(z.strong,z.n)}`;
+      }).join('<br>');
+    }else{
+      lead.innerHTML='まだ各曜日の連続日サンプルが少なめ。<b>3回</b>たまると「観察中」、<b>5回以上</b>で曜日クセを出すよ🌺';
+    }
+
+    const weak=pairs.filter(x=>x.prevWeak);
+    const weakUp=weak.filter(x=>x.weakUp);
+    weakBox.innerHTML=weak.length
+      ?`弱め判別の翌日が上げ方向になったのは <b>${pct(weakUp.length,weak.length)}</b>（${weakUp.length}/${weak.length}）<br><span class="tiny">弱かった翌日に戻すクセがあるかを見る。</span>`
+      :'前日弱め→翌日の連続データがまだないよ。';
+
+    const strong=pairs.filter(x=>x.prevStrong);
+    const strongKeep=strong.filter(x=>x.strongKeep);
+    strongBox.innerHTML=strong.length
+      ?`強め判別の翌日も強め・据え寄りだったのは <b>${pct(strongKeep.length,strong.length)}</b>（${strongKeep.length}/${strong.length}）<br><span class="tiny">強い日の翌日に残す・連投するクセを見る。</span>`
+      :'前日強め→翌日の連続データがまだないよ。';
+  }
+
+  const originalRenderLabV22=renderLab;
+  renderLab=function(){
+    originalRenderLabV22();
+    renderWeekdayTrait();
+  };
+
+  ensureWeekdayTraitUI();
+  renderWeekdayTrait();
+
+  document.title='HANA LOG 🌺 v2.2 WEEKDAY TRAIT';
+  const ver=document.querySelector('.ver');
+  if(ver)ver.textContent='v2.2 WEEKDAY TRAIT / 687';
+})();
 </script></body>
 </html>
