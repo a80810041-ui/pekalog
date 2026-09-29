@@ -773,5 +773,175 @@ syncStateToFields();if(state.pscube)saveLabSnapshot(state.pscube,state.date);ren
   const ver=document.querySelector('.ver');
   if(ver)ver.textContent='v2.2 WEEKDAY TRAIT / 687';
 })();
-</script></body>
+</script><script id="hanalog-v23-special-day">
+(function(){
+  function dateDom(d){
+    const m=String(d||'').match(/^\d{4}-\d{2}-(\d{2})$/);
+    return m?Number(m[1]):null;
+  }
+  function daysInMonth(d){
+    const p=String(d||'').split('-').map(Number);
+    if(p.length!==3||p.some(x=>!x))return null;
+    return new Date(Date.UTC(p[0],p[1],0)).getUTCDate();
+  }
+  function isMonthEnd3(d){
+    const dom=dateDom(d),last=daysInMonth(d);
+    return dom!=null&&last!=null&&(last-dom)<=2;
+  }
+  function ratePct(n,d){return d?Math.round(n/d*100)+'%':'-'}
+  function pp(v){return v==null?'-':`${v>=0?'+':''}${(v*100).toFixed(0)}pt`}
+  function signed2(v){
+    if(!Number.isFinite(Number(v)))return '-';
+    const n=Number(v);
+    return `${n>0?'+':''}${n.toFixed(2)}`;
+  }
+
+  const HANA_SPECIAL=[
+    {key:'d5',label:'5のつく日',test:d=>dateDom(d)%10===5},
+    {key:'d7',label:'7のつく日',test:d=>dateDom(d)%10===7},
+    {key:'d22',label:'22日',test:d=>dateDom(d)===22},
+    {key:'monthEnd',label:'月末3日',test:d=>isMonthEnd3(d)}
+  ];
+
+  function ensureHanaSpecialUI(){
+    if(document.getElementById('hanaSpecialDayCard'))return;
+
+    const anchor=document.getElementById('weekdayTraitCard')
+      ||document.getElementById('weekdayBody')?.closest('section');
+    if(!anchor)return;
+
+    const sec=document.createElement('section');
+    sec.className='card';
+    sec.id='hanaSpecialDayCard';
+    sec.innerHTML=`
+      <div class="storeHead">
+        <div>
+          <h3 style="margin-bottom:2px">🎯 特定日クセ</h3>
+          <div class="tiny">687番台が、5の日・7の日・22日・月末にどう動きやすいかを比較。</div>
+        </div>
+        <span class="badge info">SPECIAL</span>
+      </div>
+
+      <div id="hanaSpecialLead" class="notice" style="margin-top:9px">
+        閉店済みの日別データから特定日傾向を育てるよ🌺
+      </div>
+
+      <div style="overflow:auto;margin-top:9px">
+        <table class="labTable">
+          <thead>
+            <tr>
+              <th>条件</th><th>日数</th><th>強め着地</th><th>その他日</th><th>差</th>
+              <th>↑上げ</th><th>→据え</th><th>↓下げ</th><th>平均変化</th><th>平均差枚(客)</th>
+            </tr>
+          </thead>
+          <tbody id="hanaSpecialBody"></tbody>
+        </table>
+      </div>
+
+      <div class="tiny" style="margin-top:7px">
+        ※当日は途中データになり得るため、この表では「今日より前」の日だけ使用。
+        1000G未満の日は上げ・据え・下げ判定から除外。月末は最終3日。
+      </div>`;
+    anchor.insertAdjacentElement('afterend',sec);
+  }
+
+  function renderHanaSpecialDay(){
+    ensureHanaSpecialUI();
+    const body=document.getElementById('hanaSpecialBody');
+    const lead=document.getElementById('hanaSpecialLead');
+    if(!body||!lead)return;
+
+    const closed=labDays()
+      .filter(x=>String(x.date||'')<today())
+      .map(x=>({x,p:labSettingProfile(x)}))
+      .filter(z=>z.p)
+      .sort((a,b)=>String(a.x.date).localeCompare(String(b.x.date)));
+
+    const usable=closed.filter(z=>z.p.usable);
+    const allStrong=usable.filter(z=>z.p.mean>=3.7).length;
+    const allStrongRate=usable.length?allStrong/usable.length:null;
+
+    const pairs=[];
+    for(let i=1;i<closed.length;i++){
+      const a=closed[i-1],b=closed[i];
+      if(dateGapDays(a.x.date,b.x.date)!==1)continue;
+      if(!a.p.usable||!b.p.usable)continue;
+      const t=transitionMove(a.p,b.p);
+      if(!t)continue;
+      pairs.push({
+        a,b,dir:t.dir,delta:b.p.mean-a.p.mean
+      });
+    }
+
+    const rows=HANA_SPECIAL.map(def=>{
+      const xs=usable.filter(z=>def.test(z.x.date));
+      const other=usable.filter(z=>!def.test(z.x.date));
+      const strong=xs.filter(z=>z.p.mean>=3.7).length;
+      const otherStrong=other.filter(z=>z.p.mean>=3.7).length;
+      const sr=xs.length?strong/xs.length:null;
+      const br=other.length?otherStrong/other.length:null;
+
+      const ps=pairs.filter(q=>def.test(q.b.x.date));
+      const up=ps.filter(q=>q.dir==='up').length;
+      const flat=ps.filter(q=>q.dir==='flat').length;
+      const down=ps.filter(q=>q.dir==='down').length;
+      const avgDelta=ps.length?ps.reduce((s,q)=>s+q.delta,0)/ps.length:null;
+
+      const diffs=xs.map(z=>Number(z.x.diff)).filter(Number.isFinite);
+      const avgDiff=diffs.length?diffs.reduce((s,v)=>s+v,0)/diffs.length:null;
+
+      return {
+        ...def,n:xs.length,strong,sr,baseN:other.length,br,
+        delta:sr!=null&&br!=null?sr-br:null,
+        pairN:ps.length,up,flat,down,avgDelta,avgDiff
+      };
+    });
+
+    body.innerHTML=rows.map(z=>`
+      <tr>
+        <td><b>${z.label}</b></td>
+        <td>${z.n||'-'}</td>
+        <td>${z.n?ratePct(z.strong,z.n):'-'}</td>
+        <td>${z.br==null?'-':Math.round(z.br*100)+'%'}</td>
+        <td>${pp(z.delta)}</td>
+        <td>${z.pairN?ratePct(z.up,z.pairN):'-'}</td>
+        <td>${z.pairN?ratePct(z.flat,z.pairN):'-'}</td>
+        <td>${z.pairN?ratePct(z.down,z.pairN):'-'}</td>
+        <td>${z.avgDelta==null?'-':signed2(z.avgDelta)}</td>
+        <td class="${(z.avgDiff??0)>=0?'pos':'neg'}">${z.avgDiff==null?'-':signedN(z.avgDiff)}</td>
+      </tr>`).join('');
+
+    const observed=rows.filter(z=>z.n>=2||z.pairN>=2)
+      .sort((a,b)=>(b.pairN-a.pairN)||(b.n-a.n));
+
+    if(observed.length){
+      lead.innerHTML=observed.slice(0,3).map(z=>{
+        let move='材料少';
+        if(z.pairN){
+          if(z.up>=z.flat&&z.up>=z.down)move=`上げ ${ratePct(z.up,z.pairN)}`;
+          else if(z.down>=z.up&&z.down>=z.flat)move=`下げ ${ratePct(z.down,z.pairN)}`;
+          else move=`据え寄り ${ratePct(z.flat,z.pairN)}`;
+        }
+        return `<b>${z.label}</b>：${move} ／ 強め着地 ${z.n?ratePct(z.strong,z.n):'-'} ／ その他日比 ${pp(z.delta)}`;
+      }).join('<br>');
+    }else{
+      lead.innerHTML='特定日の閉店データが2〜3回たまると、ここに傾向メモを出すよ🌺';
+    }
+  }
+
+  const originalRenderLabV23=renderLab;
+  renderLab=function(){
+    originalRenderLabV23();
+    renderHanaSpecialDay();
+  };
+
+  ensureHanaSpecialUI();
+  renderHanaSpecialDay();
+
+  document.title='HANA LOG 🌺 v2.3 SPECIAL DAY';
+  const ver=document.querySelector('.ver');
+  if(ver)ver.textContent='v2.3 SPECIAL DAY / 687';
+})();
+</script>
+</body>
 </html>
