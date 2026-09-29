@@ -1064,6 +1064,68 @@ nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collecto
   if(ver)ver.textContent='v0.12.1 SPECIAL + TAIL';
 })();
 </script>
+<script id="pekalog-v0122-encoding-fix">
+(function(){
+  /*
+    PEKALOG LAB v0.12.2 ENCODING FIX
+    ASCII-only patch to repair UTF-8 mojibake inside the Special/Tail LAB card.
+  */
+  function recoverUtf8Mojibake(s){
+    if(typeof s !== 'string' || !s) return s;
 
+    const bytes=[];
+    for(const ch of s){
+      const cp=ch.codePointAt(0);
+      if(cp>255) return s;
+      bytes.push(cp);
+    }
+
+    let out='';
+    try{
+      out=new TextDecoder('utf-8',{fatal:false}).decode(new Uint8Array(bytes));
+    }catch(e){
+      return s;
+    }
+
+    if(out.includes('\uFFFD')) return s;
+    return out;
+  }
+
+  function fixNode(root){
+    if(!root) return;
+
+    const walker=document.createTreeWalker(
+      root,
+      NodeFilter.SHOW_TEXT,
+      null
+    );
+
+    const nodes=[];
+    while(walker.nextNode()) nodes.push(walker.currentNode);
+
+    for(const n of nodes){
+      const before=n.nodeValue||'';
+      const after=recoverUtf8Mojibake(before);
+      if(after!==before) n.nodeValue=after;
+    }
+  }
+
+  function fixSpecialTailEncoding(){
+    fixNode(document.getElementById('specialTailLabCard'));
+  }
+
+  const previousRenderAllEncodingFix=renderAll;
+  renderAll=function(){
+    previousRenderAllEncodingFix();
+    fixSpecialTailEncoding();
+  };
+
+  fixSpecialTailEncoding();
+
+  document.title='PEKALOG LAB v0.12.2 ENCODING FIX';
+  const ver=document.querySelector('.ver');
+  if(ver) ver.textContent='v0.12.2 ENCODING FIX';
+})();
+</script>
 </body>
 </html>
