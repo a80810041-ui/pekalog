@@ -518,5 +518,81 @@ function render(){syncFieldsToState();renderPhotos();renderLatest();renderLogAnd
 ['date','shop','machine','model','startCurrentG','startBig','startReg','startTotalG','currentG','maxCoins','currentCoins','drawdownLimit','invest','returnYen','sessionMemo'].forEach(id=>$(id).addEventListener('input',()=>{syncFieldsToState();persist();renderLogAndStatsOnly()}));
 syncStateToFields();if(state.pscube)saveLabSnapshot(state.pscube,state.date);render();showView(localStorage.getItem(VIEWKEY)==='lab'?'lab':'log');
 </script>
-</body>
+<script id="hanalog-v21-weekday-fix">
+(function(){
+  function hanaDateNorm(v){
+    const s=String(v||'').replaceAll('/','-');
+    return /^\d{4}-\d{2}-\d{2}$/.test(s)?s:'';
+  }
+  function hanaAddDays(date,delta){
+    const p=hanaDateNorm(date).split('-').map(Number);
+    if(p.length!==3||p.some(x=>!x))return '';
+    const d=new Date(Date.UTC(p[0],p[1]-1,p[2]));
+    d.setUTCDate(d.getUTCDate()+delta);
+    return d.toISOString().slice(0,10);
+  }
+  function hanaDaySnap(rec,date,statKey,graphKey){
+    const st=rec?.stats?.[statKey]||null;
+    if(!st)return null;
+    const gr=rec?.graphs?.[graphKey]||null;
+    const totalG=num(st.totalGEst),big=num(st.big),reg=num(st.reg);
+    if(!(totalG>0||big>0||reg>0))return null;
+    return {
+      date,machine:norm(rec?.machine||'687'),model:rec?.model||'',
+      updated:rec?.updated||'',capturedAt:rec?.capturedAt||new Date().toISOString(),
+      big,reg,combined:st.combined||'',totalG,
+      currentGame:statKey==='today'?num(rec?.currentGame):0,
+      diff:gr&&Number.isFinite(Number(gr.currentDiffEst))?Number(gr.currentDiffEst):null,
+      peak:gr&&Number.isFinite(Number(gr.peakDiffEst))?Number(gr.peakDiffEst):null,
+      trough:gr&&Number.isFinite(Number(gr.troughDiffEst))?Number(gr.troughDiffEst):null,
+      historyRows:statKey==='today'&&Array.isArray(rec?.historyRows)
+        ? rec.historyRows.map(r=>({count:num(r.count),time:r.time||'',game:num(r.game),status:r.status||''}))
+        : []
+    };
+  }
+  function hanaSaveOneDay(rec,date,statKey,graphKey){
+    const snap=hanaDaySnap(rec,date,statKey,graphKey);if(!snap)return false;
+    const db=labStore(),old=db[date]||null;
+    db[date]={date,first:old?.first||snap,last:snap,imports:(old?.imports||0)+1};
+    try{localStorage.setItem(LABKEY,JSON.stringify(db));return true}catch(e){console.warn('HANA LAB save',e);return false}
+  }
+  function hanaSaveBundleDays(rec,bundleDate){
+    const base=hanaDateNorm(bundleDate);if(!rec||!base)return 0;
+    let n=0;
+    if(hanaSaveOneDay(rec,hanaAddDays(base,-2),'prev2','prev2'))n++;
+    if(hanaSaveOneDay(rec,hanaAddDays(base,-1),'prev1','prev1'))n++;
+    if(hanaSaveOneDay(rec,base,'today','today'))n++;
+    return n;
+  }
+
+  const originalLabDays=labDays;
+  labDays=function(){
+    return originalLabDays().filter(x=>num(x?.totalG)>0||num(x?.big)>0||num(x?.reg)>0);
+  };
+
+  importBundleObject=function(j){
+    if(!j||j.kind!=='pekalog-turkey-bundle')throw new Error('å±éåéã³ã¼ãã§ã¯ãªãã');
+    const m=norm(state.machine||'687');
+    const rec=(j.machines||[]).find(x=>norm(x.machine)===m);
+    if(!rec)throw new Error(`${m}çªå°ãåéã³ã¼ãã«å¥ã£ã¦ããªãã`);
+    const base=hanaDateNorm(j.date);
+    state.pscube=rec;
+    if(base){state.date=base;if($('date'))$('date').value=base}
+    const saved=hanaSaveBundleDays(rec,base||state.date);
+    persist();render();
+    let auto=null;
+    if(state.seatMarkedAt&&String(state.startBig)!==''&&String(state.startReg)!=='')auto=applySnapshotSession(true);
+    return {rec,auto,saved};
+  };
+
+  try{
+    if(state?.pscube&&hanaDateNorm(state?.date))hanaSaveBundleDays(state.pscube,state.date);
+  }catch(e){console.warn('HANA weekday backfill',e)}
+
+  document.title='HANA LOG ðº v2.1 WEEKDAY FIX';
+  const ver=document.querySelector('.ver');
+  if(ver)ver.textContent='v2.1 WEEKDAY FIX / 687';
+  renderLab();
+})();
+</script></body>
 </html>
