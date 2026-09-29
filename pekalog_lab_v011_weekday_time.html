@@ -790,6 +790,280 @@ function renderConfig(){if($('eventDay'))$('eventDay').value=cfg.eventDay||22;if
 function renderAll(){renderDash();renderPatternLab();renderLayoutLab();renderHyp();renderEvent();renderIF();renderData();renderConfig()}
 nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collectorFile').onchange=importCollectorFile;$('collectorPasteBtn').onclick=importCollectorPaste;$('collectorClipboardBtn').onclick=importCollectorClipboard;$('exportBtn').onclick=exportData;$('reloadRemote').onclick=()=>loadRemote(false);$('demoBtn').onclick=demoData;$('csvImportBtn').onclick=importCSVText;$('saveEventCfg').onclick=saveEventConfig;$('hDate').value=todayJST();initLiveUI();renderAll();loadRemote(true);
 </script>
+<script id="pekalog-special-tail-v1">
+(function(){
+  function dateDom(d){
+    const m=String(d||'').match(/^\d{4}-\d{2}-(\d{2})$/);
+    return m?Number(m[1]):null;
+  }
+  function daysInMonth(d){
+    const p=String(d||'').split('-').map(Number);
+    if(p.length!==3||p.some(x=>!x))return null;
+    return new Date(Date.UTC(p[0],p[1],0)).getUTCDate();
+  }
+  function isMonthEnd3(d){
+    const dom=dateDom(d),last=daysInMonth(d);
+    return dom!=null&&last!=null&&(last-dom)<=2;
+  }
+  function machineTail(m){
+    const s=String(normMachine(m)||'');
+    const x=s.match(/(\d)$/);
+    return x?Number(x[1]):null;
+  }
+  function dayTail(d){
+    const dom=dateDom(d);
+    return dom==null?null:dom%10;
+  }
+  function closedEligible(){
+    return finalRows()
+      .filter(r=>r.isFinal!==false&&SETTING_SPECS[r.model])
+      .map(r=>({r,e:settingEvidence(r)}))
+      .filter(x=>x.e?.eligible);
+  }
+  function avgDiff(xs){
+    const a=xs.map(x=>Number(x.r.diff)).filter(Number.isFinite);
+    return a.length?a.reduce((s,v)=>s+v,0)/a.length:null;
+  }
+  function rowStat(xs){
+    const hits=xs.filter(x=>x.e.strong).length;
+    return {
+      n:xs.length,
+      hits,
+      rate:xs.length?hits/xs.length:null,
+      days:new Set(xs.map(x=>x.r.date)).size,
+      avgDiff:avgDiff(xs)
+    };
+  }
+  function pp(v){
+    return v==null?'-':`${v>=0?'+':''}${(v*100).toFixed(1)}pt`;
+  }
+  function rate(v){
+    return v==null?'-':(v*100).toFixed(1)+'%';
+  }
+  function trendLabel(n,delta){
+    if(n<3)return 'ææå°';
+    if(n<5)return 'è¦³å¯ä¸­';
+    if(delta==null)return 'æ¯è¼å¾ã¡';
+    if(delta>=.15)return 'ð¥ é£åå¼·ã';
+    if(delta>=.08)return 'â ããé£å';
+    if(delta<=-.12)return 'â éå¾å';
+    return 'â å·®å°';
+  }
+
+  const SPECIAL_DEFS=[
+    {key:'d5',label:'5ã®ã¤ãæ¥',test:d=>dateDom(d)%10===5},
+    {key:'d7',label:'7ã®ã¤ãæ¥',test:d=>dateDom(d)%10===7},
+    {key:'d22',label:'22æ¥',test:d=>dateDom(d)===22},
+    {key:'monthEnd',label:'ææ«3æ¥',test:d=>isMonthEnd3(d)},
+    {key:'event',label:'ç»é²EVENT',test:d=>isEventDate(d)}
+  ];
+
+  function specialStat(def,all){
+    const a=all.filter(x=>def.test(x.r.date));
+    const b=all.filter(x=>!def.test(x.r.date));
+    const sa=rowStat(a),sb=rowStat(b);
+    return {...def,...sa,baseN:sb.n,baseRate:sb.rate,delta:sa.rate!=null&&sb.rate!=null?sa.rate-sb.rate:null};
+  }
+
+  function tailMatchStats(all){
+    const available=new Set(all.map(x=>machineTail(x.r.machine)).filter(x=>x!=null));
+    const eligibleDates=new Set(all.map(x=>x.r.date).filter(d=>available.has(dayTail(d))));
+    const a=all.filter(x=>eligibleDates.has(x.r.date)&&machineTail(x.r.machine)===dayTail(x.r.date));
+    const b=all.filter(x=>eligibleDates.has(x.r.date)&&machineTail(x.r.machine)!==dayTail(x.r.date));
+    const sa=rowStat(a),sb=rowStat(b);
+    return {
+      label:'å¨æ¥ï¼æ¥ä»æ«å°¾ï¼å°çªæ«å°¾',
+      baseLabel:'åæ¥ã®æ«å°¾ä¸ä¸è´',
+      ...sa,baseN:sb.n,baseRate:sb.rate,
+      delta:sa.rate!=null&&sb.rate!=null?sa.rate-sb.rate:null
+    };
+  }
+
+  function specificTailStat(all,label,test,tail){
+    const a=all.filter(x=>test(x.r.date)&&machineTail(x.r.machine)===tail);
+    const b=all.filter(x=>!test(x.r.date)&&machineTail(x.r.machine)===tail);
+    const sa=rowStat(a),sb=rowStat(b);
+    return {
+      label,
+      baseLabel:`æ«å°¾${tail}ã»ãã®ä»æ¥`,
+      ...sa,baseN:sb.n,baseRate:sb.rate,
+      delta:sa.rate!=null&&sb.rate!=null?sa.rate-sb.rate:null
+    };
+  }
+
+  function tailTopFor(def,all){
+    const group=all.filter(x=>def.test(x.r.date));
+    if(!group.length)return [];
+    const overall=rowStat(group);
+    const tails=[...new Set(group.map(x=>machineTail(x.r.machine)).filter(x=>x!=null))];
+    return tails.map(t=>{
+      const a=group.filter(x=>machineTail(x.r.machine)===t);
+      const rest=group.filter(x=>machineTail(x.r.machine)!==t);
+      const sa=rowStat(a),sr=rowStat(rest);
+      const prior=overall.rate??.2;
+      const shrink=(sa.hits+prior*4)/(sa.n+4);
+      return {
+        tail:t,...sa,restRate:sr.rate,
+        delta:sa.rate!=null&&sr.rate!=null?sa.rate-sr.rate:null,
+        shrink
+      };
+    }).filter(x=>x.n>=2)
+      .sort((a,b)=>b.shrink-a.shrink||b.n-a.n)
+      .slice(0,3);
+  }
+
+  function ensureSpecialTailUI(){
+    if(document.getElementById('specialTailLabCard'))return;
+
+    const anchor=document.getElementById('weekdayTrendBody')?.closest('.card')
+      ||document.getElementById('layoutMapStatus')?.closest('.card');
+    if(!anchor)return;
+
+    const sec=document.createElement('section');
+    sec.className='card';
+    sec.id='specialTailLabCard';
+    sec.innerHTML=`
+      <div class="sectionTitle">
+        <div>
+          <h3>ð¢ ç¹å®æ¥ã»æ«å°¾ LAB</h3>
+          <div class="tiny">5ã®æ¥ã»7ã®æ¥ã»22æ¥ã»ææ«ã¨ãå°çªæ«å°¾ã®é£åãéåºãã¼ã¿ã ãã§æ¯è¼ã</div>
+        </div>
+        <span class="pill event">SPECIAL</span>
+      </div>
+
+      <div class="notice" style="margin-top:8px">
+        <strong>ãéå¸¸æ¥æ¯ +âptã</strong>ã¯ç¬èªç¹æ°ã§ã¯ãªããå¼·ãçã®å·®ï¼ãã¼ã»ã³ããã¤ã³ãï¼ã
+        ä¾ï¼63% â 24% ï¼ <strong>+39pt</strong>ã<br>
+        <span class="tiny">å¹³åå·®æã®ï¼ã¯å®¢å´ãã©ã¹ããµã³ãã«ãå°ãªãéã¯åè£ç¹ã«ã¯ã¾ã å ãããç ç©¶è¡¨ç¤ºã ãã«ããã</span>
+      </div>
+
+      <div id="specialDaySummary" class="grid4" style="margin-top:10px"></div>
+
+      <div class="pickSub" style="margin-top:12px">ð ç¹å®æ¥ vs ãã®ä»æ¥</div>
+      <div id="specialDayTable" class="tablewrap"></div>
+
+      <div class="pickSub" style="margin-top:12px">ð¯ æ¥ä»æ«å°¾ Ã å°çªæ«å°¾</div>
+      <div id="dateTailTable" class="tablewrap"></div>
+
+      <div class="pickSub" style="margin-top:12px">ð ç¹å®æ¥ã®æ«å°¾TOP</div>
+      <div id="specialTailTop" class="list"></div>
+
+      <div class="tiny" style="margin-top:8px">
+        â»ãå¼·ããã¯æ¢å­ã®è¨­å®æ¨å®ã­ã¸ãã¯ã¨åããå®è¨­å®ã®æ­å®ã§ã¯ãªããã
+        ææ«ã¯ãåæã®æçµ3æ¥ãã§éè¨ã
+      </div>`;
+    anchor.insertAdjacentElement('afterend',sec);
+  }
+
+  function renderSpecialTailLab(){
+    ensureSpecialTailUI();
+    const sum=document.getElementById('specialDaySummary');
+    const table=document.getElementById('specialDayTable');
+    const tailTable=document.getElementById('dateTailTable');
+    const top=document.getElementById('specialTailTop');
+    if(!sum||!table||!tailTable||!top)return;
+
+    const all=closedEligible();
+    const stats=SPECIAL_DEFS.map(d=>specialStat(d,all));
+
+    sum.innerHTML=stats.slice(0,4).map(x=>`
+      <div class="stat">
+        <div class="k">${esc(x.label)} å¼·ãç</div>
+        <div class="v">${rate(x.rate)}</div>
+        <div class="tiny">${x.hits}/${x.n||0}å°æ¥ ï¼ ${x.days}æ¥<br>${x.delta==null?'æ¯è¼å¾ã¡':'ãã®ä»æ¥æ¯ '+pp(x.delta)}</div>
+      </div>`).join('');
+
+    table.innerHTML=`
+      <table>
+        <thead>
+          <tr>
+            <th>æ¡ä»¶</th><th>æ¥æ°</th><th>å¤å®å°</th><th>å¼·ã</th><th>å¼·ãç</th>
+            <th>ãã®ä»æ¥ç</th><th>éå¸¸æ¥æ¯</th><th>å¹³åå·®æ(å®¢)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${stats.map(x=>`
+            <tr>
+              <td>${esc(x.label)}</td>
+              <td>${x.days}</td>
+              <td>${x.n}</td>
+              <td>${x.hits}</td>
+              <td>${rate(x.rate)}</td>
+              <td>${rate(x.baseRate)}</td>
+              <td class="${(x.delta??0)>=0?'pos':'neg'}">${pp(x.delta)}</td>
+              <td class="${(x.avgDiff??0)>=0?'pos':'neg'}">${x.avgDiff==null?'-':signed(Math.round(x.avgDiff))}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+
+    const d5=SPECIAL_DEFS.find(x=>x.key==='d5');
+    const d7=SPECIAL_DEFS.find(x=>x.key==='d7');
+    const d22=SPECIAL_DEFS.find(x=>x.key==='d22');
+
+    const tailStats=[
+      tailMatchStats(all),
+      specificTailStat(all,'5ã®æ¥ Ã æ«å°¾5',d5.test,5),
+      specificTailStat(all,'7ã®æ¥ Ã æ«å°¾7',d7.test,7),
+      specificTailStat(all,'22æ¥ Ã æ«å°¾2',d22.test,2)
+    ];
+
+    tailTable.innerHTML=`
+      <table>
+        <thead>
+          <tr>
+            <th>æ¡ä»¶</th><th>å¯¾è±¡n</th><th>å¼·ãç</th><th>æ¯è¼åºæº</th><th>åºæºç</th>
+            <th>å·®</th><th>å¹³åå·®æ(å®¢)</th><th>å¤å®</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${tailStats.map(x=>`
+            <tr>
+              <td>${esc(x.label)}</td>
+              <td>${x.n}</td>
+              <td>${rate(x.rate)}</td>
+              <td>${esc(x.baseLabel)}</td>
+              <td>${rate(x.baseRate)}${x.baseN!=null?` <span class="tiny">(n=${x.baseN})</span>`:''}</td>
+              <td class="${(x.delta??0)>=0?'pos':'neg'}">${pp(x.delta)}</td>
+              <td class="${(x.avgDiff??0)>=0?'pos':'neg'}">${x.avgDiff==null?'-':signed(Math.round(x.avgDiff))}</td>
+              <td><span class="pill ${x.n<5?'warn':(x.delta??0)>=.08?'good':''}">${esc(trendLabel(x.n,x.delta))}</span></td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+
+    const topDefs=[d5,d7,d22,SPECIAL_DEFS.find(x=>x.key==='monthEnd')];
+    top.innerHTML=topDefs.map(def=>{
+      const xs=tailTopFor(def,all);
+      if(!xs.length){
+        return `<div class="row"><b>${esc(def.label)}</b><div class="tiny">æ«å°¾å¥ã®å¤å®ãã¾ã è¶³ããªããã</div></div>`;
+      }
+      return `<div class="row">
+        <div class="rowtop">
+          <div><b>${esc(def.label)}</b><div class="tiny">åãç¹å®æ¥ã®ä¸­ã§ãåæ«å°¾ããä»æ«å°¾ãã¨æ¯è¼ã</div></div>
+          <span class="pill">${xs.reduce((s,x)=>s+x.n,0)}å°æ¥</span>
+        </div>
+        <div style="margin-top:7px">
+          ${xs.map((x,i)=>`
+            <span class="pill ${i===0&&x.n>=5?'good':''}" style="margin:2px">
+              #${i+1} æ«å°¾${x.tail} ${rate(x.rate)} / ä»æ«å°¾æ¯ ${pp(x.delta)} / n=${x.n}
+            </span>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  const originalRenderAllSpecialTail=renderAll;
+  renderAll=function(){
+    originalRenderAllSpecialTail();
+    renderSpecialTailLab();
+  };
+
+  renderSpecialTailLab();
+
+  document.title='PEKALOG LAB v0.12.1 SPECIAL + TAIL';
+  const ver=document.querySelector('.ver');
+  if(ver)ver.textContent='v0.12.1 SPECIAL + TAIL';
+})();
+</script>
 
 </body>
 </html>
