@@ -1184,64 +1184,7 @@ nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collecto
     ver.textContent = 'v0.12.3 FINAL PRIORITY FIX';
   }
 })();
-</script><script id="pekalog-v0123-final-priority-fix">
-(function(){
-  /*
-    PEKALOG LAB v0.12.3 FINAL PRIORITY FIX
 
-    For the same date + machine:
-      1) historical-final always wins over LIVE
-      2) if both are the same type, the newer timestamp wins
-  */
-
-  finalRows = function(){
-    const map = new Map();
-
-    for(const s of (lab.snapshots || [])){
-      if(!s.date || !s.machine) continue;
-
-      const key = s.date + '|' + normMachine(s.machine);
-      const old = map.get(key);
-
-      if(!old){
-        map.set(key, s);
-        continue;
-      }
-
-      const oldFinal = old.isFinal === true;
-      const newFinal = s.isFinal === true;
-
-      if(newFinal && !oldFinal){
-        map.set(key, s);
-        continue;
-      }
-
-      if(oldFinal && !newFinal){
-        continue;
-      }
-
-      if(Number(s.ts || 0) >= Number(old.ts || 0)){
-        map.set(key, s);
-      }
-    }
-
-    return [...map.values()].sort(
-      (a,b) => (a.date + normMachine(a.machine))
-        .localeCompare(b.date + normMachine(b.machine))
-    );
-  };
-
-  if(typeof renderAll === 'function'){
-    renderAll();
-  }
-
-  document.title = 'PEKALOG LAB v0.12.3 FINAL PRIORITY FIX';
-
-  const ver = document.querySelector('.ver');
-  if(ver){
-    ver.textContent = 'v0.12.3 FINAL PRIORITY FIX';
-  }
-})();
 </script>
 </body>
 </html>
