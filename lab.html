@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>PEKALOG LAB v0.9.1 COMMON COLLECTOR</title>
+<title>PEKALOG LAB v0.13 AYACHAN HUNT</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -47,7 +47,7 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 </head>
 <body>
 <div class="wrap">
-<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.9.1 COMMON COLLECTOR</div></header>
+<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.13 AYACHAN HUNT</div></header>
 <div class="nav" id="nav">
  <button class="btn dark active" data-view="dash">🏠 LAB</button>
  <button class="btn dark" data-view="hyp">🧠 仮説</button>
@@ -74,14 +74,14 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
    <span class="pill event">NEW</span>
   </div>
   <div class="notice" style="margin-top:8px">
-   <strong>朝イチ候補</strong>は過去の投入推定率・直近温度・投入間隔・22日相性から選抜。
-   <strong>今から候補</strong>はそこへ当日のBB/REG/合算を追加して再評価する。<br>
-   <span class="tiny">※「ハマっているからそろそろ当たる」は加点しない。現在ハマりGは当選期待の根拠に使わない。</span>
+   <strong>🌅 朝イチ候補＝設定脳</strong>。過去の投入推定率・直近温度・投入間隔・22日相性から「入りそうな台」を選抜。<br>
+   <strong>🔥 今から狙い＝綾ちゃん脳</strong>。当日の<strong>現在差枚＋直近500G/1000Gのペカ密度</strong>を重視して「今、よくペカって差枚を作っている台」を順位化する。<br>
+   <span class="tiny">※「ハマっているからそろそろ当たる」は一切加点しない。直近ペカ密度は未来の当選を保証する指標ではなく、現在までの走り方を見るためのもの。</span>
   </div>
   <div id="seatPickStatus" class="notice" style="margin-top:9px"></div>
   <div class="pickGrid" style="margin-top:10px">
    <div><div class="pickSub">🌅 朝イチ候補</div><div id="morningPicks" class="list"></div></div>
-   <div><div class="pickSub">🕓 今から候補</div><div id="livePicks" class="list"></div></div>
+   <div><div class="pickSub">🔥 今から狙い（綾ちゃん脳）</div><div id="livePicks" class="list"></div></div>
   </div>
  </div>
 
@@ -170,7 +170,7 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
    <label class="btn green" style="text-align:center;cursor:pointer">⬆ 収集JSONを読み込む<input id="collectorFile" type="file" accept=".json,application/json" style="display:none"></label>
    <button class="btn dark" id="collectorPasteBtn">✍️ 貼り付けJSONを取込</button>
   </div>
-  <textarea id="collectorPaste" rows="5" style="margin-top:9px" placeholder="共通収集の最後に出た {&quot;kind&quot;:&quot;pekalog-turkey-bundle&quot;,...} をそのまま貼り付け"></textarea>
+  <textarea id="collectorPaste" rows="5" style="margin-top:9px" placeholder="22台収集の最後に出た {&quot;kind&quot;:&quot;pekalog-turkey-bundle&quot;,...} をそのまま貼り付け"></textarea>
   <div id="collectorStatus" class="notice" style="margin-top:10px">まだ収集JSONは読み込まれていないよ。</div>
  </div>
  <div class="card">
@@ -416,43 +416,123 @@ function liveCandidate(row,p,targetDate){
  score=clamp(score,0,100);
  return {score,confidence:confidenceLabel(Math.max(p?.n||0,Math.floor(g/1200))),reasons:candidateReasons(p,targetDate,true,row,e),n:p?.n||0,row,e,live:true};
 }
-function pickBadge(score,index){
+
+// ===== v0.13 綾ちゃん脳：当日差枚 + 直近ペカ密度 =====
+function recentPekaWindow(row,windowG){
+ const hist=Array.isArray(row?.history)?row.history:[];
+ const totalG=Number(row?.totalG)||0;
+ const cur=Number(row?.currentGame);
+ const coverage=Math.max(1,Math.min(Number(windowG)||0,totalG||Number(windowG)||1));
+ if(!Number.isFinite(cur)||!hist.length)return {windowG,coverage,count:null,big:null,reg:null,per1000:null,under100Rate:null};
+ let dist=Math.max(0,cur),count=0,big=0,reg=0,under100=0,intervalN=0;
+ for(let i=0;i<hist.length;i++){
+  if(dist>windowG)break;
+  const h=hist[i]||{},st=String(h.status||'').toUpperCase();
+  count++;
+  if(st.includes('BIG'))big++;else if(st.includes('REG'))reg++;
+  const interval=Number(h.game);
+  if(Number.isFinite(interval)){
+   intervalN++;
+   if(interval<=100)under100++;
+   dist+=Math.max(0,interval);
+  }else break;
+ }
+ return {windowG,coverage,count,big,reg,per1000:count/coverage*1000,under100Rate:intervalN?under100/intervalN:null};
+}
+function pekaRateScore(rate){return Number.isFinite(rate)?clamp((rate-4)*12.5,0,100):null}
+function ayaConfidence(row){
+ const g=Number(row?.totalG)||0;
+ if(g>=4000)return '当日材料 多め';
+ if(g>=2000)return '当日材料 まずまず';
+ if(g>=800)return '当日材料 まだ中盤';
+ return '当日材料 少なめ';
+}
+function ayaCandidate(row){
+ const g=Number(row?.totalG)||0,bb=Number(row?.big)||0,reg=Number(row?.reg)||0;
+ const diff=Number(row?.diff),w500=recentPekaWindow(row,500),w1000=recentPekaWindow(row,1000);
+ const allRate=g>0?(bb+reg)/g*1000:null;
+ const parts=[];
+ if(Number.isFinite(diff))parts.push({w:.45,v:clamp(50+diff/40,0,100)});
+ if(Number.isFinite(w500.per1000))parts.push({w:.30,v:pekaRateScore(w500.per1000)});
+ if(Number.isFinite(w1000.per1000))parts.push({w:.20,v:pekaRateScore(w1000.per1000)});
+ if(Number.isFinite(allRate))parts.push({w:.05,v:pekaRateScore(allRate)});
+ const ws=parts.reduce((a,b)=>a+b.w,0)||1;
+ let score=parts.reduce((a,b)=>a+b.w*b.v,0)/ws;
+ // 出玉が大きく沈んでいる台は「よくペカって差枚が多い」基準では明確に割引
+ if(Number.isFinite(diff)&&diff<=-1000)score-=10;
+ score=clamp(score,0,100);
+ const reasons=[];
+ if(Number.isFinite(diff))reasons.push(`現在差枚 ${signed(Math.round(diff))}枚`);
+ if(w500.count!==null)reasons.push(`直近500G：${w500.count}ペカ（BB${w500.big}/RB${w500.reg}）${w500.count?`・約1/${Math.round(w500.coverage/w500.count)}`:''}`);
+ if(w1000.count!==null)reasons.push(`直近1000G：${w1000.count}ペカ（BB${w1000.big}/RB${w1000.reg}）${w1000.count?`・約1/${Math.round(w1000.coverage/w1000.count)}`:''}`);
+ if(Number.isFinite(allRate))reasons.push(`全日ペカ密度 ${allRate.toFixed(1)}回/1000G`);
+ return {score,confidence:ayaConfidence(row),reasons,n:0,row,live:true,aya:true,w500,w1000,allRate};
+}
+
+function pickBadge(score,index,aya=false){
+ if(aya){if(index===0)return '🔥 本命';if(index===1)return '✨ 次候補';if(index===2)return '👀 3番手';return `#${index+1}`;}
  if(index===0&&score>=55)return '🥇 本命';
  if(index===1&&score>=52)return '🥈 対抗';
  if(index===2)return '🕳 穴';
  return `#${index+1}`;
 }
 function pickClass(score){return score>=65?'good':score>=55?'event':score<48?'bad':'warn'}
-function pickHtml(c,index,model,machine){
+
+// 「座られてる」は当日だけ記憶。押した瞬間、次点を自動繰り上げ。
+const SEAT_SKIP_KEY='pekalog_live_occupied_v2';
+function seatSkipStore(){try{return JSON.parse(localStorage.getItem(SEAT_SKIP_KEY)||'{}')||{}}catch(e){return {}}}
+function occupiedMachines(date){const s=seatSkipStore(),a=s[String(date)]||[];return new Set(a.map(String))}
+function setOccupiedMachine(date,machine,on=true){
+ const s=seatSkipStore(),d=String(date),m=String(machine),set=new Set((s[d]||[]).map(String));
+ if(on)set.add(m);else set.delete(m);
+ s[d]=[...set];
+ try{localStorage.setItem(SEAT_SKIP_KEY,JSON.stringify(s))}catch(e){}
+ renderSeatPicks();
+}
+function markOccupied(machine){setOccupiedMachine(latestLabDate(),machine,true)}
+function unmarkOccupied(machine){setOccupiedMachine(latestLabDate(),machine,false)}
+function clearOccupied(){
+ const d=latestLabDate(),s=seatSkipStore();delete s[String(d)];
+ try{localStorage.setItem(SEAT_SKIP_KEY,JSON.stringify(s))}catch(e){}
+ renderSeatPicks();
+}
+
+function pickHtml(c,index,model,machine,isLive=false){
  const reasons=(c.reasons||[]).map(x=>`<div class="reason">・${esc(x)}</div>`).join('');
- return `<div class="pickHero"><div class="rowtop"><div><div class="pickTitle"><span class="pickRank">${pickBadge(c.score,index)}</span><b>${esc(machine)}番 ${esc(MODELS[model]||model||'')}</b></div><div class="pickConfidence">${esc(c.confidence)}${c.n?` / 閉店n=${c.n}`:''}</div></div><div class="right"><div class="pickScore">${Math.round(c.score)}<small>/100</small></div><span class="pill ${pickClass(c.score)}">${c.score>=65?'強め候補':c.score>=55?'候補':c.score>=48?'観察':'薄め'}</span></div></div><div class="reasonList">${reasons||'<div class="reason">・まだデータ不足</div>'}</div></div>`;
+ const seatBtn=isLive?`<button class="btn dark small" style="margin-top:10px;width:100%" onclick="markOccupied('${esc(machine)}')">🚫 座られてる → 次の候補</button>`:'';
+ const badge=pickBadge(c.score,index,!!c.aya);
+ const label=c.aya?(c.score>=70?'🔥 ペカ差枚とも強め':c.score>=55?'✨ 今から候補':c.score>=42?'👀 観察':'💤 今は弱め'):(c.score>=65?'強め候補':c.score>=55?'候補':c.score>=48?'観察':'薄め');
+ return `<div class="pickHero"><div class="rowtop"><div><div class="pickTitle"><span class="pickRank">${badge}</span><b>${esc(machine)}番 ${esc(MODELS[model]||model||'')}</b></div><div class="pickConfidence">${esc(c.confidence)}${c.n?` / 閉店n=${c.n}`:''}${c.aya?' / 綾ちゃん脳':''}</div></div><div class="right"><div class="pickScore">${Math.round(c.score)}<small>/100</small></div><span class="pill ${pickClass(c.score)}">${label}</span></div></div><div class="reasonList">${reasons||'<div class="reason">・まだデータ不足</div>'}</div>${seatBtn}</div>`;
 }
 function renderSeatPicks(){
  const mbox=$('morningPicks'),lbox=$('livePicks'),status=$('seatPickStatus');if(!mbox||!lbox||!status)return;
- const target=latestLabDate(),pm=profileMap();
+ const target=latestLabDate(),pm=profileMap(),occupied=occupiedMachines(target);
  const machines=[...new Set(finalRows().map(r=>String(r.machine)).filter(Boolean))];
  const morning=machines.map(machine=>{
    const p=pm.get(machine),model=p?.model||finalRows().filter(r=>String(r.machine)===machine).at(-1)?.model||'';
    const c=morningCandidate(p,target);return {machine,model,...c};
  }).sort((a,b)=>b.score-a.score);
  const topM=morning.slice(0,3);
- mbox.innerHTML=topM.length?topM.map((c,i)=>pickHtml(c,i,c.model,c.machine)).join(''):'<div class="empty">閉店データが入ると朝イチ候補を出すよ。</div>';
+ mbox.innerHTML=topM.length?topM.map((c,i)=>pickHtml(c,i,c.model,c.machine,false)).join(''):'<div class="empty">閉店データが入ると朝イチ候補を出すよ。</div>';
 
  const liveRows=finalRows().filter(r=>r.date===target&&r.isFinal===false&&r.machine);
- const live=liveRows.map(r=>{
-   const p=pm.get(String(r.machine)),c=liveCandidate(r,p,target);
-   return {machine:String(r.machine),model:r.model,...c};
- }).sort((a,b)=>b.score-a.score);
- const topL=live.slice(0,3);
- lbox.innerHTML=topL.length?topL.map((c,i)=>pickHtml(c,i,c.model,c.machine)).join(''):'<div class="empty">今日のLIVEデータを取り込むと「今から候補」を出すよ。</div>';
+ // 今から狙いは設定推測ではなく「現在差枚 + 直近ペカ密度」で独立採点
+ const live=liveRows.map(r=>({machine:String(r.machine),model:r.model,...ayaCandidate(r)})).sort((a,b)=>b.score-a.score);
+ const available=live.filter(c=>!occupied.has(String(c.machine)));
+ const topL=available.slice(0,3);
+ lbox.innerHTML=topL.length?topL.map((c,i)=>pickHtml(c,i,c.model,c.machine,true)).join(''):(live.length?'<div class="empty">候補台は全部「座られてる」指定中。空いた台があれば下から戻せるよ。</div>':'<div class="empty">今日のLIVEデータを取り込むと「今から狙い」を出すよ。</div>');
 
- const best=live[0]||morning[0];
- let msg=`対象日 <strong>${esc(target)}</strong>。`;
+ const best=available[0]||null;
+ let msg=`対象日 <strong>${esc(target)}</strong>。朝は設定脳、途中参戦は<strong>綾ちゃん脳</strong>で別判定。`;
  if(best){
-   if(best.score<55)msg+=` 今は突出した候補が薄いので、LAB判定は <strong>🚫無理に選ばず様子見寄り</strong>。`;
-   else msg+=` 現在の最上位は <strong>${esc(best.machine)}番 ${esc(MODELS[best.model]||best.model||'')}</strong>、候補優先度 <strong>${Math.round(best.score)}/100</strong>。`;
+   if(best.score<55)msg+=` 今から狙いは突出した台が薄いので <strong>🚫無理に座らず様子見寄り</strong>。`;
+   else msg+=` 今からの最上位は <strong>${esc(best.machine)}番 ${esc(MODELS[best.model]||best.model||'')}</strong>、綾ちゃんスコア <strong>${Math.round(best.score)}/100</strong>。`;
  }
- msg+=` <br><span class="tiny">この点数は設定・勝利・期待収支を保証するものではなく、保存データ内での比較順位。</span>`;
+ if(occupied.size){
+   const chips=[...occupied].map(m=>`<button class="btn dark small" style="margin:4px 4px 0 0" onclick="unmarkOccupied('${esc(m)}')">↩ ${esc(m)}番を戻す</button>`).join('');
+   msg+=`<div style="margin-top:9px"><b>🚫 座られてる：${occupied.size}台</b><br>${chips}<button class="btn dark small" style="margin-top:4px" onclick="clearOccupied()">全部解除</button></div>`;
+ }
+ msg+=` <br><span class="tiny">「座られてる」を押した台は当日の今から狙いから一時除外し、次点を自動繰り上げ。綾ちゃんスコアは未来の当たりや勝利を保証せず、現在までのペカ頻度と差枚を比べる研究値。</span>`;
  status.innerHTML=msg;
 }
 
@@ -529,11 +609,8 @@ function bundleSnapshot(rec,date,statKey,graphKey,isFinal){
  };
 }
 function turkeyBundleToSnapshots(pkg){
- if(!pkg||pkg.kind!=='pekalog-turkey-bundle')throw new Error('ターキー共通収集JSONではないよ');
- const allRows=Array.isArray(pkg.machines)?pkg.machines:[];
- const rows=allRows.filter(rec=>!/ハナハナ/.test(String(rec?.model||'')));
- const hanaRows=allRows.filter(rec=>/ハナハナ/.test(String(rec?.model||'')));
- const snaps=[];
+ if(!pkg||pkg.kind!=='pekalog-turkey-bundle')throw new Error('ターキー22台JSONではないよ');
+ const rows=Array.isArray(pkg.machines)?pkg.machines:[], snaps=[];
  for(const rec of rows){
   if(!rec||!rec.machine)continue;
   snaps.push(bundleSnapshot(rec,pkg.date,'today','today',false));
@@ -541,7 +618,7 @@ function turkeyBundleToSnapshots(pkg){
   snaps.push(bundleSnapshot(rec,addDaysISO(pkg.date,-2),'prev2','prev2',true));
  }
  if(snaps.length)mergeData({snapshots:snaps});
- return {count:snaps.length,machineCount:rows.length,hanaCount:hanaRows.length,graphOk:snaps.filter(x=>Number.isFinite(Number(x.diff))).length,histOk:rows.filter(x=>Array.isArray(x.historyRows)&&x.historyRows.length).length,errors:0,total:allRows.length,bundle:true};
+ return {count:snaps.length,machineCount:rows.length,graphOk:snaps.filter(x=>Number.isFinite(Number(x.diff))).length,histOk:rows.filter(x=>Array.isArray(x.historyRows)&&x.historyRows.length).length,errors:0,total:rows.length,bundle:true};
 }
 
 function collectorToSnapshots(pkg){
@@ -563,7 +640,7 @@ function collectorToSnapshots(pkg){
  if(snaps.length)mergeData({snapshots:snaps});
  return {count:snaps.length,graphOk,histOk,errors,total:rows.length};
 }
-function collectorStatusText(r){if(r.bundle)return `✅ <strong>共通収集 ${r.total}台</strong>を確認。LABにはジャグラー <strong>${r.machineCount}台</strong>だけ、本日LIVE＋1日前＋2日前の <strong>${r.count}件</strong> を追加。${r.hanaCount?`🌺 ハナハナ${r.hanaCount}台はHANA LOG用としてLAB分析から除外。`:''}差枚解析 ${r.graphOk}件 ／ 履歴 ${r.histOk}台。<br><span class="tiny">本日はLIVE、1日前・2日前は閉店データとして保存。翌日の収集で前日の閉店値が自動的に確定していく。</span>`;return `✅ <strong>${r.count}/${r.total}台をLABへ追加</strong>。履歴 ${r.histOk}台${r.graphOk?` ／ 差枚解析 ${r.graphOk}台`:''}${r.errors?` ／ 失敗 ${r.errors}台`:''}。${r.graphOk?'1000/2000枚分析へそのまま反映したよ。':'差枚はグラフ点列の解析が通った台から自動反映する。'}`}
+function collectorStatusText(r){if(r.bundle)return `✅ <strong>${r.machineCount}台の収集完了</strong>。本日LIVE＋1日前＋2日前を合わせて <strong>${r.count}件</strong> LABへ追加。差枚解析 ${r.graphOk}件 ／ 履歴 ${r.histOk}台。<br><span class="tiny">本日はLIVE、1日前・2日前は閉店データとして保存。翌日の収集で前日の閉店値が自動的に確定していく。</span>`;return `✅ <strong>${r.count}/${r.total}台をLABへ追加</strong>。履歴 ${r.histOk}台${r.graphOk?` ／ 差枚解析 ${r.graphOk}台`:''}${r.errors?` ／ 失敗 ${r.errors}台`:''}。${r.graphOk?'1000/2000枚分析へそのまま反映したよ。':'差枚はグラフ点列の解析が通った台から自動反映する。'}`}
 
 function saveImportMeta(j,r,source){
  const meta={
@@ -621,7 +698,7 @@ function demoData(){if(!confirm('分析画面確認用のDEMOデータを追加�
  // one unmistakable 72-peka DEMO record, explicitly demo only
  arr.push({date:'2026-08-22',ts:new Date('2026-08-22T22:36:00+09:00').getTime(),machine:'399-DEMO',model:'gogo3',totalG:8000,big:39,reg:33,diff:2600,demo:true});mergeData({snapshots:arr});renderAll()}
 function renderData(){const demos=(lab.snapshots||[]).filter(x=>x.demo).length,live=(lab.snapshots||[]).filter(x=>['pscube-live','pscube-collector','pscube-dom-collector','pscube-auto-sync'].includes(x.source)).length;let sync='';try{const m=JSON.parse(localStorage.getItem('pekalog_turkey_sync_meta_v1')||'null');if(m)sync=`<br>🦃 最終自動同期：<strong>${new Date(m.syncedAt).toLocaleString('ja-JP')}</strong> ／ ${m.machines}台`;}catch(e){}const imp=importMetaText();$('dataStatus').innerHTML=`スナップショット <strong>${(lab.snapshots||[]).length}件</strong>${live?` ／ P's CUBE ${live}件`:''}${demos?`（DEMO ${demos}件）`:''}。${sync}${imp?`<br>${imp}`:''}<br>収集JSON・<code>daily.json</code>・CSV/JSONは全部同じ分析エンジンに入る。`}
-function exportData(){const blob=new Blob([JSON.stringify({version:'0.9',exportedAt:new Date().toISOString(),snapshots:lab.snapshots,hypotheses},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pekalog_lab_backup.json';a.click();URL.revokeObjectURL(a.href)}
+function exportData(){const blob=new Blob([JSON.stringify({version:'0.13-ayachan-hunt',exportedAt:new Date().toISOString(),snapshots:lab.snapshots,hypotheses},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pekalog_lab_backup.json';a.click();URL.revokeObjectURL(a.href)}
 function importFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(j.kind==='pekalog-collector'||j.kind==='pekalog-turkey-bundle'){const z=importCollectorObject(j);alert(`${z.count}台ぶんの収集JSONを読み込んだよ`)}else{if(j.snapshots)mergeData(j);if(Array.isArray(j.hypotheses)){hypotheses=j.hypotheses;persist()}renderAll();alert('LABデータを読み込んだよ')}}catch(e){alert('JSONを読み込めなかったよ')}ev.target.value=''};r.readAsText(f)}
 function parseCSVLine(line){const out=[];let cur='',q=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'){if(q&&line[i+1]==='"'){cur+='"';i++}else q=!q}else if(c===','&&!q){out.push(cur.trim());cur=''}else cur+=c}out.push(cur.trim());return out}
 function importCSVText(){const text=$('csvPaste').value.trim();if(!text)return alert('CSVを貼ってね');const lines=text.split(/\r?\n/).filter(Boolean),first=parseCSVLine(lines[0]);const expected=['date','ts','machine','model','totalG','big','reg','diff'];let start=0,headers=expected;if(first.some(x=>expected.includes(x))){headers=first;start=1}let arr=[];for(let i=start;i<lines.length;i++){const vals=parseCSVLine(lines[i]),o={};headers.forEach((h,j)=>o[h]=vals[j]);['ts','totalG','big','reg','diff'].forEach(k=>{if(o[k]!==undefined&&o[k]!=='')o[k]=Number(o[k])});if(o.date&&o.machine)arr.push(o)}if(!arr.length)return alert('取り込める行がなかったよ');mergeData({snapshots:arr});$('csvPaste').value='';renderAll();alert(`${arr.length}件取り込んだよ`)}
@@ -630,13 +707,6 @@ function renderConfig(){if($('eventDay'))$('eventDay').value=cfg.eventDay||22;if
 function renderAll(){renderDash();renderHyp();renderEvent();renderIF();renderData();renderConfig()}
 nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collectorFile').onchange=importCollectorFile;$('collectorPasteBtn').onclick=importCollectorPaste;$('collectorClipboardBtn').onclick=importCollectorClipboard;$('exportBtn').onclick=exportData;$('reloadRemote').onclick=()=>loadRemote(false);$('demoBtn').onclick=demoData;$('csvImportBtn').onclick=importCSVText;$('saveEventCfg').onclick=saveEventConfig;$('hDate').value=todayJST();initLiveUI();renderAll();loadRemote(true);
 </script>
-<script id="pekalog-lab-turkey-archive-patch">
-(function(){
-  // PEKALOGはターキー専用運用なので、店名の有無にかかわらず
-  // 保存済み実戦をすべてLAB連携対象として扱う。
-  turkeyArchives=function(){return archiveData()};
-  renderAll();
-})();
-</script>
+
 </body>
 </html>
