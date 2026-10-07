@@ -46,7 +46,7 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 .decisionTitle{font-size:26px;font-weight:950;letter-spacing:.01em;margin:0}.decisionSub{font-size:12px;color:var(--muted);margin-top:4px}
 .todayDecisionHero{margin:10px 0 12px;padding:14px;border-radius:16px;background:#0b1017;border:1px solid #31465b}
 .todayDecisionHero .heroLabel{font-size:11px;color:var(--muted);font-weight:800}.todayDecisionHero .heroMachine{font-size:30px;font-weight:950;line-height:1.15;margin-top:4px}.todayDecisionHero .heroMeta{margin-top:7px;font-size:12px;color:#c0cad7}
-.candidateDetails{margin-top:9px;border-top:1px solid #263240;padding-top:8px}.candidateDetails summary,.compactDisclosure summary{cursor:pointer;font-weight:850;color:#c9d7e8;list-style:none;-webkit-tap-highlight-color:transparent}.candidateDetails summary::-webkit-details-marker,.compactDisclosure summary::-webkit-details-marker{display:none}.candidateDetails summary:after,.compactDisclosure summary:after{content:'ï¼';float:right;color:var(--cyan)}.candidateDetails[open] summary:after,.compactDisclosure[open] summary:after{content:'â'}
+.candidateDetails{margin-top:9px;border-top:1px solid #263240;padding-top:8px}.candidateDetails summary,.compactDisclosure summary{cursor:pointer;font-weight:850;color:#c9d7e8;list-style:none;-webkit-tap-highlight-color:transparent}.candidateDetails summary::-webkit-details-marker,.compactDisclosure summary::-webkit-details-marker{display:none}.candidateDetails summary:after,.compactDisclosure summary:after{content:'＋';float:right;color:var(--cyan)}.candidateDetails[open] summary:after,.compactDisclosure[open] summary:after{content:'−'}
 .compactDisclosure{background:#10151c;border:1px solid #29313d;border-radius:14px;padding:11px;margin-top:10px}.compactDisclosure>.disclosureBody{margin-top:10px}
 .toolLauncher{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.toolLaunchBtn{width:100%;text-align:left;background:#0f151d;border:1px solid #2b3745;color:#fff;border-radius:15px;padding:13px;cursor:pointer;font-weight:900;font-size:14px}.toolLaunchBtn small{display:block;color:var(--muted);font-weight:600;font-size:10px;margin-top:4px;line-height:1.4}.toolLaunchBtn:active{transform:scale(.985)}
 .researchOverlay{display:none;position:fixed;inset:0;z-index:180;background:rgba(4,7,11,.88);backdrop-filter:blur(9px);align-items:flex-end;justify-content:center}.researchOverlay.open{display:flex}.researchSheet{width:min(980px,100%);height:min(92vh,900px);background:#0b0f15;border:1px solid #334050;border-radius:22px 22px 0 0;overflow:hidden;box-shadow:0 -16px 50px rgba(0,0,0,.45);display:flex;flex-direction:column}.researchHead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #26313d;background:#101620;position:sticky;top:0;z-index:2}.researchHead h3{margin:0;font-size:18px}.researchBody{padding:12px;overflow:auto;-webkit-overflow-scrolling:touch}.researchPanel{display:none}.researchPanel.active{display:block}.researchClose{border:0;border-radius:12px;background:#252c37;color:#fff;padding:9px 12px;font-weight:900;cursor:pointer}
@@ -61,33 +61,33 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 </head>
 <body>
 <div class="wrap">
-<header><div><h1>ð§ª PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.13.6 LIVE + 1000</div></header>
+<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.13.6 LIVE + 1000</div></header>
 <div class="nav" id="nav">
- <button class="btn dark active" data-view="dash">ð  LAB</button>
- <button class="btn dark" data-view="hyp">ð§  ä»®èª¬</button>
- <button class="btn dark" data-view="event">ð¥ 22æ¥</button>
- <button class="btn dark" data-view="iflab">ð» IF</button>
- <button class="btn dark" data-view="data">ð ãã¼ã¿</button>
+ <button class="btn dark active" data-view="dash">🏠 LAB</button>
+ <button class="btn dark" data-view="hyp">🧠 仮説</button>
+ <button class="btn dark" data-view="event">🔥 22日</button>
+ <button class="btn dark" data-view="iflab">👻 IF</button>
+ <button class="btn dark" data-view="data">🗃 データ</button>
 </div>
 
 <section id="dash" class="view active">
  <div class="card decisionCard">
   <div class="sectionTitle">
-   <div><div class="decisionTitle">ð¯ ä»æ¥ãä½åº§ãï¼</div><div class="decisionSub">ã¾ãçµè«ãçç±ã¯å¿è¦ãªæã ãéãã</div></div>
+   <div><div class="decisionTitle">🎯 今日、何座る？</div><div class="decisionSub">まず結論。理由は必要な時だけ開く。</div></div>
    <span class="pill good">TODAY FIRST</span>
   </div>
-  <div id="todayDecisionHero" class="todayDecisionHero"><div class="tiny">åè£ãè¨ç®ä¸­â¦</div></div>
+  <div id="todayDecisionHero" class="todayDecisionHero"><div class="tiny">候補を計算中…</div></div>
   <div class="pickGrid">
-   <div><div class="pickSub">ð æã¤ãåè£</div><div id="morningPicks" class="list"></div></div>
-   <div><div class="pickSub">ð¥ ä»ããåè£</div><div id="livePicks" class="list"></div></div>
+   <div><div class="pickSub">🌅 朝イチ候補</div><div id="morningPicks" class="list"></div></div>
+   <div><div class="pickSub">🔥 今から候補</div><div id="livePicks" class="list"></div></div>
   </div>
   <details class="compactDisclosure" id="seatReasonDetails">
-   <summary>ð§  å¤å®ã®èãæ¹ã»ç¾å¨ã®ç¶æãè¦ã</summary>
+   <summary>🧠 判定の考え方・現在の状態を見る</summary>
    <div class="disclosureBody">
     <div class="notice">
-     <strong>ð æã¤ãï¼è¨­å®è³</strong>ãéå»ã®æå¥æ¨å®çã»ç´è¿æ¸©åº¦ã»æå¥ééã»22æ¥ç¸æ§ã»ææ¥ã¯ã»ã»éç½®ã¯ã»ããé¸æã<br>
-     <strong>ð¥ ä»ããï¼ç¶¾ã¡ããè³</strong>ãç¾å¨å·®æï¼ç´è¿500G/1000Gã®ãã«å¯åº¦ãä¸»å½¹ã«ãéå»7æ¥ã»14æ¥ã®1000æå°éçãå å³ã<br>
-     <span class="tiny">â»ãããã£ã¦ããããããããå½ãããã¯å ç¹ããªããé ä½ã¯ä¿å­ãã¼ã¿åã®æ¯è¼ã§ãæªæ¥ã®å½ããã»è¨­å®ã»åå©ãä¿è¨¼ããªãã</span>
+     <strong>🌅 朝イチ＝設定脳</strong>。過去の投入推定率・直近温度・投入間隔・22日相性・曜日クセ・配置クセから選抜。<br>
+     <strong>🔥 今から＝綾ちゃん脳</strong>。現在差枚＋直近500G/1000Gのペカ密度を主役に、過去7日・14日の1000枚到達率も加味。<br>
+     <span class="tiny">※「ハマっているからそろそろ当たる」は加点しない。順位は保存データ内の比較で、未来の当たり・設定・勝利を保証しない。</span>
     </div>
     <div id="seatPickStatus" class="notice" style="margin-top:9px"></div>
    </div>
@@ -95,75 +95,75 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
  </div>
 
  <div class="card">
-  <div class="sectionTitle"><div><h3>ð è¦ããæã ãç ç©¶</h3><div class="tiny">ãããã¯ç­ããã«ã«ãã»ä¸¦ã³ã»ç¹å®æ¥ã»é±éã°ã©ãã¯å¿è¦ãªæã ãéãã</div></div><span class="pill">ON DEMAND</span></div>
+  <div class="sectionTitle"><div><h3>🔎 見たい時だけ研究</h3><div class="tiny">トップは短く。カルテ・並び・特定日・週間グラフは必要な時だけ開く。</div></div><span class="pill">ON DEMAND</span></div>
   <div class="toolLauncher">
-   <button class="toolLaunchBtn" onclick="openResearchTool0133('pattern')">ð ææ¥ã»æéã«ã«ã<small>ææ¥ã®åã / LIVEæéå¸¯ / ä»æ¥ã®ææ¥ã§å¼·ãå°</small></button>
-   <button class="toolLaunchBtn" onclick="openResearchTool0133('special')">ð¥ ç¹å®æ¥æ¨æ¸¬<small>5ã»7ã»22æ¥ / ææ« / æ¥ä»æ«å°¾ Ã å°çªæ«å°¾</small></button>
-   <button class="toolLaunchBtn" onclick="openResearchTool0133('layout')">ðº ä¸¦ã³ã»éç½®<small>è§ / è§2 / æ©ç¨®å¢ç / é£æ¥ / éè·¯åãã</small></button>
-   <button class="toolLaunchBtn" onclick="openResearchTool0133('machine')">ð å°å¥ 7æ¥ã»14æ¥<small>è¨­å®æ¨çé  / å°çªé  / å·®æé  / ç´è¿æ¸©åº¦</small></button>
+   <button class="toolLaunchBtn" onclick="openResearchTool0133('pattern')">📅 曜日・時間カルテ<small>曜日の偏り / LIVE時間帯 / 今日の曜日で強い台</small></button>
+   <button class="toolLaunchBtn" onclick="openResearchTool0133('special')">🔥 特定日推測<small>5・7・22日 / 月末 / 日付末尾 × 台番末尾</small></button>
+   <button class="toolLaunchBtn" onclick="openResearchTool0133('layout')">🗺 並び・配置<small>角 / 角2 / 機種境界 / 隣接 / 通路向かい</small></button>
+   <button class="toolLaunchBtn" onclick="openResearchTool0133('machine')">📈 台別 7日・14日<small>設定推理順 / 台番順 / 差枚順 / 直近温度</small></button>
   </div>
  </div>
 
  <div class="card">
-  <div class="sectionTitle"><div><h3>ä»æ¥ã®ç ç©¶ç¶æ³</h3><div class="tiny">PEKALOGã¯å®æ¦ãLABã¯åºã¨å¤æ­ãæ¤è¨¼ã</div></div><span class="pill event">é·ºæ²¼ã¿ã¼ã­ã¼</span></div>
+  <div class="sectionTitle"><div><h3>今日の研究状況</h3><div class="tiny">PEKALOGは実戦、LABは店と判断を検証。</div></div><span class="pill event">鷺沼ターキー</span></div>
   <div class="grid4" style="margin-top:10px">
-   <div class="stat"><div class="k">ä¿å­æ¥æ°</div><div class="v" id="daysCount">0</div></div>
-   <div class="stat"><div class="k">å°ãã¼ã¿</div><div class="v" id="finalCount">0</div></div>
-   <div class="stat"><div class="k">PEKALOGå®æ¦</div><div class="v" id="pekaCount">0</div></div>
-   <div class="stat"><div class="k">ä»®èª¬</div><div class="v" id="hypCount">0</div></div>
+   <div class="stat"><div class="k">保存日数</div><div class="v" id="daysCount">0</div></div>
+   <div class="stat"><div class="k">台データ</div><div class="v" id="finalCount">0</div></div>
+   <div class="stat"><div class="k">PEKALOG実戦</div><div class="v" id="pekaCount">0</div></div>
+   <div class="stat"><div class="k">仮説</div><div class="v" id="hypCount">0</div></div>
   </div>
   <div id="syncNotice" class="notice" style="margin-top:10px"></div>
  </div>
 
  <details class="compactDisclosure" id="researchLog0133">
-  <summary>ð§ª ç­ãåããã»ç ç©¶ã­ã°</summary>
+  <summary>🧪 答え合わせ・研究ログ</summary>
   <div class="disclosureBody">
-   <div class="researchChunk"><div class="sectionTitle"><h3>ð ææ°åå¾ã®1000æå°é</h3><div id="latestDate" class="tiny">-</div></div><div id="latestHits" class="list" style="margin-top:9px"></div></div>
-   <div class="researchChunk"><div class="sectionTitle"><div><h3>ð¯ å°å¥ã»è¨­å®æå¥æ¨ç</h3><div class="tiny">éåºãã¼ã¿ã ãã§å°çªãã¨ã®ãå¥ããããããå­¦ç¿ã</div></div><span class="pill event">DETAIL</span></div><div id="machineInferenceSummary" class="grid3" style="margin-top:10px"></div><div id="machineProfiles" class="list" style="margin-top:10px"></div></div>
-   <div class="researchChunk"><div class="sectionTitle"><h3>ð LABãè¦ã¤ããå¾å</h3><span class="pill">èªååæ</span></div><div id="discoveries" class="list" style="margin-top:9px"></div></div>
+   <div class="researchChunk"><div class="sectionTitle"><h3>🏆 最新取得の1000枚到達</h3><div id="latestDate" class="tiny">-</div></div><div id="latestHits" class="list" style="margin-top:9px"></div></div>
+   <div class="researchChunk"><div class="sectionTitle"><div><h3>🎯 台別・設定投入推理</h3><div class="tiny">閉店データだけで台番ごとの「入りやすさ」を学習。</div></div><span class="pill event">DETAIL</span></div><div id="machineInferenceSummary" class="grid3" style="margin-top:10px"></div><div id="machineProfiles" class="list" style="margin-top:10px"></div></div>
+   <div class="researchChunk"><div class="sectionTitle"><h3>🔎 LABが見つけた傾向</h3><span class="pill">自動分析</span></div><div id="discoveries" class="list" style="margin-top:9px"></div></div>
   </div>
  </details>
 
  <div id="researchOverlay0133" class="researchOverlay" onclick="if(event.target===this)closeResearchTool0133()">
   <div class="researchSheet" role="dialog" aria-modal="true" aria-labelledby="researchTitle0133">
-   <div class="researchHead"><h3 id="researchTitle0133">ç ç©¶</h3><button class="researchClose" onclick="closeResearchTool0133()">â éãã</button></div>
+   <div class="researchHead"><h3 id="researchTitle0133">研究</h3><button class="researchClose" onclick="closeResearchTool0133()">✕ 閉じる</button></div>
    <div class="researchBody">
     <section id="researchPattern0133" class="researchPanel">
-     <div class="sectionTitle"><div><h3>ð ææ¥ã»æéå¸¯ã«ã«ã</h3><div class="tiny">ææ¥ã®åãã¨LIVEæéå¸¯ããå¿è¦ãªæã ãéè¨ã</div></div><span class="pill good">AUTO</span></div>
+     <div class="sectionTitle"><div><h3>📅 曜日・時間帯カルテ</h3><div class="tiny">曜日の偏りとLIVE時間帯を、必要な時だけ集計。</div></div><span class="pill good">AUTO</span></div>
      <div id="next22Status" class="notice" style="margin-top:8px"></div>
      <div class="grid2" style="margin-top:10px">
-      <div><div class="pickSub">ð ææ¥å¥</div><div class="tablewrap"><table><thead><tr><th>ææ¥</th><th>æ¥æ°</th><th>å¤å®å°</th><th>å¼·ãç</th><th>éå¸¸æ¥ç</th><th>å¹³åå·®æ</th></tr></thead><tbody id="weekdayTrendBody"></tbody></table></div></div>
-      <div><div class="pickSub">ð° æéå¸¯å¥ LIVE</div><div class="tablewrap"><table><thead><tr><th>æéå¸¯</th><th>åå¾</th><th>å¤å®</th><th>å¹³åG</th><th>å¹³åscore</th><th>å¼·ãç</th></tr></thead><tbody id="timeTrendBody"></tbody></table></div></div>
+      <div><div class="pickSub">📆 曜日別</div><div class="tablewrap"><table><thead><tr><th>曜日</th><th>日数</th><th>判定台</th><th>強め率</th><th>通常日率</th><th>平均差枚</th></tr></thead><tbody id="weekdayTrendBody"></tbody></table></div></div>
+      <div><div class="pickSub">🕰 時間帯別 LIVE</div><div class="tablewrap"><table><thead><tr><th>時間帯</th><th>取得</th><th>判定</th><th>平均G</th><th>平均score</th><th>強め率</th></tr></thead><tbody id="timeTrendBody"></tbody></table></div></div>
      </div>
-     <div class="pickSub" style="margin-top:12px">ð° ä»æ¥ã®ææ¥ã§å¼·ãå°</div><div id="weekdayMachinePicks" class="list"></div>
-     <div class="tiny" style="margin-top:8px">â»ææ¥ã»æéå¸¯ã¯å¾åã®è¦³æ¸¬ãææ¥ãæå»ãã®ãã®ãå½ãããçãã¨ããæå³ã§ã¯ãªãã</div>
+     <div class="pickSub" style="margin-top:12px">🎰 今日の曜日で強い台</div><div id="weekdayMachinePicks" class="list"></div>
+     <div class="tiny" style="margin-top:8px">※曜日・時間帯は傾向の観測。曜日や時刻そのものが当たりを生むという意味ではない。</div>
     </section>
 
     <section id="researchLayout0133" class="researchPanel">
-     <div class="sectionTitle"><div><h3>ðº ä¸¦ã³ã»éç½® LAB</h3><div class="tiny">ã¿ã¼ã­ã¼ã®å®éç½®ã§è§ã»è§2ã»å¢çã»é£æ¥ã»åãããåãã¦å­¦ç¿ã</div></div><span class="pill event">TURKEY MAP</span></div>
+     <div class="sectionTitle"><div><h3>🗺 並び・配置 LAB</h3><div class="tiny">ターキーの実配置で角・角2・境界・隣接・向かいを分けて学習。</div></div><span class="pill event">TURKEY MAP</span></div>
      <div id="layoutMapStatus" class="notice" style="margin-top:8px"></div>
      <div id="layoutSummary" class="grid4" style="margin-top:10px"></div>
-     <div class="pickSub" style="margin-top:12px">ð ä½ç½®å¥ã«ã«ã</div><div id="layoutPositionTable" class="tablewrap"></div>
-     <div class="pickSub" style="margin-top:12px">ð¯ å®éã«é£ãåãå°ã®ãä¸¦ã³å¼·ãã</div><div id="layoutNeighborPairs" class="list"></div>
-     <div class="pickSub" style="margin-top:12px">ðª éè·¯ãæãã åããåãã</div><div id="layoutPassagePairs" class="list"></div>
-     <div class="pickSub" style="margin-top:12px">ð å°çªãã¨ã®å¤å¥æ¨ç§»</div><div id="layoutTransitions" class="list"></div>
+     <div class="pickSub" style="margin-top:12px">📍 位置別カルテ</div><div id="layoutPositionTable" class="tablewrap"></div>
+     <div class="pickSub" style="margin-top:12px">👯 実際に隣り合う台の「並び強め」</div><div id="layoutNeighborPairs" class="list"></div>
+     <div class="pickSub" style="margin-top:12px">🚪 通路を挟んだ向かい合わせ</div><div id="layoutPassagePairs" class="list"></div>
+     <div class="pickSub" style="margin-top:12px">🔁 台番ごとの判別推移</div><div id="layoutTransitions" class="list"></div>
     </section>
 
     <section id="specialTailLabCard" class="researchPanel">
-     <div class="sectionTitle"><div><h3>ð¥ ç¹å®æ¥æ¨æ¸¬</h3><div class="tiny">5ã®æ¥ã»7ã®æ¥ã»22æ¥ã»ææ«ã¨ãå°çªæ«å°¾ã®é£åãéåºãã¼ã¿ã ãã§æ¯è¼ã</div></div><span class="pill event">SPECIAL</span></div>
-     <div class="notice" style="margin-top:8px"><strong>ãéå¸¸æ¥æ¯ +âptã</strong>ã¯å¼·ãçã®å·®ããµã³ãã«ãå°ãªãéã¯åè£ç¹ã¸å¼·ãæ··ãããç ç©¶è¡¨ç¤ºãåªåããã</div>
+     <div class="sectionTitle"><div><h3>🔥 特定日推測</h3><div class="tiny">5の日・7の日・22日・月末と、台番末尾の連動を閉店データだけで比較。</div></div><span class="pill event">SPECIAL</span></div>
+     <div class="notice" style="margin-top:8px"><strong>「通常日比 +○pt」</strong>は強め率の差。サンプルが少ない間は候補点へ強く混ぜず、研究表示を優先する。</div>
      <div id="specialDaySummary" class="grid4" style="margin-top:10px"></div>
-     <div class="pickSub" style="margin-top:12px">ð ç¹å®æ¥ vs ãã®ä»æ¥</div><div id="specialDayTable" class="tablewrap"></div>
-     <div class="pickSub" style="margin-top:12px">ð¯ æ¥ä»æ«å°¾ Ã å°çªæ«å°¾</div><div id="dateTailTable" class="tablewrap"></div>
-     <div class="pickSub" style="margin-top:12px">ð ç¹å®æ¥ã®æ«å°¾TOP</div><div id="specialTailTop" class="list"></div>
-     <div class="tiny" style="margin-top:8px">â»ãå¼·ããã¯æ¢å­ã®è¨­å®æ¨å®ã­ã¸ãã¯ã¨åããå®è¨­å®ã®æ­å®ã§ã¯ãªããææ«ã¯åæã®æçµ3æ¥ã</div>
+     <div class="pickSub" style="margin-top:12px">📆 特定日 vs その他日</div><div id="specialDayTable" class="tablewrap"></div>
+     <div class="pickSub" style="margin-top:12px">🎯 日付末尾 × 台番末尾</div><div id="dateTailTable" class="tablewrap"></div>
+     <div class="pickSub" style="margin-top:12px">👀 特定日の末尾TOP</div><div id="specialTailTop" class="list"></div>
+     <div class="tiny" style="margin-top:8px">※「強め」は既存の設定推定ロジックと同じ。実設定の断定ではない。月末は各月の最終3日。</div>
     </section>
 
     <section id="researchMachine0133" class="researchPanel">
-     <div class="sectionTitle"><div><h3>ð å°å¥ 7æ¥ã»14æ¥ã«ã«ã</h3><div class="tiny">éåºæç¹ã®æ¥å¥å·®æãã¤ãªãã§ãå°ãã¨ã®æè¿ã®èµ°ããç¢ºèªã</div></div><span class="pill good">LAZY</span></div>
+     <div class="sectionTitle"><div><h3>📈 台別 7日・14日カルテ</h3><div class="tiny">閉店時点の日別差枚をつないで、台ごとの最近の走りを確認。</div></div><span class="pill good">LAZY</span></div>
      <div class="machineControls">
-      <div><label>è¡¨ç¤ºé </label><select id="machineSort0133" onchange="renderMachineExplorer0133()"><option value="setting">ð¥ è¨­å®æ¨çãé«ãé </option><option value="machine">ð¢ å°çªé </option><option value="diff">ð æéç´¯è¨å·®æé </option><option value="temp">ð¡ ç´è¿æ¸©åº¦é </option></select></div>
-      <div><label>æé</label><div class="machinePeriodBtns"><button id="period7Btn0133" class="btn dark small" onclick="setMachinePeriod0133(7)">7æ¥</button><button id="period14Btn0133" class="btn cyan small active" onclick="setMachinePeriod0133(14)">14æ¥</button></div></div>
+      <div><label>表示順</label><select id="machineSort0133" onchange="renderMachineExplorer0133()"><option value="setting">🔥 設定推理が高い順</option><option value="machine">🔢 台番順</option><option value="diff">📈 期間累計差枚順</option><option value="temp">🌡 直近温度順</option></select></div>
+      <div><label>期間</label><div class="machinePeriodBtns"><button id="period7Btn0133" class="btn dark small" onclick="setMachinePeriod0133(7)">7日</button><button id="period14Btn0133" class="btn cyan small active" onclick="setMachinePeriod0133(14)">14日</button></div></div>
      </div>
      <div id="machineDetail0133" class="machineDetail"></div>
      <div id="machineExplorerList0133" class="list"></div>
@@ -175,88 +175,88 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 
 <section id="hyp" class="view">
  <div class="card">
-  <h3>ð§  ä»®èª¬ãäºåç»é²</h3>
-  <div class="notice">ããã ãäººéã®ä»äºãç»é²ããåå®¹ã¯ä½ææå»ä»ãã§ä¿å­ãã¦ããã¨ããé½åããè¨æ¶ãæ¸ãæããªãä»æ§ã</div>
+  <h3>🧠 仮説を事前登録</h3>
+  <div class="notice">ここだけ人間の仕事。登録した内容は作成時刻付きで保存して、あとから都合よく記憶を書き換えない仕様。</div>
   <div class="grid2" style="margin-top:10px">
-   <div><label>æ¤è¨¼æ¥</label><input id="hDate" type="date"></div>
-   <div><label>æ©ç¨®</label><select id="hModel"><option value="all">å¨ã¸ã£ã°</option><option value="gogo3">ã´ã¼ã¸ã£ã°3</option><option value="neoim">ããªã¢ã¤ã </option><option value="my5">ãã¤ã¸ã£ã°V</option><option value="my6">ãã¤ã¸ã£ã°VI</option><option value="happy3">ãããã¼V III</option><option value="ultra">ã¦ã«ãã©ãã©ã¯ã«</option></select></div>
+   <div><label>検証日</label><input id="hDate" type="date"></div>
+   <div><label>機種</label><select id="hModel"><option value="all">全ジャグ</option><option value="gogo3">ゴージャグ3</option><option value="neoim">ネオアイム</option><option value="my5">マイジャグV</option><option value="my6">マイジャグVI</option><option value="happy3">ハッピーV III</option><option value="ultra">ウルトラミラクル</option></select></div>
   </div>
-  <div style="margin-top:9px"><label>ä»®èª¬å</label><input id="hTitle" placeholder="ä¾ï¼22æ¥ã¯ã´ã¼ã¸ã£ã°ãä¸çªå¼·ã"></div>
+  <div style="margin-top:9px"><label>仮説名</label><input id="hTitle" placeholder="例：22日はゴージャグが一番強い"></div>
   <div class="grid2" style="margin-top:9px">
-   <div><label>å¯¾è±¡å°ï¼ä»»æã»ã«ã³ãåºåãï¼</label><input id="hMachines" placeholder="301,302,303"></div>
-   <div><label>HITåºæº</label><select id="hMetric"><option value="1000">+1000æä»¥ä¸</option><option value="2000">+2000æä»¥ä¸</option><option value="content">åå®¹å¼·ãï¼REG/åç®ï¼</option></select></div>
+   <div><label>対象台（任意・カンマ区切り）</label><input id="hMachines" placeholder="301,302,303"></div>
+   <div><label>HIT基準</label><select id="hMetric"><option value="1000">+1000枚以上</option><option value="2000">+2000枚以上</option><option value="content">内容強め（REG/合算）</option></select></div>
   </div>
   <div class="grid2" style="margin-top:9px">
-   <div><label>èªä¿¡åº¦</label><select id="hConfidence"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
-   <div><label>ã¤ãã³ãã¿ã°</label><select id="hEvent"><option value="auto">èªåï¼22æ¥ã¯ã¤ãã³ãï¼</option><option value="event">ã¤ãã³ãæ±ã</option><option value="normal">éå¸¸æ¥æ±ã</option></select></div>
+   <div><label>自信度</label><select id="hConfidence"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
+   <div><label>イベントタグ</label><select id="hEvent"><option value="auto">自動（22日はイベント）</option><option value="event">イベント扱い</option><option value="normal">通常日扱い</option></select></div>
   </div>
-  <div style="margin-top:9px"><label>æåæ¡ä»¶</label><select id="hSuccess"><option value="any">å¯¾è±¡ã«1å°ä»¥ä¸HIT</option><option value="half">å¯¾è±¡ã®åæ°ä»¥ä¸HIT</option><option value="avg0">å¯¾è±¡å¹³åå·®æããã©ã¹</option><option value="avg500">å¯¾è±¡å¹³åå·®æ +500æä»¥ä¸</option><option value="uplift10">1000æçãåºæºãã+10ptä»¥ä¸</option></select></div>
-  <div style="margin-top:9px"><label>çç±ã»èª­ã¿</label><textarea id="hReason" rows="3" placeholder="åæ¥å¹ã¿ãä¸¦ã³ãåå22æ¥ã®éåãªã©"></textarea></div>
-  <button class="btn violet wide" style="margin-top:10px" id="saveHyp">ð ä»®èª¬ãç»é²</button>
+  <div style="margin-top:9px"><label>成功条件</label><select id="hSuccess"><option value="any">対象に1台以上HIT</option><option value="half">対象の半数以上HIT</option><option value="avg0">対象平均差枚がプラス</option><option value="avg500">対象平均差枚 +500枚以上</option><option value="uplift10">1000枚率が基準より+10pt以上</option></select></div>
+  <div style="margin-top:9px"><label>理由・読み</label><textarea id="hReason" rows="3" placeholder="前日凹み、並び、前回22日の配分など"></textarea></div>
+  <button class="btn violet wide" style="margin-top:10px" id="saveHyp">🔒 仮説を登録</button>
  </div>
- <div class="card"><h3>ð¯ ä»®èª¬ã®ç­ãåãã</h3><div id="hypList" class="list"></div></div>
+ <div class="card"><h3>🎯 仮説の答え合わせ</h3><div id="hypList" class="list"></div></div>
 </section>
 
 <section id="event" class="view">
  <div class="card">
-  <div class="sectionTitle"><div><h3>ð¥ 22æ¥ EVENT LAB</h3><div class="tiny">éå¸¸æ¥ã¨ã¯å¥ãªã¼ã°ã§æ¯è¼ã</div></div><div id="eventScore" class="score">-</div></div>
+  <div class="sectionTitle"><div><h3>🔥 22日 EVENT LAB</h3><div class="tiny">通常日とは別リーグで比較。</div></div><div id="eventScore" class="score">-</div></div>
   <div class="grid4" style="margin-top:10px">
-   <div class="stat"><div class="k">22æ¥ãµã³ãã«</div><div class="v" id="eventDays">0</div></div>
-   <div class="stat"><div class="k">å¹³åå·®æ</div><div class="v" id="eventAvgDiff">-</div></div>
-   <div class="stat"><div class="k">1000æç</div><div class="v" id="event1000">-</div></div>
-   <div class="stat"><div class="k">2000æç</div><div class="v" id="event2000">-</div></div>
+   <div class="stat"><div class="k">22日サンプル</div><div class="v" id="eventDays">0</div></div>
+   <div class="stat"><div class="k">平均差枚</div><div class="v" id="eventAvgDiff">-</div></div>
+   <div class="stat"><div class="k">1000枚率</div><div class="v" id="event1000">-</div></div>
+   <div class="stat"><div class="k">2000枚率</div><div class="v" id="event2000">-</div></div>
   </div>
   <div id="eventCompare" class="notice" style="margin-top:10px"></div>
   <div id="eventLatestDelta" class="notice" style="margin-top:8px"></div>
  </div>
- <div class="card"><h3>ð 22æ¥ Ã ææ¥</h3><div class="tiny" style="margin-bottom:9px">22æ¥ãä½ææ¥ã«å½ãã£ãæã«åããéãããåé¢ããµã³ãã«ãå¢ããã»ã©è²ã¤ã</div><div id="eventWeekdays" class="tablewrap"></div></div>
- <div class="card"><h3>ð 22æ¥ãã¨ã®å¤å</h3><div id="eventTrend" class="tablewrap"></div></div>
- <div class="card"><h3>ð° æ©ç¨®å¥ 22æ¥ vs éå¸¸æ¥</h3><div id="eventModels" class="tablewrap"></div></div>
- <div class="card"><h3>â¨ EVENT ãã«è¨é²</h3><div class="tiny" style="margin-bottom:9px">BB+REGãããã«æ°ãã¨ãã¦è¨é²ã72ãã«ç´ãã©ããããç°å¸¸ã ã£ãããå¾ããæ¯è¼ã§ããã</div><div id="pekaRecords" class="list"></div></div>
+ <div class="card"><h3>📅 22日 × 曜日</h3><div class="tiny" style="margin-bottom:9px">22日が何曜日に当たった時に動きが違うかを分離。サンプルが増えるほど育つ。</div><div id="eventWeekdays" class="tablewrap"></div></div>
+ <div class="card"><h3>📈 22日ごとの変化</h3><div id="eventTrend" class="tablewrap"></div></div>
+ <div class="card"><h3>🎰 機種別 22日 vs 通常日</h3><div id="eventModels" class="tablewrap"></div></div>
+ <div class="card"><h3>✨ EVENT ペカ記録</h3><div class="tiny" style="margin-bottom:9px">BB+REGを「ペカ数」として記録。72ペカ級がどれくらい異常だったか、後から比較できる。</div><div id="pekaRecords" class="list"></div></div>
 </section>
 
 <section id="iflab" class="view">
  <div class="card">
-  <h3>ð» ããã®å¾ã©ããªã£ãï¼ã</h3>
-  <div class="notice"><strong>PEKALOGã®ä¿å­å®æ¦</strong>ãåããã©ã¦ã¶ããèªåèª­è¾¼ãLABã«10ååå¾ã®ã¹ãããã·ã§ãããããã°ãã¤ã¡æå»ä»è¿ããéåºã¾ã§ã®å·®æå¤åãæ¯è¼ããã<br><span class="tiny">â»ããã¯ãã¤ã¡ãå¾ã«ãã®å°ãã©ãåããããã®å®ç¸¾ãã¸ã£ã°ã©ã¼ã¯æ½é¸ãªã®ã§ãå®éã«èªåãç¶ããå ´åã¨åãçµæã«ãªãä¿è¨¼ã¯ãªããã</span></div>
+  <h3>👻 「その後どうなった？」</h3>
+  <div class="notice"><strong>PEKALOGの保存実戦</strong>を同じブラウザから自動読込。LABに10分前後のスナップショットがあれば、ヤメ時刻付近から閉店までの差枚変化を比較する。<br><span class="tiny">※これは「ヤメた後にその台がどう動いたか」の実績。ジャグラーは抽選なので、実際に自分が続けた場合と同じ結果になる保証はないよ。</span></div>
   <div id="ifList" class="list" style="margin-top:10px"></div>
  </div>
  <div class="card">
-  <h3>ð§  å¤æ­ã¯ã»</h3>
-  <div id="decisionSummary" class="notice">å®æ¦ã¨ã¹ãããã·ã§ãããè²¯ã¾ãã¨ãæ¤éå¾ã«ä¼¸ã³ã/è½ã¡ãæ¯çãéè¨ããã</div>
+  <h3>🧠 判断クセ</h3>
+  <div id="decisionSummary" class="notice">実戦とスナップショットが貯まると、撤退後に伸びた/落ちた比率を集計する。</div>
   <div id="reasonStats" class="list" style="margin-top:10px"></div>
  </div>
 </section>
 
 <section id="data" class="view">
  <div class="card">
-  <div class="sectionTitle"><div><h3>ð¦ ã¿ã¼ã­ã¼åéä¿ <span class="pill good">v1.5 COPY</span></h3><div class="tiny">GitHub Pagesããã®ç´æ¥åå¾ã¯P's CUBEã®ã»ãã·ã§ã³å¶éã§HTMLã«å·®ãæ¿ãã£ããããP's CUBEç»é¢ä¸ã§åã1ã¿ããåéæ¹å¼ã«åãæ¿ãã</div></div></div>
+  <div class="sectionTitle"><div><h3>📦 ターキー収集係 <span class="pill good">v1.5 COPY</span></h3><div class="tiny">GitHub Pagesからの直接取得はP's CUBEのセッション制限でHTMLに差し替わったため、P's CUBE画面上で動く1タップ収集方式に切り替え。</div></div></div>
   <div class="notice" style="margin-top:9px">
-   <strong>iPhoneåéï¼</strong> P's CUBEã®å°è©³ç´°ãSafariã§éã â å±æ â <strong>PEKALOGåé</strong>ã1å°ãã¤é«éä¿å­ãã22å°ç®ã§å¨å°JSONãè¿ãã<br>
-   <span class="tiny">å®æJSONã¯ <code>pekalog-turkey-bundle</code>ãæ¬æ¥LIVEã«å ãã¦ã1æ¥åã»2æ¥åãã®éåºãã¼ã¿ãåæã«LABã¸åãè¾¼ãã</span>
+   <strong>iPhone収集：</strong> P's CUBEの台詳細をSafariで開く → 共有 → <strong>PEKALOG収集</strong>。1台ずつ高速保存し、22台目で全台JSONを返す。<br>
+   <span class="tiny">完成JSONは <code>pekalog-turkey-bundle</code>。本日LIVEに加えて「1日前・2日前」の閉店データも同時にLABへ取り込む。</span>
   </div>
-  <div class="notice" style="margin-top:9px"><strong>ä»ã®éç¨ï¼</strong> 22å°åéãçµãã£ãããã³ãã¼ãã¦LABãéããâ ä¸ã®ãã¯ãªãããã¼ãããåè¾¼ãã1åæ¼ãã ãã</div>
+  <div class="notice" style="margin-top:9px"><strong>今の運用：</strong> 22台収集が終わったら「コピーしてLABを開く」→ 下の「クリップボードから取込」を1回押すだけ。</div>
   <div class="grid2" style="margin-top:9px">
-   <button class="btn cyan" id="collectorClipboardBtn">ð ã¯ãªãããã¼ãããåè¾¼</button>
-   <label class="btn green" style="text-align:center;cursor:pointer">â¬ åéJSONãèª­ã¿è¾¼ã<input id="collectorFile" type="file" accept=".json,application/json" style="display:none"></label>
-   <button class="btn dark" id="collectorPasteBtn">âï¸ è²¼ãä»ãJSONãåè¾¼</button>
+   <button class="btn cyan" id="collectorClipboardBtn">📋 クリップボードから取込</button>
+   <label class="btn green" style="text-align:center;cursor:pointer">⬆ 収集JSONを読み込む<input id="collectorFile" type="file" accept=".json,application/json" style="display:none"></label>
+   <button class="btn dark" id="collectorPasteBtn">✍️ 貼り付けJSONを取込</button>
   </div>
-  <textarea id="collectorPaste" rows="5" style="margin-top:9px" placeholder="22å°åéã®æå¾ã«åºã {&quot;kind&quot;:&quot;pekalog-turkey-bundle&quot;,...} ããã®ã¾ã¾è²¼ãä»ã"></textarea>
-  <div id="collectorStatus" class="notice" style="margin-top:10px">ã¾ã åéJSONã¯èª­ã¿è¾¼ã¾ãã¦ããªããã</div>
+  <textarea id="collectorPaste" rows="5" style="margin-top:9px" placeholder="22台収集の最後に出た {&quot;kind&quot;:&quot;pekalog-turkey-bundle&quot;,...} をそのまま貼り付け"></textarea>
+  <div id="collectorStatus" class="notice" style="margin-top:10px">まだ収集JSONは読み込まれていないよ。</div>
  </div>
  <div class="card">
-  <h3>ð LABãã¼ã¿</h3>
+  <h3>🗃 LABデータ</h3>
   <div id="dataStatus" class="notice"></div>
   <div class="grid2" style="margin-top:10px">
-   <label class="btn blue" style="text-align:center;cursor:pointer">â¬ JSONèª­è¾¼<input id="jsonFile" type="file" accept=".json,application/json" style="display:none"></label>
-   <button class="btn dark" id="exportBtn">â¬ LABãã¼ã¿ä¿å­</button>
-   <button class="btn cyan" id="reloadRemote">ð daily.jsonåèª­è¾¼</button>
-   <button class="btn violet" id="demoBtn">ð§ª ãã¢ãã¼ã¿</button>
+   <label class="btn blue" style="text-align:center;cursor:pointer">⬆ JSON読込<input id="jsonFile" type="file" accept=".json,application/json" style="display:none"></label>
+   <button class="btn dark" id="exportBtn">⬇ LABデータ保存</button>
+   <button class="btn cyan" id="reloadRemote">🔄 daily.json再読込</button>
+   <button class="btn violet" id="demoBtn">🧪 デモデータ</button>
   </div>
-  <div class="tiny" style="margin-top:9px">åéJSONã»LABããã¯ã¢ããã»CSVã»daily.jsonã¯å¨é¨åãåæã¨ã³ã¸ã³ã«å¥ãã</div>
+  <div class="tiny" style="margin-top:9px">収集JSON・LABバックアップ・CSV・daily.jsonは全部同じ分析エンジンに入る。</div>
  </div>
  <div class="card">
-  <h3>å¿è¦ãã¼ã¿å½¢å¼</h3>
+  <h3>必要データ形式</h3>
   <pre class="notice" style="overflow:auto;white-space:pre-wrap">{
   "snapshots": [
     {"date":"2026-09-22","ts":1790089200000,"machine":"301","model":"gogo3","totalG":7200,"big":38,"reg":34,"diff":2100}
@@ -265,26 +265,26 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
  </div>
 
  <div class="card">
-  <h3>ð¥ CSVè²¼ãä»ãåè¾¼</h3>
-  <div class="notice">èªååéãå®æããã¾ã§ã®ç¾å®ãã¼ã¿å¥å£ã<br>1è¡ç®ã <code>date,ts,machine,model,totalG,big,reg,diff</code> ã«ãã¦è²¼ãã°ããã®ã¾ã¾LABã«è¿½å ã§ããã</div>
+  <h3>📥 CSV貼り付け取込</h3>
+  <div class="notice">自動収集が完成するまでの現実データ入口。<br>1行目を <code>date,ts,machine,model,totalG,big,reg,diff</code> にして貼れば、そのままLABに追加できる。</div>
   <textarea id="csvPaste" rows="6" style="margin-top:9px" placeholder="2026-09-22,1790084100000,301,gogo3,6500,31,29,1800"></textarea>
-  <button class="btn green wide" style="margin-top:9px" id="csvImportBtn">CSVãåãè¾¼ã</button>
+  <button class="btn green wide" style="margin-top:9px" id="csvImportBtn">CSVを取り込む</button>
  </div>
  <div class="card">
-  <h3>ð¥ ã¤ãã³ãæ¥è¨­å®</h3>
-  <div class="grid2"><div><label>æ¯æã®ç¹å®æ¥</label><input id="eventDay" type="number" min="1" max="31" value="22"></div><div><label>è¿½å ã¤ãã³ãæ¥ï¼ã«ã³ãåºåãï¼</label><input id="extraEvents" placeholder="2026-10-10,2026-11-11"></div></div>
-  <button class="btn orange wide" style="margin-top:9px" id="saveEventCfg">ã¤ãã³ãè¨­å®ãä¿å­</button>
+  <h3>🔥 イベント日設定</h3>
+  <div class="grid2"><div><label>毎月の特定日</label><input id="eventDay" type="number" min="1" max="31" value="22"></div><div><label>追加イベント日（カンマ区切り）</label><input id="extraEvents" placeholder="2026-10-10,2026-11-11"></div></div>
+  <button class="btn orange wide" style="margin-top:9px" id="saveEventCfg">イベント設定を保存</button>
  </div>
 </section>
 
-<div class="footer">PEKALOG LABã¯å¬éãã¼ã¿ã¨èªåã®ä»®èª¬ãæ¤è¨¼ããç ç©¶ãã¼ã«ãé«è¨­å®ã£ã½ãã»æå¥æ¨å®ã¯çµ±è¨çãªåèå¤ã§ãè¨­å®ã»åå©ãä¿è¨¼ãããã®ã§ã¯ããã¾ããã<br>åä¸GitHub Pagesãã¡ã¤ã³éä¸ãªãPEKALOGã®localStorageãç´æ¥é£æºã§ãã¾ãã</div>
+<div class="footer">PEKALOG LABは公開データと自分の仮説を検証する研究ツール。高設定っぽさ・投入推定は統計的な参考値で、設定・勝利を保証するものではありません。<br>同一GitHub Pagesドメイン配下ならPEKALOGのlocalStorageを直接連携できます。</div>
 </div>
 <script>
 
 const IMPORT_META_KEY='pekalog_lab_last_import_v09';
 const LAB_KEY='pekalog_lab_v02_data', HYP_KEY='pekalog_lab_v02_hypotheses', CFG_KEY='pekalog_lab_v02_config';
 const PEKA_ARCH='pekalog_v2_archives';
-const MODELS={gogo3:'ã´ã¼ã¸ã£ã°3',neoim:'ããªã¢ã¤ã ',my5:'ãã¤ã¸ã£ã°V',my6:'ãã¤ã¸ã£ã°VI',happy3:'ãããã¼V III',ultra:'ã¦ã«ãã©ãã©ã¯ã«',newkinghana5:'ãã¥ã¼ã­ã³ã°ããããV'};
+const MODELS={gogo3:'ゴージャグ3',neoim:'ネオアイム',my5:'マイジャグV',my6:'マイジャグVI',happy3:'ハッピーV III',ultra:'ウルトラミラクル',newkinghana5:'ニューキングハナハナV'};
 const SETTING_SPECS={
  gogo3:[259.0,354.2,149.6,258.0,332.7,145.3,257.0,306.2,139.7,254.0,268.6,130.5,247.3,247.3,123.7,234.9,234.9,117.4],
  neoim:[273.1,439.8,168.5,269.7,399.6,161.0,269.7,331.0,148.6,259.0,315.1,142.2,259.0,255.0,128.5,255.0,255.0,127.5],
@@ -296,24 +296,24 @@ const SETTING_SPECS={
 
 const TURKEY_LAYOUT={
  rows:[
-  {label:'éè·¯å´',segments:[['651','652','653','655','656','657','658','660'],['661','662','663']]},
-  {label:'å£å´',segments:[['720','718','717','716','715','713','712','711'],['710','708','707']]}
+  {label:'通路側',segments:[['651','652','653','655','656','657','658','660'],['661','662','663']]},
+  {label:'壁側',segments:[['720','718','717','716','715','713','712','711'],['710','708','707']]}
  ],
  passagePairs:[['660','661'],['711','710']],
  modelBoundaryPairs:[['657','658'],['713','712']],
  roles:{
-  '651':['è§','ãã¤è§'],'652':['è§2'],'656':['ãã¤æ©ç¨®ç«¯2'],'657':['ãã¤æ©ç¨®ç«¯','æ©ç¨®å¢ç'],
-  '658':['è§2','GO'],'660':['è§','GOè§'],'661':['è§','ã¢ã¤ã è§'],'662':['è§2'],
-  '720':['è§','ãã¤è§'],'718':['è§2'],'715':['ãã¤æ©ç¨®ç«¯2'],'713':['ãã¤æ©ç¨®ç«¯','æ©ç¨®å¢ç'],
-  '712':['è§2','GO','æ©ç¨®å¢ç'],'711':['è§','GOè§'],'710':['è§','ã¢ã¤ã è§'],'708':['è§2']
+  '651':['角','マイ角'],'652':['角2'],'656':['マイ機種端2'],'657':['マイ機種端','機種境界'],
+  '658':['角2','GO'],'660':['角','GO角'],'661':['角','アイム角'],'662':['角2'],
+  '720':['角','マイ角'],'718':['角2'],'715':['マイ機種端2'],'713':['マイ機種端','機種境界'],
+  '712':['角2','GO','機種境界'],'711':['角','GO角'],'710':['角','アイム角'],'708':['角2']
  }
 };
 const TURKEY_POSITION_GROUPS=[
- {key:'corner',label:'è§',machines:['651','660','661','720','711','710']},
- {key:'corner2',label:'è§2',machines:['652','658','662','718','712','708']},
- {key:'modelEnd',label:'ãã¤æ©ç¨®ç«¯',machines:['657','713']},
- {key:'modelEnd2',label:'ãã¤æ©ç¨®ç«¯2',machines:['656','715']},
- {key:'boundary',label:'ãã¤âGOå¢ç',machines:['657','658','713','712']}
+ {key:'corner',label:'角',machines:['651','660','661','720','711','710']},
+ {key:'corner2',label:'角2',machines:['652','658','662','718','712','708']},
+ {key:'modelEnd',label:'マイ機種端',machines:['657','713']},
+ {key:'modelEnd2',label:'マイ機種端2',machines:['656','715']},
+ {key:'boundary',label:'マイ↔GO境界',machines:['657','658','713','712']}
 ];
 const TURKEY_LIVE={
  base:'https://www.pscube.jp/h/a707001/cgi-bin/',
@@ -326,7 +326,7 @@ function apiMachine(v){const s=normMachine(v);return /^\d+$/.test(s)?s.padStart(
 function ymd8(date){return String(date||'').replace(/-/g,'')}
 function date10(ymd){const s=String(ymd||'');return s.length===8?s.slice(0,4)+'-'+s.slice(4,6)+'-'+s.slice(6,8):s}
 function todayJST(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
-function modelIdFromName(name){const n=String(name||'').normalize('NFKC');if(n.includes('ãã¥ã¼ã­ã³ã°ãããã'))return 'newkinghana5';if(n.includes('ã´ã¼ã´ã¼'))return 'gogo3';if(n.includes('ããªã¢ã¤ã '))return 'neoim';if(n.includes('ãã¤ã¸ã£ã°ã©ã¼VI')||n.includes('ãã¤ã¸ã£ã°ã©ã¼6'))return 'my6';if(n.includes('ãã¤ã¸ã£ã°ã©ã¼V'))return 'my5';if(n.includes('ãããã¼'))return 'happy3';if(n.includes('ã¦ã«ãã©ãã©ã¯ã«'))return 'ultra';return 'unknown'}
+function modelIdFromName(name){const n=String(name||'').normalize('NFKC');if(n.includes('ニューキングハナハナ'))return 'newkinghana5';if(n.includes('ゴーゴー'))return 'gogo3';if(n.includes('ネオアイム'))return 'neoim';if(n.includes('マイジャグラーVI')||n.includes('マイジャグラー6'))return 'my6';if(n.includes('マイジャグラーV'))return 'my5';if(n.includes('ハッピー'))return 'happy3';if(n.includes('ウルトラミラクル'))return 'ultra';return 'unknown'}
 function deepGetArrays(root){const out=[];const seen=new Set();function walk(v,path=''){if(!v||typeof v!=='object'||seen.has(v))return;seen.add(v);if(Array.isArray(v)){out.push({path,value:v});v.forEach((x,i)=>walk(x,path+'['+i+']'));return}for(const [k,x] of Object.entries(v))walk(x,path?path+'.'+k:k)}walk(root);return out}
 function deepObjects(root){const out=[];const seen=new Set();function walk(v,path=''){if(!v||typeof v!=='object'||seen.has(v))return;seen.add(v);if(!Array.isArray(v))out.push({path,value:v});if(Array.isArray(v))v.forEach((x,i)=>walk(x,path+'['+i+']'));else for(const [k,x] of Object.entries(v))walk(x,path?path+'.'+k:k)}walk(root);return out}
 function nval(v){if(v===null||v===undefined||v===false||v==='')return null;const n=Number(String(v).replace(/,/g,''));return Number.isFinite(n)?n:null}
@@ -335,7 +335,7 @@ function firstNumeric(arr){if(!Array.isArray(arr))return nval(arr);for(const x o
 function parseBasicJSON(j,requestedDate,machine){
  const root=Array.isArray(j)?(j[0]||{}):(j||{}), data=Array.isArray(root.Data)?root.Data:(Array.isArray(root.data)?root.data:[]);
  let big=null,reg=null,comb=null,totalG=null;
- for(const row of data){if(!row||typeof row!=='object')continue;const t=titleText(row.title);const a=row.item??row.Item??row.value??row.values;const v=firstNumeric(a);if(t.includes('BIG'))big=v;else if(t.includes('REG'))reg=v;else if(t.includes('åæ')||t.includes('åç®'))comb=v;else if(t.includes('ç·ã²ã¼ã ')||t.includes('ç·åè»¢')||t==='GAME'||t.includes('ã²ã¼ã æ°'))totalG=v;}
+ for(const row of data){if(!row||typeof row!=='object')continue;const t=titleText(row.title);const a=row.item??row.Item??row.value??row.values;const v=firstNumeric(a);if(t.includes('BIG'))big=v;else if(t.includes('REG'))reg=v;else if(t.includes('合成')||t.includes('合算'))comb=v;else if(t.includes('総ゲーム')||t.includes('総回転')||t==='GAME'||t.includes('ゲーム数'))totalG=v;}
  big=big??0;reg=reg??0;if(totalG===null&&comb!==null&&(big+reg)>0)totalG=Math.round(comb*(big+reg));if(totalG===null&&big===0&&reg===0)totalG=0;
  const modelName=root?.Ki?.name||root?.KI?.name||root?.K?.name||'';
  const date=date10(root.YMD_biz||ymd8(requestedDate));
@@ -351,20 +351,20 @@ function parseGraphJSON(j,requestedDate){const root=Array.isArray(j)?(j[0]||{}):
  if(best){best.pts.sort((a,b)=>(a.x??0)-(b.x??0));const ys=best.pts.map(p=>p.y);return {diff:ys.at(-1),maxDiff:Math.max(...ys),minDiff:Math.min(...ys),pointCount:ys.length,graphMode:'generic-points'};}
  return {diff:null,maxDiff:null,minDiff:null,pointCount:0,graphMode:'unparsed',metaCount:metas.length};
 }
-async function turkeyFetch(endpoint,machine,date){const u=new URL(TURKEY_LIVE.base+endpoint);u.searchParams.set('cd_dai',apiMachine(machine));u.searchParams.set('YMD_biz',ymd8(date));u.searchParams.set('_',String(Date.now()));const r=await fetch(u.toString(),{method:'GET',cache:'no-store',mode:'cors',credentials:'omit'});if(!r.ok)throw new Error(`${endpoint}: HTTP ${r.status}`);const text=await r.text();try{return JSON.parse(text)}catch(e){throw new Error(`${endpoint}: JSONã§ã¯ãªãå¿ç­ (${text.slice(0,60).replace(/\s+/g,' ')})`)}}
+async function turkeyFetch(endpoint,machine,date){const u=new URL(TURKEY_LIVE.base+endpoint);u.searchParams.set('cd_dai',apiMachine(machine));u.searchParams.set('YMD_biz',ymd8(date));u.searchParams.set('_',String(Date.now()));const r=await fetch(u.toString(),{method:'GET',cache:'no-store',mode:'cors',credentials:'omit'});if(!r.ok)throw new Error(`${endpoint}: HTTP ${r.status}`);const text=await r.text();try{return JSON.parse(text)}catch(e){throw new Error(`${endpoint}: JSONではない応答 (${text.slice(0,60).replace(/\s+/g,' ')})`)}}
 async function turkeyOne(machine,date,{full=true,captureRaw=false}={}){const basicJ=await turkeyFetch(TURKEY_LIVE.endpoints.basic,machine,date);const s=parseBasicJSON(basicJ,date,machine);let hist=null,graph=null;if(full){const results=await Promise.allSettled([turkeyFetch(TURKEY_LIVE.endpoints.history,machine,date),turkeyFetch(TURKEY_LIVE.endpoints.graph,machine,date)]);if(results[0].status==='fulfilled')hist=parseHistoryJSON(results[0].value);if(results[1].status==='fulfilled')graph=parseGraphJSON(results[1].value,date);if(captureRaw)lastLiveDebug={capturedAt:new Date().toISOString(),machine:normMachine(machine),date,basic:basicJ,history:results[0].status==='fulfilled'?results[0].value:{error:String(results[0].reason)},graph:results[1].status==='fulfilled'?results[1].value:{error:String(results[1].reason)}}}else if(captureRaw)lastLiveDebug={capturedAt:new Date().toISOString(),machine:normMachine(machine),date,basic:basicJ};Object.assign(s,hist||{});if(graph){s.diff=graph.diff;s.maxDiff=graph.maxDiff;s.minDiff=graph.minDiff;s.graphMode=graph.graphMode;s.graphPoints=graph.pointCount}else{s.diff=null;s.graphMode='not-fetched'}s.source='pscube-live';return s}
 function liveMachineList(){const v=($('liveMachines')?.value||'').split(',').map(normMachine).filter(Boolean);return [...new Set(v)]}
 function saveLiveSnapshot(s){mergeData({snapshots:[s]})}
-function liveRowHtml(s){const diff=Number.isFinite(Number(s.diff))?`<b class="${Number(s.diff)>=0?'pos':'neg'}">${signed(Math.round(s.diff))}æ</b>`:'<span class="pill warn">å·®æè§£æå¾ã¡</span>';return `<div class="row"><div class="rowtop"><div><b>${esc(s.machine)}çª ${esc(MODELS[s.model]||s.modelName||s.model)}</b><div class="tiny">${fmt(s.totalG)}G / BB${fmt(s.big)} RB${fmt(s.reg)} / åç® ${s.comb?`1/${s.comb}`:'-'}</div></div><div class="right">${diff}<div class="tiny">${esc(s.graphMode||'')}</div></div></div></div>`}
-async function liveTest(){if(liveBusy)return;liveBusy=true;const date=$('liveDate').value||todayJST();$('liveStatus').innerHTML='0711çªã¸æ¥ç¶ä¸­â¦';$('liveRows').innerHTML='';try{const s=await turkeyOne('711',date,{full:true,captureRaw:true});saveLiveSnapshot(s);$('liveStatus').innerHTML=`â <strong>æ¥ç¶æå</strong>ã${esc(s.machine)}çª ${esc(MODELS[s.model]||s.modelName||s.model)} / BB${fmt(s.big)} RB${fmt(s.reg)} / ${fmt(s.totalG)}Gã<br>${Number.isFinite(Number(s.diff))?`å·®æãåå¾ã§ããï¼<strong>${signed(Math.round(s.diff))}æ</strong>`:`åºæ¬ãã¼ã¿ã»å±¥æ­´ã¯åå¾ãã°ã©ãJSONã¯åããããå·®æã®ç¹åã¯ã¾ã èªåå¤èª­ã§ãã¦ããªãï¼${esc(s.graphMode)}ï¼ã`}<br><span class="tiny">åå¾æå»ï¼${new Date(s.ts).toLocaleString('ja-JP')}</span>`;$('liveRows').innerHTML=liveRowHtml(s)}catch(e){$('liveStatus').innerHTML=`â <strong>æ¥ç¶ã§ããªãã£ã</strong>ï¼${esc(e.message)}<br><span class="tiny">GitHub PagesâP's CUBEã®ç´æ¥éä¿¡ãCORS/ã»ãã·ã§ã³ç­ã§æå¦ãããå¯è½æ§ãããããã®å ´åã¯åé¿ãããæ¬¡æ®µéã®åéä¿æ¹å¼ã«åãæ¿ããã</span>`}finally{liveBusy=false;renderAll()}}
-async function liveScan(){if(liveBusy)return;const machines=liveMachineList();if(!machines.length)return alert('å¯¾è±¡å°ãå¥ãã¦ã­');liveBusy=true;const date=$('liveDate').value||todayJST(),ok=[],ng=[];$('liveRows').innerHTML='';for(let i=0;i<machines.length;i++){const m=machines[i];$('liveStatus').innerHTML=`ð¡ ${i+1}/${machines.length}å° åå¾ä¸­â¦ <strong>${m}çª</strong>`;try{const s=await turkeyOne(m,date,{full:true});saveLiveSnapshot(s);ok.push(s);$('liveRows').insertAdjacentHTML('beforeend',liveRowHtml(s))}catch(e){ng.push({m,e:e.message});$('liveRows').insertAdjacentHTML('beforeend',`<div class="row"><b>${esc(m)}çª</b> <span class="pill bad">åå¾å¤±æ</span><div class="tiny">${esc(e.message)}</div></div>`)}await new Promise(r=>setTimeout(r,180))}liveBusy=false;$('liveStatus').innerHTML=`â åå¾å®äºï¼<strong>${ok.length}/${machines.length}å°</strong>${ng.length?` ï¼ å¤±æ ${ng.length}å°`:''}ã<br>${ok.some(s=>Number.isFinite(Number(s.diff)))?'å·®æã¾ã§èª­ããå°ã¯1000/2000æåæã¸èªååæ ã':'BB/REG/åç®ã¯ä¿å­æ¸ã¿ãå·®æã¯ã°ã©ãè§£æãéã£ãæç¹ããèªååæ ããã'}`;renderAll()}
-function saveLiveDebug(){if(!lastLiveDebug)return alert('åã«0711ã®æ¥ç¶ãã¹ãããã¦ã­');const blob=new Blob([JSON.stringify(lastLiveDebug,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_0711_debug_${lastLiveDebug.date||'today'}.json`;a.click();URL.revokeObjectURL(a.href)}
+function liveRowHtml(s){const diff=Number.isFinite(Number(s.diff))?`<b class="${Number(s.diff)>=0?'pos':'neg'}">${signed(Math.round(s.diff))}枚</b>`:'<span class="pill warn">差枚解析待ち</span>';return `<div class="row"><div class="rowtop"><div><b>${esc(s.machine)}番 ${esc(MODELS[s.model]||s.modelName||s.model)}</b><div class="tiny">${fmt(s.totalG)}G / BB${fmt(s.big)} RB${fmt(s.reg)} / 合算 ${s.comb?`1/${s.comb}`:'-'}</div></div><div class="right">${diff}<div class="tiny">${esc(s.graphMode||'')}</div></div></div></div>`}
+async function liveTest(){if(liveBusy)return;liveBusy=true;const date=$('liveDate').value||todayJST();$('liveStatus').innerHTML='0711番へ接続中…';$('liveRows').innerHTML='';try{const s=await turkeyOne('711',date,{full:true,captureRaw:true});saveLiveSnapshot(s);$('liveStatus').innerHTML=`✅ <strong>接続成功</strong>。${esc(s.machine)}番 ${esc(MODELS[s.model]||s.modelName||s.model)} / BB${fmt(s.big)} RB${fmt(s.reg)} / ${fmt(s.totalG)}G。<br>${Number.isFinite(Number(s.diff))?`差枚も取得できた：<strong>${signed(Math.round(s.diff))}枚</strong>`:`基本データ・履歴は取得。グラフJSONは取れたが、差枚の点列はまだ自動判読できていない（${esc(s.graphMode)}）。`}<br><span class="tiny">取得時刻：${new Date(s.ts).toLocaleString('ja-JP')}</span>`;$('liveRows').innerHTML=liveRowHtml(s)}catch(e){$('liveStatus').innerHTML=`❌ <strong>接続できなかった</strong>：${esc(e.message)}<br><span class="tiny">GitHub Pages→P's CUBEの直接通信がCORS/セッション等で拒否された可能性がある。この場合は回避せず、次段階の収集係方式に切り替える。</span>`}finally{liveBusy=false;renderAll()}}
+async function liveScan(){if(liveBusy)return;const machines=liveMachineList();if(!machines.length)return alert('対象台を入れてね');liveBusy=true;const date=$('liveDate').value||todayJST(),ok=[],ng=[];$('liveRows').innerHTML='';for(let i=0;i<machines.length;i++){const m=machines[i];$('liveStatus').innerHTML=`📡 ${i+1}/${machines.length}台 取得中… <strong>${m}番</strong>`;try{const s=await turkeyOne(m,date,{full:true});saveLiveSnapshot(s);ok.push(s);$('liveRows').insertAdjacentHTML('beforeend',liveRowHtml(s))}catch(e){ng.push({m,e:e.message});$('liveRows').insertAdjacentHTML('beforeend',`<div class="row"><b>${esc(m)}番</b> <span class="pill bad">取得失敗</span><div class="tiny">${esc(e.message)}</div></div>`)}await new Promise(r=>setTimeout(r,180))}liveBusy=false;$('liveStatus').innerHTML=`✅ 取得完了：<strong>${ok.length}/${machines.length}台</strong>${ng.length?` ／ 失敗 ${ng.length}台`:''}。<br>${ok.some(s=>Number.isFinite(Number(s.diff)))?'差枚まで読めた台は1000/2000枚分析へ自動反映。':'BB/REG/合算は保存済み。差枚はグラフ解析が通った時点から自動反映する。'}`;renderAll()}
+function saveLiveDebug(){if(!lastLiveDebug)return alert('先に0711の接続テストをしてね');const blob=new Blob([JSON.stringify(lastLiveDebug,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_0711_debug_${lastLiveDebug.date||'today'}.json`;a.click();URL.revokeObjectURL(a.href)}
 function setupLiveAuto(){if(liveTimer){clearInterval(liveTimer);liveTimer=null}const mins=Number($('liveAuto')?.value||0);cfg.liveAuto=mins||'off';persist();if(mins>0)liveTimer=setInterval(()=>{if(!liveBusy)liveScan()},mins*60*1000)}
 function initLiveUI(){if(!$('liveDate'))return;$('liveDate').value=todayJST();$('liveAuto').value=String(cfg.liveAuto||'off');if(cfg.liveMachines?.length)$('liveMachines').value=cfg.liveMachines.join(',');$('liveTestBtn').onclick=liveTest;$('liveScanBtn').onclick=liveScan;$('liveDebugBtn').onclick=saveLiveDebug;$('liveAuto').onchange=setupLiveAuto;$('liveMachines').onchange=()=>{cfg.liveMachines=liveMachineList();persist()};setupLiveAuto()}
 const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 let lab=loadLab(), hypotheses=JSON.parse(localStorage.getItem(HYP_KEY)||'[]'), cfg=loadCfg();
 // 687 legacy model normalization
-if(lab&&Array.isArray(lab.snapshots)){let __hana687Changed=false;for(const r of lab.snapshots){if(normMachine(r?.machine)==='687'){if(!r.model||r.model==='unknown'){r.model='newkinghana5';__hana687Changed=true}if(!r.modelName||r.modelName==='unknown'){r.modelName='ãã¥ã¼ã­ã³ã°ããããV';__hana687Changed=true}}}if(__hana687Changed){try{localStorage.setItem(LAB_KEY,JSON.stringify(lab))}catch(e){console.warn('687 normalize save',e)}}}
+if(lab&&Array.isArray(lab.snapshots)){let __hana687Changed=false;for(const r of lab.snapshots){if(normMachine(r?.machine)==='687'){if(!r.model||r.model==='unknown'){r.model='newkinghana5';__hana687Changed=true}if(!r.modelName||r.modelName==='unknown'){r.modelName='ニューキングハナハナV';__hana687Changed=true}}}if(__hana687Changed){try{localStorage.setItem(LAB_KEY,JSON.stringify(lab))}catch(e){console.warn('687 normalize save',e)}}}
 function loadCfg(){try{return {...{eventDay:22,extraEvents:[]},...JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}}catch(e){return {eventDay:22,extraEvents:[]}}}
 function loadLab(){try{return JSON.parse(localStorage.getItem(LAB_KEY)||'{"snapshots":[]}')}catch(e){return {snapshots:[]}}}
 function persist(){localStorage.setItem(LAB_KEY,JSON.stringify(lab));localStorage.setItem(HYP_KEY,JSON.stringify(hypotheses));localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}
@@ -399,9 +399,9 @@ function finalRows(){
 function rowsByDate(){const m={};for(const r of finalRows())(m[r.date]??=[]).push(r);return m}
 function latestSnapshot(date,machine){return (lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===normMachine(machine)).sort((a,b)=>Number(a.ts||0)-Number(b.ts||0)).at(-1)||null}
 function nearestSnapshot(date,machine,ts){const a=(lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===normMachine(machine)&&x.ts).sort((x,y)=>Math.abs(x.ts-ts)-Math.abs(y.ts-ts));return a[0]||null}
-function tags(r){let out=[];if(isEventDate(r.date))out.push('<span class="pill event">22æ¥</span>');if(r.isFinal===true)out.push('<span class="pill good">éåº</span>');else if(r.isFinal===false)out.push('<span class="pill">LIVE</span>');const d=Number(r.diff);if(d>=3000)out.push('<span class="pill hit3000">ð3000</span>');else if(d>=2000)out.push('<span class="pill hit2000">ð¥2000</span>');else if(d>=1000)out.push('<span class="pill hit1000">ð¡1000</span>');return out.join('')}
+function tags(r){let out=[];if(isEventDate(r.date))out.push('<span class="pill event">22日</span>');if(r.isFinal===true)out.push('<span class="pill good">閉店</span>');else if(r.isFinal===false)out.push('<span class="pill">LIVE</span>');const d=Number(r.diff);if(d>=3000)out.push('<span class="pill hit3000">🚀3000</span>');else if(d>=2000)out.push('<span class="pill hit2000">🔥2000</span>');else if(d>=1000)out.push('<span class="pill hit1000">🟡1000</span>');return out.join('')}
 function archiveData(){try{return JSON.parse(localStorage.getItem(PEKA_ARCH)||'[]')}catch(e){return []}}
-function turkeyArchives(){return archiveData().filter(a=>/ã¿ã¼ã­ã¼|turkey/i.test(a.shop||''))}
+function turkeyArchives(){return archiveData().filter(a=>/ターキー|turkey/i.test(a.shop||''))}
 function nav(){document.querySelectorAll('#nav .btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav .btn').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.view).classList.add('active');renderAll()})}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 function poissonLogLab(k,l){if(l<=0)return -1e99;let f=0;for(let i=2;i<=k;i++)f+=Math.log(i);return k*Math.log(l)-l-f}
@@ -423,12 +423,12 @@ function settingEvidence(r){
  const strong=eligible&&score>=62&&pHigh>=.55;
  return {score,pHigh,p56,mean,conf,eligible,strong,g,bb,rb,regRate:rb?g/rb:null,combRate:(bb+rb)?g/(bb+rb):null,probs};
 }
-function scoreLabel(e){if(!e)return 'å¤å®ä¸å¯';if(e.g<1000)return 'ææå°';if(e.score>=72)return 'ããªãå¼·ã';if(e.score>=62)return 'å¼·ãåè£';if(e.score>=52)return 'ä¸­éãä¸ã';if(e.score>=42)return 'å¤å¥ä¿ç';return 'ä½ãå¯ã'}
+function scoreLabel(e){if(!e)return '判定不可';if(e.g<1000)return '材料少';if(e.score>=72)return 'かなり強め';if(e.score>=62)return '強め候補';if(e.score>=52)return '中間〜上も';if(e.score>=42)return '判別保留';return '低め寄り'}
 function scoreClass(e){if(!e||e.g<1000)return 'warn';if(e.score>=62)return 'good';if(e.score<42)return 'bad';return ''}
 function dateGap(a,b){const x=new Date(a+'T00:00:00Z'),y=new Date(b+'T00:00:00Z');return Math.round((y-x)/86400000)}
-const JP_WEEK=['æ¥','æ','ç«','æ°´','æ¨','é','å'];
+const JP_WEEK=['日','月','火','水','木','金','土'];
 function weekdayIndex(date){const p=String(date||'').split('-').map(Number);if(p.length!==3||p.some(x=>!x))return null;return new Date(Date.UTC(p[0],p[1]-1,p[2])).getUTCDay()}
-function weekdayName(date){const i=weekdayIndex(date);return i===null?'-':JP_WEEK[i]+'æ'}
+function weekdayName(date){const i=weekdayIndex(date);return i===null?'-':JP_WEEK[i]+'曜'}
 function nextConfiguredEventDate(from=todayJST()){
  const p=String(from).split('-').map(Number);if(p.length!==3||p.some(x=>!x))return null;
  const wanted=Number(cfg.eventDay||22);
@@ -453,9 +453,9 @@ function machineWeekdayStats(machine,targetDate){
  const h=a.filter(x=>x.e.strong);return {n:a.length,hits:h.length,rate:a.length?h.length/a.length:null,weekday:JP_WEEK[wi]};
 }
 function hourJST(ts){if(!Number.isFinite(Number(ts)))return null;const parts=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',hour:'2-digit',hour12:false}).formatToParts(new Date(Number(ts)));const h=Number(parts.find(x=>x.type==='hour')?.value);return Number.isFinite(h)?h%24:null}
-function timeBandInfo(ts){const h=hourJST(ts);if(h===null)return null;if(h<12)return {id:'morning',label:'æã11:59'};if(h<15)return {id:'noon',label:'æ¼12ã14:59'};if(h<18)return {id:'evening',label:'å¤15ã17:59'};if(h<21)return {id:'night',label:'å¤18ã20:59'};return {id:'late',label:'éåºå21ã'} }
+function timeBandInfo(ts){const h=hourJST(ts);if(h===null)return null;if(h<12)return {id:'morning',label:'朝〜11:59'};if(h<15)return {id:'noon',label:'昼12〜14:59'};if(h<18)return {id:'evening',label:'夕15〜17:59'};if(h<21)return {id:'night',label:'夜18〜20:59'};return {id:'late',label:'閉店前21〜'} }
 function timeBandSummary(){
- const order=[['morning','æã11:59'],['noon','æ¼12ã14:59'],['evening','å¤15ã17:59'],['night','å¤18ã20:59'],['late','éåºå21ã']];
+ const order=[['morning','朝〜11:59'],['noon','昼12〜14:59'],['evening','夕15〜17:59'],['night','夜18〜20:59'],['late','閉店前21〜']];
  const rows=(lab.snapshots||[]).filter(r=>r.isFinal!==true&&r.date&&r.machine&&Number.isFinite(Number(r.ts))&&SETTING_SPECS[r.model]);
  return order.map(([id,label])=>{const a=rows.filter(r=>timeBandInfo(r.ts)?.id===id),ev=a.map(r=>settingEvidence(r)).filter(e=>e&&e.g>=800),strong=ev.filter(e=>e.score>=62),gs=ev.map(e=>e.g),scores=ev.map(e=>e.score);return {id,label,captures:new Set(a.map(r=>`${r.date}|${Math.floor(Number(r.ts)/900000)}`)).size,n:ev.length,avgG:gs.length?gs.reduce((x,y)=>x+y,0)/gs.length:null,avgScore:scores.length?scores.reduce((x,y)=>x+y,0)/scores.length:null,strongRate:ev.length?strong.length/ev.length:null};})
 }
@@ -466,10 +466,10 @@ function renderPatternLab(){
  const ts=timeBandSummary();tb.innerHTML=ts.map(x=>`<tr><td>${x.label}</td><td>${x.captures}</td><td>${x.n}</td><td>${x.avgG===null?'-':fmt(Math.round(x.avgG))}</td><td>${x.avgScore===null?'-':Math.round(x.avgScore)+'/100'}</td><td>${x.strongRate===null?'-':(x.strongRate*100).toFixed(1)+'%'}</td></tr>`).join('');
  const target=latestLabDate(),wi=weekdayIndex(target),machines=[...new Set(finalRows().map(r=>String(r.machine)).filter(Boolean))];
  const ranked=machines.map(machine=>{const st=machineWeekdayStats(machine,target),p=profileMap().get(machine),model=p?.model||finalRows().filter(r=>String(r.machine)===machine).at(-1)?.model||'';const shrunk=st.rate===null?0:(st.rate-.20)*(st.n/(st.n+4));return {machine,model,...st,shrunk}}).filter(x=>x.n>0).sort((a,b)=>b.shrunk-a.shrunk||b.n-a.n).slice(0,6);
- mp.innerHTML=ranked.length?ranked.map((x,i)=>`<div class="row"><div class="rowtop"><div><b>${JP_WEEK[wi]||'-'}æ #${i+1}ã${esc(x.machine)}çª ${esc(MODELS[x.model]||x.model)}</b><div class="tiny">åãææ¥ã®éåºå¤å® n=${x.n} ï¼ å¼·ãåè£ ${x.hits}å</div></div><span class="pill ${x.rate!==null&&x.rate>=.35?'good':'warn'}">${x.rate===null?'-':(x.rate*100).toFixed(1)+'%'}</span></div></div>`).join(''):'<div class="empty">åãææ¥ã®éåºãã¼ã¿ãè²¯ã¾ãã¨å°çªãã¨ã®ææ¥ã¯ã»ãåºããã</div>';
+ mp.innerHTML=ranked.length?ranked.map((x,i)=>`<div class="row"><div class="rowtop"><div><b>${JP_WEEK[wi]||'-'}曜 #${i+1}　${esc(x.machine)}番 ${esc(MODELS[x.model]||x.model)}</b><div class="tiny">同じ曜日の閉店判定 n=${x.n} ／ 強め候補 ${x.hits}回</div></div><span class="pill ${x.rate!==null&&x.rate>=.35?'good':'warn'}">${x.rate===null?'-':(x.rate*100).toFixed(1)+'%'}</span></div></div>`).join(''):'<div class="empty">同じ曜日の閉店データが貯まると台番ごとの曜日クセを出すよ。</div>';
  const next=nextConfiguredEventDate(),nextWi=next?weekdayIndex(next):null,eventRows=finalRows().filter(r=>r.isFinal!==false&&isEventDate(r.date)&&SETTING_SPECS[r.model]);const sameWeek=eventRows.filter(r=>weekdayIndex(r.date)===nextWi),sameEligible=sameWeek.map(r=>settingEvidence(r)).filter(e=>e?.eligible),sameStrong=sameEligible.filter(e=>e.strong);
- const liveNow=currentTimeBandStat();const liveTxt=liveNow&&liveNow.n?`ç¾å¨ã®æéå¸¯ã${liveNow.label}ãã¯éå»LIVEå¤å® n=${liveNow.n}ãå¼·ãåè£è¦³æ¸¬ ${(liveNow.strongRate*100).toFixed(1)}%ã`:'æéå¸¯ãã¼ã¿ã¯ããããèç©ã';
- n22.innerHTML=next?`ð¥ æ¬¡ã®<strong>${cfg.eventDay||22}æ¥</strong>ã¯ <strong>${esc(next)}ï¼${JP_WEEK[nextWi]}æï¼</strong>ãåãææ¥ã«å½ãã£ãéå»ã¤ãã³ãã®å¤å®ã¯ <strong>n=${sameEligible.length}</strong>${sameEligible.length?`ãå¼·ãåè£ç <strong>${(sameStrong.length/sameEligible.length*100).toFixed(1)}%</strong>`:''}ã<br><span class="tiny">${liveTxt} ææ¥ã»æéã¯äºè¨ã§ã¯ãªããéå»ãã¼ã¿ã®åããå¯è¦åãã¦åè£é¸ã³ã®è£å©ã«ä½¿ãã</span>`:'æ¬¡åã¤ãã³ãæ¥ãè¨ç®ã§ããªãã£ããã';
+ const liveNow=currentTimeBandStat();const liveTxt=liveNow&&liveNow.n?`現在の時間帯「${liveNow.label}」は過去LIVE判定 n=${liveNow.n}、強め候補観測 ${(liveNow.strongRate*100).toFixed(1)}%。`:'時間帯データはこれから蓄積。';
+ n22.innerHTML=next?`🔥 次の<strong>${cfg.eventDay||22}日</strong>は <strong>${esc(next)}（${JP_WEEK[nextWi]}曜）</strong>。同じ曜日に当たった過去イベントの判定は <strong>n=${sameEligible.length}</strong>${sameEligible.length?`、強め候補率 <strong>${(sameStrong.length/sameEligible.length*100).toFixed(1)}%</strong>`:''}。<br><span class="tiny">${liveTxt} 曜日・時間は予言ではなく、過去データの偏りを可視化して候補選びの補助に使う。</span>`:'次回イベント日を計算できなかったよ。';
 }
 function machineInferenceProfiles(){
  const rows=finalRows().filter(r=>r.isFinal!==false&&r.machine&&SETTING_SPECS[r.model]);
@@ -489,13 +489,13 @@ function machineInferenceProfiles(){
   const recent=eligible.slice(-3);const w=[.2,.3,.5].slice(3-recent.length);const ws=w.reduce((a,b)=>a+b,0)||1;const temp=recent.length?recent.reduce((s,x,i)=>s+x.e.score*w[i],0)/ws:null;
   const ev=eligible.filter(x=>isEventDate(x.r.date)),normal=eligible.filter(x=>!isEventDate(x.r.date));
   const evRate=ev.length?ev.filter(x=>x.e.strong).length/ev.length:null,normRate=normal.length?normal.filter(x=>x.e.strong).length/normal.length:null;
-  let type='è¦³å¯ä¸­';
+  let type='観察中';
   if(eligible.length>=5){
-   if(ev.length>=3&&normal.length>=3&&evRate-normRate>=.20)type='ð¥22æ¥å';
-   else if(repN>=3&&repeatRate>=.5)type='ðé£æå';
-   else if(hits.length>=2&&avgInterval!==null&&avgInterval<=3)type='â¡å¨æç­ã';
-   else if(hitRate!==null&&hitRate>=.35)type='ðæå¥å¤ã';
-   else type='ð¯åçºå';
+   if(ev.length>=3&&normal.length>=3&&evRate-normRate>=.20)type='🔥22日型';
+   else if(repN>=3&&repeatRate>=.5)type='🔁連投型';
+   else if(hits.length>=2&&avgInterval!==null&&avgInterval<=3)type='⚡周期短め';
+   else if(hitRate!==null&&hitRate>=.35)type='📈投入多め';
+   else type='🎯単発型';
   }
   const latest=eligible.at(-1)||scored.at(-1)||null,lastStrong=hits.at(-1)||null;
   out.push({machine,model:arr.at(-1)?.model||'',observed:arr.length,n:eligible.length,hits:hits.length,hitRate,avgInterval,repeatRate,repN,temp,type,latest,lastStrong,evRate,normRate});
@@ -519,57 +519,57 @@ function layoutPairStat(pair,kind='neighbor'){
 function machineTransitionStats(machine){
  const m=String(machine),a=layoutEligibleRows().filter(x=>String(x.r.machine)===m).sort((x,y)=>x.r.date.localeCompare(y.r.date));let n=0,up=0,down=0,flat=0,strongStay=0,weakToStrong=0,strongToWeak=0;
  for(let i=1;i<a.length;i++){const p=a[i-1],c=a[i];if(dateGap(p.r.date,c.r.date)!==1)continue;n++;const d=c.e.mean-p.e.mean;if(d>=.55)up++;else if(d<=-.55)down++;else flat++;if(p.e.strong&&c.e.strong)strongStay++;if(!p.e.strong&&c.e.strong)weakToStrong++;if(p.e.strong&&!c.e.strong)strongToWeak++}
- const dom=n?[[up,'â ä¸ãæ¹å'],[flat,'â æ®ãå¯ã'],[down,'â ä¸ãæ¹å']].sort((x,y)=>y[0]-x[0])[0]:[0,'è¦³å¯ä¸­'];return {n,up,down,flat,strongStay,weakToStrong,strongToWeak,label:n>=2?dom[1]:'è¦³å¯ä¸­'}
+ const dom=n?[[up,'↗ 上げ方向'],[flat,'→ 据え寄り'],[down,'↘ 下げ方向']].sort((x,y)=>y[0]-x[0])[0]:[0,'観察中'];return {n,up,down,flat,strongStay,weakToStrong,strongToWeak,label:n>=2?dom[1]:'観察中'}
 }
-function layoutPairHtml(x){const label=x.boundary?' <span class="pill event">æ©ç¨®å¢ç</span>':'';const cls=x.n>=3&&x.rate>=.35?'good':x.n<2?'warn':'';return `<div class="row"><div class="rowtop"><div><b>${esc(x.pair[0])} â ${esc(x.pair[1])}${label}</b><div class="tiny">ä¸¡å°ãå¤å®ã§ããæ¥ n=${x.n} ï¼ ã©ã¡ããå¼·ã ${x.either}/${x.n||0}</div></div><span class="pill ${cls}">${x.rate===null?'-':'ä¸¦ã³ '+(x.rate*100).toFixed(1)+'%'}</span></div></div>`}
+function layoutPairHtml(x){const label=x.boundary?' <span class="pill event">機種境界</span>':'';const cls=x.n>=3&&x.rate>=.35?'good':x.n<2?'warn':'';return `<div class="row"><div class="rowtop"><div><b>${esc(x.pair[0])} ↔ ${esc(x.pair[1])}${label}</b><div class="tiny">両台を判定できた日 n=${x.n} ／ どちらか強め ${x.either}/${x.n||0}</div></div><span class="pill ${cls}">${x.rate===null?'-':'並び '+(x.rate*100).toFixed(1)+'%'}</span></div></div>`}
 function renderLayoutLab(){
- const map=$('layoutMapStatus');if(!map)return;map.innerHTML=`<b>éè·¯å´</b>ï¼651â652â653â655â656â657â658â660 ï½éè·¯ï½ 661â662â663<br><b>å£å´</b>ï¼720â718â717â716â715â713â712â711 ï½éè·¯ï½ 710â708â707`;
+ const map=$('layoutMapStatus');if(!map)return;map.innerHTML=`<b>通路側</b>：651–652–653–655–656–657–658–660 ｜通路｜ 661–662–663<br><b>壁側</b>：720–718–717–716–715–713–712–711 ｜通路｜ 710–708–707`;
  const ps=layoutPositionStats(),base=layoutBaseline(),corner=ps.find(x=>x.key==='corner'),corner2=ps.find(x=>x.key==='corner2'),boundaryPairs=TURKEY_LAYOUT.modelBoundaryPairs.map(p=>layoutPairStat(p,'boundary')),neighbor=turkeyNeighborPairs().map(p=>layoutPairStat(p,'neighbor')),pass=TURKEY_LAYOUT.passagePairs.map(p=>layoutPairStat(p,'passage'));
  const allPairN=neighbor.reduce((s,x)=>s+x.n,0),allPairBoth=neighbor.reduce((s,x)=>s+x.both,0),boundaryN=boundaryPairs.reduce((s,x)=>s+x.n,0),boundaryBoth=boundaryPairs.reduce((s,x)=>s+x.both,0);
- $('layoutSummary').innerHTML=`<div class="stat"><div class="k">è§ å¼·ãç</div><div class="v">${corner?.rate==null?'-':(corner.rate*100).toFixed(0)+'%'}</div><div class="tiny">${corner?.hits||0}/${corner?.n||0}</div></div><div class="stat"><div class="k">è§2 å¼·ãç</div><div class="v">${corner2?.rate==null?'-':(corner2.rate*100).toFixed(0)+'%'}</div><div class="tiny">${corner2?.hits||0}/${corner2?.n||0}</div></div><div class="stat"><div class="k">æ©ç¨®å¢ç ä¸¦ã³</div><div class="v">${boundaryN?(boundaryBoth/boundaryN*100).toFixed(0)+'%':'-'}</div><div class="tiny">${boundaryBoth}/${boundaryN}</div></div><div class="stat"><div class="k">å¨é£æ¥ ä¸¦ã³</div><div class="v">${allPairN?(allPairBoth/allPairN*100).toFixed(0)+'%':'-'}</div><div class="tiny">${allPairBoth}/${allPairN}</div></div>`;
- $('layoutPositionTable').innerHTML=`<table><thead><tr><th>ä½ç½®</th><th>å¯¾è±¡å°</th><th>å¤å®</th><th>å¼·ã</th><th>å¼·ãç</th><th>å¹³åå·®æ</th></tr></thead><tbody>${ps.map(x=>`<tr><td>${esc(x.label)}</td><td>${x.machines.join(',')}</td><td>${x.n}</td><td>${x.hits}</td><td>${x.rate===null?'-':(x.rate*100).toFixed(1)+'%'}</td><td class="${(x.avgDiff??0)>=0?'pos':'neg'}">${x.avgDiff===null?'-':signed(Math.round(x.avgDiff))}</td></tr>`).join('')}</tbody></table><div class="tiny" style="margin-top:6px">å¨ä½ã®å¼·ãåè£çï¼${base.rate===null?'-':(base.rate*100).toFixed(1)+'%'}ï¼${base.hits}/${base.n}ï¼</div>`;
- const nr=neighbor.filter(x=>x.n).sort((a,b)=>((b.rate??-1)-(a.rate??-1))||(b.n-a.n));$('layoutNeighborPairs').innerHTML=nr.length?nr.slice(0,10).map(layoutPairHtml).join(''):'<div class="empty">ä¸¡å°ãå¤å®ã§ããæ¥ãå¢ããã¨ãå®éç½®ã®ä¸¦ã³å¾åãè²ã¤ãã</div>';
- $('layoutPassagePairs').innerHTML=pass.some(x=>x.n)?pass.map(layoutPairHtml).join(''):'<div class="empty">660â661ã711â710ããé£ãã§ã¯ãªãéè·¯åããã¨ãã¦å¥éè¨ãããã</div>';
- const trans=machineInferenceProfiles().map(p=>({p,t:machineTransitionStats(p.machine)})).filter(x=>x.t.n).sort((a,b)=>b.t.n-a.t.n||a.p.machine.localeCompare(b.p.machine));$('layoutTransitions').innerHTML=trans.length?trans.slice(0,10).map(({p,t})=>`<div class="row"><div class="rowtop"><div><b>${esc(p.machine)}çª ${turkeyLayoutRoleHtml(p.machine)}</b><div class="tiny">é£ç¶æ¥ n=${t.n} ï¼ â${t.up} â${t.flat} â${t.down} ï¼ å¼·âå¼· ${t.strongStay}</div></div><span class="pill ${t.n<3?'warn':''}">${esc(t.label)}</span></div></div>`).join(''):'<div class="empty">1500Gä»¥ä¸ã®éåºãã¼ã¿ãé£ç¶æ¥ã§è²¯ã¾ãã¨ãå°çªãã¨ã®å¤å¥æ¨ç§»ãåºããã</div>';
+ $('layoutSummary').innerHTML=`<div class="stat"><div class="k">角 強め率</div><div class="v">${corner?.rate==null?'-':(corner.rate*100).toFixed(0)+'%'}</div><div class="tiny">${corner?.hits||0}/${corner?.n||0}</div></div><div class="stat"><div class="k">角2 強め率</div><div class="v">${corner2?.rate==null?'-':(corner2.rate*100).toFixed(0)+'%'}</div><div class="tiny">${corner2?.hits||0}/${corner2?.n||0}</div></div><div class="stat"><div class="k">機種境界 並び</div><div class="v">${boundaryN?(boundaryBoth/boundaryN*100).toFixed(0)+'%':'-'}</div><div class="tiny">${boundaryBoth}/${boundaryN}</div></div><div class="stat"><div class="k">全隣接 並び</div><div class="v">${allPairN?(allPairBoth/allPairN*100).toFixed(0)+'%':'-'}</div><div class="tiny">${allPairBoth}/${allPairN}</div></div>`;
+ $('layoutPositionTable').innerHTML=`<table><thead><tr><th>位置</th><th>対象台</th><th>判定</th><th>強め</th><th>強め率</th><th>平均差枚</th></tr></thead><tbody>${ps.map(x=>`<tr><td>${esc(x.label)}</td><td>${x.machines.join(',')}</td><td>${x.n}</td><td>${x.hits}</td><td>${x.rate===null?'-':(x.rate*100).toFixed(1)+'%'}</td><td class="${(x.avgDiff??0)>=0?'pos':'neg'}">${x.avgDiff===null?'-':signed(Math.round(x.avgDiff))}</td></tr>`).join('')}</tbody></table><div class="tiny" style="margin-top:6px">全体の強め候補率：${base.rate===null?'-':(base.rate*100).toFixed(1)+'%'}（${base.hits}/${base.n}）</div>`;
+ const nr=neighbor.filter(x=>x.n).sort((a,b)=>((b.rate??-1)-(a.rate??-1))||(b.n-a.n));$('layoutNeighborPairs').innerHTML=nr.length?nr.slice(0,10).map(layoutPairHtml).join(''):'<div class="empty">両台を判定できる日が増えると、実配置の並び傾向が育つよ。</div>';
+ $('layoutPassagePairs').innerHTML=pass.some(x=>x.n)?pass.map(layoutPairHtml).join(''):'<div class="empty">660↔661、711↔710を「隣」ではなく通路向かいとして別集計するよ。</div>';
+ const trans=machineInferenceProfiles().map(p=>({p,t:machineTransitionStats(p.machine)})).filter(x=>x.t.n).sort((a,b)=>b.t.n-a.t.n||a.p.machine.localeCompare(b.p.machine));$('layoutTransitions').innerHTML=trans.length?trans.slice(0,10).map(({p,t})=>`<div class="row"><div class="rowtop"><div><b>${esc(p.machine)}番 ${turkeyLayoutRoleHtml(p.machine)}</b><div class="tiny">連続日 n=${t.n} ／ ↗${t.up} →${t.flat} ↘${t.down} ／ 強→強 ${t.strongStay}</div></div><span class="pill ${t.n<3?'warn':''}">${esc(t.label)}</span></div></div>`).join(''):'<div class="empty">1500G以上の閉店データが連続日で貯まると、台番ごとの判別推移を出すよ。</div>';
 }
 
 function renderMachineInference(){
  const box=$('machineProfiles'),sum=$('machineInferenceSummary');if(!box||!sum)return;
  const ps=machineInferenceProfiles();const eligible=ps.filter(x=>x.n>0),with5=ps.filter(x=>x.n>=5),hot=eligible.filter(x=>x.hitRate!==null&&x.hitRate>=.35);
- sum.innerHTML=`<div class="stat"><div class="k">å¤å®å¯è½å°</div><div class="v">${eligible.length}</div><div class="tiny">1500Gä»¥ä¸ã®éåºãã¼ã¿ãã</div></div><div class="stat"><div class="k">å­¦ç¿é²è¡</div><div class="v">${with5.length}</div><div class="tiny">n=5ä»¥ä¸ã®å°</div></div><div class="stat"><div class="k">æå¥å¤ãåè£</div><div class="v">${hot.length}</div><div class="tiny">æ«å®35%ä»¥ä¸</div></div>`;
- if(!ps.length){box.innerHTML='<div class="empty">éåºãã¼ã¿ãå¥ãã¨å°çªãã¨ã®æ¨çãéå§ãããã</div>';return}
+ sum.innerHTML=`<div class="stat"><div class="k">判定可能台</div><div class="v">${eligible.length}</div><div class="tiny">1500G以上の閉店データあり</div></div><div class="stat"><div class="k">学習進行</div><div class="v">${with5.length}</div><div class="tiny">n=5以上の台</div></div><div class="stat"><div class="k">投入多め候補</div><div class="v">${hot.length}</div><div class="tiny">暫定35%以上</div></div>`;
+ if(!ps.length){box.innerHTML='<div class="empty">閉店データが入ると台番ごとの推理を開始するよ。</div>';return}
  ps.sort((a,b)=>((b.hitRate??-1)-(a.hitRate??-1))||((b.temp??-1)-(a.temp??-1))||a.machine.localeCompare(b.machine));
  box.innerHTML=ps.map((p,i)=>{
-   const rate=p.hitRate===null?'-':(p.hitRate*100).toFixed(1)+'%';const temp=p.temp===null?'-':Math.round(p.temp);const interval=p.avgInterval===null?'-':p.avgInterval.toFixed(1)+'æ¥';const repeat=p.repeatRate===null?'-':(p.repeatRate*100).toFixed(1)+'%';
-   const last=p.lastStrong?p.lastStrong.r.date:'ã¾ã ãªã';const latest=p.latest?.e;const latestTxt=latest?`${Math.round(latest.score)}/100 ${scoreLabel(latest)}`:'-';const cls=p.n<5?'warn':(p.hitRate??0)>=.35?'good':'';
+   const rate=p.hitRate===null?'-':(p.hitRate*100).toFixed(1)+'%';const temp=p.temp===null?'-':Math.round(p.temp);const interval=p.avgInterval===null?'-':p.avgInterval.toFixed(1)+'日';const repeat=p.repeatRate===null?'-':(p.repeatRate*100).toFixed(1)+'%';
+   const last=p.lastStrong?p.lastStrong.r.date:'まだなし';const latest=p.latest?.e;const latestTxt=latest?`${Math.round(latest.score)}/100 ${scoreLabel(latest)}`:'-';const cls=p.n<5?'warn':(p.hitRate??0)>=.35?'good':'';
    const tr=machineTransitionStats(p.machine),roles=turkeyLayoutRoleHtml(p.machine);
-   return `<div class="row"><div class="rowtop"><div><b><span class="rankNo">#${i+1}</span>${esc(p.machine)}çª ${esc(MODELS[p.model]||p.model)}</b>${roles?`<div style="margin-top:4px">${roles}</div>`:''}<div class="tiny">éåºå¤å® n=${p.n} ï¼ è¦³æ¸¬ ${p.observed}æ¥ ï¼ æçµæå¥åè£ ${esc(last)}</div></div><span class="pill ${cls}">${esc(p.type)}</span></div><div class="inferMeta"><span class="pill">æå¥æ¨å®ç <b>${rate}</b> (${p.hits}/${p.n})</span><span class="pill">ç´è¿æ¸©åº¦ <b>${temp}</b></span><span class="pill">å¹³åéé <b>${interval}</b></span><span class="pill">é£æç <b>${repeat}</b>${p.repN?` (${Math.round((p.repeatRate||0)*p.repN)}/${p.repN})`:''}</span></div><div class="miniBar"><div style="width:${p.hitRate===null?0:clamp(p.hitRate*100,0,100)}%"></div></div><div class="tiny" style="margin-top:7px">ç´è¿ã®éåºã¹ã³ã¢ï¼<strong>${latestTxt}</strong>${p.n<5?' ï¼ ã¾ã ãµã³ãã«å°ãçã¯åèå¤ã':''}${tr.n?`<br>å¤å¥æ¨ç§»ï¼<strong>${esc(tr.label)}</strong> ï¼ é£ç¶æ¥ ${tr.n}åï¼â${tr.up} â${tr.flat} â${tr.down} / å¼·âå¼· ${tr.strongStay}ï¼`:''}</div></div>`;
+   return `<div class="row"><div class="rowtop"><div><b><span class="rankNo">#${i+1}</span>${esc(p.machine)}番 ${esc(MODELS[p.model]||p.model)}</b>${roles?`<div style="margin-top:4px">${roles}</div>`:''}<div class="tiny">閉店判定 n=${p.n} ／ 観測 ${p.observed}日 ／ 最終投入候補 ${esc(last)}</div></div><span class="pill ${cls}">${esc(p.type)}</span></div><div class="inferMeta"><span class="pill">投入推定率 <b>${rate}</b> (${p.hits}/${p.n})</span><span class="pill">直近温度 <b>${temp}</b></span><span class="pill">平均間隔 <b>${interval}</b></span><span class="pill">連投率 <b>${repeat}</b>${p.repN?` (${Math.round((p.repeatRate||0)*p.repN)}/${p.repN})`:''}</span></div><div class="miniBar"><div style="width:${p.hitRate===null?0:clamp(p.hitRate*100,0,100)}%"></div></div><div class="tiny" style="margin-top:7px">直近の閉店スコア：<strong>${latestTxt}</strong>${p.n<5?' ／ まだサンプル少。率は参考値。':''}${tr.n?`<br>判別推移：<strong>${esc(tr.label)}</strong> ／ 連続日 ${tr.n}回（↗${tr.up} →${tr.flat} ↘${tr.down} / 強→強 ${tr.strongStay}）`:''}</div></div>`;
  }).join('');
 }
 
 function profileMap(){return new Map(machineInferenceProfiles().map(p=>[String(p.machine),p]))}
 function latestLabDate(){return todayJST()}
 function daysSince(date,target){if(!date||!target)return null;return dateGap(date,target)}
-function confidenceLabel(n){if(n>=10)return 'åèåº¦ é«ã';if(n>=5)return 'å­¦ç¿ä¸­';if(n>=3)return 'è¦³å¯ä¸­';return 'ææå°'}
+function confidenceLabel(n){if(n>=10)return '参考度 高め';if(n>=5)return '学習中';if(n>=3)return '観察中';return '材料少'}
 function candidateReasons(p,targetDate,isLive=false,liveRow=null,liveEvidence=null){
  const rs=[];
  if(p){
-  if(p.hitRate!==null)rs.push(`æå¥æ¨å®ç ${(p.hitRate*100).toFixed(1)}%ï¼${p.hits}/${p.n}ï¼`);
-  if(p.temp!==null)rs.push(`ç´è¿æ¸©åº¦ ${Math.round(p.temp)}/100`);
+  if(p.hitRate!==null)rs.push(`投入推定率 ${(p.hitRate*100).toFixed(1)}%（${p.hits}/${p.n}）`);
+  if(p.temp!==null)rs.push(`直近温度 ${Math.round(p.temp)}/100`);
   const last=p.lastStrong?.r?.date||null, gap=last?daysSince(last,targetDate):null;
-  if(gap!==null&&p.avgInterval!==null)rs.push(`ååå¼·æ¥ãã${gap}æ¥ / å¹³åéé ${p.avgInterval.toFixed(1)}æ¥`);
-  else if(gap!==null)rs.push(`ååå¼·æ¥ãã${gap}æ¥`);
-  if(isEventDate(targetDate)&&p.evRate!==null)rs.push(`22æ¥ç³»æå¥ç ${(p.evRate*100).toFixed(1)}%`);
-  if(p.repeatRate!==null&&gap===1)rs.push(`é£æç ${(p.repeatRate*100).toFixed(1)}%`);
-  const wd=machineWeekdayStats(p.machine,targetDate);if(wd.n>=2&&wd.rate!==null)rs.push(`${wd.weekday}æã®å¼·ãåè£ç ${(wd.rate*100).toFixed(1)}%ï¼${wd.hits}/${wd.n}ï¼`);
-  const lb=layoutGroupForMachine(p.machine);if(lb&&lb.n>=5)rs.push(`${lb.label}ã®å¼·ãç ${(lb.rate*100).toFixed(1)}%ï¼n=${lb.n}ï¼`);
+  if(gap!==null&&p.avgInterval!==null)rs.push(`前回強日から${gap}日 / 平均間隔 ${p.avgInterval.toFixed(1)}日`);
+  else if(gap!==null)rs.push(`前回強日から${gap}日`);
+  if(isEventDate(targetDate)&&p.evRate!==null)rs.push(`22日系投入率 ${(p.evRate*100).toFixed(1)}%`);
+  if(p.repeatRate!==null&&gap===1)rs.push(`連投率 ${(p.repeatRate*100).toFixed(1)}%`);
+  const wd=machineWeekdayStats(p.machine,targetDate);if(wd.n>=2&&wd.rate!==null)rs.push(`${wd.weekday}曜の強め候補率 ${(wd.rate*100).toFixed(1)}%（${wd.hits}/${wd.n}）`);
+  const lb=layoutGroupForMachine(p.machine);if(lb&&lb.n>=5)rs.push(`${lb.label}の強め率 ${(lb.rate*100).toFixed(1)}%（n=${lb.n}）`);
  }
  if(isLive&&liveRow&&liveEvidence){
   const g=Number(liveRow.totalG)||0;
-  const rr=liveEvidence.regRate?`REG 1/${Math.round(liveEvidence.regRate)}`:'REGææãªã';
-  const cr=liveEvidence.combRate?`åç® 1/${Math.round(liveEvidence.combRate)}`:'åç®ææãªã';
-  rs.unshift(`${fmt(g)}Gæç¹ / ${rr} / ${cr}`);
-  rs.push(`å½æ¥åå®¹ã¹ã³ã¢ ${Math.round(liveEvidence.score)}/100`);
+  const rr=liveEvidence.regRate?`REG 1/${Math.round(liveEvidence.regRate)}`:'REG材料なし';
+  const cr=liveEvidence.combRate?`合算 1/${Math.round(liveEvidence.combRate)}`:'合算材料なし';
+  rs.unshift(`${fmt(g)}G時点 / ${rr} / ${cr}`);
+  rs.push(`当日内容スコア ${Math.round(liveEvidence.score)}/100`);
  }
  return rs.slice(0,4);
 }
@@ -606,7 +606,7 @@ function liveCandidate(row,p,targetDate){
  const liveWeight=clamp(g/3000,.18,.62);
  const liveAdjusted=50+(e.score-50)*clamp(g/2200,.18,1);
  let score=base.score*(1-liveWeight)+liveAdjusted*liveWeight;
- // REGãããéãããã ãå°ãµã³ãã«ã¯æãã
+ // REGをやや重く、ただし小サンプルは抑える
  if(e.regRate&&g>=800){
   const spec=settingSpecRows(row.model);
   if(spec.length){
@@ -617,7 +617,7 @@ function liveCandidate(row,p,targetDate){
  score=clamp(score,0,100);
  return {score,confidence:confidenceLabel(Math.max(p?.n||0,Math.floor(g/1200))),reasons:candidateReasons(p,targetDate,true,row,e),n:p?.n||0,row,e,live:true};
 }
-// ===== v0.13.2 ç¶¾ã¡ããè³ï¼å½æ¥å·®æ + ç´è¿ãã«å¯åº¦ =====
+// ===== v0.13.2 綾ちゃん脳：当日差枚 + 直近ペカ密度 =====
 function recentPekaWindow(row,windowG){
  const hist=Array.isArray(row?.history)?row.history:[];
  const totalG=Number(row?.totalG)||0;
@@ -642,17 +642,17 @@ function recentPekaWindow(row,windowG){
 function pekaRateScore(rate){return Number.isFinite(rate)?clamp((rate-4)*12.5,0,100):null}
 function ayaConfidence(row){
  const g=Number(row?.totalG)||0;
- if(g>=4000)return 'å½æ¥ææ å¤ã';
- if(g>=2000)return 'å½æ¥ææ ã¾ãã¾ã';
- if(g>=800)return 'å½æ¥ææ ã¾ã ä¸­ç¤';
- return 'å½æ¥ææ å°ãªã';
+ if(g>=4000)return '当日材料 多め';
+ if(g>=2000)return '当日材料 まずまず';
+ if(g>=800)return '当日材料 まだ中盤';
+ return '当日材料 少なめ';
 }
 function ayaCandidate(row){
  const g=Number(row?.totalG)||0,bb=Number(row?.big)||0,reg=Number(row?.reg)||0;
  const diff=Number(row?.diff),w500=recentPekaWindow(row,500),w1000=recentPekaWindow(row,1000);
  const allRate=g>0?(bb+reg)/g*1000:null;
- // ä»ã®èµ°ããä¸»å½¹(80%)ã«ãã¤ã¤ãéå»ã®ãå®éã«1000æã¾ã§ä¼¸ã³ãçããæå¤§20%å å³ã
- // ã°ã©ãæªåå¾æ¥ã¯ thousandStats0135 å´ã§æ¯æ°ããé¤å¤ããã
+ // 今の走りを主役(80%)にしつつ、過去の「実際に1000枚まで伸びた癖」を最大20%加味。
+ // グラフ未取得日は thousandStats0135 側で母数から除外する。
  const hist14=machineHistoryRows0133(String(row?.machine||''),14);
  const hist7=hist14.slice(-7),t7=thousandStats0135(hist7),t14=thousandStats0135(hist14);
  const parts=[];
@@ -667,19 +667,19 @@ function ayaCandidate(row){
  if(Number.isFinite(diff)&&diff<=-1000)score-=10;
  score=clamp(score,0,100);
  const reasons=[];
- if(Number.isFinite(diff))reasons.push(`ç¾å¨å·®æ ${signed(Math.round(diff))}æ`);
- if(w500.count!==null)reasons.push(`ç´è¿500Gï¼${w500.count}ãã«ï¼BB${w500.big}/RB${w500.reg}ï¼${w500.count?`ã»ç´1/${Math.round(w500.coverage/w500.count)}`:''}`);
- if(w1000.count!==null)reasons.push(`ç´è¿1000Gï¼${w1000.count}ãã«ï¼BB${w1000.big}/RB${w1000.reg}ï¼${w1000.count?`ã»ç´1/${Math.round(w1000.coverage/w1000.count)}`:''}`);
- if(Number.isFinite(allRate))reasons.push(`å¨æ¥ãã«å¯åº¦ ${allRate.toFixed(1)}å/1000G`);
- if(t7.valid)reasons.push(`éå»7æ¥ï¼1000æå°é ${t7.hits}/${t7.valid}æ¥ï¼${Math.round(t7.rate*100)}%ï¼`);
- if(t14.valid)reasons.push(`éå»14æ¥ï¼1000æå°é ${t14.hits}/${t14.valid}æ¥ï¼${Math.round(t14.rate*100)}%ï¼`);
+ if(Number.isFinite(diff))reasons.push(`現在差枚 ${signed(Math.round(diff))}枚`);
+ if(w500.count!==null)reasons.push(`直近500G：${w500.count}ペカ（BB${w500.big}/RB${w500.reg}）${w500.count?`・約1/${Math.round(w500.coverage/w500.count)}`:''}`);
+ if(w1000.count!==null)reasons.push(`直近1000G：${w1000.count}ペカ（BB${w1000.big}/RB${w1000.reg}）${w1000.count?`・約1/${Math.round(w1000.coverage/w1000.count)}`:''}`);
+ if(Number.isFinite(allRate))reasons.push(`全日ペカ密度 ${allRate.toFixed(1)}回/1000G`);
+ if(t7.valid)reasons.push(`過去7日：1000枚到達 ${t7.hits}/${t7.valid}日（${Math.round(t7.rate*100)}%）`);
+ if(t14.valid)reasons.push(`過去14日：1000枚到達 ${t14.hits}/${t14.valid}日（${Math.round(t14.rate*100)}%）`);
  return {score,confidence:ayaConfidence(row),reasons,n:0,row,live:true,aya:true,w500,w1000,allRate,t7,t14};
 }
 function pickBadge(score,index,aya=false){
- if(aya){if(index===0)return 'ð¥ æ¬å½';if(index===1)return 'â¨ æ¬¡åè£';if(index===2)return 'ð 3çªæ';return `#${index+1}`;}
- if(index===0&&score>=55)return 'ð¥ æ¬å½';
- if(index===1&&score>=52)return 'ð¥ å¯¾æ';
- if(index===2)return 'ð³ ç©´';
+ if(aya){if(index===0)return '🔥 本命';if(index===1)return '✨ 次候補';if(index===2)return '👀 3番手';return `#${index+1}`;}
+ if(index===0&&score>=55)return '🥇 本命';
+ if(index===1&&score>=52)return '🥈 対抗';
+ if(index===2)return '🕳 穴';
  return `#${index+1}`;
 }
 function pickClass(score){return score>=65?'good':score>=55?'event':score<48?'bad':'warn'}
@@ -701,19 +701,19 @@ function clearOccupied(){
  renderSeatPicks();
 }
 function pickHtml(c,index,model,machine,isLive=false){
- const reasons=(c.reasons||[]).map(x=>`<div class="reason">ã»${esc(x)}</div>`).join('');
- const seatBtn=`<button class="btn dark small" style="margin-top:10px;width:100%" onclick="markOccupied('${esc(machine)}')">ð« åº§ããã¦ã â æ¬¡ã®åè£</button>`;
+ const reasons=(c.reasons||[]).map(x=>`<div class="reason">・${esc(x)}</div>`).join('');
+ const seatBtn=`<button class="btn dark small" style="margin-top:10px;width:100%" onclick="markOccupied('${esc(machine)}')">🚫 座られてる → 次の候補</button>`;
  const badge=pickBadge(c.score,index,!!c.aya);
- const label=c.aya?(c.score>=70?'ð¥ ãã«å·®æã¨ãå¼·ã':c.score>=55?'â¨ ä»ããåè£':c.score>=42?'ð è¦³å¯':'ð¤ ä»ã¯å¼±ã'):(c.score>=65?'å¼·ãåè£':c.score>=55?'åè£':c.score>=48?'è¦³å¯':'èã');
- return `<div class="pickHero"><div class="rowtop"><div><div class="pickTitle"><span class="pickRank">${badge}</span><b>${esc(machine)}çª ${esc(MODELS[model]||model||'')}</b></div><div class="pickConfidence">${esc(c.confidence)}${c.n?` / éåºn=${c.n}`:''}${c.aya?' / ç¶¾ã¡ããè³':''}</div></div><div class="right"><div class="pickScore">${Math.round(c.score)}<small>/100</small></div><span class="pill ${pickClass(c.score)}">${label}</span></div></div><details class="candidateDetails"><summary>ãªããã®å°ï¼ è©³ç´°ãè¦ã</summary><div class="reasonList">${reasons||'<div class="reason">ã»ã¾ã ãã¼ã¿ä¸è¶³</div>'}</div></details>${seatBtn}</div>`;
+ const label=c.aya?(c.score>=70?'🔥 ペカ差枚とも強め':c.score>=55?'✨ 今から候補':c.score>=42?'👀 観察':'💤 今は弱め'):(c.score>=65?'強め候補':c.score>=55?'候補':c.score>=48?'観察':'薄め');
+ return `<div class="pickHero"><div class="rowtop"><div><div class="pickTitle"><span class="pickRank">${badge}</span><b>${esc(machine)}番 ${esc(MODELS[model]||model||'')}</b></div><div class="pickConfidence">${esc(c.confidence)}${c.n?` / 閉店n=${c.n}`:''}${c.aya?' / 綾ちゃん脳':''}</div></div><div class="right"><div class="pickScore">${Math.round(c.score)}<small>/100</small></div><span class="pill ${pickClass(c.score)}">${label}</span></div></div><details class="candidateDetails"><summary>なぜこの台？ 詳細を見る</summary><div class="reasonList">${reasons||'<div class="reason">・まだデータ不足</div>'}</div></details>${seatBtn}</div>`;
 }
 function renderSeatPicks(){
  const mbox=$('morningPicks'),lbox=$('livePicks'),status=$('seatPickStatus');if(!mbox||!lbox||!status)return;
  const target=todayJST(),pm=profileMap(),occupied=occupiedMachines(target),rows=finalRows();
  const md=target.slice(5).replace('-','/');
  const mtitle=mbox.parentElement?.querySelector('.pickSub'),ltitle=lbox.parentElement?.querySelector('.pickSub');
- if(mtitle)mtitle.textContent=`ð ${md} æã¤ãä½æ¦ï¼è¨­å®è³ï¼`;
- if(ltitle)ltitle.textContent=`ð¥ ${md} ä»ããçãï¼ç¶¾ã¡ããè³ï¼`;
+ if(mtitle)mtitle.textContent=`🌅 ${md} 朝イチ作戦（設定脳）`;
+ if(ltitle)ltitle.textContent=`🔥 ${md} 今から狙い（綾ちゃん脳）`;
 
  const historicalRows=rows.filter(r=>r.isFinal!==false&&String(r.date||'')<String(target)&&r.machine);
  const machines=[...new Set(historicalRows.map(r=>String(r.machine)).filter(Boolean))];
@@ -722,93 +722,93 @@ function renderSeatPicks(){
   const c=morningCandidate(p,target);return {machine,model,...c};
  }).sort((a,b)=>b.score-a.score);
  const morningAvailable=morning.filter(c=>!occupied.has(String(c.machine))),topM=morningAvailable.slice(0,3);
- mbox.innerHTML=topM.length?topM.map((c,i)=>pickHtml(c,i,c.model,c.machine,false)).join(''):(morning.length?'<div class="empty">æã¤ãåè£ã¯å¨é¨ãåº§ããã¦ããæå®ä¸­ãç©ºããå°ãããã°æ»ãããã</div>':'<div class="empty">æ¨æ¥ã¾ã§ã®ãã¼ã¿ãå¥ãã¨æã¤ãåè£ãåºããã</div>');
+ mbox.innerHTML=topM.length?topM.map((c,i)=>pickHtml(c,i,c.model,c.machine,false)).join(''):(morning.length?'<div class="empty">朝イチ候補は全部「座られてる」指定中。空いた台があれば戻せるよ。</div>':'<div class="empty">昨日までのデータが入ると朝イチ候補を出すよ。</div>');
 
  const liveRows=rows.filter(r=>r.date===target&&r.isFinal===false&&r.machine);
  const live=liveRows.map(r=>({machine:String(r.machine),model:r.model,...ayaCandidate(r)})).sort((a,b)=>b.score-a.score);
  const available=live.filter(c=>!occupied.has(String(c.machine))),topL=available.slice(0,3);
- lbox.innerHTML=topL.length?topL.map((c,i)=>pickHtml(c,i,c.model,c.machine,true)).join(''):(live.length?'<div class="empty">ä»ããçãã¯å¨é¨ãåº§ããã¦ããæå®ä¸­ãç©ºããå°ãããã°æ»ãããã</div>':`<div class="empty">ä»æ¥ï¼${esc(target)}ï¼ã®LIVEã¯ã¾ã æªåå¾ãéä¸­åæ¦åè£ã¯LIVEåè¾¼å¾ã«åºããã</div>`);
+ lbox.innerHTML=topL.length?topL.map((c,i)=>pickHtml(c,i,c.model,c.machine,true)).join(''):(live.length?'<div class="empty">今から狙いは全部「座られてる」指定中。空いた台があれば戻せるよ。</div>':`<div class="empty">今日（${esc(target)}）のLIVEはまだ未取得。途中参戦候補はLIVE取込後に出すよ。</div>`);
 
  const best=available[0]||morningAvailable[0]||null;
  const provisional=rows.filter(r=>r.provisionalFinal===true),provisionalDates=[...new Set(provisional.map(r=>r.date).filter(Boolean))].sort();
- let msg=`å¯¾è±¡æ¥ <strong>${esc(target)}ï¼${esc(weekdayName(target))}ï¼</strong>ãæã¯<strong>è¨­å®è³</strong>ãéä¸­åæ¦ã¯<strong>ç¶¾ã¡ããè³</strong>ã§å¥å¤å®ã`;
- if(provisionalDates.length)msg+=`<br><span class="pill warn">ð æ¥ä»ã¾ããè£æ­£ ON</span> <span class="tiny">${provisionalDates.map(esc).join(', ')} ã®æªç¢ºå®LIVEææ°å¤ãæ«å®éåºã¨ãã¦ææ¥ã»éå»åæã¸åæ ä¸­ãæ­£å¼éåºãã¼ã¿åå¾å¾ã¯èªåã§ãã¡ããåªåã</span>`;
- if(liveRows.length)msg+=` <span class="pill good">ä»æ¥LIVE ${liveRows.length}å° åæ ä¸­</span>`;else msg+=` <span class="pill warn">ä»æ¥LIVE æªåå¾</span>`;
+ let msg=`対象日 <strong>${esc(target)}（${esc(weekdayName(target))}）</strong>。朝は<strong>設定脳</strong>、途中参戦は<strong>綾ちゃん脳</strong>で別判定。`;
+ if(provisionalDates.length)msg+=`<br><span class="pill warn">🌙 日付またぎ補正 ON</span> <span class="tiny">${provisionalDates.map(esc).join(', ')} の未確定LIVE最新値を暫定閉店として曜日・過去分析へ反映中。正式閉店データ取得後は自動でそちらを優先。</span>`;
+ if(liveRows.length)msg+=` <span class="pill good">今日LIVE ${liveRows.length}台 反映中</span>`;else msg+=` <span class="pill warn">今日LIVE 未取得</span>`;
  if(best){
   if(available.length){
-   if(best.score<55)msg+=`<br>ä»ããçãã¯çªåºããå°ãèãã<strong>ð« ç¡çã«åº§ããæ§å­è¦å¯ã</strong>ã`;
-   else msg+=`<br>ä»ããã®æä¸ä½ã¯ <strong>${esc(best.machine)}çª ${esc(MODELS[best.model]||best.model||'')}</strong>ãç¶¾ã¡ããã¹ã³ã¢ <strong>${Math.round(best.score)}/100</strong>ã`;
-  }else msg+=`<br>æã¤ãæä¸ä½ã¯ <strong>${esc(best.machine)}çª ${esc(MODELS[best.model]||best.model||'')}</strong>ãåè£åªååº¦ <strong>${Math.round(best.score)}/100</strong>ã`;
+   if(best.score<55)msg+=`<br>今から狙いは突出した台が薄め。<strong>🚫 無理に座らず様子見寄り</strong>。`;
+   else msg+=`<br>今からの最上位は <strong>${esc(best.machine)}番 ${esc(MODELS[best.model]||best.model||'')}</strong>、綾ちゃんスコア <strong>${Math.round(best.score)}/100</strong>。`;
+  }else msg+=`<br>朝イチ最上位は <strong>${esc(best.machine)}番 ${esc(MODELS[best.model]||best.model||'')}</strong>、候補優先度 <strong>${Math.round(best.score)}/100</strong>。`;
  }
  if(occupied.size){
-  const chips=[...occupied].map(m=>`<button class="btn dark small" style="margin:4px 4px 0 0" onclick="unmarkOccupied('${esc(m)}')">â© ${esc(m)}çªãæ»ã</button>`).join('');
-  msg+=`<div style="margin-top:9px"><b>ð« åº§ããã¦ãï¼${occupied.size}å°</b><br>${chips}<button class="btn dark small" style="margin-top:4px" onclick="clearOccupied()">å¨é¨è§£é¤</button></div>`;
+  const chips=[...occupied].map(m=>`<button class="btn dark small" style="margin:4px 4px 0 0" onclick="unmarkOccupied('${esc(m)}')">↩ ${esc(m)}番を戻す</button>`).join('');
+  msg+=`<div style="margin-top:9px"><b>🚫 座られてる：${occupied.size}台</b><br>${chips}<button class="btn dark small" style="margin-top:4px" onclick="clearOccupied()">全部解除</button></div>`;
  }
- msg+=`<br><span class="tiny">ç¶¾ã¡ããè³ã¯ãç¾å¨å·®æã»ç´è¿500G/1000Gã®ãã«å¯åº¦ããéè¦ããããã£ã¦ããããããããå½ãããã¯å ç¹ããªããåè£ç¹ã¯æªæ¥ã®å½ããã»è¨­å®ã»åå©ãä¿è¨¼ãããã®ã§ã¯ãªããä¿å­ãã¼ã¿åã®æ¯è¼é ä½ã</span>`;
+ msg+=`<br><span class="tiny">綾ちゃん脳は「現在差枚・直近500G/1000Gのペカ密度」を重視。「ハマっているからそろそろ当たる」は加点しない。候補点は未来の当たり・設定・勝利を保証するものではなく、保存データ内の比較順位。</span>`;
  status.innerHTML=msg;
  const hero=$('todayDecisionHero');
  if(hero){
   const chosen=available[0]||morningAvailable[0]||null;
-  const mode=available.length?'ð¥ ä»ããçããªã':'ð æã¤ããªã';
+  const mode=available.length?'🔥 今から狙うなら':'🌅 朝イチなら';
   const next=(available.length?available:morningAvailable).slice(1,3);
   if(chosen){
-   const scoreName=available.length?'ç¶¾ã¡ããã¹ã³ã¢':'åè£åªååº¦';
+   const scoreName=available.length?'綾ちゃんスコア':'候補優先度';
    if(available.length&&chosen.score<55){
-    hero.innerHTML=`<div class="heroLabel">ð« ä»ããã¯æ§å­è¦å¯ã</div><div class="heroMachine" style="font-size:24px">ç¡çã«åº§ããªã</div><div class="heroMeta">è¦³å¯1ä½ã¯ ${esc(chosen.machine)}çª ${esc(MODELS[chosen.model]||chosen.model||'')} / ${scoreName} <strong>${Math.round(chosen.score)}/100</strong></div>`;
+    hero.innerHTML=`<div class="heroLabel">🚫 今からは様子見寄り</div><div class="heroMachine" style="font-size:24px">無理に座らない</div><div class="heroMeta">観察1位は ${esc(chosen.machine)}番 ${esc(MODELS[chosen.model]||chosen.model||'')} / ${scoreName} <strong>${Math.round(chosen.score)}/100</strong></div>`;
    }else{
-    hero.innerHTML=`<div class="heroLabel">${mode}</div><div class="heroMachine">${esc(chosen.machine)}çª <span style="font-size:.52em;color:#aeb9c7">${esc(MODELS[chosen.model]||chosen.model||'')}</span></div><div class="heroMeta">${scoreName} <strong>${Math.round(chosen.score)}/100</strong>${next.length?` ï¼ æ¬¡ï¼${next.map(x=>esc(x.machine)+'çª').join('ã»')}`:''}</div>`;
+    hero.innerHTML=`<div class="heroLabel">${mode}</div><div class="heroMachine">${esc(chosen.machine)}番 <span style="font-size:.52em;color:#aeb9c7">${esc(MODELS[chosen.model]||chosen.model||'')}</span></div><div class="heroMeta">${scoreName} <strong>${Math.round(chosen.score)}/100</strong>${next.length?` ／ 次：${next.map(x=>esc(x.machine)+'番').join('・')}`:''}</div>`;
    }
   }else{
-   hero.innerHTML='<div class="heroLabel">TODAY</div><div class="heroMachine" style="font-size:20px">åè£ãã¼ã¿å¾ã¡</div><div class="heroMeta">æ¨æ¥ã¾ã§ã®éåºãã¼ã¿ãã¾ãã¯ä»æ¥ã®LIVEãåãè¾¼ãã¨è¡¨ç¤ºãããã</div>';
+   hero.innerHTML='<div class="heroLabel">TODAY</div><div class="heroMachine" style="font-size:20px">候補データ待ち</div><div class="heroMeta">昨日までの閉店データ、または今日のLIVEを取り込むと表示するよ。</div>';
   }
  }
 }
 
 function latestPeak(r){const a=[Number(r.diff),Number(r.maxDiff)].filter(Number.isFinite);return a.length?Math.max(...a):null}
-function reachedTags(r){let out=[];if(isEventDate(r.date))out.push('<span class="pill event">22æ¥</span>');if(r.isFinal===true)out.push('<span class="pill good">éåº</span>');else if(r.isFinal===false)out.push('<span class="pill">LIVE</span>');const d=Number(r.diff),p=latestPeak(r);if(Number.isFinite(p)&&p>=2000){out.push(`<span class="pill hit2000">ð¥${d>=2000?'ç¾å¨2000':'2000å°é'}</span>`)}else if(Number.isFinite(p)&&p>=1000){out.push(`<span class="pill hit1000">ð¡${d>=1000?'ç¾å¨1000':'1000å°é'}</span>`)}return out.join('')}
+function reachedTags(r){let out=[];if(isEventDate(r.date))out.push('<span class="pill event">22日</span>');if(r.isFinal===true)out.push('<span class="pill good">閉店</span>');else if(r.isFinal===false)out.push('<span class="pill">LIVE</span>');const d=Number(r.diff),p=latestPeak(r);if(Number.isFinite(p)&&p>=2000){out.push(`<span class="pill hit2000">🔥${d>=2000?'現在2000':'2000到達'}</span>`)}else if(Number.isFinite(p)&&p>=1000){out.push(`<span class="pill hit1000">🟡${d>=1000?'現在1000':'1000到達'}</span>`)}return out.join('')}
 function renderDash(){const rows=finalRows(),dates=[...new Set(rows.map(r=>r.date))].sort();$('daysCount').textContent=dates.length;$('finalCount').textContent=rows.length;$('pekaCount').textContent=turkeyArchives().length;$('hypCount').textContent=hypotheses.length;
- $('syncNotice').innerHTML=`PEKALOGé£æºï¼<strong>${turkeyArchives().length}ä»¶</strong> ï¼ LABã¹ãããã·ã§ããï¼<strong>${(lab.snapshots||[]).length}ä»¶</strong>${location.protocol==='file:'?'<br>â ï¸ ã­ã¼ã«ã«ãã¡ã¤ã«ã§éãã¦ãããããå¬éPEKALOGã®localStorageã¨ã¯å¥ç©ã§ããåãGitHub Pageséä¸ã«ç½®ãã¨ç´æ¥é£æºãã¾ãã':''}`;
- const latest=dates.at(-1);$('latestDate').textContent=latest||'-';const hits=rows.filter(r=>r.date===latest&&((Number.isFinite(latestPeak(r))&&latestPeak(r)>=1000)||r.peak1000)).sort((a,b)=>(latestPeak(b)||0)-(latestPeak(a)||0));$('latestHits').innerHTML=hits.length?hits.map(r=>{const peak=latestPeak(r),cur=Number(r.diff);return `<div class="row"><div class="rowtop"><div><b>${esc(r.machine)}çª ${esc(MODELS[r.model]||r.model||'')}</b><div class="tiny">${fmt(r.totalG)}G / BB${fmt(r.big)} RB${fmt(r.reg)} / ${fmt(Number(r.big||0)+Number(r.reg||0))}ãã«</div></div><div class="right"><b class="${cur>=0?'pos':'neg'}">ç¾å¨ ${signed(cur)}æ</b><div class="tiny">æé« ${Number.isFinite(peak)?signed(Math.round(peak)):'-'}æ</div><div>${reachedTags(r)}</div></div></div></div>`}).join(''):'<div class="empty">ã¾ã 1000æå°éãã¼ã¿ãªãã</div>';
+ $('syncNotice').innerHTML=`PEKALOG連携：<strong>${turkeyArchives().length}件</strong> ／ LABスナップショット：<strong>${(lab.snapshots||[]).length}件</strong>${location.protocol==='file:'?'<br>⚠️ ローカルファイルで開いているため、公開PEKALOGのlocalStorageとは別物です。同じGitHub Pages配下に置くと直接連携します。':''}`;
+ const latest=dates.at(-1);$('latestDate').textContent=latest||'-';const hits=rows.filter(r=>r.date===latest&&((Number.isFinite(latestPeak(r))&&latestPeak(r)>=1000)||r.peak1000)).sort((a,b)=>(latestPeak(b)||0)-(latestPeak(a)||0));$('latestHits').innerHTML=hits.length?hits.map(r=>{const peak=latestPeak(r),cur=Number(r.diff);return `<div class="row"><div class="rowtop"><div><b>${esc(r.machine)}番 ${esc(MODELS[r.model]||r.model||'')}</b><div class="tiny">${fmt(r.totalG)}G / BB${fmt(r.big)} RB${fmt(r.reg)} / ${fmt(Number(r.big||0)+Number(r.reg||0))}ペカ</div></div><div class="right"><b class="${cur>=0?'pos':'neg'}">現在 ${signed(cur)}枚</b><div class="tiny">最高 ${Number.isFinite(peak)?signed(Math.round(peak)):'-'}枚</div><div>${reachedTags(r)}</div></div></div></div>`}).join(''):'<div class="empty">まだ1000枚到達データなし。</div>';
  renderSeatPicks();renderMachineInference();renderDiscoveries();}
 function featureRows(rows,fn){return rows.filter(fn)}
-function discoveryLine(title,sub,rate,base,n){const delta=rate-base;const cls=n<5?'warn':delta>=10?'good':delta<=-5?'bad':'';return `<div class="row"><div class="rowtop"><div><b>${esc(title)}</b><div class="tiny">${esc(sub)}</div></div><span class="pill ${cls}">${n<5?'è¦³å¯ä¸­':delta>=10?'ææ':delta<=-5?'å¼±ã':'å·®å°'}</span></div><div class="smalltext" style="margin-top:7px">1000æç <b>${rate.toFixed(1)}%</b> ï¼ åºæº ${base.toFixed(1)}% ï¼ n=${n}</div></div>`}
-function renderDiscoveries(){const rows=finalRows().filter(r=>r.isFinal!==false);if(rows.length<2){$('discoveries').innerHTML='<div class="empty">ãã¼ã¿ãè²¯ã¾ãã¨ã22æ¥ã»æ©ç¨®ã»åæ¥å¹ã¿ãªã©ãèªåæ¯è¼ãããã</div>';return}const base=rows.filter(r=>Number.isFinite(Number(r.diff)));const baseRate=base.length?base.filter(r=>Number(r.diff)>=1000).length/base.length*100:0;let ds=[];
- const ev=base.filter(r=>isEventDate(r.date));if(ev.length)ds.push(['22æ¥ã¤ãã³ã','éå¸¸æ¥ã¨åé¢ãã¦æ¤è¨¼',ev.filter(r=>Number(r.diff)>=1000).length/ev.length*100,baseRate,ev.length]);
- for(const [id,name] of Object.entries(MODELS)){const a=base.filter(r=>r.model===id);if(a.length>=3)ds.push([name,`${name}å¨æ¥`,a.filter(r=>Number(r.diff)>=1000).length/a.length*100,baseRate,a.length])}
+function discoveryLine(title,sub,rate,base,n){const delta=rate-base;const cls=n<5?'warn':delta>=10?'good':delta<=-5?'bad':'';return `<div class="row"><div class="rowtop"><div><b>${esc(title)}</b><div class="tiny">${esc(sub)}</div></div><span class="pill ${cls}">${n<5?'観察中':delta>=10?'有望':delta<=-5?'弱め':'差小'}</span></div><div class="smalltext" style="margin-top:7px">1000枚率 <b>${rate.toFixed(1)}%</b> ／ 基準 ${base.toFixed(1)}% ／ n=${n}</div></div>`}
+function renderDiscoveries(){const rows=finalRows().filter(r=>r.isFinal!==false);if(rows.length<2){$('discoveries').innerHTML='<div class="empty">データが貯まると、22日・機種・前日凹みなどを自動比較するよ。</div>';return}const base=rows.filter(r=>Number.isFinite(Number(r.diff)));const baseRate=base.length?base.filter(r=>Number(r.diff)>=1000).length/base.length*100:0;let ds=[];
+ const ev=base.filter(r=>isEventDate(r.date));if(ev.length)ds.push(['22日イベント','通常日と分離して検証',ev.filter(r=>Number(r.diff)>=1000).length/ev.length*100,baseRate,ev.length]);
+ for(const [id,name] of Object.entries(MODELS)){const a=base.filter(r=>r.model===id);if(a.length>=3)ds.push([name,`${name}全日`,a.filter(r=>Number(r.diff)>=1000).length/a.length*100,baseRate,a.length])}
  // previous-day features
  const byMachine={};for(const r of base){(byMachine[r.machine]??=[]).push(r)}let prevDeep=[],prevBoom=[];for(const arr of Object.values(byMachine)){arr.sort((a,b)=>a.date.localeCompare(b.date));for(let i=1;i<arr.length;i++){if(Number(arr[i-1].diff)<=-1000)prevDeep.push(arr[i]);if(Number(arr[i-1].diff)>=2000)prevBoom.push(arr[i])}}
- if(prevDeep.length)ds.push(['åæ¥-1000æä»¥ä¸','ç¿æ¥ã®1000æOVERç',prevDeep.filter(r=>Number(r.diff)>=1000).length/prevDeep.length*100,baseRate,prevDeep.length]);if(prevBoom.length)ds.push(['åæ¥+2000æä»¥ä¸','çåºå°ç¿æ¥ã®1000æOVERç',prevBoom.filter(r=>Number(r.diff)>=1000).length/prevBoom.length*100,baseRate,prevBoom.length]);
- ds.sort((a,b)=>(b[2]-b[3])-(a[2]-a[3]));$('discoveries').innerHTML=ds.slice(0,6).map(x=>discoveryLine(...x)).join('')||'<div class="empty">åææ¡ä»¶ã«å¿è¦ãªãµã³ãã«ãã¾ã å°ãªããã</div>'}
+ if(prevDeep.length)ds.push(['前日-1000枚以下','翌日の1000枚OVER率',prevDeep.filter(r=>Number(r.diff)>=1000).length/prevDeep.length*100,baseRate,prevDeep.length]);if(prevBoom.length)ds.push(['前日+2000枚以上','爆出台翌日の1000枚OVER率',prevBoom.filter(r=>Number(r.diff)>=1000).length/prevBoom.length*100,baseRate,prevBoom.length]);
+ ds.sort((a,b)=>(b[2]-b[3])-(a[2]-a[3]));$('discoveries').innerHTML=ds.slice(0,6).map(x=>discoveryLine(...x)).join('')||'<div class="empty">分析条件に必要なサンプルがまだ少ないよ。</div>'}
 function evaluateHyp(h){
- let rows=finalRows().filter(r=>r.date===h.date);if(h.model!=='all')rows=rows.filter(r=>r.model===h.model);if(h.machines?.length)rows=rows.filter(r=>h.machines.includes(String(r.machine)));if(!rows.length)return {status:'pending',text:'ã¾ã çµæãã¼ã¿ãªã',rows:[]};
+ let rows=finalRows().filter(r=>r.date===h.date);if(h.model!=='all')rows=rows.filter(r=>r.model===h.model);if(h.machines?.length)rows=rows.filter(r=>h.machines.includes(String(r.machine)));if(!rows.length)return {status:'pending',text:'まだ結果データなし',rows:[]};
  let hits=0;if(h.metric==='1000')hits=rows.filter(r=>Number(r.diff)>=1000).length;else if(h.metric==='2000')hits=rows.filter(r=>Number(r.diff)>=2000).length;else hits=rows.filter(r=>{const g=Number(r.totalG||0),reg=Number(r.reg||0),all=Number(r.big||0)+reg;return g>=5000&&((reg&&g/reg<=320)||(all&&g/all<=135))}).length;
  const hitRate=rows.length?hits/rows.length*100:0, av=avg(rows,'diff')||0;
  const baselineRows=finalRows().filter(r=>r.date===h.date && (!h.machines?.length || !h.machines.includes(String(r.machine))));
  const baseHit=baselineRows.length?baselineRows.filter(r=>Number(r.diff)>=1000).length/baselineRows.length*100:null;
  let ok=false, rule=h.success||'any';
  if(rule==='any')ok=hits>=1; else if(rule==='half')ok=hits/rows.length>=.5; else if(rule==='avg0')ok=av>0; else if(rule==='avg500')ok=av>=500; else if(rule==='uplift10')ok=baseHit!==null && hitRate>=baseHit+10;
- const baseText=baseHit===null?'':` ï¼ å½æ¥åºæº1000ç ${baseHit.toFixed(1)}%`;
- return {status:ok?'hit':'miss',text:`${hits}/${rows.length}å° HIT (${hitRate.toFixed(1)}%) ï¼ å¹³å ${signed(Math.round(av))}æ${baseText}`,rows,hitRate,av,baseHit}
+ const baseText=baseHit===null?'':` ／ 当日基準1000率 ${baseHit.toFixed(1)}%`;
+ return {status:ok?'hit':'miss',text:`${hits}/${rows.length}台 HIT (${hitRate.toFixed(1)}%) ／ 平均 ${signed(Math.round(av))}枚${baseText}`,rows,hitRate,av,baseHit}
 }
-function renderHyp(){if(!hypotheses.length){$('hypList').innerHTML='<div class="empty">ä»®èª¬ã¯ã¾ã ãªããæ¬¡ã®22æ¥ã®èª­ã¿ããå¥ãããð§ª</div>';return}$('hypList').innerHTML=hypotheses.slice().sort((a,b)=>b.createdAt-a.createdAt).map(h=>{const e=evaluateHyp(h),cls=e.status==='hit'?'good':e.status==='miss'?'bad':'warn';return `<div class="row"><div class="rowtop"><div><b>${esc(h.date)} ${esc(h.title)}</b><div class="tiny">${h.model==='all'?'å¨ã¸ã£ã°':esc(MODELS[h.model]||h.model)} ${h.machines?.length?'ï¼ å° '+h.machines.join(', '):''}</div></div><span class="pill ${cls}">${e.status==='hit'?'ð¯ HIT':e.status==='miss'?'â MISS':'â³ å¾ã¡'}</span></div><div class="smalltext" style="margin-top:7px">${esc(e.text)} ï¼ èªä¿¡åº¦ ${'â'.repeat(Number(h.confidence||1))}</div><div class="tiny" style="margin-top:5px">çç±ï¼${esc(h.reason||'-')}<br>ç»é²ï¼${new Date(h.createdAt).toLocaleString('ja-JP')}</div></div>`}).join('')}
-function saveHyp(){const title=$('hTitle').value.trim(),date=$('hDate').value;if(!title||!date)return alert('æ¤è¨¼æ¥ã¨ä»®èª¬åãå¥ãã¦ã­');const machines=$('hMachines').value.split(',').map(x=>x.trim()).filter(Boolean);hypotheses.unshift({id:Date.now(),createdAt:Date.now(),date,title,model:$('hModel').value,machines,metric:$('hMetric').value,confidence:Number($('hConfidence').value),event:$('hEvent').value,success:$('hSuccess').value,reason:$('hReason').value.trim()});persist();$('hTitle').value='';$('hMachines').value='';$('hReason').value='';renderAll();alert('ä»®èª¬ãã­ãã¯ããã ð')}
+function renderHyp(){if(!hypotheses.length){$('hypList').innerHTML='<div class="empty">仮説はまだなし。次の22日の読みから入れよう🧪</div>';return}$('hypList').innerHTML=hypotheses.slice().sort((a,b)=>b.createdAt-a.createdAt).map(h=>{const e=evaluateHyp(h),cls=e.status==='hit'?'good':e.status==='miss'?'bad':'warn';return `<div class="row"><div class="rowtop"><div><b>${esc(h.date)} ${esc(h.title)}</b><div class="tiny">${h.model==='all'?'全ジャグ':esc(MODELS[h.model]||h.model)} ${h.machines?.length?'／ 台 '+h.machines.join(', '):''}</div></div><span class="pill ${cls}">${e.status==='hit'?'🎯 HIT':e.status==='miss'?'❌ MISS':'⏳ 待ち'}</span></div><div class="smalltext" style="margin-top:7px">${esc(e.text)} ／ 自信度 ${'★'.repeat(Number(h.confidence||1))}</div><div class="tiny" style="margin-top:5px">理由：${esc(h.reason||'-')}<br>登録：${new Date(h.createdAt).toLocaleString('ja-JP')}</div></div>`}).join('')}
+function saveHyp(){const title=$('hTitle').value.trim(),date=$('hDate').value;if(!title||!date)return alert('検証日と仮説名を入れてね');const machines=$('hMachines').value.split(',').map(x=>x.trim()).filter(Boolean);hypotheses.unshift({id:Date.now(),createdAt:Date.now(),date,title,model:$('hModel').value,machines,metric:$('hMetric').value,confidence:Number($('hConfidence').value),event:$('hEvent').value,success:$('hSuccess').value,reason:$('hReason').value.trim()});persist();$('hTitle').value='';$('hMachines').value='';$('hReason').value='';renderAll();alert('仮説をロックしたよ 🔒')}
 function avg(a,key){const b=a.map(x=>Number(x[key])).filter(Number.isFinite);return b.length?b.reduce((s,x)=>s+x,0)/b.length:null}
 function renderEvent(){const rows=finalRows().filter(r=>r.isFinal!==false&&Number.isFinite(Number(r.diff))),ev=rows.filter(r=>isEventDate(r.date)),norm=rows.filter(r=>!isEventDate(r.date));const evDates=[...new Set(ev.map(r=>r.date))];$('eventDays').textContent=evDates.length;$('eventAvgDiff').textContent=ev.length?signed(Math.round(avg(ev,'diff'))) : '-';$('event1000').textContent=pct(ev.filter(r=>Number(r.diff)>=1000).length,ev.length);$('event2000').textContent=pct(ev.filter(r=>Number(r.diff)>=2000).length,ev.length);
- const er=ev.length?ev.filter(r=>Number(r.diff)>=1000).length/ev.length:0,nr=norm.length?norm.filter(r=>Number(r.diff)>=1000).length/norm.length:0;const ratio=nr?er/nr:null;let score='-';if(ev.length>=3){let raw=(er*2)+(ev.filter(r=>Number(r.diff)>=2000).length/ev.length*1.5)+Math.max(0,Math.min(.3,(avg(ev,'diff')||0)/5000));score=Math.max(1,Math.min(5,1+raw*4)).toFixed(1)}$('eventScore').textContent=score==='-'?'-':score+'/5';$('eventCompare').innerHTML=ev.length?`22æ¥ã®1000æOVERçã¯ <strong>${(er*100).toFixed(1)}%</strong>ãéå¸¸æ¥ã¯ <strong>${(nr*100).toFixed(1)}%</strong>${ratio?`ãç´ <strong>${ratio.toFixed(2)}å</strong>`:''}ã<br><span class="tiny">â»ãµã³ãã«ãå°ãªãéã¯ãå¼·ããã¨æ­å®ããè¦³å¯ã</span>`:'22æ¥ãã¼ã¿ãå¥ãã¨éå¸¸æ¥ã¨ã®æ¯è¼ãéå§ããã';
- const by=rowsByDate(),trend=evDates.sort().map(d=>{const a=(by[d]||[]).filter(r=>Number.isFinite(Number(r.diff)));return {d,n:a.length,av:avg(a,'diff'),r1:a.filter(r=>Number(r.diff)>=1000).length,r2:a.filter(r=>Number(r.diff)>=2000).length,peka:Math.max(0,...a.map(r=>Number(r.big||0)+Number(r.reg||0)))}});$('eventTrend').innerHTML=trend.length?`<table><tr><th>22æ¥</th><th>ææ¥</th><th>å°æ°</th><th>å¹³åå·®æ</th><th>1000</th><th>2000</th><th>æé«ãã«</th></tr>${trend.map(x=>`<tr><td>${x.d}</td><td>${weekdayName(x.d)}</td><td>${x.n}</td><td class="${x.av>=0?'pos':'neg'}">${signed(Math.round(x.av||0))}</td><td>${pct(x.r1,x.n)}</td><td>${pct(x.r2,x.n)}</td><td>${x.peka}</td></tr>`).join('')}</table>`:'<div class="empty">22æ¥ãã¼ã¿ãªã</div>';
- const last2=trend.slice(-2);if(last2.length>=2){const p=last2[0],c=last2[1],d=Math.round((c.av||0)-(p.av||0)),pp=(c.n?c.r1/c.n*100:0)-(p.n?p.r1/p.n*100:0);$('eventLatestDelta').innerHTML=`ææ°22æ¥ <strong>${c.d}</strong> ã¯åå ${p.d} æ¯ã§ãå¹³åå·®æ <strong class="${d>=0?'pos':'neg'}">${signed(d)}æ</strong>ã1000æç <strong>${pp>=0?'+':''}${pp.toFixed(1)}pt</strong>ã`; }else $('eventLatestDelta').textContent='22æ¥ã2åä»¥ä¸è²¯ã¾ãã¨ãååããå¼·ããªã£ã/å¼±ããªã£ãããè¡¨ç¤ºããã';
- const ew=JP_WEEK.map((name,wi)=>{const a=ev.filter(r=>weekdayIndex(r.date)===wi),dates=new Set(a.map(r=>r.date)),diffs=a.map(r=>Number(r.diff)).filter(Number.isFinite);return {name,days:dates.size,n:a.length,av:diffs.length?diffs.reduce((x,y)=>x+y,0)/diffs.length:null,r1:a.filter(r=>Number(r.diff)>=1000).length}}).filter(x=>x.n);$('eventWeekdays').innerHTML=ew.length?`<table><tr><th>ææ¥</th><th>ã¤ãã³ãæ¥æ°</th><th>å°æ°</th><th>å¹³åå·®æ</th><th>1000æç</th></tr>${ew.map(x=>`<tr><td>${x.name}æ</td><td>${x.days}</td><td>${x.n}</td><td class="${(x.av??0)>=0?'pos':'neg'}">${x.av===null?'-':signed(Math.round(x.av))}</td><td>${pct(x.r1,x.n)}</td></tr>`).join('')}</table>`:'<div class="empty">22æ¥ã®ææ¥å¥ãã¼ã¿ã¯ã¾ã ãªãã</div>';
- const mr=Object.entries(MODELS).map(([id,name])=>{const a=ev.filter(r=>r.model===id),b=norm.filter(r=>r.model===id);return {name,a,b}}).filter(x=>x.a.length||x.b.length);$('eventModels').innerHTML=mr.length?`<table><tr><th>æ©ç¨®</th><th>22æ¥å¹³å</th><th>éå¸¸å¹³å</th><th>22æ¥1000ç</th><th>éå¸¸1000ç</th></tr>${mr.map(x=>`<tr><td>${x.name}</td><td>${x.a.length?signed(Math.round(avg(x.a,'diff'))):'-'}</td><td>${x.b.length?signed(Math.round(avg(x.b,'diff'))):'-'}</td><td>${pct(x.a.filter(r=>Number(r.diff)>=1000).length,x.a.length)}</td><td>${pct(x.b.filter(r=>Number(r.diff)>=1000).length,x.b.length)}</td></tr>`).join('')}</table>`:'<div class="empty">æ©ç¨®æ¯è¼ãã¼ã¿ãªã</div>';
- const pr=ev.slice().sort((a,b)=>(Number(b.big||0)+Number(b.reg||0))-(Number(a.big||0)+Number(a.reg||0))).slice(0,8);$('pekaRecords').innerHTML=pr.length?pr.map((r,i)=>`<div class="row"><div class="rowtop"><div><b>${i+1}. ${r.date} ${r.machine}çª ${esc(MODELS[r.model]||r.model)}</b><div class="tiny">BB${r.big||0} + RB${r.reg||0}</div></div><div class="right"><b style="font-size:20px">${Number(r.big||0)+Number(r.reg||0)}ãã«</b><div class="tiny">${signed(r.diff)}æ</div></div></div></div>`).join(''):'<div class="empty">22æ¥ã®ãã«è¨é²ã¯ã¾ã ãªãã</div>'}
+ const er=ev.length?ev.filter(r=>Number(r.diff)>=1000).length/ev.length:0,nr=norm.length?norm.filter(r=>Number(r.diff)>=1000).length/norm.length:0;const ratio=nr?er/nr:null;let score='-';if(ev.length>=3){let raw=(er*2)+(ev.filter(r=>Number(r.diff)>=2000).length/ev.length*1.5)+Math.max(0,Math.min(.3,(avg(ev,'diff')||0)/5000));score=Math.max(1,Math.min(5,1+raw*4)).toFixed(1)}$('eventScore').textContent=score==='-'?'-':score+'/5';$('eventCompare').innerHTML=ev.length?`22日の1000枚OVER率は <strong>${(er*100).toFixed(1)}%</strong>。通常日は <strong>${(nr*100).toFixed(1)}%</strong>${ratio?`、約 <strong>${ratio.toFixed(2)}倍</strong>`:''}。<br><span class="tiny">※サンプルが少ない間は「強い」と断定せず観察。</span>`:'22日データが入ると通常日との比較を開始する。';
+ const by=rowsByDate(),trend=evDates.sort().map(d=>{const a=(by[d]||[]).filter(r=>Number.isFinite(Number(r.diff)));return {d,n:a.length,av:avg(a,'diff'),r1:a.filter(r=>Number(r.diff)>=1000).length,r2:a.filter(r=>Number(r.diff)>=2000).length,peka:Math.max(0,...a.map(r=>Number(r.big||0)+Number(r.reg||0)))}});$('eventTrend').innerHTML=trend.length?`<table><tr><th>22日</th><th>曜日</th><th>台数</th><th>平均差枚</th><th>1000</th><th>2000</th><th>最高ペカ</th></tr>${trend.map(x=>`<tr><td>${x.d}</td><td>${weekdayName(x.d)}</td><td>${x.n}</td><td class="${x.av>=0?'pos':'neg'}">${signed(Math.round(x.av||0))}</td><td>${pct(x.r1,x.n)}</td><td>${pct(x.r2,x.n)}</td><td>${x.peka}</td></tr>`).join('')}</table>`:'<div class="empty">22日データなし</div>';
+ const last2=trend.slice(-2);if(last2.length>=2){const p=last2[0],c=last2[1],d=Math.round((c.av||0)-(p.av||0)),pp=(c.n?c.r1/c.n*100:0)-(p.n?p.r1/p.n*100:0);$('eventLatestDelta').innerHTML=`最新22日 <strong>${c.d}</strong> は前回 ${p.d} 比で、平均差枚 <strong class="${d>=0?'pos':'neg'}">${signed(d)}枚</strong>、1000枚率 <strong>${pp>=0?'+':''}${pp.toFixed(1)}pt</strong>。`; }else $('eventLatestDelta').textContent='22日が2回以上貯まると「前回から強くなった/弱くなった」を表示する。';
+ const ew=JP_WEEK.map((name,wi)=>{const a=ev.filter(r=>weekdayIndex(r.date)===wi),dates=new Set(a.map(r=>r.date)),diffs=a.map(r=>Number(r.diff)).filter(Number.isFinite);return {name,days:dates.size,n:a.length,av:diffs.length?diffs.reduce((x,y)=>x+y,0)/diffs.length:null,r1:a.filter(r=>Number(r.diff)>=1000).length}}).filter(x=>x.n);$('eventWeekdays').innerHTML=ew.length?`<table><tr><th>曜日</th><th>イベント日数</th><th>台数</th><th>平均差枚</th><th>1000枚率</th></tr>${ew.map(x=>`<tr><td>${x.name}曜</td><td>${x.days}</td><td>${x.n}</td><td class="${(x.av??0)>=0?'pos':'neg'}">${x.av===null?'-':signed(Math.round(x.av))}</td><td>${pct(x.r1,x.n)}</td></tr>`).join('')}</table>`:'<div class="empty">22日の曜日別データはまだなし。</div>';
+ const mr=Object.entries(MODELS).map(([id,name])=>{const a=ev.filter(r=>r.model===id),b=norm.filter(r=>r.model===id);return {name,a,b}}).filter(x=>x.a.length||x.b.length);$('eventModels').innerHTML=mr.length?`<table><tr><th>機種</th><th>22日平均</th><th>通常平均</th><th>22日1000率</th><th>通常1000率</th></tr>${mr.map(x=>`<tr><td>${x.name}</td><td>${x.a.length?signed(Math.round(avg(x.a,'diff'))):'-'}</td><td>${x.b.length?signed(Math.round(avg(x.b,'diff'))):'-'}</td><td>${pct(x.a.filter(r=>Number(r.diff)>=1000).length,x.a.length)}</td><td>${pct(x.b.filter(r=>Number(r.diff)>=1000).length,x.b.length)}</td></tr>`).join('')}</table>`:'<div class="empty">機種比較データなし</div>';
+ const pr=ev.slice().sort((a,b)=>(Number(b.big||0)+Number(b.reg||0))-(Number(a.big||0)+Number(a.reg||0))).slice(0,8);$('pekaRecords').innerHTML=pr.length?pr.map((r,i)=>`<div class="row"><div class="rowtop"><div><b>${i+1}. ${r.date} ${r.machine}番 ${esc(MODELS[r.model]||r.model)}</b><div class="tiny">BB${r.big||0} + RB${r.reg||0}</div></div><div class="right"><b style="font-size:20px">${Number(r.big||0)+Number(r.reg||0)}ペカ</b><div class="tiny">${signed(r.diff)}枚</div></div></div></div>`).join(''):'<div class="empty">22日のペカ記録はまだなし。</div>'}
 function ifAnalysis(a){const date=a.date,machine=String(a.machine||'');if(!date||!machine)return null;const final=latestSnapshot(date,machine);if(!final)return {kind:'nodata'};const endTs=Number(a.endedAt||a.id||a.history?.at(-1)?.ts||0);const near=endTs?nearestSnapshot(date,machine,endTs):null;if(near&&Number.isFinite(Number(near.diff))&&Number.isFinite(Number(final.diff))){const after=Number(final.diff)-Number(near.diff);return {kind:'snap',near,final,after}}if(a.diffCoins!==''&&Number.isFinite(Number(a.diffCoins))&&Number.isFinite(Number(final.diff))){return {kind:'finalonly',final,after:Number(final.diff)-Number(a.diffCoins)}}return {kind:'final',final}}
 function renderIF(){
- const a=turkeyArchives().slice().sort((x,y)=>Number(y.endedAt||y.id||0)-Number(x.endedAt||x.id||0));if(!a.length){$('ifList').innerHTML='<div class="empty">PEKALOGã§ãã¿ã¼ã­ã¼ãã¨åºåãå¥ãã¦å®æ¦ä¿å­ããã¨ãããã«åºã¦ãããã</div>';$('reasonStats').innerHTML='';return}
+ const a=turkeyArchives().slice().sort((x,y)=>Number(y.endedAt||y.id||0)-Number(x.endedAt||x.id||0));if(!a.length){$('ifList').innerHTML='<div class="empty">PEKALOGで「ターキー」と店名を入れて実戦保存すると、ここに出てくるよ。</div>';$('reasonStats').innerHTML='';return}
  let down=0,up=0,flat=0,valid=0;const reasonMap={};
- $('ifList').innerHTML=a.map(x=>{const z=ifAnalysis(x),model=MODELS[x.model]||x.model||'',reason=x.endReason||'æªè¨é²';let body='';if(!z||z.kind==='nodata')body='<span class="pill warn">LABãã¼ã¿å¾ã¡</span> åæ¥ã®å°ãã¼ã¿ãã¾ã ãªãã';else if(z.kind==='snap'){valid++;if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;(reasonMap[reason]??=[]).push(z.after);body=`ã¤ã¡æå»ä»è¿ <b>${signed(z.near.diff)}æ</b> â éåº <b>${signed(z.final.diff)}æ</b><br>ãã®å¾ <b class="${z.after>0?'pos':'neg'}">${signed(z.after)}æ</b> ${z.after>=500?'ð ãã®å¾ä¼¸ã³ã':z.after<=-500?'ð æ¤éæåå¯ã':'â ã»ã¼æ¨ªã°ã'}`;}else if(z.kind==='finalonly'){valid++;if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;(reasonMap[reason]??=[]).push(z.after);body=`PEKALOGè¨é² <b>${signed(x.diffCoins)}æ</b> â åºæçµ <b>${signed(z.final.diff)}æ</b><br>å·® <b class="${z.after>0?'pos':'neg'}">${signed(z.after)}æ</b> <span class="tiny">â»æå»ã¹ãããã·ã§ãããªãã®ç°¡ææ¯è¼</span>`;}else body=`åºæçµï¼<b>${signed(z.final.diff)}æ</b>ãPEKALOGå´ã®å·®æãæå»ã¹ãããã·ã§ãããããã¨IFæ¯è¼ã§ããã`;
- return `<div class="row"><div class="rowtop"><div><b>${esc(x.date||'-')} ${esc(x.machine||'-')}çª ${esc(model)}</b><div class="tiny">PEKALOG ${fmt(x.totalG)}G / BB${fmt(x.big)} RB${fmt(x.reg)} ï¼ ã¤ã¡çç±ï¼${esc(reason)}</div></div><span class="pill">${x.diffCoins!==''?signed(x.diffCoins)+'æ':'å·®ææªå¥å'}</span></div><div class="smalltext" style="margin-top:8px">${body}</div></div>`}).join('');
- $('decisionSummary').innerHTML=valid?`IFæ¯è¼ã§ããå®æ¦ <strong>${valid}ä»¶</strong>ããã®å¾ +500æä»¥ä¸ ${up}ä»¶ ï¼ -500æä»¥ä¸ ${down}ä»¶ ï¼ æ¨ªã°ã ${flat}ä»¶ã<br><span class="tiny">ãåã£ã¦ã/è² ãã¦ããã§ã¯ãªãããã®å¾å®ç¸¾ã¨ãã¦å¤æ­ã«ã¼ã«ãæ¤è¨¼ããã</span>`:'å®æ¦ã¨LABãã¼ã¿ãä¸è´ããã¨å¤æ­ã¯ã»éè¨ãéå§ããã';
+ $('ifList').innerHTML=a.map(x=>{const z=ifAnalysis(x),model=MODELS[x.model]||x.model||'',reason=x.endReason||'未記録';let body='';if(!z||z.kind==='nodata')body='<span class="pill warn">LABデータ待ち</span> 同日の台データがまだない。';else if(z.kind==='snap'){valid++;if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;(reasonMap[reason]??=[]).push(z.after);body=`ヤメ時刻付近 <b>${signed(z.near.diff)}枚</b> → 閉店 <b>${signed(z.final.diff)}枚</b><br>その後 <b class="${z.after>0?'pos':'neg'}">${signed(z.after)}枚</b> ${z.after>=500?'😇 その後伸びた':z.after<=-500?'🏃 撤退成功寄り':'➖ ほぼ横ばい'}`;}else if(z.kind==='finalonly'){valid++;if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;(reasonMap[reason]??=[]).push(z.after);body=`PEKALOG記録 <b>${signed(x.diffCoins)}枚</b> → 店最終 <b>${signed(z.final.diff)}枚</b><br>差 <b class="${z.after>0?'pos':'neg'}">${signed(z.after)}枚</b> <span class="tiny">※時刻スナップショットなしの簡易比較</span>`;}else body=`店最終：<b>${signed(z.final.diff)}枚</b>。PEKALOG側の差枚か時刻スナップショットがあるとIF比較できる。`;
+ return `<div class="row"><div class="rowtop"><div><b>${esc(x.date||'-')} ${esc(x.machine||'-')}番 ${esc(model)}</b><div class="tiny">PEKALOG ${fmt(x.totalG)}G / BB${fmt(x.big)} RB${fmt(x.reg)} ／ ヤメ理由：${esc(reason)}</div></div><span class="pill">${x.diffCoins!==''?signed(x.diffCoins)+'枚':'差枚未入力'}</span></div><div class="smalltext" style="margin-top:8px">${body}</div></div>`}).join('');
+ $('decisionSummary').innerHTML=valid?`IF比較できた実戦 <strong>${valid}件</strong>。その後 +500枚以上 ${up}件 ／ -500枚以下 ${down}件 ／ 横ばい ${flat}件。<br><span class="tiny">「勝ってた/負けてた」ではなく、その後実績として判断ルールを検証する。</span>`:'実戦とLABデータが一致すると判断クセ集計を開始する。';
  const rs=Object.entries(reasonMap).map(([reason,vals])=>({reason,n:vals.length,av:vals.reduce((a,b)=>a+b,0)/vals.length,up:vals.filter(v=>v>=500).length,down:vals.filter(v=>v<=-500).length})).sort((a,b)=>b.n-a.n);
- $('reasonStats').innerHTML=rs.length?rs.map(r=>`<div class="row"><div class="rowtop"><div><b>${esc(r.reason)}</b><div class="tiny">n=${r.n} ï¼ ãã®å¾+500 ${r.up} ï¼ -500 ${r.down}</div></div><div class="right"><b class="${r.av>=0?'pos':'neg'}">å¹³å ${signed(Math.round(r.av))}æ</b></div></div></div>`).join(''):'<div class="empty">ã¤ã¡çç±ã¤ãå®æ¦ãè²¯ã¾ãã¨çç±å¥ã«æ¯è¼ããã</div>';
+ $('reasonStats').innerHTML=rs.length?rs.map(r=>`<div class="row"><div class="rowtop"><div><b>${esc(r.reason)}</b><div class="tiny">n=${r.n} ／ その後+500 ${r.up} ／ -500 ${r.down}</div></div><div class="right"><b class="${r.av>=0?'pos':'neg'}">平均 ${signed(Math.round(r.av))}枚</b></div></div></div>`).join(''):'<div class="empty">ヤメ理由つき実戦が貯まると理由別に比較する。</div>';
 }
 
 
@@ -838,7 +838,7 @@ function bundleSnapshot(rec,date,statKey,graphKey,isFinal){
  };
 }
 function turkeyBundleToSnapshots(pkg){
- if(!pkg||pkg.kind!=='pekalog-turkey-bundle')throw new Error('ã¿ã¼ã­ã¼22å°JSONã§ã¯ãªãã');
+ if(!pkg||pkg.kind!=='pekalog-turkey-bundle')throw new Error('ターキー22台JSONではないよ');
  const rows=Array.isArray(pkg.machines)?pkg.machines:[], snaps=[];
  for(const rec of rows){
   if(!rec||!rec.machine)continue;
@@ -852,7 +852,7 @@ function turkeyBundleToSnapshots(pkg){
 
 function collectorToSnapshots(pkg){
  if(pkg?.kind==='pekalog-turkey-bundle')return turkeyBundleToSnapshots(pkg);
- if(!pkg||pkg.kind!=='pekalog-collector')throw new Error('PEKALOGåéJSONã§ã¯ãªãã');
+ if(!pkg||pkg.kind!=='pekalog-collector')throw new Error('PEKALOG収集JSONではないよ');
  const rows=Array.isArray(pkg.machines)?pkg.machines:[];
  const snaps=[];let graphOk=0,histOk=0,errors=0;
  for(const rec of rows){
@@ -869,7 +869,7 @@ function collectorToSnapshots(pkg){
  if(snaps.length)mergeData({snapshots:snaps});
  return {count:snaps.length,graphOk,histOk,errors,total:rows.length};
 }
-function collectorStatusText(r){if(r.bundle)return `â <strong>${r.machineCount}å°ã®åéå®äº</strong>ãæ¬æ¥LIVEï¼1æ¥åï¼2æ¥åãåããã¦ <strong>${r.count}ä»¶</strong> LABã¸è¿½å ãå·®æè§£æ ${r.graphOk}ä»¶ ï¼ å±¥æ­´ ${r.histOk}å°ã<br><span class="tiny">æ¬æ¥ã¯LIVEã1æ¥åã»2æ¥åã¯éåºãã¼ã¿ã¨ãã¦ä¿å­ãç¿æ¥ã®åéã§åæ¥ã®éåºå¤ãèªåçã«ç¢ºå®ãã¦ããã</span>`;return `â <strong>${r.count}/${r.total}å°ãLABã¸è¿½å </strong>ãå±¥æ­´ ${r.histOk}å°${r.graphOk?` ï¼ å·®æè§£æ ${r.graphOk}å°`:''}${r.errors?` ï¼ å¤±æ ${r.errors}å°`:''}ã${r.graphOk?'1000/2000æåæã¸ãã®ã¾ã¾åæ ãããã':'å·®æã¯ã°ã©ãç¹åã®è§£æãéã£ãå°ããèªååæ ããã'}`}
+function collectorStatusText(r){if(r.bundle)return `✅ <strong>${r.machineCount}台の収集完了</strong>。本日LIVE＋1日前＋2日前を合わせて <strong>${r.count}件</strong> LABへ追加。差枚解析 ${r.graphOk}件 ／ 履歴 ${r.histOk}台。<br><span class="tiny">本日はLIVE、1日前・2日前は閉店データとして保存。翌日の収集で前日の閉店値が自動的に確定していく。</span>`;return `✅ <strong>${r.count}/${r.total}台をLABへ追加</strong>。履歴 ${r.histOk}台${r.graphOk?` ／ 差枚解析 ${r.graphOk}台`:''}${r.errors?` ／ 失敗 ${r.errors}台`:''}。${r.graphOk?'1000/2000枚分析へそのまま反映したよ。':'差枚はグラフ点列の解析が通った台から自動反映する。'}`}
 
 function saveImportMeta(j,r,source){
  const meta={
@@ -890,51 +890,51 @@ function importMetaText(){
  const m=lastImportMeta();if(!m)return '';
  let when='';
  try{when=new Date(m.importedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}catch(e){}
- const dataDate=m.dataDate?` ï¼ ãã¼ã¿æ¥ ${m.dataDate}`:'';
- return `ð¥ æçµåè¾¼ï¼<strong>${when||'ä¸æ'}</strong>${m.machines!=null?` ï¼ ${m.machines}å°`:''}${m.snapshots!=null?` ï¼ ${m.snapshots}ä»¶`:''}${dataDate}`;
+ const dataDate=m.dataDate?` ／ データ日 ${m.dataDate}`:'';
+ return `📥 最終取込：<strong>${when||'不明'}</strong>${m.machines!=null?` ／ ${m.machines}台`:''}${m.snapshots!=null?` ／ ${m.snapshots}件`:''}${dataDate}`;
 }
 
 function importCollectorObject(j,source='collector'){const r=collectorToSnapshots(j);saveImportMeta(j,r,source);const el=$('collectorStatus');if(el)el.innerHTML=collectorStatusText(r)+'<br><span class="tiny">'+importMetaText()+'</span>';renderAll();return r}
-function importCollectorFile(ev){const f=ev.target.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const j=JSON.parse(rd.result);const r=importCollectorObject(j,'file');alert(`${r.machineCount??r.count}å°ã¶ãèª­ã¿è¾¼ãã ãï¼`)}catch(e){alert('åéJSONãèª­ã¿è¾¼ããªãã£ããï¼'+e.message)}ev.target.value=''};rd.readAsText(f)}
-function importCollectorPaste(){const t=$('collectorPaste')?.value.trim();if(!t)return alert('åéJSONãè²¼ãä»ãã¦ã­');try{const j=JSON.parse(t);const r=importCollectorObject(j,'paste');$('collectorPaste').value='';alert(`${r.machineCount??r.count}å°ã¶ãèª­ã¿è¾¼ãã ãï¼`)}catch(e){alert('è²¼ãä»ãJSONãèª­ã¿è¾¼ããªãã£ããï¼'+e.message)}}
+function importCollectorFile(ev){const f=ev.target.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const j=JSON.parse(rd.result);const r=importCollectorObject(j,'file');alert(`${r.machineCount??r.count}台ぶん読み込んだよ！`)}catch(e){alert('収集JSONを読み込めなかったよ：'+e.message)}ev.target.value=''};rd.readAsText(f)}
+function importCollectorPaste(){const t=$('collectorPaste')?.value.trim();if(!t)return alert('収集JSONを貼り付けてね');try{const j=JSON.parse(t);const r=importCollectorObject(j,'paste');$('collectorPaste').value='';alert(`${r.machineCount??r.count}台ぶん読み込んだよ！`)}catch(e){alert('貼り付けJSONを読み込めなかったよ：'+e.message)}}
 async function importCollectorClipboard(){
  const btn=$('collectorClipboardBtn');
  const old=btn?.textContent;
- if(btn){btn.disabled=true;btn.textContent='ð èª­ã¿åãä¸­â¦'}
+ if(btn){btn.disabled=true;btn.textContent='📋 読み取り中…'}
  try{
-  if(!navigator.clipboard?.readText)throw new Error('ãã®ãã©ã¦ã¶ã§ã¯ã¯ãªãããã¼ãèª­åãä½¿ãã¾ãã');
+  if(!navigator.clipboard?.readText)throw new Error('このブラウザではクリップボード読取が使えません');
   const t=(await navigator.clipboard.readText()).trim();
-  if(!t)throw new Error('ã¯ãªãããã¼ããç©ºã ã');
+  if(!t)throw new Error('クリップボードが空だよ');
   const j=JSON.parse(t);
   const r=importCollectorObject(j,'clipboard');
   if($('collectorPaste'))$('collectorPaste').value='';
-  alert(`â ${r.machineCount??r.count}å° ï¼ ${r.count}ä»¶ãåãè¾¼ãã ãï¼`);
+  alert(`✅ ${r.machineCount??r.count}台 ／ ${r.count}件を取り込んだよ！`);
  }catch(e){
   const msg=String(e?.message||e);
-  if(/denied|NotAllowed|permission|è¨±å¯/i.test(msg)){
-   alert('ã¯ãªãããã¼ãã®èª­åãè¨±å¯ãããªãã£ãããä¸ã®è²¼ãä»ãæ¬ã«é·æ¼ãâããã¼ã¹ããã§å¥ããã°OKï¼');
+  if(/denied|NotAllowed|permission|許可/i.test(msg)){
+   alert('クリップボードの読取が許可されなかったよ。下の貼り付け欄に長押し→「ペースト」で入れればOK！');
   }else{
-   alert('ã¯ãªãããã¼ãããèª­ã¿è¾¼ããªãã£ããï¼'+msg);
+   alert('クリップボードから読み込めなかったよ：'+msg);
   }
  }finally{
-  if(btn){btn.disabled=false;btn.textContent=old||'ð ã¯ãªãããã¼ãããåè¾¼'}
+  if(btn){btn.disabled=false;btn.textContent=old||'📋 クリップボードから取込'}
  }
 }
 
-async function loadRemote(silent=false){try{const r=await fetch('./daily.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error(r.status);const j=await r.json();mergeData(j);if(!silent)alert('daily.jsonãèª­ã¿è¾¼ãã ã')}catch(e){if(!silent)alert('daily.jsonã¯ã¾ã æ¥ç¶ããã¦ãªãããä»ã¯JSONèª­è¾¼ããã¢ã§è©¦ããã')}renderAll()}
+async function loadRemote(silent=false){try{const r=await fetch('./daily.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error(r.status);const j=await r.json();mergeData(j);if(!silent)alert('daily.jsonを読み込んだよ')}catch(e){if(!silent)alert('daily.jsonはまだ接続されてないよ。今はJSON読込かデモで試せる。')}renderAll()}
 function mergeData(j){const incoming=Array.isArray(j)?j:(j.snapshots||[]);if(!Array.isArray(incoming))return;const map=new Map((lab.snapshots||[]).map(s=>[(s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s]));for(const raw of incoming){const s={...raw,machine:normMachine(raw.machine)};map.set((s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s);}lab.snapshots=[...map.values()];__finalRowsCache0132=null;persist()}
-function demoData(){if(!confirm('åæç»é¢ç¢ºèªç¨ã®DEMOãã¼ã¿ãè¿½å ããï¼ï¼å®ãã¼ã¿ã§ã¯ããã¾ããï¼'))return;const models=['gogo3','gogo3','gogo3','my5','my5','neoim'];const machines=['301','302','303','311','312','321'];const dates=['2026-06-22','2026-07-22','2026-08-22','2026-09-10','2026-09-11'];let arr=[];dates.forEach((d,di)=>machines.forEach((m,i)=>{let g=4200+((di*777+i*433)%3500),big=14+((di*7+i*5)%20),reg=10+((di*5+i*3)%18),diff=((di*911+i*733)%4200)-1500;if(d.endsWith('-22')){g+=1300;big+=7;reg+=6;diff+=700}arr.push({date:d,ts:new Date(d+'T22:35:00+09:00').getTime(),machine:m,model:models[i],totalG:g,big,reg,diff,demo:true})}));
+function demoData(){if(!confirm('分析画面確認用のDEMOデータを追加する？（実データではありません）'))return;const models=['gogo3','gogo3','gogo3','my5','my5','neoim'];const machines=['301','302','303','311','312','321'];const dates=['2026-06-22','2026-07-22','2026-08-22','2026-09-10','2026-09-11'];let arr=[];dates.forEach((d,di)=>machines.forEach((m,i)=>{let g=4200+((di*777+i*433)%3500),big=14+((di*7+i*5)%20),reg=10+((di*5+i*3)%18),diff=((di*911+i*733)%4200)-1500;if(d.endsWith('-22')){g+=1300;big+=7;reg+=6;diff+=700}arr.push({date:d,ts:new Date(d+'T22:35:00+09:00').getTime(),machine:m,model:models[i],totalG:g,big,reg,diff,demo:true})}));
  // one unmistakable 72-peka DEMO record, explicitly demo only
  arr.push({date:'2026-08-22',ts:new Date('2026-08-22T22:36:00+09:00').getTime(),machine:'399-DEMO',model:'gogo3',totalG:8000,big:39,reg:33,diff:2600,demo:true});mergeData({snapshots:arr});renderAll()}
-function renderData(){const demos=(lab.snapshots||[]).filter(x=>x.demo).length,live=(lab.snapshots||[]).filter(x=>['pscube-live','pscube-collector','pscube-dom-collector','pscube-auto-sync'].includes(x.source)).length;let sync='';try{const m=JSON.parse(localStorage.getItem('pekalog_turkey_sync_meta_v1')||'null');if(m)sync=`<br>ð¦ æçµèªååæï¼<strong>${new Date(m.syncedAt).toLocaleString('ja-JP')}</strong> ï¼ ${m.machines}å°`;}catch(e){}const imp=importMetaText();$('dataStatus').innerHTML=`ã¹ãããã·ã§ãã <strong>${(lab.snapshots||[]).length}ä»¶</strong>${live?` ï¼ P's CUBE ${live}ä»¶`:''}${demos?`ï¼DEMO ${demos}ä»¶ï¼`:''}ã${sync}${imp?`<br>${imp}`:''}<br>åéJSONã»<code>daily.json</code>ã»CSV/JSONã¯å¨é¨åãåæã¨ã³ã¸ã³ã«å¥ãã`}
+function renderData(){const demos=(lab.snapshots||[]).filter(x=>x.demo).length,live=(lab.snapshots||[]).filter(x=>['pscube-live','pscube-collector','pscube-dom-collector','pscube-auto-sync'].includes(x.source)).length;let sync='';try{const m=JSON.parse(localStorage.getItem('pekalog_turkey_sync_meta_v1')||'null');if(m)sync=`<br>🦃 最終自動同期：<strong>${new Date(m.syncedAt).toLocaleString('ja-JP')}</strong> ／ ${m.machines}台`;}catch(e){}const imp=importMetaText();$('dataStatus').innerHTML=`スナップショット <strong>${(lab.snapshots||[]).length}件</strong>${live?` ／ P's CUBE ${live}件`:''}${demos?`（DEMO ${demos}件）`:''}。${sync}${imp?`<br>${imp}`:''}<br>収集JSON・<code>daily.json</code>・CSV/JSONは全部同じ分析エンジンに入る。`}
 function exportData(){const blob=new Blob([JSON.stringify({version:'0.13.6-live-plus-1000',exportedAt:new Date().toISOString(),snapshots:lab.snapshots,hypotheses},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pekalog_lab_backup.json';a.click();URL.revokeObjectURL(a.href)}
-function importFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(j.kind==='pekalog-collector'||j.kind==='pekalog-turkey-bundle'){const z=importCollectorObject(j);alert(`${z.count}å°ã¶ãã®åéJSONãèª­ã¿è¾¼ãã ã`)}else{if(j.snapshots)mergeData(j);if(Array.isArray(j.hypotheses)){hypotheses=j.hypotheses;persist()}renderAll();alert('LABãã¼ã¿ãèª­ã¿è¾¼ãã ã')}}catch(e){alert('JSONãèª­ã¿è¾¼ããªãã£ãã')}ev.target.value=''};r.readAsText(f)}
+function importFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(j.kind==='pekalog-collector'||j.kind==='pekalog-turkey-bundle'){const z=importCollectorObject(j);alert(`${z.count}台ぶんの収集JSONを読み込んだよ`)}else{if(j.snapshots)mergeData(j);if(Array.isArray(j.hypotheses)){hypotheses=j.hypotheses;persist()}renderAll();alert('LABデータを読み込んだよ')}}catch(e){alert('JSONを読み込めなかったよ')}ev.target.value=''};r.readAsText(f)}
 function parseCSVLine(line){const out=[];let cur='',q=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'){if(q&&line[i+1]==='"'){cur+='"';i++}else q=!q}else if(c===','&&!q){out.push(cur.trim());cur=''}else cur+=c}out.push(cur.trim());return out}
-function importCSVText(){const text=$('csvPaste').value.trim();if(!text)return alert('CSVãè²¼ã£ã¦ã­');const lines=text.split(/\r?\n/).filter(Boolean),first=parseCSVLine(lines[0]);const expected=['date','ts','machine','model','totalG','big','reg','diff'];let start=0,headers=expected;if(first.some(x=>expected.includes(x))){headers=first;start=1}let arr=[];for(let i=start;i<lines.length;i++){const vals=parseCSVLine(lines[i]),o={};headers.forEach((h,j)=>o[h]=vals[j]);['ts','totalG','big','reg','diff'].forEach(k=>{if(o[k]!==undefined&&o[k]!=='')o[k]=Number(o[k])});if(o.date&&o.machine)arr.push(o)}if(!arr.length)return alert('åãè¾¼ããè¡ããªãã£ãã');mergeData({snapshots:arr});$('csvPaste').value='';renderAll();alert(`${arr.length}ä»¶åãè¾¼ãã ã`)}
-function saveEventConfig(){const d=Number($('eventDay').value||22);if(d<1||d>31)return alert('ç¹å®æ¥ã¯1ã31ã§å¥ãã¦ã­');cfg.eventDay=d;cfg.extraEvents=$('extraEvents').value.split(',').map(x=>x.trim()).filter(Boolean);persist();renderAll();alert('ã¤ãã³ãè¨­å®ãä¿å­ããã ð¥')}
+function importCSVText(){const text=$('csvPaste').value.trim();if(!text)return alert('CSVを貼ってね');const lines=text.split(/\r?\n/).filter(Boolean),first=parseCSVLine(lines[0]);const expected=['date','ts','machine','model','totalG','big','reg','diff'];let start=0,headers=expected;if(first.some(x=>expected.includes(x))){headers=first;start=1}let arr=[];for(let i=start;i<lines.length;i++){const vals=parseCSVLine(lines[i]),o={};headers.forEach((h,j)=>o[h]=vals[j]);['ts','totalG','big','reg','diff'].forEach(k=>{if(o[k]!==undefined&&o[k]!=='')o[k]=Number(o[k])});if(o.date&&o.machine)arr.push(o)}if(!arr.length)return alert('取り込める行がなかったよ');mergeData({snapshots:arr});$('csvPaste').value='';renderAll();alert(`${arr.length}件取り込んだよ`)}
+function saveEventConfig(){const d=Number($('eventDay').value||22);if(d<1||d>31)return alert('特定日は1〜31で入れてね');cfg.eventDay=d;cfg.extraEvents=$('extraEvents').value.split(',').map(x=>x.trim()).filter(Boolean);persist();renderAll();alert('イベント設定を保存したよ 🔥')}
 function renderConfig(){if($('eventDay'))$('eventDay').value=cfg.eventDay||22;if($('extraEvents'))$('extraEvents').value=(cfg.extraEvents||[]).join(',')}
 
-/* ===== v0.13.3 ãªã³ããã³ãç ç©¶ããã« + å°å¥7/14æ¥ ===== */
+/* ===== v0.13.3 オンデマンド研究パネル + 台別7/14日 ===== */
 let activeResearchTool0133=null;
 let machinePeriod0133=14;
 let selectedMachine0133=null;
@@ -942,8 +942,8 @@ let selectedMachine0133=null;
 function openResearchTool0133(type){
  const overlay=$('researchOverlay0133');if(!overlay)return;
  activeResearchTool0133=type;
- const titles={pattern:'ð ææ¥ã»æéã«ã«ã',special:'ð¥ ç¹å®æ¥æ¨æ¸¬',layout:'ðº ä¸¦ã³ã»éç½®',machine:'ð å°å¥ 7æ¥ã»14æ¥'};
- if($('researchTitle0133'))$('researchTitle0133').textContent=titles[type]||'ç ç©¶';
+ const titles={pattern:'📅 曜日・時間カルテ',special:'🔥 特定日推測',layout:'🗺 並び・配置',machine:'📈 台別 7日・14日'};
+ if($('researchTitle0133'))$('researchTitle0133').textContent=titles[type]||'研究';
  document.querySelectorAll('.researchPanel').forEach(x=>x.classList.remove('active'));
  const ids={pattern:'researchPattern0133',special:'specialTailLabCard',layout:'researchLayout0133',machine:'researchMachine0133'};
  $(ids[type])?.classList.add('active');
@@ -991,21 +991,21 @@ function setMachinePeriod0133(n){
  renderMachineExplorer0133();
 }
 function machineChartSvg0133(rows){
- if(!rows.length)return '<div class="empty">ãã®æéã®éåºãã¼ã¿ãã¾ã ãªããã</div>';
+ if(!rows.length)return '<div class="empty">この期間の閉店データがまだないよ。</div>';
  const W=720,H=205,px=34,py=24,vals=rows.map(r=>Number(r.diff)).map(v=>Number.isFinite(v)?v:0),maxAbs=Math.max(500,...vals.map(Math.abs));
  const x=i=>rows.length===1?W/2:px+i*((W-px*2)/(rows.length-1));
  const y=v=>py+(maxAbs-v)/(maxAbs*2)*(H-py*2);
  const pts=vals.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' '),zero=y(0);
  const labels=rows.map((r,i)=>{if(rows.length>8&&i%2===1&&i!==rows.length-1)return '';return `<text class="chartLabel" x="${x(i).toFixed(1)}" y="${H-5}" text-anchor="middle">${esc(String(r.date).slice(5).replace('-','/'))}</text>`}).join('');
- const circles=vals.map((v,i)=>`<circle class="chartPoint" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="4"><title>${esc(rows[i].date)} ${signed(Math.round(v))}æ</title></circle>`).join('');
- return `<div class="machineChartWrap"><svg class="machineChart" viewBox="0 0 ${W} ${H}" aria-label="æ¥å¥éåºå·®æã°ã©ã"><line class="chartZero" x1="${px}" y1="${zero}" x2="${W-px}" y2="${zero}"></line><text class="chartLabel" x="5" y="${Math.max(12,py)}">+${fmt(maxAbs)}</text><text class="chartLabel" x="5" y="${H-py}">-${fmt(maxAbs)}</text><polyline class="chartLine" points="${pts}"></polyline>${circles}${labels}</svg></div>`;
+ const circles=vals.map((v,i)=>`<circle class="chartPoint" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="4"><title>${esc(rows[i].date)} ${signed(Math.round(v))}枚</title></circle>`).join('');
+ return `<div class="machineChartWrap"><svg class="machineChart" viewBox="0 0 ${W} ${H}" aria-label="日別閉店差枚グラフ"><line class="chartZero" x1="${px}" y1="${zero}" x2="${W-px}" y2="${zero}"></line><text class="chartLabel" x="5" y="${Math.max(12,py)}">+${fmt(maxAbs)}</text><text class="chartLabel" x="5" y="${H-py}">-${fmt(maxAbs)}</text><polyline class="chartLine" points="${pts}"></polyline>${circles}${labels}</svg></div>`;
 }
 function showMachineDetail0133(machine){selectedMachine0133=String(machine);renderMachineDetail0133();$('machineDetail0133')?.scrollIntoView({behavior:'smooth',block:'start'})}
 function renderMachineDetail0133(){
  const box=$('machineDetail0133');if(!box)return;
- if(!selectedMachine0133){box.innerHTML='<div class="notice">ä¸è¦§ããå°ãã¿ããããã¨ãããã«é±éã°ã©ããéããã</div>';return}
+ if(!selectedMachine0133){box.innerHTML='<div class="notice">一覧から台をタップすると、ここに週間グラフを開くよ。</div>';return}
  const rows=machineHistoryRows0133(selectedMachine0133,machinePeriod0133),last=rows.at(-1),p=profileMap().get(selectedMachine0133),sum=sumDiff0133(rows),ev=last?settingEvidence(last):null,strong=rows.map(r=>settingEvidence(r)).filter(e=>e?.strong).length,avgd=rows.length?sumDiff0133(rows)/rows.length:null,t1000=thousandStats0135(rows);
- box.innerHTML=`<div class="pickHero"><div class="rowtop"><div><b style="font-size:19px">${esc(selectedMachine0133)}çª ${esc(MODELS[last?.model||p?.model]||last?.model||p?.model||'')}</b><div class="tiny">ç´è¿${machinePeriod0133}æ¥ã«ã«ã / ${rows.length}æ¥ã¶ã</div></div><span class="pill ${ev?.score>=62?'good':'warn'}">ç´è¿è¨­å®ã¹ã³ã¢ ${ev?Math.round(ev.score):'-'}</span></div><div class="grid4" style="margin-top:10px"><div class="stat"><div class="k">æéç´¯è¨å·®æ</div><div class="v ${(sum??0)>=0?'pos':'neg'}">${sum===null?'-':signed(Math.round(sum))}</div></div><div class="stat"><div class="k">1000æå°é</div><div class="v">${t1000.valid?t1000.hits+'/'+t1000.valid+'æ¥':'-'}</div><div class="tiny">${t1000.rate==null?'ã°ã©ãåå¾å¾ã¡':(t1000.rate*100).toFixed(0)+'% ï¼ ã°ã©ãåå¾æ¸ã¿ã®ã¿'}</div></div><div class="stat"><div class="k">å¼·ãå¤å®</div><div class="v">${strong}/${rows.length}</div></div><div class="stat"><div class="k">æå¥æ¨å®ç</div><div class="v">${p?.hitRate==null?'-':(p.hitRate*100).toFixed(0)+'%'}</div></div></div><div style="margin-top:10px">${machineChartSvg0133(rows)}</div><div class="tiny" style="margin-top:7px">æ¥å¥ã®éåºå·®æãç·ã§æ¥ç¶ãåºåã®é±éã°ã©ããã®ãã®ã§ã¯ãªããPEKALOGã«ä¿å­ãããåæ¥ã®éåºå¤ããä½ãã«ã«ãã</div><div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>æ¥</th><th>å·®æ</th><th>G</th><th>BB</th><th>RB</th><th>è¨­å®score</th></tr></thead><tbody>${rows.slice().reverse().map(r=>{const e=settingEvidence(r),d=Number(r.diff);return `<tr><td>${esc(r.date.slice(5).replace('-','/'))}</td><td class="${d>=0?'pos':'neg'}">${Number.isFinite(d)?signed(Math.round(d)):'-'}</td><td>${fmt(r.totalG)}</td><td>${fmt(r.big)}</td><td>${fmt(r.reg)}</td><td>${e?Math.round(e.score):'-'}</td></tr>`}).join('')}</tbody></table></div></div>`;
+ box.innerHTML=`<div class="pickHero"><div class="rowtop"><div><b style="font-size:19px">${esc(selectedMachine0133)}番 ${esc(MODELS[last?.model||p?.model]||last?.model||p?.model||'')}</b><div class="tiny">直近${machinePeriod0133}日カルテ / ${rows.length}日ぶん</div></div><span class="pill ${ev?.score>=62?'good':'warn'}">直近設定スコア ${ev?Math.round(ev.score):'-'}</span></div><div class="grid4" style="margin-top:10px"><div class="stat"><div class="k">期間累計差枚</div><div class="v ${(sum??0)>=0?'pos':'neg'}">${sum===null?'-':signed(Math.round(sum))}</div></div><div class="stat"><div class="k">1000枚到達</div><div class="v">${t1000.valid?t1000.hits+'/'+t1000.valid+'日':'-'}</div><div class="tiny">${t1000.rate==null?'グラフ取得待ち':(t1000.rate*100).toFixed(0)+'% ／ グラフ取得済みのみ'}</div></div><div class="stat"><div class="k">強め判定</div><div class="v">${strong}/${rows.length}</div></div><div class="stat"><div class="k">投入推定率</div><div class="v">${p?.hitRate==null?'-':(p.hitRate*100).toFixed(0)+'%'}</div></div></div><div style="margin-top:10px">${machineChartSvg0133(rows)}</div><div class="tiny" style="margin-top:7px">日別の閉店差枚を線で接続。店内の週間グラフそのものではなく、PEKALOGに保存された各日の閉店値から作るカルテ。</div><div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>日</th><th>差枚</th><th>G</th><th>BB</th><th>RB</th><th>設定score</th></tr></thead><tbody>${rows.slice().reverse().map(r=>{const e=settingEvidence(r),d=Number(r.diff);return `<tr><td>${esc(r.date.slice(5).replace('-','/'))}</td><td class="${d>=0?'pos':'neg'}">${Number.isFinite(d)?signed(Math.round(d)):'-'}</td><td>${fmt(r.totalG)}</td><td>${fmt(r.big)}</td><td>${fmt(r.reg)}</td><td>${e?Math.round(e.score):'-'}</td></tr>`}).join('')}</tbody></table></div></div>`;
 }
 function renderMachineExplorer0133(){
  const list=$('machineExplorerList0133');if(!list)return;
@@ -1014,7 +1014,7 @@ function renderMachineExplorer0133(){
  else if(sort==='diff')xs.sort((a,b)=>(b.diffPeriod??-1e12)-(a.diffPeriod??-1e12));
  else if(sort==='temp')xs.sort((a,b)=>(b.p?.temp??-1)-(a.p?.temp??-1));
  else xs.sort((a,b)=>(b.p?.hitRate??-1)-(a.p?.hitRate??-1)||(b.p?.temp??-1)-(a.p?.temp??-1)||Number(a.machine)-Number(b.machine));
- list.innerHTML=xs.length?xs.map((x,i)=>{const rate=x.p?.hitRate==null?'-':(x.p.hitRate*100).toFixed(1)+'%',temp=x.p?.temp==null?'-':Math.round(x.p.temp),score=x.e?Math.round(x.e.score):'-',diff=x.diffPeriod;return `<div class="row machineExplorerRow" onclick="showMachineDetail0133('${esc(x.machine)}')"><div class="rowtop"><div><b><span class="rankNo">#${i+1}</span>${esc(x.machine)}çª ${esc(MODELS[x.model]||x.model||'')}</b><div class="tiny">æå¥æ¨å®ç ${rate} ï¼ ç´è¿æ¸©åº¦ ${temp} ï¼ ç´è¿éåºscore ${score}</div></div><div class="right"><b class="${(diff??0)>=0?'pos':'neg'}">${machinePeriod0133}æ¥ ${diff===null?'-':signed(Math.round(diff))}æ</b><div class="tiny">ã¿ããã§ã°ã©ã</div></div></div></div>`}).join(''):'<div class="empty">éåºãã¼ã¿ãè²¯ã¾ãã¨å°å¥ã«ã«ããä½ããã</div>';
+ list.innerHTML=xs.length?xs.map((x,i)=>{const rate=x.p?.hitRate==null?'-':(x.p.hitRate*100).toFixed(1)+'%',temp=x.p?.temp==null?'-':Math.round(x.p.temp),score=x.e?Math.round(x.e.score):'-',diff=x.diffPeriod;return `<div class="row machineExplorerRow" onclick="showMachineDetail0133('${esc(x.machine)}')"><div class="rowtop"><div><b><span class="rankNo">#${i+1}</span>${esc(x.machine)}番 ${esc(MODELS[x.model]||x.model||'')}</b><div class="tiny">投入推定率 ${rate} ／ 直近温度 ${temp} ／ 直近閉店score ${score}</div></div><div class="right"><b class="${(diff??0)>=0?'pos':'neg'}">${machinePeriod0133}日 ${diff===null?'-':signed(Math.round(diff))}枚</b><div class="tiny">タップでグラフ</div></div></div></div>`}).join(''):'<div class="empty">閉店データが貯まると台別カルテを作るよ。</div>';
  if(selectedMachine0133&&!xs.some(x=>x.machine===selectedMachine0133))selectedMachine0133=null;
  renderMachineDetail0133();
 }
@@ -1037,7 +1037,7 @@ function renderAll(){
  }
 }
 
-/* ===== ç¹å®æ¥ã»æ«å°¾LABï¼çµ±åæ¸ã¿ / UTF-8ä¿®å¾©æ¸ã¿ï¼ ===== */
+/* ===== 特定日・末尾LAB（統合済み / UTF-8修復済み） ===== */
 function dateDom(d){
     const m=String(d||'').match(/^\d{4}-\d{2}-(\d{2})$/);
     return m?Number(m[1]):null;
@@ -1087,21 +1087,21 @@ function dateDom(d){
     return v==null?'-':(v*100).toFixed(1)+'%';
   }
   function trendLabel(n,delta){
-    if(n<3)return 'ææå°';
-    if(n<5)return 'è¦³å¯ä¸­';
-    if(delta==null)return 'æ¯è¼å¾ã¡';
-    if(delta>=.15)return 'ð¥ é£åå¼·ã';
-    if(delta>=.08)return 'â ããé£å';
-    if(delta<=-.12)return 'â éå¾å';
-    return 'â å·®å°';
+    if(n<3)return '材料少';
+    if(n<5)return '観察中';
+    if(delta==null)return '比較待ち';
+    if(delta>=.15)return '🔥 連動強め';
+    if(delta>=.08)return '↗ やや連動';
+    if(delta<=-.12)return '↘ 逆傾向';
+    return '↔ 差小';
   }
 
   const SPECIAL_DEFS=[
-    {key:'d5',label:'5ã®ã¤ãæ¥',test:d=>dateDom(d)%10===5},
-    {key:'d7',label:'7ã®ã¤ãæ¥',test:d=>dateDom(d)%10===7},
-    {key:'d22',label:'22æ¥',test:d=>dateDom(d)===22},
-    {key:'monthEnd',label:'ææ«3æ¥',test:d=>isMonthEnd3(d)},
-    {key:'event',label:'ç»é²EVENT',test:d=>isEventDate(d)}
+    {key:'d5',label:'5のつく日',test:d=>dateDom(d)%10===5},
+    {key:'d7',label:'7のつく日',test:d=>dateDom(d)%10===7},
+    {key:'d22',label:'22日',test:d=>dateDom(d)===22},
+    {key:'monthEnd',label:'月末3日',test:d=>isMonthEnd3(d)},
+    {key:'event',label:'登録EVENT',test:d=>isEventDate(d)}
   ];
 
   function specialStat(def,all){
@@ -1118,8 +1118,8 @@ function dateDom(d){
     const b=all.filter(x=>eligibleDates.has(x.r.date)&&machineTail(x.r.machine)!==dayTail(x.r.date));
     const sa=rowStat(a),sb=rowStat(b);
     return {
-      label:'å¨æ¥ï¼æ¥ä»æ«å°¾ï¼å°çªæ«å°¾',
-      baseLabel:'åæ¥ã®æ«å°¾ä¸ä¸è´',
+      label:'全日：日付末尾＝台番末尾',
+      baseLabel:'同日の末尾不一致',
       ...sa,baseN:sb.n,baseRate:sb.rate,
       delta:sa.rate!=null&&sb.rate!=null?sa.rate-sb.rate:null
     };
@@ -1131,7 +1131,7 @@ function dateDom(d){
     const sa=rowStat(a),sb=rowStat(b);
     return {
       label,
-      baseLabel:`æ«å°¾${tail}ã»ãã®ä»æ¥`,
+      baseLabel:`末尾${tail}・その他日`,
       ...sa,baseN:sb.n,baseRate:sb.rate,
       delta:sa.rate!=null&&sb.rate!=null?sa.rate-sb.rate:null
     };
@@ -1171,32 +1171,32 @@ function dateDom(d){
     sec.innerHTML=`
       <div class="sectionTitle">
         <div>
-          <h3>ð¢ ç¹å®æ¥ã»æ«å°¾ LAB</h3>
-          <div class="tiny">5ã®æ¥ã»7ã®æ¥ã»22æ¥ã»ææ«ã¨ãå°çªæ«å°¾ã®é£åãéåºãã¼ã¿ã ãã§æ¯è¼ã</div>
+          <h3>🔢 特定日・末尾 LAB</h3>
+          <div class="tiny">5の日・7の日・22日・月末と、台番末尾の連動を閉店データだけで比較。</div>
         </div>
         <span class="pill event">SPECIAL</span>
       </div>
 
       <div class="notice" style="margin-top:8px">
-        <strong>ãéå¸¸æ¥æ¯ +âptã</strong>ã¯ç¬èªç¹æ°ã§ã¯ãªããå¼·ãçã®å·®ï¼ãã¼ã»ã³ããã¤ã³ãï¼ã
-        ä¾ï¼63% â 24% ï¼ <strong>+39pt</strong>ã<br>
-        <span class="tiny">å¹³åå·®æã®ï¼ã¯å®¢å´ãã©ã¹ããµã³ãã«ãå°ãªãéã¯åè£ç¹ã«ã¯ã¾ã å ãããç ç©¶è¡¨ç¤ºã ãã«ããã</span>
+        <strong>「通常日比 +○pt」</strong>は独自点数ではなく、強め率の差（パーセントポイント）。
+        例：63% − 24% ＝ <strong>+39pt</strong>。<br>
+        <span class="tiny">平均差枚の＋は客側プラス。サンプルが少ない間は候補点にはまだ加えず、研究表示だけにする。</span>
       </div>
 
       <div id="specialDaySummary" class="grid4" style="margin-top:10px"></div>
 
-      <div class="pickSub" style="margin-top:12px">ð ç¹å®æ¥ vs ãã®ä»æ¥</div>
+      <div class="pickSub" style="margin-top:12px">📆 特定日 vs その他日</div>
       <div id="specialDayTable" class="tablewrap"></div>
 
-      <div class="pickSub" style="margin-top:12px">ð¯ æ¥ä»æ«å°¾ Ã å°çªæ«å°¾</div>
+      <div class="pickSub" style="margin-top:12px">🎯 日付末尾 × 台番末尾</div>
       <div id="dateTailTable" class="tablewrap"></div>
 
-      <div class="pickSub" style="margin-top:12px">ð ç¹å®æ¥ã®æ«å°¾TOP</div>
+      <div class="pickSub" style="margin-top:12px">👀 特定日の末尾TOP</div>
       <div id="specialTailTop" class="list"></div>
 
       <div class="tiny" style="margin-top:8px">
-        â»ãå¼·ããã¯æ¢å­ã®è¨­å®æ¨å®ã­ã¸ãã¯ã¨åããå®è¨­å®ã®æ­å®ã§ã¯ãªããã
-        ææ«ã¯ãåæã®æçµ3æ¥ãã§éè¨ã
+        ※「強め」は既存の設定推定ロジックと同じ。実設定の断定ではないよ。
+        月末は「各月の最終3日」で集計。
       </div>`;
     anchor.insertAdjacentElement('afterend',sec);
   }
@@ -1214,17 +1214,17 @@ function dateDom(d){
 
     sum.innerHTML=stats.slice(0,4).map(x=>`
       <div class="stat">
-        <div class="k">${esc(x.label)} å¼·ãç</div>
+        <div class="k">${esc(x.label)} 強め率</div>
         <div class="v">${rate(x.rate)}</div>
-        <div class="tiny">${x.hits}/${x.n||0}å°æ¥ ï¼ ${x.days}æ¥<br>${x.delta==null?'æ¯è¼å¾ã¡':'ãã®ä»æ¥æ¯ '+pp(x.delta)}</div>
+        <div class="tiny">${x.hits}/${x.n||0}台日 ／ ${x.days}日<br>${x.delta==null?'比較待ち':'その他日比 '+pp(x.delta)}</div>
       </div>`).join('');
 
     table.innerHTML=`
       <table>
         <thead>
           <tr>
-            <th>æ¡ä»¶</th><th>æ¥æ°</th><th>å¤å®å°</th><th>å¼·ã</th><th>å¼·ãç</th>
-            <th>ãã®ä»æ¥ç</th><th>éå¸¸æ¥æ¯</th><th>å¹³åå·®æ(å®¢)</th>
+            <th>条件</th><th>日数</th><th>判定台</th><th>強め</th><th>強め率</th>
+            <th>その他日率</th><th>通常日比</th><th>平均差枚(客)</th>
           </tr>
         </thead>
         <tbody>
@@ -1248,17 +1248,17 @@ function dateDom(d){
 
     const tailStats=[
       tailMatchStats(all),
-      specificTailStat(all,'5ã®æ¥ Ã æ«å°¾5',d5.test,5),
-      specificTailStat(all,'7ã®æ¥ Ã æ«å°¾7',d7.test,7),
-      specificTailStat(all,'22æ¥ Ã æ«å°¾2',d22.test,2)
+      specificTailStat(all,'5の日 × 末尾5',d5.test,5),
+      specificTailStat(all,'7の日 × 末尾7',d7.test,7),
+      specificTailStat(all,'22日 × 末尾2',d22.test,2)
     ];
 
     tailTable.innerHTML=`
       <table>
         <thead>
           <tr>
-            <th>æ¡ä»¶</th><th>å¯¾è±¡n</th><th>å¼·ãç</th><th>æ¯è¼åºæº</th><th>åºæºç</th>
-            <th>å·®</th><th>å¹³åå·®æ(å®¢)</th><th>å¤å®</th>
+            <th>条件</th><th>対象n</th><th>強め率</th><th>比較基準</th><th>基準率</th>
+            <th>差</th><th>平均差枚(客)</th><th>判定</th>
           </tr>
         </thead>
         <tbody>
@@ -1280,29 +1280,29 @@ function dateDom(d){
     top.innerHTML=topDefs.map(def=>{
       const xs=tailTopFor(def,all);
       if(!xs.length){
-        return `<div class="row"><b>${esc(def.label)}</b><div class="tiny">æ«å°¾å¥ã®å¤å®ãã¾ã è¶³ããªããã</div></div>`;
+        return `<div class="row"><b>${esc(def.label)}</b><div class="tiny">末尾別の判定がまだ足りないよ。</div></div>`;
       }
       return `<div class="row">
         <div class="rowtop">
-          <div><b>${esc(def.label)}</b><div class="tiny">åãç¹å®æ¥ã®ä¸­ã§ãåæ«å°¾ããä»æ«å°¾ãã¨æ¯è¼ã</div></div>
-          <span class="pill">${xs.reduce((s,x)=>s+x.n,0)}å°æ¥</span>
+          <div><b>${esc(def.label)}</b><div class="tiny">同じ特定日の中で、各末尾を「他末尾」と比較。</div></div>
+          <span class="pill">${xs.reduce((s,x)=>s+x.n,0)}台日</span>
         </div>
         <div style="margin-top:7px">
           ${xs.map((x,i)=>`
             <span class="pill ${i===0&&x.n>=5?'good':''}" style="margin:2px">
-              #${i+1} æ«å°¾${x.tail} ${rate(x.rate)} / ä»æ«å°¾æ¯ ${pp(x.delta)} / n=${x.n}
+              #${i+1} 末尾${x.tail} ${rate(x.rate)} / 他末尾比 ${pp(x.delta)} / n=${x.n}
             </span>`).join('')}
         </div>
       </div>`;
     }).join('');
   }
 
-/* ===== æ´æ°ãã¿ã³ï¼çµ±åæ¸ã¿ï¼ ===== */
+/* ===== 更新ボタン（統合済み） ===== */
 function initForceUpdateButton(){
  const btn = document.createElement('button');
    btn.id = 'pekalogForceUpdateBtn';
-   btn.textContent = 'ð æ´æ°';
-   btn.title = 'ææ°çãèª­ã¿ç´ã';
+   btn.textContent = '🔄 更新';
+   btn.title = '最新版を読み直す';
 
    Object.assign(btn.style,{
      position:'fixed',
@@ -1322,10 +1322,10 @@ function initForceUpdateButton(){
 
    btn.addEventListener('click', async ()=>{
      btn.disabled = true;
-     btn.textContent = 'ð æ´æ°ä¸­...';
+     btn.textContent = '🔄 更新中...';
 
      try{
-       /* localStorageã¯æ¶ããªã */
+       /* localStorageは消さない */
        if('serviceWorker' in navigator){
          const regs = await navigator.serviceWorker.getRegistrations();
          await Promise.all(
@@ -1333,7 +1333,7 @@ function initForceUpdateButton(){
          );
        }
 
-       /* ãã©ã¦ã¶/PWAã®ã­ã£ãã·ã¥ã ãåé¤ */
+       /* ブラウザ/PWAのキャッシュだけ削除 */
        if('caches' in window){
          const keys = await caches.keys();
          await Promise.all(
@@ -1353,7 +1353,7 @@ function initForceUpdateButton(){
 }
 
 
-/* ===== åä¸èµ·å ===== */
+/* ===== 単一起動 ===== */
 
 document.title='PEKALOG LAB v0.13.6 LIVE + 1000';
 const __ver0132=document.querySelector('.ver');
@@ -1376,7 +1376,7 @@ $('hDate').value=todayJST();
 initLiveUI();
 initForceUpdateButton();
 
-/* ã¾ãä¿å­æ¸ã¿ãã¼ã¿ã§1åã ãæç»ãdaily.jsonã¯ååæç»å¾ã«æ´æ° */
+/* まず保存済みデータで1回だけ描画。daily.jsonは初回描画後に更新 */
 renderAll();
 if(typeof requestAnimationFrame==='function'){
  requestAnimationFrame(()=>loadRemote(true));
