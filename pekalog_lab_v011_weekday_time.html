@@ -1365,7 +1365,73 @@ if(typeof requestAnimationFrame==='function'){
 }else{
  setTimeout(()=>loadRemote(true),0);
 }
+/* =========================================================
+   PEKALOG LAB PATCH
+   687 ニューキングハナハナV対応
+   ========================================================= */
 
+(function patchMachine687(){
+
+  const HANA687_NAME = 'ニューキングハナハナV';
+
+  // すでにLABに保存されている687番も補正
+  function fix687Rows(){
+    if(!window.lab || !Array.isArray(lab.snapshots)) return;
+
+    let changed = false;
+
+    lab.snapshots.forEach(row => {
+      if(String(row.machine) !== '687') return;
+
+      if(
+        row.model === 'unknown' ||
+        !row.model ||
+        String(row.model).toLowerCase() === 'unknown'
+      ){
+        row.model = 'newkinghana5';
+        changed = true;
+      }
+
+      if(
+        !row.modelName ||
+        String(row.modelName).toLowerCase() === 'unknown'
+      ){
+        row.modelName = HANA687_NAME;
+        changed = true;
+      }
+    });
+
+    if(changed){
+      try{
+        persist();
+      }catch(e){
+        console.warn('687 persist:', e);
+      }
+    }
+  }
+
+  // LAB内の機種名辞書にも追加
+  if(typeof MODELS === 'object' && MODELS){
+    MODELS.newkinghana5 = HANA687_NAME;
+  }
+
+  fix687Rows();
+
+  // 今後データを取り込んだあとにも自動補正
+  const originalMergeData =
+    typeof mergeData === 'function' ? mergeData : null;
+
+  if(originalMergeData){
+    window.mergeData = function(j){
+      const result = originalMergeData(j);
+      fix687Rows();
+      return result;
+    };
+  }
+
+  console.log('🌺 687 ニューキングハナハナV patch loaded');
+
+})();
 </script>
 </body>
 </html>
