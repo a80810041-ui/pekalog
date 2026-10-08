@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>PEKALOG LAB v0.13.8 順位つき空き台チェッカー</title>
+<title>PEKALOG LAB v0.13.9 ランキング比較</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -739,6 +739,18 @@ function checkVacantMachines0137(){
    return index<0?'順位なし':`${index+1}位 / ${list.length}台`;
  };
 
+ const rankContext=(machine,isLive)=>{
+   const list=isLive?liveRank:morningRank;
+   const index=list.findIndex(r=>r.machine===machine);
+   if(index<0)return '<div class="tiny">ランキング対象外</div>';
+   const indices=[...new Set([0,1,2,index-1,index,index+1].filter(i=>i>=0&&i<list.length))].sort((a,b)=>a-b);
+   return `<div style="margin-top:12px;padding:10px;border-radius:12px;background:#121e2c"><div style="font-weight:800;margin-bottom:7px">🏆 全台ランキングと前後の順位</div>${indices.map((i,k)=>{
+     const entry=list[i],selected=entry.machine===machine;
+     const gap=k&&i>indices[k-1]+1?'<div class="tiny" style="text-align:center">⋮</div>':'';
+     const occupied=occ.has(entry.machine)?' 🚫着席指定':'';
+     return `${gap}<div style="padding:6px 8px;border-radius:8px;${selected?'background:#24465b;border:1px solid #7ee3ff;':''}"><b>${i+1}位</b>　${esc(entry.machine)}番　${Math.round(entry.score)}/100${selected?' ◀ この台':''}${occupied}</div>`;
+   }).join('')}<div class="tiny" style="margin-top:7px">※順位は採点上の比較。空席・勝率を保証するものではありません。</div></div>`;
+ };
  const found=nums.map(machine=>{
    const past=historical.filter(r=>String(r.machine)===machine);
    const live=rows.filter(r=>String(r.machine)===machine&&r.date===today&&r.isFinal===false).at(-1);
@@ -758,9 +770,22 @@ function checkVacantMachines0137(){
    if(x.missing)return `<div class="notice">⚠️ ${esc(x.machine)}番：保存データが見つからないよ。</div>`;
    const score=x.now||x.morning,mode=x.now?'🔥 今から':'🌅 朝イチ参考';
    const rank=ranking(x.machine,!!x.now);
+   const cautions=[];
+   if(!x.live)cautions.push('今日のLIVEデータがないため、当日の状況を評価できない');
+   if(x.live){
+     const d=x.live, diff=Number(d.diff),game=Number(d.currentGame),spins=Number(d.totalG);
+     if(d.diff!==null&&d.diff!==undefined&&d.diff!==''&&Number.isFinite(diff)&&diff<0)cautions.push(`現時点の推定差枚は${signed(Math.round(diff))}枚`);
+     if(d.currentGame!==null&&d.currentGame!==undefined&&d.currentGame!==''&&Number.isFinite(game)&&game>=500)cautions.push(`現在${Math.round(game)}Gでボーナス間のハマりが長め`);
+     if(Number.isFinite(spins)&&spins<1000)cautions.push(`今日の総回転${Math.round(spins)}Gでサンプルが少なめ`);
+   }
+   if(score?.score<45)cautions.push('採点スコアは控えめ。無理に座らない選択も');
+   if(!cautions.length)cautions.push('目立つ警戒条件は少ないけれど、短期の出玉は予測できない');
+   const cautionHtml=`<details class="candidateDetails"><summary>⚠️ 見送る理由・注意点</summary>${cautions.map(t=>`<div class="tiny" style="margin:6px 0">・${esc(t)}</div>`).join('')}</details>`;
+   const contextHtml=rankContext(x.machine,!!x.now);
+
    const reasons=(score?.reasons||[]).map(t=>`<div class="tiny" style="margin:5px 0">・${esc(t)}</div>`).join('');
    const d=x.live,stat=d?`今日 ${fmt(d.totalG)}G / BB${fmt(d.big)} RB${fmt(d.reg)} / 差枚 ${Number.isFinite(Number(d.diff))?signed(Math.round(d.diff))+'枚':'不明'} / 現在G ${d.currentGame??'不明'}`:'今日のLIVE未取得';
-   return `<div class="pickHero" style="margin:10px 0;padding:13px"><div class="rowtop"><b>${esc(x.machine)}番 ${esc(MODELS[x.model]||x.model||'機種不明')}</b><div class="right"><b>${Math.round(score?.score||0)}/100</b><div class="tiny">${mode}</div><div style="font-weight:800;color:#7ee3ff;margin-top:4px">🏅 おすすめ ${esc(rank)}</div></div></div><div class="tiny">${esc(stat)}</div><div style="margin-top:9px">🚀 1000枚到達：7日 ${esc(rate(x.a))} / 14日 ${esc(rate(x.b))}</div>${x.occupied?'<div class="tiny">🚫 座られてる指定中</div>':''}<details class="candidateDetails"><summary>なぜこの評価？</summary>${reasons||'<div class="tiny">根拠データ不足</div>'}</details></div>`;
+   return `<div class="pickHero" style="margin:10px 0;padding:13px"><div class="rowtop"><b>${esc(x.machine)}番 ${esc(MODELS[x.model]||x.model||'機種不明')}</b><div class="right"><b>${Math.round(score?.score||0)}/100</b><div class="tiny">${mode}</div><div style="font-weight:800;color:#7ee3ff;margin-top:4px">🏅 おすすめ ${esc(rank)}</div></div></div><div class="tiny">${esc(stat)}</div><div style="margin-top:9px">🚀 1000枚到達：7日 ${esc(rate(x.a))} / 14日 ${esc(rate(x.b))}</div>${x.occupied?'<div class="tiny">🚫 座られてる指定中</div>':''}<details class="candidateDetails"><summary>なぜこの評価？</summary>${reasons||'<div class="tiny">根拠データ不足</div>'}</details>${cautionHtml}${contextHtml}</div>`;
  }).join('');
 }
 function renderSeatPicks(){
