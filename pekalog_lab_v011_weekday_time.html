@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>PEKALOG LAB v0.13.7 空き台チェッカー</title>
+<title>PEKALOG LAB v0.13.8 順位つき空き台チェッカー</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -41,7 +41,7 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 @media(max-width:720px){.pickGrid{grid-template-columns:1fr}}
 
 
-/* ===== v0.13.7 空き台チェッカー ===== */
+/* ===== v0.13.8 順位つき空き台チェッカー ===== */
 .decisionCard{border:1px solid #3c5972;background:linear-gradient(180deg,#152233,#0d131b);box-shadow:0 14px 40px rgba(0,0,0,.28)}
 .decisionTitle{font-size:26px;font-weight:950;letter-spacing:.01em;margin:0}.decisionSub{font-size:12px;color:var(--muted);margin-top:4px}
 .todayDecisionHero{margin:10px 0 12px;padding:14px;border-radius:16px;background:#0b1017;border:1px solid #31465b}
@@ -61,7 +61,7 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 </head>
 <body>
 <div class="wrap">
-<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.13.7 空き台チェッカー</div></header>
+<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.13.8 順位つき空き台チェッカー</div></header>
 <div class="nav" id="nav">
  <button class="btn dark active" data-view="dash">🏠 LAB</button>
  <button class="btn dark" data-view="hyp">🧠 仮説</button>
@@ -717,7 +717,7 @@ function pickHtml(c,index,model,machine,isLive=false){
  return `<div class="pickHero"><div class="rowtop"><div><div class="pickTitle"><span class="pickRank">${badge}</span><b>${esc(machine)}番 ${esc(MODELS[model]||model||'')}</b></div><div class="pickConfidence">${esc(c.confidence)}${c.n?` / 閉店n=${c.n}`:''}${c.aya?' / 綾ちゃん脳':''}</div></div><div class="right"><div class="pickScore">${Math.round(c.score)}<small>/100</small></div><span class="pill ${pickClass(c.score)}">${label}</span></div></div><details class="candidateDetails"><summary>なぜこの台？ 詳細を見る</summary><div class="reasonList">${reasons||'<div class="reason">・まだデータ不足</div>'}</div></details>${seatBtn}</div>`;
 }
 
-/* ===== v0.13.7 空き台チェッカー：既存の朝・今から採点を再利用 ===== */
+/* ===== v0.13.8 順位つき空き台チェッカー：既存の朝・今から採点を再利用 ===== */
 function checkVacantMachines0137(){
  const box=$('vacantMachineResult0137'),raw=($('vacantMachineInput0137')?.value||'').trim();
  if(!box)return;
@@ -725,6 +725,20 @@ function checkVacantMachines0137(){
  if(!nums.length){box.innerHTML='<div class="tiny">台番号を入力してね。</div>';return}
  const today=todayJST(),rows=finalRows(),pm=profileMap(),occ=occupiedMachines(today);
  const historical=rows.filter(r=>r.isFinal!==false&&String(r.date||'')<today);
+ // 全台の順位を同一採点式で算出。入力した台だけで順位を振らない。
+ const liveAll=rows.filter(r=>r.date===today&&r.isFinal===false&&r.machine);
+ const liveRank=[...new Map(liveAll.map(r=>[String(r.machine),r])).values()]
+   .map(r=>({machine:String(r.machine),score:ayaCandidate(r).score}))
+   .sort((a,b)=>b.score-a.score||a.machine.localeCompare(b.machine));
+ const morningMachines=[...new Set(rows.filter(r=>r.isFinal!==false&&String(r.date||'')<today&&r.machine).map(r=>String(r.machine)))];
+ const morningRank=morningMachines.map(machine=>({machine,score:morningCandidate(pm.get(machine),today).score}))
+   .sort((a,b)=>b.score-a.score||a.machine.localeCompare(b.machine));
+ const ranking=(machine,isLive)=>{
+   const list=isLive?liveRank:morningRank;
+   const index=list.findIndex(r=>r.machine===machine);
+   return index<0?'順位なし':`${index+1}位 / ${list.length}台`;
+ };
+
  const found=nums.map(machine=>{
    const past=historical.filter(r=>String(r.machine)===machine);
    const live=rows.filter(r=>String(r.machine)===machine&&r.date===today&&r.isFinal===false).at(-1);
@@ -743,9 +757,10 @@ function checkVacantMachines0137(){
  box.innerHTML=found.map(x=>{
    if(x.missing)return `<div class="notice">⚠️ ${esc(x.machine)}番：保存データが見つからないよ。</div>`;
    const score=x.now||x.morning,mode=x.now?'🔥 今から':'🌅 朝イチ参考';
+   const rank=ranking(x.machine,!!x.now);
    const reasons=(score?.reasons||[]).map(t=>`<div class="tiny" style="margin:5px 0">・${esc(t)}</div>`).join('');
    const d=x.live,stat=d?`今日 ${fmt(d.totalG)}G / BB${fmt(d.big)} RB${fmt(d.reg)} / 差枚 ${Number.isFinite(Number(d.diff))?signed(Math.round(d.diff))+'枚':'不明'} / 現在G ${d.currentGame??'不明'}`:'今日のLIVE未取得';
-   return `<div class="pickHero" style="margin:10px 0;padding:13px"><div class="rowtop"><b>${esc(x.machine)}番 ${esc(MODELS[x.model]||x.model||'機種不明')}</b><div class="right"><b>${Math.round(score?.score||0)}/100</b><div class="tiny">${mode}</div></div></div><div class="tiny">${esc(stat)}</div><div style="margin-top:9px">🚀 1000枚到達：7日 ${esc(rate(x.a))} / 14日 ${esc(rate(x.b))}</div>${x.occupied?'<div class="tiny">🚫 座られてる指定中</div>':''}<details class="candidateDetails"><summary>なぜこの評価？</summary>${reasons||'<div class="tiny">根拠データ不足</div>'}</details></div>`;
+   return `<div class="pickHero" style="margin:10px 0;padding:13px"><div class="rowtop"><b>${esc(x.machine)}番 ${esc(MODELS[x.model]||x.model||'機種不明')}</b><div class="right"><b>${Math.round(score?.score||0)}/100</b><div class="tiny">${mode}</div><div style="font-weight:800;color:#7ee3ff;margin-top:4px">🏅 おすすめ ${esc(rank)}</div></div></div><div class="tiny">${esc(stat)}</div><div style="margin-top:9px">🚀 1000枚到達：7日 ${esc(rate(x.a))} / 14日 ${esc(rate(x.b))}</div>${x.occupied?'<div class="tiny">🚫 座られてる指定中</div>':''}<details class="candidateDetails"><summary>なぜこの評価？</summary>${reasons||'<div class="tiny">根拠データ不足</div>'}</details></div>`;
  }).join('');
 }
 function renderSeatPicks(){
@@ -1396,9 +1411,9 @@ function initForceUpdateButton(){
 
 /* ===== 単一起動 ===== */
 
-document.title='PEKALOG LAB v0.13.7 空き台チェッカー';
+document.title='PEKALOG LAB v0.13.8 順位つき空き台チェッカー';
 const __ver0132=document.querySelector('.ver');
-if(__ver0132)__ver0132.textContent='v0.13.7 空き台チェッカー';
+if(__ver0132)__ver0132.textContent='v0.13.8 順位つき空き台チェッカー';
 
 nav();
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&activeResearchTool0133)closeResearchTool0133()});
