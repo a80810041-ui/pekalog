@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>PEKALOG LAB v0.14 IF TIME SAFE</title>
+<title>PEKALOG LAB v0.15 IF PHOTO TIME</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -47,7 +47,7 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 </head>
 <body>
 <div class="wrap">
-<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.14 IF TIME SAFE</div></header>
+<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.15 IF PHOTO TIME</div></header>
 <div class="nav" id="nav">
  <button class="btn dark active" data-view="dash">🏠 LAB</button>
  <button class="btn dark" data-view="hyp">🧠 仮説</button>
@@ -147,7 +147,7 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 <section id="iflab" class="view">
  <div class="card">
   <h3>👻 「その後どうなった？」</h3>
-  <div class="notice"><strong>PEKALOGの保存実戦</strong>を同じブラウザから自動読込。LABに10分前後のスナップショットがあれば、ヤメ時刻付近から閉店までの差枚変化を比較する。<br><span class="tiny">※これは「ヤメた後にその台がどう動いたか」の実績。ジャグラーは抽選なので、実際に自分が続けた場合と同じ結果になる保証はないよ。</span></div>
+  <div class="notice"><strong>PEKALOGの保存実戦</strong>とLABの台データを照合。写真から取得したヤメ時刻を優先するよ。<br><strong>比較可能</strong>：確認済みヤメ時刻から10分以内の直前データ＋店最終データ。<strong>参考のみ</strong>：10〜30分前のデータなど。<strong>比較不可</strong>：ヤメ時刻・途中値・最終値が揃わない場合。<br><span class="tiny">※差枚はグラフ由来の推定値。本人の投資・回収差枚とは別。参考値は判断クセ集計に含めない。結果は将来の当選を保証しないよ。</span></div>
   <div id="ifList" class="list" style="margin-top:10px"></div>
  </div>
  <div class="card">
@@ -571,30 +571,116 @@ function renderEvent(){const rows=finalRows().filter(r=>r.isFinal!==false&&Numbe
  const last2=trend.slice(-2);if(last2.length>=2){const p=last2[0],c=last2[1],d=Math.round((c.av||0)-(p.av||0)),pp=(c.n?c.r1/c.n*100:0)-(p.n?p.r1/p.n*100:0);$('eventLatestDelta').innerHTML=`最新22日 <strong>${c.d}</strong> は前回 ${p.d} 比で、平均差枚 <strong class="${d>=0?'pos':'neg'}">${signed(d)}枚</strong>、1000枚率 <strong>${pp>=0?'+':''}${pp.toFixed(1)}pt</strong>。`; }else $('eventLatestDelta').textContent='22日が2回以上貯まると「前回から強くなった/弱くなった」を表示する。';
  const mr=Object.entries(MODELS).map(([id,name])=>{const a=ev.filter(r=>r.model===id),b=norm.filter(r=>r.model===id);return {name,a,b}}).filter(x=>x.a.length||x.b.length);$('eventModels').innerHTML=mr.length?`<table><tr><th>機種</th><th>22日平均</th><th>通常平均</th><th>22日1000率</th><th>通常1000率</th></tr>${mr.map(x=>`<tr><td>${x.name}</td><td>${x.a.length?signed(Math.round(avg(x.a,'diff'))):'-'}</td><td>${x.b.length?signed(Math.round(avg(x.b,'diff'))):'-'}</td><td>${pct(x.a.filter(r=>Number(r.diff)>=1000).length,x.a.length)}</td><td>${pct(x.b.filter(r=>Number(r.diff)>=1000).length,x.b.length)}</td></tr>`).join('')}</table>`:'<div class="empty">機種比較データなし</div>';
  const pr=ev.slice().sort((a,b)=>(Number(b.big||0)+Number(b.reg||0))-(Number(a.big||0)+Number(a.reg||0))).slice(0,8);$('pekaRecords').innerHTML=pr.length?pr.map((r,i)=>`<div class="row"><div class="rowtop"><div><b>${i+1}. ${r.date} ${r.machine}番 ${esc(MODELS[r.model]||r.model)}</b><div class="tiny">BB${r.big||0} + RB${r.reg||0}</div></div><div class="right"><b style="font-size:20px">${Number(r.big||0)+Number(r.reg||0)}ペカ</b><div class="tiny">${signed(r.diff)}枚</div></div></div></div>`).join(''):'<div class="empty">22日のペカ記録はまだなし。</div>'}
+// ===== v0.15: 写真の実際のヤメ時刻を優先し、曖昧な差枚は集計しない =====
+// iPhone、PC、Safariのタイムゾーン設定に影響されないJST日時解析。
+function ifParseJstLocal(raw){
+ const m=String(raw||'').trim().match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/);
+ if(!m)return null;
+ const [y,mo,d,h,mi,se]=m.slice(1).map(Number);
+ if(h>23||mi>59||(se||0)>59)return null;
+ const day=new Date(Date.UTC(y,mo-1,d));
+ if(!Number.isFinite(day.getTime())||day.toISOString().slice(0,10)!==`${m[1]}-${m[2]}-${m[3]}`)return null;
+ const ts=Date.parse(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]||'00'}+09:00`);
+ return Number.isFinite(ts)?ts:null;
+}
+function ifJstDate(ts){
+ if(!Number.isFinite(Number(ts))||Number(ts)<=0)return '';
+ return new Date(Number(ts)+9*3600000).toISOString().slice(0,10);
+}
+function ifClock(ts){
+ if(!Number.isFinite(ts))return '-';
+ return new Date(ts+9*3600000).toISOString().slice(11,16);
+}
+function ifEndTimeInfo(a){
+ const date=String(a.date||'');
+ if(a.actualEndTime){
+  const ts=ifParseJstLocal(a.actualEndTime);
+  if(ts===null||ifJstDate(ts)!==date)return {ts:null,reason:'実戦日時とヤメ時刻が一致しないため、時刻を使わず保留'};
+  const source=a.actualEndTimeSource==='photo'?'写真の撮影時刻':(a.actualEndTimeSource==='manual'?'手入力':'実戦日時欄');
+  return {ts,verified:a.actualTimeVerified===true,source,reason:a.actualTimeVerified===true?'':'実戦時刻の確認フラグがないため参考扱い'};
+ }
+ // 旧データでも、撮影時刻と終了写真の確定が揃う場合だけ採用。
+ const end=a.lamp?.end;
+ if(end?.confirmed===true&&end?.photoTimeSource==='exif'){
+  const ts=Number(end.photoTakenAt);
+  if(Number.isFinite(ts)&&ifJstDate(ts)===date)return {ts,verified:true,source:'終了写真の撮影日時'};
+ }
+ // endedAtは通常「保存ボタンを押した時刻」。単なる日付一致では信用しない。
+ const legacy=Number(a.endedAt);
+ if(a.actualTimeVerified===true&&Number.isFinite(legacy)&&ifJstDate(legacy)===date){
+  return {ts:legacy,verified:true,source:'確認済みの終了時刻'};
+ }
+ return {ts:null,verified:false,reason:'実際のヤメ時刻が未記録（保存日時は代用しない）'};
+}
+function ifObservedTime(s,date){
+ if(s.isFinal===true||s.snapshotType==='historical-final')return null;
+ // P’s CUBEの「更新日時」があれば、データの時点として採用。
+ const m=String(s.updated||'').match(/^(\d{4})\/(\d{2})\/(\d{2})\s+(\d{2}):(\d{2})(?::(\d{2}))?$/);
+ if(m){
+  const ts=ifParseJstLocal(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]||'00'}`);
+  if(ts!==null&&ifJstDate(ts)===date){
+   const cap=Number(s.ts);
+   if(!Number.isFinite(cap)||cap<=0||ts<=cap+5*60000)return {ts,source:'サイト更新'};
+  }
+ }
+ // 更新日時が取得できない場合は取得時刻を使う。ただし日付を跨いだ取得は除外。
+ const cap=Number(s.ts);
+ return Number.isFinite(cap)&&ifJstDate(cap)===date?{ts:cap,source:'収集'}:null;
+}
 function ifAnalysis(a){
- const date=a.date,machine=normMachine(a.machine);if(!date||!machine)return null;
- const all=(lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===machine&&x.diff!==null&&x.diff!==undefined&&x.diff!==''&&Number.isFinite(Number(x.diff)));
+ const date=a.date,machine=normMachine(a.machine);if(!date||!machine)return {kind:'nodata'};
+ const all=(lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===machine&&
+   (!a.model||!x.model||x.model==='unknown'||a.model===x.model)&&
+   x.diff!==null&&x.diff!==undefined&&x.diff!==''&&Number.isFinite(Number(x.diff)));
+ if(!all.length)return {kind:'nodata'};
+ // LIVEを「閉店データ」として代用しない。
  const finals=all.filter(x=>x.isFinal===true||x.snapshotType==='historical-final');
- const final=(finals.length?finals:all.filter(x=>x.isFinal!==false)).sort((x,y)=>Number(y.ts||0)-Number(x.ts||0))[0];
- if(!final)return {kind:'nodata'};
- // 旧アーカイブのendedAtは再登録日かもしれない。日付一致だけでは正しいヤメ時刻と断定できない。
- const endTs=Number(a.endedAt||0);
- const sameDay=endTs&&new Date(endTs).toLocaleDateString('sv-SE',{timeZone:'Asia/Tokyo'})===date;
- const trusted=!!(a.actualTimeVerified&&sameDay);
- const near=trusted?all.filter(x=>x.isFinal===false&&x.snapshotType!=='historical-final'&&Number(x.ts)>0&&Number(x.ts)<=endTs+10*60000&&Math.abs(Number(x.ts)-endTs)<=30*60000).sort((x,y)=>Math.abs(x.ts-endTs)-Math.abs(y.ts-endTs))[0]:null;
- if(near&&near!==final&&Number(final.ts)>Number(near.ts))return {kind:'snap',near,final,after:Number(final.diff)-Number(near.diff)};
- const entered=a.diffCoins!==''&&a.diffCoins!==null&&a.diffCoins!==undefined&&Number.isFinite(Number(a.diffCoins));
- if(entered)return {kind:'finalonly',final,after:Number(final.diff)-Number(a.diffCoins)};
- return {kind:'final',final};
+ const final=finals.sort((x,y)=>Number(y.ts||0)-Number(x.ts||0))[0];
+ if(!final)return {kind:'noFinal'};
+ const end=ifEndTimeInfo(a);
+ if(!end.ts)return {kind:'final',final,end};
+ const previous=all.map(x=>({snapshot:x,observed:ifObservedTime(x,date)}))
+   .filter(x=>x.observed&&x.observed.ts<=end.ts)
+   .sort((x,y)=>y.observed.ts-x.observed.ts);
+ const nearest=previous[0];
+ if(!nearest)return {kind:'final',final,end,reason:'ヤメ時刻以前の途中差枚データがない'};
+ const gapMin=Math.round((end.ts-nearest.observed.ts)/60000);
+ if(gapMin>30)return {kind:'final',final,end,gapMin,reason:'ヤメ時刻より30分以内の途中データがない'};
+ const after=Number(final.diff)-Number(nearest.snapshot.diff);
+ const shared={near:nearest.snapshot,nearTs:nearest.observed.ts,nearSource:nearest.observed.source,final,end,gapMin,after};
+ if(gapMin<=10&&end.verified)return {kind:'snap',...shared};
+ return {kind:'reference',...shared};
 }
 function renderIF(){
- const a=turkeyArchives().slice().sort((x,y)=>Number(y.endedAt||y.id||0)-Number(x.endedAt||x.id||0));if(!a.length){$('ifList').innerHTML='<div class="empty">PEKALOGで実戦保存すると、店名が空欄でもここに表示するよ。</div>';$('reasonStats').innerHTML='';return}
- let down=0,up=0,flat=0,valid=0;const reasonMap={};
- $('ifList').innerHTML=a.map(x=>{const z=ifAnalysis(x),model=MODELS[x.model]||x.model||'',reason=x.endReason||'未記録';let body='';if(!z||z.kind==='nodata')body='<span class="pill warn">LABデータ待ち</span> 同日の台データがまだない。';else if(z.kind==='snap'){valid++;if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;(reasonMap[reason]??=[]).push(z.after);body=`ヤメ時刻付近 <b>${signed(z.near.diff)}枚</b> → 閉店 <b>${signed(z.final.diff)}枚</b><br>その後 <b class="${z.after>0?'pos':'neg'}">${signed(z.after)}枚</b> ${z.after>=500?'😇 その後伸びた':z.after<=-500?'🏃 撤退成功寄り':'➖ ほぼ横ばい'}`;}else if(z.kind==='finalonly'){valid++;if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;(reasonMap[reason]??=[]).push(z.after);body=`PEKALOG記録 <b>${signed(x.diffCoins)}枚</b> → 店最終 <b>${signed(z.final.diff)}枚</b><br>差 <b class="${z.after>0?'pos':'neg'}">${signed(z.after)}枚</b> <span class="tiny">※時刻スナップショットなしの簡易比較</span>`;}else body=`店最終：<b>${signed(z.final.diff)}枚</b>。ヤメ時点の差枚が不明のため比較不可。途中スナップショットと実際のヤメ時刻が揃えば分析できる。`;
- return `<div class="row"><div class="rowtop"><div><b>${esc(x.date||'-')} ${esc(x.machine||'-')}番 ${esc(model)}</b><div class="tiny">PEKALOG ${fmt(x.totalG)}G / BB${fmt(x.big)} RB${fmt(x.reg)} ／ ヤメ理由：${esc(reason)}</div></div><span class="pill">${x.diffCoins!==''&&x.diffCoins!=null?signed(x.diffCoins)+'枚':'差枚未入力'}</span></div><div class="smalltext" style="margin-top:8px">${body}</div></div>`}).join('');
- $('decisionSummary').innerHTML=valid?`IF比較できた実戦 <strong>${valid}件</strong>。その後 +500枚以上 ${up}件 ／ -500枚以下 ${down}件 ／ 横ばい ${flat}件。<br><span class="tiny">「勝ってた/負けてた」ではなく、その後実績として判断ルールを検証する。</span>`:'実戦とLABデータが一致すると判断クセ集計を開始する。';
+ const archives=turkeyArchives().slice().sort((x,y)=>(String(y.date||'').localeCompare(String(x.date||'')))||Number(y.endedAt||y.id||0)-Number(x.endedAt||x.id||0));
+ if(!archives.length){$('ifList').innerHTML='<div class="empty">PEKALOGで実戦保存すると、店名が空欄でもここに表示するよ。</div>';$('reasonStats').innerHTML='';$('decisionSummary').textContent='保存実戦を待っているよ。';return}
+ let down=0,up=0,flat=0,valid=0,reference=0,notComparable=0;const reasonMap={};
+ $('ifList').innerHTML=archives.map(x=>{
+  const z=ifAnalysis(x),model=MODELS[x.model]||x.model||'',reason=x.endReason||'未記録';
+  let body='',badge='比較不可',kindClass='warn';
+  if(!z||z.kind==='nodata'){
+   notComparable++;body='同じ日・台番号・機種のLAB差枚データがないよ。';
+  }else if(z.kind==='noFinal'){
+   notComparable++;body='途中の台データはあるけれど、閉店時の確定データがまだないよ。';
+  }else if(z.kind==='snap'){
+   valid++;badge='比較可能（推定）';kindClass='good';
+   if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;
+   (reasonMap[reason]??=[]).push(z.after);
+   body=`${esc(ifClock(z.nearTs))}時点 <b>${signed(z.near.diff)}枚</b> → 店最終 <b>${signed(z.final.diff)}枚</b><br><strong>その後の推定差枚 <span class="${z.after>=0?'pos':'neg'}">${signed(z.after)}枚</span></strong> ${z.after>=500?'📈 その後伸びた':z.after<=-500?'📉 その後下がった':'➖ 増減小さめ'}<br><span class="tiny">ヤメ ${esc(ifClock(z.end.ts))}（${esc(z.end.source)}）／ 直前データとの差 ${z.gapMin}分。グラフ推定値の比較だよ。</span>`;
+  }else if(z.kind==='reference'){
+   reference++;badge='参考のみ';
+   body=`ヤメ時刻 <b>${esc(ifClock(z.end.ts))}</b>（${esc(z.end.source)}）／ ${z.gapMin}分前の${esc(z.nearSource)}データ <b>${signed(z.near.diff)}枚</b> → 店最終 <b>${signed(z.final.diff)}枚</b><br><strong>参考差 ${signed(z.after)}枚</strong><br><span class="tiny">${z.end.verified?'ヤメ時刻から10分以上離れた記録のため、ヤメ後の増減とは断定しない。':'実戦終了時刻が未確認のため、ヤメ後の増減とは断定しない。'} 判断クセ集計の対象外。</span>`;
+  }else{
+   notComparable++;
+   const time=z.end?.ts?`ヤメ ${esc(ifClock(z.end.ts))}（${esc(z.end.source)}）。`:'';
+   body=`店最終：<b>${signed(z.final.diff)}枚</b>。${time}${esc(z.reason||z.end?.reason||'ヤメ時点の差枚が不明')}ため比較不可。<br><span class="tiny">途中スナップショットと実際のヤメ時刻が揃えば分析できるよ。</span>`;
+  }
+  const timeInfo=ifEndTimeInfo(x);const tm=timeInfo.ts?` ／ ヤメ ${esc(ifClock(timeInfo.ts))}`:'';
+  return `<div class="row"><div class="rowtop"><div><b>${esc(x.date||'-')} ${esc(x.machine||'-')}番 ${esc(model)}</b><div class="tiny">PEKALOG ${fmt(x.totalG)}G / BB${fmt(x.big)} RB${fmt(x.reg)} ／ ヤメ理由：${esc(reason)}${tm}</div></div><span class="pill ${kindClass}">${badge}</span></div><div class="smalltext" style="margin-top:8px">${body}</div></div>`;
+ }).join('');
+ $('decisionSummary').innerHTML=`比較可能 <strong>${valid}件</strong> ／ 参考のみ <strong>${reference}件</strong> ／ 比較不可 <strong>${notComparable}件</strong>。<br>比較可能な実戦の内訳：その後 +500枚以上 ${up}件 ／ -500枚以下 ${down}件 ／ 増減小さめ ${flat}件。<br><span class="tiny">※グラフ推定値の比較。参考値は集計しない。本人の収支差枚との混同もしない。</span>`;
  const rs=Object.entries(reasonMap).map(([reason,vals])=>({reason,n:vals.length,av:vals.reduce((a,b)=>a+b,0)/vals.length,up:vals.filter(v=>v>=500).length,down:vals.filter(v=>v<=-500).length})).sort((a,b)=>b.n-a.n);
- $('reasonStats').innerHTML=rs.length?rs.map(r=>`<div class="row"><div class="rowtop"><div><b>${esc(r.reason)}</b><div class="tiny">n=${r.n} ／ その後+500 ${r.up} ／ -500 ${r.down}</div></div><div class="right"><b class="${r.av>=0?'pos':'neg'}">平均 ${signed(Math.round(r.av))}枚</b></div></div></div>`).join(''):'<div class="empty">ヤメ理由つき実戦が貯まると理由別に比較する。</div>';
+ $('reasonStats').innerHTML=rs.length?rs.map(r=>`<div class="row"><div class="rowtop"><div><b>${esc(r.reason)}</b><div class="tiny">n=${r.n} ／ その後+500 ${r.up} ／ -500 ${r.down}</div></div><div class="right"><b class="${r.av>=0?'pos':'neg'}">平均 ${signed(Math.round(r.av))}枚</b></div></div></div>`).join(''):'<div class="empty">比較可能な実戦が貯まると、ヤメ理由別に分析するよ。</div>';
 }
 
 
