@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.6.4 TIME SAFE</title>
+<title>ペカログ JUGGLER EDITION v3.6.5 PHOTO CLEAR</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -92,7 +92,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.6.4 TIME SAFE</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.6.5 PHOTO CLEAR</div>
 </header>
 
 <div class="card">
@@ -439,6 +439,7 @@ function numVal(id){
  return Number.isFinite(n)?n:null;
 }
 let photoTarget={kind:'start',field:'machine'};
+let photoLoadGeneration=0;
 function setPhotoTarget(kind,field){
  photoTarget={kind,field};
  document.querySelectorAll('.photoFields input').forEach(x=>x.classList.remove('photoTarget'));
@@ -481,18 +482,21 @@ async function readOriginalPhotoTime(file){
 }
 async function loadLampPhoto(kind,ev){
  const f=ev.target.files?.[0];if(!f)return;
+ const generation=photoLoadGeneration;
  const ids=lampIds(kind),status=$(ids.status);
  if(status)status.textContent='元写真の撮影日時を確認中…';
  try{
   const photoTime=await readOriginalPhotoTime(f);
+  if(generation!==photoLoadGeneration)return;
   const dataUrl=await compressImage(f);
+  if(generation!==photoLoadGeneration)return;
   if(!state.lamp)state.lamp={start:null,end:null};
   state.lamp[kind]={...(state.lamp[kind]||{}),img:dataUrl,confirmed:false,photoTakenAt:photoTime?photoTime.ms:null,photoTimeSource:photoTime?photoTime.source:null};
   if(photoTime){const key=kind==='start'?'actualStartTime':'actualEndTime';if(!state[key]||state[key+'Source']==='photo'){state[key]=photoTime.local;state[key+'Source']='photo';if($(key))$(key).value=photoTime.local;}}
   const im=$(ids.preview);im.src=dataUrl;im.classList.add('show');
   if(status)status.textContent=photoTime?'📷 撮影日時 '+photoTime.local.replace('T',' ')+' を読み取ったよ。実戦日時欄を確認してね。':'📷 写真は保存できたよ。撮影日時は取得できなかったので時刻は推測しないよ。';
   persist();
- }catch(e){if(status)status.textContent='写真を読み込めなかったよ。'}
+ }catch(e){if(generation===photoLoadGeneration&&status)status.textContent='写真を読み込めなかったよ。'}
 }
 function numericCandidatesFromResult(result){
  const words=result?.data?.words||[];
@@ -563,7 +567,10 @@ function confirmLampPhoto(kind){
 function renderPhotoUI(){
  for(const kind of ['start','end']){
   const ids=lampIds(kind),obj=state.lamp?.[kind];
-  if(obj?.img&&$(ids.preview)){ $(ids.preview).src=obj.img;$(ids.preview).classList.add('show') }
+  if($(ids.preview)){
+   if(obj?.img){$(ids.preview).src=obj.img;$(ids.preview).classList.add('show')}
+   else{$(ids.preview).removeAttribute('src');$(ids.preview).classList.remove('show')}
+  }
   if(obj?.data)writeLampFields(kind,obj.data);
  }
  renderPhotoDelta();
@@ -738,7 +745,33 @@ function deleteArchive(id){
 function loadArchive(id){const a=JSON.parse(localStorage.getItem(ARCH)||'[]'),x=a.find(v=>v.id===id);if(!x)return;if(!confirm('この実戦を現在の画面に読み込む？'))return;const {id:_,...rest}=x;state=rest;state.loadedFromArchive=true;state.actualStartTime=state.actualStartTime||'';state.actualEndTime=state.actualEndTime||'';if(!state.quickFlags)state.quickFlags={cherry:false,premium:false};if(!state.lamp)state.lamp={start:null,end:null};updatePremiumOptions();render();window.scrollTo({top:0,behavior:'smooth'})}
 function downloadJSON(){const payload={version:'3.0',current:state,archives:JSON.parse(localStorage.getItem(ARCH)||'[]')};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_${state.date||'data'}_${state.machine||'machine'}.json`;a.click();URL.revokeObjectURL(a.href)}
 function importJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);if(p.current)state=p.current;if(Array.isArray(p.archives))localStorage.setItem(ARCH,JSON.stringify(p.archives));updatePremiumOptions();render();alert('データを読み込んだよ！')}catch(e){alert('JSONを読み込めなかったよ')}};r.readAsText(f);ev.target.value=''}
-function newSession(){if(!confirm('現在の実戦をリセットして、新しい実戦を始める？\n必要なら先に「実戦を保存」してね。'))return;const m=state.model;state=blankState();state.model=m;closeBonus();render();window.scrollTo({top:0,behavior:'smooth'})}
+function clearPhotoInputsForNewSession(){
+ for(const kind of ['start','end']){
+  const ids=lampIds(kind);
+  const preview=$(ids.preview);
+  if(preview){preview.removeAttribute('src');preview.classList.remove('show')}
+  for(const field of ['machine','currentG','big','reg','totalG']){
+   const input=$(ids[field]);if(input){input.value='';input.classList.remove('photoTarget')}
+  }
+  for(const suffix of ['PhotoCamera','PhotoLibrary']){
+   const input=$(kind+suffix);if(input)input.value='';
+  }
+  const status=$(ids.status);if(status)status.textContent='';
+  const candidates=$(ids.candidates);if(candidates)candidates.innerHTML='';
+ }
+ photoTarget={kind:'start',field:'machine'};
+}
+function newSession(){
+ if(!confirm('現在の実戦をリセットして、新しい実戦を始める？\\n必要なら先に「実戦を保存」してね。'))return;
+ photoLoadGeneration++;
+ const m=state.model;
+ state=blankState();
+ state.model=m;
+ clearPhotoInputsForNewSession();
+ closeBonus();
+ render();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
 ['date','shop','machine','diffCoins','sessionMemo','endReason','actualStartTime','actualEndTime'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='actualStartTime'||id==='actualEndTime')state[id+'Source']='manual';saveMeta();if(id==='machine'){const rr=turkeyRoleTags(state.machine),pos=$('machinePosition');if(pos)pos.innerHTML=rr.length?`🗺 ターキー配置：${rr.map(x=>`<span class="judgeTag">${esc(x)}</span>`).join(' ')}`:''}}));
 updatePremiumOptions();render();
 </script>
