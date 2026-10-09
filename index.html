@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.6.1 ARCHIVE SAVE FIX</title>
+<title>ペカログ JUGGLER EDITION v3.6.2 ARCHIVE DELETE</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -91,7 +91,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.6.1 ARCHIVE SAVE FIX</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.6.2 ARCHIVE DELETE</div>
 </header>
 
 <div class="card">
@@ -682,7 +682,24 @@ function archiveSession(){
 }
 function renderArchives(){
  const a=JSON.parse(localStorage.getItem(ARCH)||'[]');
- $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">${esc(x.shop||'')} 台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}${x.endReason?` / ${esc(x.endReason)}`:''}</div>${turkeyRoleHtml(x.machine)}</div><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button></div>${archiveJudgeHtml(x)}</div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'
+ $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">${esc(x.shop||'')} 台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}${x.endReason?` / ${esc(x.endReason)}`:''}</div>${turkeyRoleHtml(x.machine)}</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button><button class="btn small" style="background:#55212b;color:#ffe3e7" onclick="deleteArchive(${JSON.stringify(x.id)})">🗑️ 削除</button></div></div>${archiveJudgeHtml(x)}</div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'
+}
+function deleteArchive(id){
+ try{
+  const raw=localStorage.getItem(ARCH),archives=raw?JSON.parse(raw):[];
+  if(!Array.isArray(archives))throw new Error('Archive format invalid');
+  const index=archives.findIndex(x=>String(x.id)===String(id));
+  if(index<0){alert('対象の実戦が見つからなかったよ。');renderArchives();return;}
+  const target=archives[index];
+  const title=`${target.date||'日付なし'} / ${target.shop||'店舗未入力'} / 台${target.machine||'-'} / ${target.totalG||0}G`;
+  if(!confirm(`この保存済み実戦を削除する？\n\n${title}\n\n※この1件だけを削除します。元には戻せないので、必要なら先にJSON保存してね。`))return;
+  const next=archives.filter((_,i)=>i!==index);
+  localStorage.setItem(ARCH,JSON.stringify(next));
+  const verify=JSON.parse(localStorage.getItem(ARCH)||'[]');
+  if(!Array.isArray(verify)||verify.length!==next.length||verify.some(x=>String(x.id)===String(id)))throw new Error('Archive delete verification failed');
+  renderArchives();
+  alert('選んだ実戦を1件削除したよ！');
+ }catch(err){console.error('Archive delete error:',err);alert('削除できなかったよ。データは確認してからもう一度試してね。');}
 }
 function loadArchive(id){const a=JSON.parse(localStorage.getItem(ARCH)||'[]'),x=a.find(v=>v.id===id);if(!x)return;if(!confirm('この実戦を現在の画面に読み込む？'))return;const {id:_,...rest}=x;state=rest;if(!state.quickFlags)state.quickFlags={cherry:false,premium:false};if(!state.lamp)state.lamp={start:null,end:null};updatePremiumOptions();render();window.scrollTo({top:0,behavior:'smooth'})}
 function downloadJSON(){const payload={version:'3.0',current:state,archives:JSON.parse(localStorage.getItem(ARCH)||'[]')};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_${state.date||'data'}_${state.machine||'machine'}.json`;a.click();URL.revokeObjectURL(a.href)}
