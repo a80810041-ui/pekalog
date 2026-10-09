@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.6.3 TIME SAFE</title>
+<title>ペカログ JUGGLER EDITION v3.6.4 TIME SAFE</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -71,6 +71,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <meta name="apple-mobile-web-app-title" content="ペカログ">
 
 <script defer src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/exifr@7/dist/full.umd.js"></script>
 
 <script id="pekalog-cache-cleanup-v351">
 (async()=>{
@@ -91,7 +92,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.6.3 TIME SAFE</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.6.4 TIME SAFE</div>
 </header>
 
 <div class="card">
@@ -117,7 +118,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 
 <div class="card">
  <h3>📸 開始・終了写真</h3>
- <div class="notice">データランプを撮るだけ。画像読取はβ版なので、候補を確認してから確定。終了写真まで入れると実戦差分を自動計算するよ。</div>
+ <div class="notice">データランプを撮るだけ。iPhoneの元写真に撮影日時があれば、圧縮前に読み取って実戦時刻へ反映。日時が取れなければ空欄のまま。画像の数字読取はβ版だよ。</div>
  <div class="photoGrid" style="margin-top:10px">
   <div class="photoSlot">
    <b>▶️ 開始写真</b>
@@ -458,16 +459,38 @@ async function compressImage(file,maxW=900,quality=.58){
   img.src=url;
  });
 }
+function photoLocalString(d){
+ if(!(d instanceof Date)||!Number.isFinite(d.getTime()))return null;
+ const pad=n=>String(n).padStart(2,'0');
+ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+async function readOriginalPhotoTime(file){
+ // Original EXIF, never file.lastModified (which may be import/download time).
+ try{
+  if(typeof exifr==='undefined')return null;
+  const meta=await exifr.parse(file,{pick:['DateTimeOriginal','CreateDate','DateTimeDigitized'],translateValues:true});
+  const raw=meta?.DateTimeOriginal||meta?.CreateDate||meta?.DateTimeDigitized;
+  let d=raw instanceof Date?raw:null;
+  if(!d&&typeof raw==='string'){
+   const m=raw.match(/^(\d{4})[:\-](\d{2})[:\-](\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?/);
+   if(m)d=new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5],+(m[6]||0));
+  }
+  const local=photoLocalString(d);
+  return local?{ms:d.getTime(),local,source:'exif'}:null;
+ }catch(e){console.warn('Photo EXIF unavailable',e);return null;}
+}
 async function loadLampPhoto(kind,ev){
  const f=ev.target.files?.[0];if(!f)return;
  const ids=lampIds(kind),status=$(ids.status);
- if(status)status.textContent='写真を準備中…';
+ if(status)status.textContent='元写真の撮影日時を確認中…';
  try{
+  const photoTime=await readOriginalPhotoTime(f);
   const dataUrl=await compressImage(f);
   if(!state.lamp)state.lamp={start:null,end:null};
-  state.lamp[kind]={...(state.lamp[kind]||{}),img:dataUrl,confirmed:false};
+  state.lamp[kind]={...(state.lamp[kind]||{}),img:dataUrl,confirmed:false,photoTakenAt:photoTime?photoTime.ms:null,photoTimeSource:photoTime?photoTime.source:null};
+  if(photoTime){const key=kind==='start'?'actualStartTime':'actualEndTime';if(!state[key]||state[key+'Source']==='photo'){state[key]=photoTime.local;state[key+'Source']='photo';if($(key))$(key).value=photoTime.local;}}
   const im=$(ids.preview);im.src=dataUrl;im.classList.add('show');
-  if(status)status.textContent='📷 写真を保存したよ。「数字候補を出す」で読取β版を試せるよ。';
+  if(status)status.textContent=photoTime?'📷 撮影日時 '+photoTime.local.replace('T',' ')+' を読み取ったよ。実戦日時欄を確認してね。':'📷 写真は保存できたよ。撮影日時は取得できなかったので時刻は推測しないよ。';
   persist();
  }catch(e){if(status)status.textContent='写真を読み込めなかったよ。'}
 }
@@ -664,8 +687,17 @@ function archiveSession(){
   // Photos remain in the active session; only numeric photo data goes into archives.
   for(const kind of ['start','end'])if(lamp[kind])delete lamp[kind].img;
   const now=Date.now(),id=now+Math.random();
+  const parseActual=(v)=>{if(!v)return null;const n=new Date(v).getTime();return Number.isFinite(n)?n:null};
+  const actualStart=parseActual(state.actualStartTime),actualEnd=parseActual(state.actualEndTime);
+  const sameDate=(ts)=>ts!=null&&new Date(ts).toLocaleDateString('sv-SE')===state.date;
+  // Registration timestamp is not the quit timestamp for historical sessions.
+  const startTs=sameDate(actualStart)?actualStart:(!state.loadedFromArchive&&sameDate(Number(state.startedAt))?Number(state.startedAt):null);
+  const endTs=sameDate(actualEnd)?actualEnd:(!state.loadedFromArchive&&sameDate(now)&&sameDate(Number(state.startedAt))?now:null);
+  if(actualEnd!=null&&!sameDate(actualEnd))return alert('終了写真の撮影日と実戦日付が違うよ。日付を確認してから保存してね。');
+  if(actualStart!=null&&!sameDate(actualStart))return alert('開始写真の撮影日と実戦日付が違うよ。日付を確認してから保存してね。');
+  if(startTs!=null&&endTs!=null&&startTs>endTs)return alert('開始時刻が終了時刻より後になっているよ。確認してね。');
   const entry={...state,history:JSON.parse(JSON.stringify(state.history||[])),
-   quickFlags:{...(state.quickFlags||{})},lamp,id,startedAt:startTs,endedAt:endTs,recordedAt:now,updatedAt:now,actualTimeVerified:!!(state.actualEndTime||endTs),loadedFromArchive:false};
+   quickFlags:{...(state.quickFlags||{})},lamp,id,startedAt:startTs,endedAt:endTs,recordedAt:now,updatedAt:now,actualTimeVerified:!!sameDate(actualEnd),loadedFromArchive:false};
   localStorage.setItem(ARCH,JSON.stringify([entry,...archives].slice(0,60)));
   const verify=JSON.parse(localStorage.getItem(ARCH)||'[]');
   if(!verify.some(x=>x.id===id))throw new Error('Archive verification failed');
@@ -707,7 +739,7 @@ function loadArchive(id){const a=JSON.parse(localStorage.getItem(ARCH)||'[]'),x=
 function downloadJSON(){const payload={version:'3.0',current:state,archives:JSON.parse(localStorage.getItem(ARCH)||'[]')};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_${state.date||'data'}_${state.machine||'machine'}.json`;a.click();URL.revokeObjectURL(a.href)}
 function importJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);if(p.current)state=p.current;if(Array.isArray(p.archives))localStorage.setItem(ARCH,JSON.stringify(p.archives));updatePremiumOptions();render();alert('データを読み込んだよ！')}catch(e){alert('JSONを読み込めなかったよ')}};r.readAsText(f);ev.target.value=''}
 function newSession(){if(!confirm('現在の実戦をリセットして、新しい実戦を始める？\n必要なら先に「実戦を保存」してね。'))return;const m=state.model;state=blankState();state.model=m;closeBonus();render();window.scrollTo({top:0,behavior:'smooth'})}
-['date','shop','machine','diffCoins','sessionMemo','endReason','actualStartTime','actualEndTime'].forEach(id=>$(id).addEventListener('input',()=>{saveMeta();if(id==='machine'){const rr=turkeyRoleTags(state.machine),pos=$('machinePosition');if(pos)pos.innerHTML=rr.length?`🗺 ターキー配置：${rr.map(x=>`<span class="judgeTag">${esc(x)}</span>`).join(' ')}`:''}}));
+['date','shop','machine','diffCoins','sessionMemo','endReason','actualStartTime','actualEndTime'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='actualStartTime'||id==='actualEndTime')state[id+'Source']='manual';saveMeta();if(id==='machine'){const rr=turkeyRoleTags(state.machine),pos=$('machinePosition');if(pos)pos.innerHTML=rr.length?`🗺 ターキー配置：${rr.map(x=>`<span class="judgeTag">${esc(x)}</span>`).join(' ')}`:''}}));
 updatePremiumOptions();render();
 </script>
 
