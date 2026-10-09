@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>PEKALOG LAB v0.13.9 ランキング比較</title>
+<title>PEKALOG LAB v0.14 IF TIME SAFE</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -40,20 +40,6 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 .pickConfidence{font-size:10px;color:var(--muted);margin-top:5px}
 @media(max-width:720px){.pickGrid{grid-template-columns:1fr}}
 
-
-/* ===== v0.13.8 順位つき空き台チェッカー ===== */
-.decisionCard{border:1px solid #3c5972;background:linear-gradient(180deg,#152233,#0d131b);box-shadow:0 14px 40px rgba(0,0,0,.28)}
-.decisionTitle{font-size:26px;font-weight:950;letter-spacing:.01em;margin:0}.decisionSub{font-size:12px;color:var(--muted);margin-top:4px}
-.todayDecisionHero{margin:10px 0 12px;padding:14px;border-radius:16px;background:#0b1017;border:1px solid #31465b}
-.todayDecisionHero .heroLabel{font-size:11px;color:var(--muted);font-weight:800}.todayDecisionHero .heroMachine{font-size:30px;font-weight:950;line-height:1.15;margin-top:4px}.todayDecisionHero .heroMeta{margin-top:7px;font-size:12px;color:#c0cad7}
-.candidateDetails{margin-top:9px;border-top:1px solid #263240;padding-top:8px}.candidateDetails summary,.compactDisclosure summary{cursor:pointer;font-weight:850;color:#c9d7e8;list-style:none;-webkit-tap-highlight-color:transparent}.candidateDetails summary::-webkit-details-marker,.compactDisclosure summary::-webkit-details-marker{display:none}.candidateDetails summary:after,.compactDisclosure summary:after{content:'＋';float:right;color:var(--cyan)}.candidateDetails[open] summary:after,.compactDisclosure[open] summary:after{content:'−'}
-.compactDisclosure{background:#10151c;border:1px solid #29313d;border-radius:14px;padding:11px;margin-top:10px}.compactDisclosure>.disclosureBody{margin-top:10px}
-.toolLauncher{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.toolLaunchBtn{width:100%;text-align:left;background:#0f151d;border:1px solid #2b3745;color:#fff;border-radius:15px;padding:13px;cursor:pointer;font-weight:900;font-size:14px}.toolLaunchBtn small{display:block;color:var(--muted);font-weight:600;font-size:10px;margin-top:4px;line-height:1.4}.toolLaunchBtn:active{transform:scale(.985)}
-.researchOverlay{display:none;position:fixed;inset:0;z-index:180;background:rgba(4,7,11,.88);backdrop-filter:blur(9px);align-items:flex-end;justify-content:center}.researchOverlay.open{display:flex}.researchSheet{width:min(980px,100%);height:min(92vh,900px);background:#0b0f15;border:1px solid #334050;border-radius:22px 22px 0 0;overflow:hidden;box-shadow:0 -16px 50px rgba(0,0,0,.45);display:flex;flex-direction:column}.researchHead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #26313d;background:#101620;position:sticky;top:0;z-index:2}.researchHead h3{margin:0;font-size:18px}.researchBody{padding:12px;overflow:auto;-webkit-overflow-scrolling:touch}.researchPanel{display:none}.researchPanel.active{display:block}.researchClose{border:0;border-radius:12px;background:#252c37;color:#fff;padding:9px 12px;font-weight:900;cursor:pointer}
-.machineControls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.machineControls select{font-size:14px;padding:10px}.machineExplorerRow{cursor:pointer}.machineExplorerRow:active{transform:scale(.995)}.machineDetail{margin-bottom:12px}.machineChartWrap{overflow:auto;border:1px solid #293440;border-radius:14px;background:#0d1218;padding:8px}.machineChart{min-width:620px;width:100%;height:225px;display:block}.chartZero{stroke:#4a5665;stroke-width:1;stroke-dasharray:4 4}.chartLine{fill:none;stroke:#7de3ff;stroke-width:3}.chartPoint{fill:#f7f8fb;stroke:#7de3ff;stroke-width:2}.chartLabel{fill:#8e9bad;font-size:10px}.machinePeriodBtns{display:flex;gap:6px}.machinePeriodBtns .btn.active{background:var(--cyan);color:#082029}
-.researchChunk{margin-top:12px;padding-top:12px;border-top:1px solid #27313d}.researchChunk:first-child{margin-top:0;padding-top:0;border-top:0}
-@media(max-width:620px){.decisionTitle{font-size:23px}.todayDecisionHero .heroMachine{font-size:27px}.toolLauncher{grid-template-columns:1fr 1fr}.researchSheet{height:94vh}.machineControls{grid-template-columns:1fr}.researchBody{padding:9px}}
-
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -61,7 +47,7 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 </head>
 <body>
 <div class="wrap">
-<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.13.8 順位つき空き台チェッカー</div></header>
+<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.14 IF TIME SAFE</div></header>
 <div class="nav" id="nav">
  <button class="btn dark active" data-view="dash">🏠 LAB</button>
  <button class="btn dark" data-view="hyp">🧠 仮説</button>
@@ -71,48 +57,6 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 </div>
 
 <section id="dash" class="view active">
- <div class="card decisionCard">
-  <div class="sectionTitle">
-   <div><div class="decisionTitle">🎯 今日、何座る？</div><div class="decisionSub">まず結論。理由は必要な時だけ開く。</div></div>
-   <span class="pill good">TODAY FIRST</span>
-  </div>
-  <div class="card" style="margin:12px 0;background:#0d1724;border:1px solid #38526c">
-    <div style="font-weight:800;font-size:19px;margin-bottom:6px">🔎 空き台チェッカー</div>
-    <div class="tiny" style="margin-bottom:10px">空いている台番号を入力。複数台は「660,710,715」のようにカンマ区切りで比較できるよ。</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <input id="vacantMachineInput0137" type="text" inputmode="numeric" placeholder="例：710 または 660,710,715" style="flex:1;min-width:180px;padding:12px;border-radius:12px;background:#0b111a;color:white;border:1px solid #45617b;font-size:17px">
-      <button class="btn" onclick="checkVacantMachines0137()">🔎 診断</button>
-    </div>
-    <div id="vacantMachineResult0137" style="margin-top:12px"></div>
-  </div>
-  <div id="todayDecisionHero" class="todayDecisionHero"><div class="tiny">候補を計算中…</div></div>
-  <div class="pickGrid">
-   <div><div class="pickSub">🌅 朝イチ候補</div><div id="morningPicks" class="list"></div></div>
-   <div><div class="pickSub">🔥 今から候補</div><div id="livePicks" class="list"></div></div>
-  </div>
-  <details class="compactDisclosure" id="seatReasonDetails">
-   <summary>🧠 判定の考え方・現在の状態を見る</summary>
-   <div class="disclosureBody">
-    <div class="notice">
-     <strong>🌅 朝イチ＝設定脳</strong>。過去の投入推定率・直近温度・投入間隔・22日相性・曜日クセ・配置クセから選抜。<br>
-     <strong>🔥 今から＝綾ちゃん脳</strong>。現在差枚＋直近500G/1000Gのペカ密度を主役に、過去7日・14日の1000枚到達率も加味。<br>
-     <span class="tiny">※「ハマっているからそろそろ当たる」は加点しない。順位は保存データ内の比較で、未来の当たり・設定・勝利を保証しない。</span>
-    </div>
-    <div id="seatPickStatus" class="notice" style="margin-top:9px"></div>
-   </div>
-  </details>
- </div>
-
- <div class="card">
-  <div class="sectionTitle"><div><h3>🔎 見たい時だけ研究</h3><div class="tiny">トップは短く。カルテ・並び・特定日・週間グラフは必要な時だけ開く。</div></div><span class="pill">ON DEMAND</span></div>
-  <div class="toolLauncher">
-   <button class="toolLaunchBtn" onclick="openResearchTool0133('pattern')">📅 曜日・時間カルテ<small>曜日の偏り / LIVE時間帯 / 今日の曜日で強い台</small></button>
-   <button class="toolLaunchBtn" onclick="openResearchTool0133('special')">🔥 特定日推測<small>5・7・22日 / 月末 / 日付末尾 × 台番末尾</small></button>
-   <button class="toolLaunchBtn" onclick="openResearchTool0133('layout')">🗺 並び・配置<small>角 / 角2 / 機種境界 / 隣接 / 通路向かい</small></button>
-   <button class="toolLaunchBtn" onclick="openResearchTool0133('machine')">📈 台別 7日・14日<small>設定推理順 / 台番順 / 差枚順 / 直近温度</small></button>
-  </div>
- </div>
-
  <div class="card">
   <div class="sectionTitle"><div><h3>今日の研究状況</h3><div class="tiny">PEKALOGは実戦、LABは店と判断を検証。</div></div><span class="pill event">鷺沼ターキー</span></div>
   <div class="grid4" style="margin-top:10px">
@@ -124,61 +68,38 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
   <div id="syncNotice" class="notice" style="margin-top:10px"></div>
  </div>
 
- <details class="compactDisclosure" id="researchLog0133">
-  <summary>🧪 答え合わせ・研究ログ</summary>
-  <div class="disclosureBody">
-   <div class="researchChunk"><div class="sectionTitle"><h3>🏆 最新取得の1000枚到達</h3><div id="latestDate" class="tiny">-</div></div><div id="latestHits" class="list" style="margin-top:9px"></div></div>
-   <div class="researchChunk"><div class="sectionTitle"><div><h3>🎯 台別・設定投入推理</h3><div class="tiny">閉店データだけで台番ごとの「入りやすさ」を学習。</div></div><span class="pill event">DETAIL</span></div><div id="machineInferenceSummary" class="grid3" style="margin-top:10px"></div><div id="machineProfiles" class="list" style="margin-top:10px"></div></div>
-   <div class="researchChunk"><div class="sectionTitle"><h3>🔎 LABが見つけた傾向</h3><span class="pill">自動分析</span></div><div id="discoveries" class="list" style="margin-top:9px"></div></div>
+ <div class="card">
+  <div class="sectionTitle">
+   <div><h3>🎯 今日座るならコレ！</h3><div class="tiny">閉店履歴＋当日LIVEを分けて評価。点数は勝率ではなく、LAB内の「候補優先度」。</div></div>
+   <span class="pill event">NEW</span>
   </div>
- </details>
-
- <div id="researchOverlay0133" class="researchOverlay" onclick="if(event.target===this)closeResearchTool0133()">
-  <div class="researchSheet" role="dialog" aria-modal="true" aria-labelledby="researchTitle0133">
-   <div class="researchHead"><h3 id="researchTitle0133">研究</h3><button class="researchClose" onclick="closeResearchTool0133()">✕ 閉じる</button></div>
-   <div class="researchBody">
-    <section id="researchPattern0133" class="researchPanel">
-     <div class="sectionTitle"><div><h3>📅 曜日・時間帯カルテ</h3><div class="tiny">曜日の偏りとLIVE時間帯を、必要な時だけ集計。</div></div><span class="pill good">AUTO</span></div>
-     <div id="next22Status" class="notice" style="margin-top:8px"></div>
-     <div class="grid2" style="margin-top:10px">
-      <div><div class="pickSub">📆 曜日別</div><div class="tablewrap"><table><thead><tr><th>曜日</th><th>日数</th><th>判定台</th><th>強め率</th><th>通常日率</th><th>平均差枚</th></tr></thead><tbody id="weekdayTrendBody"></tbody></table></div></div>
-      <div><div class="pickSub">🕰 時間帯別 LIVE</div><div class="tablewrap"><table><thead><tr><th>時間帯</th><th>取得</th><th>判定</th><th>平均G</th><th>平均score</th><th>強め率</th></tr></thead><tbody id="timeTrendBody"></tbody></table></div></div>
-     </div>
-     <div class="pickSub" style="margin-top:12px">🎰 今日の曜日で強い台</div><div id="weekdayMachinePicks" class="list"></div>
-     <div class="tiny" style="margin-top:8px">※曜日・時間帯は傾向の観測。曜日や時刻そのものが当たりを生むという意味ではない。</div>
-    </section>
-
-    <section id="researchLayout0133" class="researchPanel">
-     <div class="sectionTitle"><div><h3>🗺 並び・配置 LAB</h3><div class="tiny">ターキーの実配置で角・角2・境界・隣接・向かいを分けて学習。</div></div><span class="pill event">TURKEY MAP</span></div>
-     <div id="layoutMapStatus" class="notice" style="margin-top:8px"></div>
-     <div id="layoutSummary" class="grid4" style="margin-top:10px"></div>
-     <div class="pickSub" style="margin-top:12px">📍 位置別カルテ</div><div id="layoutPositionTable" class="tablewrap"></div>
-     <div class="pickSub" style="margin-top:12px">👯 実際に隣り合う台の「並び強め」</div><div id="layoutNeighborPairs" class="list"></div>
-     <div class="pickSub" style="margin-top:12px">🚪 通路を挟んだ向かい合わせ</div><div id="layoutPassagePairs" class="list"></div>
-     <div class="pickSub" style="margin-top:12px">🔁 台番ごとの判別推移</div><div id="layoutTransitions" class="list"></div>
-    </section>
-
-    <section id="specialTailLabCard" class="researchPanel">
-     <div class="sectionTitle"><div><h3>🔥 特定日推測</h3><div class="tiny">5の日・7の日・22日・月末と、台番末尾の連動を閉店データだけで比較。</div></div><span class="pill event">SPECIAL</span></div>
-     <div class="notice" style="margin-top:8px"><strong>「通常日比 +○pt」</strong>は強め率の差。サンプルが少ない間は候補点へ強く混ぜず、研究表示を優先する。</div>
-     <div id="specialDaySummary" class="grid4" style="margin-top:10px"></div>
-     <div class="pickSub" style="margin-top:12px">📆 特定日 vs その他日</div><div id="specialDayTable" class="tablewrap"></div>
-     <div class="pickSub" style="margin-top:12px">🎯 日付末尾 × 台番末尾</div><div id="dateTailTable" class="tablewrap"></div>
-     <div class="pickSub" style="margin-top:12px">👀 特定日の末尾TOP</div><div id="specialTailTop" class="list"></div>
-     <div class="tiny" style="margin-top:8px">※「強め」は既存の設定推定ロジックと同じ。実設定の断定ではない。月末は各月の最終3日。</div>
-    </section>
-
-    <section id="researchMachine0133" class="researchPanel">
-     <div class="sectionTitle"><div><h3>📈 台別 7日・14日カルテ</h3><div class="tiny">閉店時点の日別差枚をつないで、台ごとの最近の走りを確認。</div></div><span class="pill good">LAZY</span></div>
-     <div class="machineControls">
-      <div><label>表示順</label><select id="machineSort0133" onchange="renderMachineExplorer0133()"><option value="setting">🔥 設定推理が高い順</option><option value="machine">🔢 台番順</option><option value="diff">📈 期間累計差枚順</option><option value="temp">🌡 直近温度順</option></select></div>
-      <div><label>期間</label><div class="machinePeriodBtns"><button id="period7Btn0133" class="btn dark small" onclick="setMachinePeriod0133(7)">7日</button><button id="period14Btn0133" class="btn cyan small active" onclick="setMachinePeriod0133(14)">14日</button></div></div>
-     </div>
-     <div id="machineDetail0133" class="machineDetail"></div>
-     <div id="machineExplorerList0133" class="list"></div>
-    </section>
-   </div>
+  <div class="notice" style="margin-top:8px">
+   <strong>🌅 朝イチ候補＝設定脳</strong>。過去の投入推定率・直近温度・投入間隔・22日相性から「入りそうな台」を選抜。<br>
+   <strong>🔥 今から狙い＝綾ちゃん脳</strong>。当日の<strong>現在差枚＋直近500G/1000Gのペカ密度</strong>を重視して「今、よくペカって差枚を作っている台」を順位化する。<br>
+   <span class="tiny">※「ハマっているからそろそろ当たる」は一切加点しない。直近ペカ密度は未来の当選を保証する指標ではなく、現在までの走り方を見るためのもの。</span>
   </div>
+  <div id="seatPickStatus" class="notice" style="margin-top:9px"></div>
+  <div class="pickGrid" style="margin-top:10px">
+   <div><div class="pickSub">🌅 朝イチ候補</div><div id="morningPicks" class="list"></div></div>
+   <div><div class="pickSub">🔥 今から狙い（綾ちゃん脳）</div><div id="livePicks" class="list"></div></div>
+  </div>
+ </div>
+
+ <div class="card">
+  <div class="sectionTitle"><h3>🏆 最新取得の1000枚到達</h3><div id="latestDate" class="tiny">-</div></div>
+  <div id="latestHits" class="list"></div>
+ </div>
+
+ <div class="card">
+  <div class="sectionTitle"><div><h3>🎯 台別・設定投入推理</h3><div class="tiny">閉店データだけで台番ごとの「入りやすさ」を学習。</div></div><span class="pill event">NEW</span></div>
+  <div class="notice" style="margin-top:8px">BB・REGを機種別の設定確率と照合し、総回転数で信頼度を調整。差枚は補助材料として小さく加点する。<strong>設定を断定するものではなく「高設定っぽさ」の研究スコア</strong>だよ。LIVEは投入頻度に使わない。</div>
+  <div id="machineInferenceSummary" class="grid3" style="margin-top:10px"></div>
+  <div id="machineProfiles" class="list" style="margin-top:10px"></div>
+ </div>
+
+ <div class="card">
+  <div class="sectionTitle"><h3>🔎 LABが見つけた傾向</h3><span class="pill">自動分析</span></div>
+  <div id="discoveries" class="list"></div>
  </div>
 </section>
 
@@ -218,7 +139,6 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
   <div id="eventCompare" class="notice" style="margin-top:10px"></div>
   <div id="eventLatestDelta" class="notice" style="margin-top:8px"></div>
  </div>
- <div class="card"><h3>📅 22日 × 曜日</h3><div class="tiny" style="margin-bottom:9px">22日が何曜日に当たった時に動きが違うかを分離。サンプルが増えるほど育つ。</div><div id="eventWeekdays" class="tablewrap"></div></div>
  <div class="card"><h3>📈 22日ごとの変化</h3><div id="eventTrend" class="tablewrap"></div></div>
  <div class="card"><h3>🎰 機種別 22日 vs 通常日</h3><div id="eventModels" class="tablewrap"></div></div>
  <div class="card"><h3>✨ EVENT ペカ記録</h3><div class="tiny" style="margin-bottom:9px">BB+REGを「ペカ数」として記録。72ペカ級がどれくらい異常だったか、後から比較できる。</div><div id="pekaRecords" class="list"></div></div>
@@ -289,11 +209,10 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 <div class="footer">PEKALOG LABは公開データと自分の仮説を検証する研究ツール。高設定っぽさ・投入推定は統計的な参考値で、設定・勝利を保証するものではありません。<br>同一GitHub Pagesドメイン配下ならPEKALOGのlocalStorageを直接連携できます。</div>
 </div>
 <script>
-
 const IMPORT_META_KEY='pekalog_lab_last_import_v09';
 const LAB_KEY='pekalog_lab_v02_data', HYP_KEY='pekalog_lab_v02_hypotheses', CFG_KEY='pekalog_lab_v02_config';
 const PEKA_ARCH='pekalog_v2_archives';
-const MODELS={gogo3:'ゴージャグ3',neoim:'ネオアイム',my5:'マイジャグV',my6:'マイジャグVI',happy3:'ハッピーV III',ultra:'ウルトラミラクル',newkinghana5:'ニューキングハナハナV'};
+const MODELS={gogo3:'ゴージャグ3',neoim:'ネオアイム',my5:'マイジャグV',my6:'マイジャグVI',happy3:'ハッピーV III',ultra:'ウルトラミラクル'};
 const SETTING_SPECS={
  gogo3:[259.0,354.2,149.6,258.0,332.7,145.3,257.0,306.2,139.7,254.0,268.6,130.5,247.3,247.3,123.7,234.9,234.9,117.4],
  neoim:[273.1,439.8,168.5,269.7,399.6,161.0,269.7,331.0,148.6,259.0,315.1,142.2,259.0,255.0,128.5,255.0,255.0,127.5],
@@ -302,32 +221,10 @@ const SETTING_SPECS={
  happy3:[273.1,397.2,161.8,270.8,362.1,154.9,263.2,332.7,146.9,254.0,300.6,137.7,239.2,273.1,127.5,226.0,256.0,120.0],
  ultra:[267.5,425.6,164.3,261.1,402.1,158.3,256.0,350.5,147.9,242.7,322.8,138.6,233.2,297.9,130.8,216.3,277.7,121.6]
 };
-
-const TURKEY_LAYOUT={
- rows:[
-  {label:'通路側',segments:[['651','652','653','655','656','657','658','660'],['661','662','663']]},
-  {label:'壁側',segments:[['720','718','717','716','715','713','712','711'],['710','708','707']]}
- ],
- passagePairs:[['660','661'],['711','710']],
- modelBoundaryPairs:[['657','658'],['713','712']],
- roles:{
-  '651':['角','マイ角'],'652':['角2'],'656':['マイ機種端2'],'657':['マイ機種端','機種境界'],
-  '658':['角2','GO'],'660':['角','GO角'],'661':['角','アイム角'],'662':['角2'],
-  '720':['角','マイ角'],'718':['角2'],'715':['マイ機種端2'],'713':['マイ機種端','機種境界'],
-  '712':['角2','GO','機種境界'],'711':['角','GO角'],'710':['角','アイム角'],'708':['角2']
- }
-};
-const TURKEY_POSITION_GROUPS=[
- {key:'corner',label:'角',machines:['651','660','661','720','711','710']},
- {key:'corner2',label:'角2',machines:['652','658','662','718','712','708']},
- {key:'modelEnd',label:'マイ機種端',machines:['657','713']},
- {key:'modelEnd2',label:'マイ機種端2',machines:['656','715']},
- {key:'boundary',label:'マイ↔GO境界',machines:['657','658','713','712']}
-];
 const TURKEY_LIVE={
  base:'https://www.pscube.jp/h/a707001/cgi-bin/',
  endpoints:{basic:'nc-m06-001.php',history:'nc-m06-008.php',graph:'nc-m06-003.php'},
- defaultMachines:['651','652','653','655','656','657','658','660','661','662','663','707','708','710','711','712','713','715','716','717','718','720','687']
+ defaultMachines:['651','652','653','655','656','657','658','660','661','662','663','707','708','710','711','712','713','715','716','717','718','720']
 };
 let liveTimer=null, liveBusy=false, lastLiveDebug=null;
 function normMachine(v){const s=String(v??'').trim();if(!s)return '';const n=Number(s);return Number.isFinite(n)?String(n):s.replace(/^0+/,'')||'0'}
@@ -335,7 +232,7 @@ function apiMachine(v){const s=normMachine(v);return /^\d+$/.test(s)?s.padStart(
 function ymd8(date){return String(date||'').replace(/-/g,'')}
 function date10(ymd){const s=String(ymd||'');return s.length===8?s.slice(0,4)+'-'+s.slice(4,6)+'-'+s.slice(6,8):s}
 function todayJST(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
-function modelIdFromName(name){const n=String(name||'').normalize('NFKC');if(n.includes('ニューキングハナハナ'))return 'newkinghana5';if(n.includes('ゴーゴー'))return 'gogo3';if(n.includes('ネオアイム'))return 'neoim';if(n.includes('マイジャグラーVI')||n.includes('マイジャグラー6'))return 'my6';if(n.includes('マイジャグラーV'))return 'my5';if(n.includes('ハッピー'))return 'happy3';if(n.includes('ウルトラミラクル'))return 'ultra';return 'unknown'}
+function modelIdFromName(name){const n=String(name||'').normalize('NFKC');if(n.includes('ゴーゴー'))return 'gogo3';if(n.includes('ネオアイム'))return 'neoim';if(n.includes('マイジャグラーVI')||n.includes('マイジャグラー6'))return 'my6';if(n.includes('マイジャグラーV'))return 'my5';if(n.includes('ハッピー'))return 'happy3';if(n.includes('ウルトラミラクル'))return 'ultra';return 'unknown'}
 function deepGetArrays(root){const out=[];const seen=new Set();function walk(v,path=''){if(!v||typeof v!=='object'||seen.has(v))return;seen.add(v);if(Array.isArray(v)){out.push({path,value:v});v.forEach((x,i)=>walk(x,path+'['+i+']'));return}for(const [k,x] of Object.entries(v))walk(x,path?path+'.'+k:k)}walk(root);return out}
 function deepObjects(root){const out=[];const seen=new Set();function walk(v,path=''){if(!v||typeof v!=='object'||seen.has(v))return;seen.add(v);if(!Array.isArray(v))out.push({path,value:v});if(Array.isArray(v))v.forEach((x,i)=>walk(x,path+'['+i+']'));else for(const [k,x] of Object.entries(v))walk(x,path?path+'.'+k:k)}walk(root);return out}
 function nval(v){if(v===null||v===undefined||v===false||v==='')return null;const n=Number(String(v).replace(/,/g,''));return Number.isFinite(n)?n:null}
@@ -372,8 +269,6 @@ function setupLiveAuto(){if(liveTimer){clearInterval(liveTimer);liveTimer=null}c
 function initLiveUI(){if(!$('liveDate'))return;$('liveDate').value=todayJST();$('liveAuto').value=String(cfg.liveAuto||'off');if(cfg.liveMachines?.length)$('liveMachines').value=cfg.liveMachines.join(',');$('liveTestBtn').onclick=liveTest;$('liveScanBtn').onclick=liveScan;$('liveDebugBtn').onclick=saveLiveDebug;$('liveAuto').onchange=setupLiveAuto;$('liveMachines').onchange=()=>{cfg.liveMachines=liveMachineList();persist()};setupLiveAuto()}
 const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 let lab=loadLab(), hypotheses=JSON.parse(localStorage.getItem(HYP_KEY)||'[]'), cfg=loadCfg();
-// 687 legacy model normalization
-if(lab&&Array.isArray(lab.snapshots)){let __hana687Changed=false;for(const r of lab.snapshots){if(normMachine(r?.machine)==='687'){if(!r.model||r.model==='unknown'){r.model='newkinghana5';__hana687Changed=true}if(!r.modelName||r.modelName==='unknown'){r.modelName='ニューキングハナハナV';__hana687Changed=true}}}if(__hana687Changed){try{localStorage.setItem(LAB_KEY,JSON.stringify(lab))}catch(e){console.warn('687 normalize save',e)}}}
 function loadCfg(){try{return {...{eventDay:22,extraEvents:[]},...JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}}catch(e){return {eventDay:22,extraEvents:[]}}}
 function loadLab(){try{return JSON.parse(localStorage.getItem(LAB_KEY)||'{"snapshots":[]}')}catch(e){return {snapshots:[]}}}
 function persist(){localStorage.setItem(LAB_KEY,JSON.stringify(lab));localStorage.setItem(HYP_KEY,JSON.stringify(hypotheses));localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}
@@ -381,36 +276,13 @@ function fmt(n){if(n===null||n===undefined||Number.isNaN(Number(n)))return '-';r
 function pct(n,d){return d?((n/d)*100).toFixed(1)+'%':'-'}
 function signed(n){if(n===null||n===undefined||n==='')return '-';n=Number(n);return `${n>0?'+':''}${fmt(n)}`}
 function isEventDate(d){const day=Number(String(d).slice(8,10));return day===Number(cfg.eventDay||22)||(cfg.extraEvents||[]).includes(String(d))}
-let __finalRowsCache0132=null;
-function finalRows(){
- if(__finalRowsCache0132)return __finalRowsCache0132;
- const map=new Map();
- for(const s of (lab.snapshots||[])){
-  if(!s.date||!s.machine)continue;
-  const key=String(s.date)+'|'+normMachine(s.machine);
-  const old=map.get(key);
-  if(!old){map.set(key,s);continue}
-  const oldFinal=old.isFinal===true,newFinal=s.isFinal===true;
-  if(newFinal&&!oldFinal){map.set(key,s);continue}
-  if(oldFinal&&!newFinal)continue;
-  if(Number(s.ts||0)>=Number(old.ts||0))map.set(key,s);
- }
- const today=todayJST();
- const rows=[...map.values()].map(r=>{
-  if(r&&r.isFinal===false&&String(r.date||'')<String(today)){
-   return {...r,isFinal:true,provisionalFinal:true};
-  }
-  return r;
- }).sort((a,b)=>(String(a.date)+normMachine(a.machine)).localeCompare(String(b.date)+normMachine(b.machine)));
- __finalRowsCache0132=rows;
- return rows;
-}
+function finalRows(){const map=new Map();for(const s of lab.snapshots||[]){if(!s.date||!s.machine)continue;const k=s.date+'|'+s.machine;const old=map.get(k);if(!old||Number(s.ts||0)>=Number(old.ts||0))map.set(k,s)}return [...map.values()].sort((a,b)=>(a.date+a.machine).localeCompare(b.date+b.machine))}
 function rowsByDate(){const m={};for(const r of finalRows())(m[r.date]??=[]).push(r);return m}
 function latestSnapshot(date,machine){return (lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===normMachine(machine)).sort((a,b)=>Number(a.ts||0)-Number(b.ts||0)).at(-1)||null}
 function nearestSnapshot(date,machine,ts){const a=(lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===normMachine(machine)&&x.ts).sort((x,y)=>Math.abs(x.ts-ts)-Math.abs(y.ts-ts));return a[0]||null}
 function tags(r){let out=[];if(isEventDate(r.date))out.push('<span class="pill event">22日</span>');if(r.isFinal===true)out.push('<span class="pill good">閉店</span>');else if(r.isFinal===false)out.push('<span class="pill">LIVE</span>');const d=Number(r.diff);if(d>=3000)out.push('<span class="pill hit3000">🚀3000</span>');else if(d>=2000)out.push('<span class="pill hit2000">🔥2000</span>');else if(d>=1000)out.push('<span class="pill hit1000">🟡1000</span>');return out.join('')}
 function archiveData(){try{return JSON.parse(localStorage.getItem(PEKA_ARCH)||'[]')}catch(e){return []}}
-function turkeyArchives(){return archiveData().filter(a=>/ターキー|turkey/i.test(a.shop||''))}
+function turkeyArchives(){return archiveData()} // PEKALOGはターキー専用。店名入力不要
 function nav(){document.querySelectorAll('#nav .btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav .btn').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.view).classList.add('active');renderAll()})}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 function poissonLogLab(k,l){if(l<=0)return -1e99;let f=0;for(let i=2;i<=k;i++)f+=Math.log(i);return k*Math.log(l)-l-f}
@@ -435,51 +307,6 @@ function settingEvidence(r){
 function scoreLabel(e){if(!e)return '判定不可';if(e.g<1000)return '材料少';if(e.score>=72)return 'かなり強め';if(e.score>=62)return '強め候補';if(e.score>=52)return '中間〜上も';if(e.score>=42)return '判別保留';return '低め寄り'}
 function scoreClass(e){if(!e||e.g<1000)return 'warn';if(e.score>=62)return 'good';if(e.score<42)return 'bad';return ''}
 function dateGap(a,b){const x=new Date(a+'T00:00:00Z'),y=new Date(b+'T00:00:00Z');return Math.round((y-x)/86400000)}
-const JP_WEEK=['日','月','火','水','木','金','土'];
-function weekdayIndex(date){const p=String(date||'').split('-').map(Number);if(p.length!==3||p.some(x=>!x))return null;return new Date(Date.UTC(p[0],p[1]-1,p[2])).getUTCDay()}
-function weekdayName(date){const i=weekdayIndex(date);return i===null?'-':JP_WEEK[i]+'曜'}
-function nextConfiguredEventDate(from=todayJST()){
- const p=String(from).split('-').map(Number);if(p.length!==3||p.some(x=>!x))return null;
- const wanted=Number(cfg.eventDay||22);
- for(let add=0;add<15;add++){
-  const d=new Date(Date.UTC(p[0],p[1]-1+add,1));const y=d.getUTCFullYear(),m=d.getUTCMonth();
-  const last=new Date(Date.UTC(y,m+1,0)).getUTCDate();if(wanted>last)continue;
-  const cand=new Date(Date.UTC(y,m,wanted)).toISOString().slice(0,10);if(cand>=from)return cand;
- }
- return null;
-}
-function weekdaySummary(){
- const rows=finalRows().filter(r=>r.isFinal!==false&&SETTING_SPECS[r.model]);
- return JP_WEEK.map((name,wi)=>{
-  const a=rows.filter(r=>weekdayIndex(r.date)===wi),eligible=a.map(r=>({r,e:settingEvidence(r)})).filter(x=>x.e?.eligible),strong=eligible.filter(x=>x.e.strong);
-  const normal=eligible.filter(x=>!isEventDate(x.r.date)),normalStrong=normal.filter(x=>x.e.strong);
-  const diffs=a.map(r=>Number(r.diff)).filter(Number.isFinite);return {wi,name,days:new Set(a.map(r=>r.date)).size,n:eligible.length,hits:strong.length,rate:eligible.length?strong.length/eligible.length:null,normalN:normal.length,normalRate:normal.length?normalStrong.length/normal.length:null,avgDiff:diffs.length?diffs.reduce((x,y)=>x+y,0)/diffs.length:null};
- })
-}
-function machineWeekdayStats(machine,targetDate){
- const wi=weekdayIndex(targetDate);if(wi===null)return {n:0,hits:0,rate:null};
- const a=finalRows().filter(r=>r.isFinal!==false&&String(r.machine)===String(machine)&&weekdayIndex(r.date)===wi&&SETTING_SPECS[r.model]).map(r=>({r,e:settingEvidence(r)})).filter(x=>x.e?.eligible);
- const h=a.filter(x=>x.e.strong);return {n:a.length,hits:h.length,rate:a.length?h.length/a.length:null,weekday:JP_WEEK[wi]};
-}
-function hourJST(ts){if(!Number.isFinite(Number(ts)))return null;const parts=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',hour:'2-digit',hour12:false}).formatToParts(new Date(Number(ts)));const h=Number(parts.find(x=>x.type==='hour')?.value);return Number.isFinite(h)?h%24:null}
-function timeBandInfo(ts){const h=hourJST(ts);if(h===null)return null;if(h<12)return {id:'morning',label:'朝〜11:59'};if(h<15)return {id:'noon',label:'昼12〜14:59'};if(h<18)return {id:'evening',label:'夕15〜17:59'};if(h<21)return {id:'night',label:'夜18〜20:59'};return {id:'late',label:'閉店前21〜'} }
-function timeBandSummary(){
- const order=[['morning','朝〜11:59'],['noon','昼12〜14:59'],['evening','夕15〜17:59'],['night','夜18〜20:59'],['late','閉店前21〜']];
- const rows=(lab.snapshots||[]).filter(r=>r.isFinal!==true&&r.date&&r.machine&&Number.isFinite(Number(r.ts))&&SETTING_SPECS[r.model]);
- return order.map(([id,label])=>{const a=rows.filter(r=>timeBandInfo(r.ts)?.id===id),ev=a.map(r=>settingEvidence(r)).filter(e=>e&&e.g>=800),strong=ev.filter(e=>e.score>=62),gs=ev.map(e=>e.g),scores=ev.map(e=>e.score);return {id,label,captures:new Set(a.map(r=>`${r.date}|${Math.floor(Number(r.ts)/900000)}`)).size,n:ev.length,avgG:gs.length?gs.reduce((x,y)=>x+y,0)/gs.length:null,avgScore:scores.length?scores.reduce((x,y)=>x+y,0)/scores.length:null,strongRate:ev.length?strong.length/ev.length:null};})
-}
-function currentTimeBandStat(){const band=timeBandInfo(Date.now());if(!band)return null;return timeBandSummary().find(x=>x.id===band.id)||null}
-function renderPatternLab(){
- const wb=$('weekdayTrendBody'),tb=$('timeTrendBody'),mp=$('weekdayMachinePicks'),n22=$('next22Status');if(!wb||!tb||!mp||!n22)return;
- const ws=weekdaySummary();wb.innerHTML=ws.map(x=>`<tr><td>${x.name}</td><td>${x.days}</td><td>${x.n}</td><td>${x.rate===null?'-':(x.rate*100).toFixed(1)+'%'}</td><td>${x.normalRate===null?'-':(x.normalRate*100).toFixed(1)+'%'}</td><td class="${(x.avgDiff??0)>=0?'pos':'neg'}">${x.avgDiff===null?'-':signed(Math.round(x.avgDiff))}</td></tr>`).join('');
- const ts=timeBandSummary();tb.innerHTML=ts.map(x=>`<tr><td>${x.label}</td><td>${x.captures}</td><td>${x.n}</td><td>${x.avgG===null?'-':fmt(Math.round(x.avgG))}</td><td>${x.avgScore===null?'-':Math.round(x.avgScore)+'/100'}</td><td>${x.strongRate===null?'-':(x.strongRate*100).toFixed(1)+'%'}</td></tr>`).join('');
- const target=latestLabDate(),wi=weekdayIndex(target),machines=[...new Set(finalRows().map(r=>String(r.machine)).filter(Boolean))];
- const ranked=machines.map(machine=>{const st=machineWeekdayStats(machine,target),p=profileMap().get(machine),model=p?.model||finalRows().filter(r=>String(r.machine)===machine).at(-1)?.model||'';const shrunk=st.rate===null?0:(st.rate-.20)*(st.n/(st.n+4));return {machine,model,...st,shrunk}}).filter(x=>x.n>0).sort((a,b)=>b.shrunk-a.shrunk||b.n-a.n).slice(0,6);
- mp.innerHTML=ranked.length?ranked.map((x,i)=>`<div class="row"><div class="rowtop"><div><b>${JP_WEEK[wi]||'-'}曜 #${i+1}　${esc(x.machine)}番 ${esc(MODELS[x.model]||x.model)}</b><div class="tiny">同じ曜日の閉店判定 n=${x.n} ／ 強め候補 ${x.hits}回</div></div><span class="pill ${x.rate!==null&&x.rate>=.35?'good':'warn'}">${x.rate===null?'-':(x.rate*100).toFixed(1)+'%'}</span></div></div>`).join(''):'<div class="empty">同じ曜日の閉店データが貯まると台番ごとの曜日クセを出すよ。</div>';
- const next=nextConfiguredEventDate(),nextWi=next?weekdayIndex(next):null,eventRows=finalRows().filter(r=>r.isFinal!==false&&isEventDate(r.date)&&SETTING_SPECS[r.model]);const sameWeek=eventRows.filter(r=>weekdayIndex(r.date)===nextWi),sameEligible=sameWeek.map(r=>settingEvidence(r)).filter(e=>e?.eligible),sameStrong=sameEligible.filter(e=>e.strong);
- const liveNow=currentTimeBandStat();const liveTxt=liveNow&&liveNow.n?`現在の時間帯「${liveNow.label}」は過去LIVE判定 n=${liveNow.n}、強め候補観測 ${(liveNow.strongRate*100).toFixed(1)}%。`:'時間帯データはこれから蓄積。';
- n22.innerHTML=next?`🔥 次の<strong>${cfg.eventDay||22}日</strong>は <strong>${esc(next)}（${JP_WEEK[nextWi]}曜）</strong>。同じ曜日に当たった過去イベントの判定は <strong>n=${sameEligible.length}</strong>${sameEligible.length?`、強め候補率 <strong>${(sameStrong.length/sameEligible.length*100).toFixed(1)}%</strong>`:''}。<br><span class="tiny">${liveTxt} 曜日・時間は予言ではなく、過去データの偏りを可視化して候補選びの補助に使う。</span>`:'次回イベント日を計算できなかったよ。';
-}
 function machineInferenceProfiles(){
  const rows=finalRows().filter(r=>r.isFinal!==false&&r.machine&&SETTING_SPECS[r.model]);
  const by={};for(const r of rows)(by[r.machine]??=[]).push(r);
@@ -511,37 +338,6 @@ function machineInferenceProfiles(){
  }
  return out;
 }
-
-function turkeyLayoutRoles(machine){return TURKEY_LAYOUT.roles[normMachine(machine)]||[]}
-function turkeyLayoutRoleHtml(machine){const a=turkeyLayoutRoles(machine);return a.length?a.map(x=>`<span class="pill">${esc(x)}</span>`).join(' '):''}
-function turkeyNeighborPairs(){const out=[];for(const row of TURKEY_LAYOUT.rows)for(const seg of row.segments)for(let i=0;i<seg.length-1;i++)out.push([seg[i],seg[i+1]]);return out}
-function layoutEligibleRows(){return finalRows().filter(r=>r.isFinal!==false&&SETTING_SPECS[r.model]).map(r=>({r,e:settingEvidence(r)})).filter(x=>x.e?.eligible)}
-function layoutBaseline(){const a=layoutEligibleRows();return {n:a.length,hits:a.filter(x=>x.e.strong).length,rate:a.length?a.filter(x=>x.e.strong).length/a.length:null}}
-function layoutGroupStat(group){const set=new Set(group.machines.map(String)),a=layoutEligibleRows().filter(x=>set.has(String(x.r.machine))),hits=a.filter(x=>x.e.strong),diffs=a.map(x=>Number(x.r.diff)).filter(Number.isFinite);return {...group,n:a.length,hits:hits.length,rate:a.length?hits.length/a.length:null,avgDiff:diffs.length?diffs.reduce((s,v)=>s+v,0)/diffs.length:null,days:new Set(a.map(x=>x.r.date)).size}}
-function layoutPositionStats(){return TURKEY_POSITION_GROUPS.map(layoutGroupStat)}
-function layoutGroupForMachine(machine){const m=String(machine),base=layoutBaseline();const cand=layoutPositionStats().filter(x=>x.machines.includes(m)&&x.n>=5&&x.rate!==null);if(!cand.length)return null;cand.sort((a,b)=>((Math.abs((b.rate??0)-(base.rate??0))*Math.sqrt(b.n))-Math.abs((a.rate??0)-(base.rate??0))*Math.sqrt(a.n)));const x=cand[0];return {...x,baseRate:base.rate,delta:(x.rate??0)-(base.rate??0)}}
-function layoutPairStat(pair,kind='neighbor'){
- const [a,b]=pair.map(String),by=new Map();for(const x of layoutEligibleRows()){const m=String(x.r.machine);if(m!==a&&m!==b)continue;const d=x.r.date;if(!by.has(d))by.set(d,{});by.get(d)[m]=x}
- let n=0,both=0,either=0,meanSum=0;for(const v of by.values()){if(!v[a]||!v[b])continue;n++;const sa=v[a].e.strong,sb=v[b].e.strong;if(sa||sb)either++;if(sa&&sb)both++;meanSum+=(v[a].e.mean+v[b].e.mean)/2}
- return {pair:[a,b],kind,n,both,either,rate:n?both/n:null,eitherRate:n?either/n:null,mean:n?meanSum/n:null,boundary:TURKEY_LAYOUT.modelBoundaryPairs.some(p=>p[0]===a&&p[1]===b||p[0]===b&&p[1]===a)}
-}
-function machineTransitionStats(machine){
- const m=String(machine),a=layoutEligibleRows().filter(x=>String(x.r.machine)===m).sort((x,y)=>x.r.date.localeCompare(y.r.date));let n=0,up=0,down=0,flat=0,strongStay=0,weakToStrong=0,strongToWeak=0;
- for(let i=1;i<a.length;i++){const p=a[i-1],c=a[i];if(dateGap(p.r.date,c.r.date)!==1)continue;n++;const d=c.e.mean-p.e.mean;if(d>=.55)up++;else if(d<=-.55)down++;else flat++;if(p.e.strong&&c.e.strong)strongStay++;if(!p.e.strong&&c.e.strong)weakToStrong++;if(p.e.strong&&!c.e.strong)strongToWeak++}
- const dom=n?[[up,'↗ 上げ方向'],[flat,'→ 据え寄り'],[down,'↘ 下げ方向']].sort((x,y)=>y[0]-x[0])[0]:[0,'観察中'];return {n,up,down,flat,strongStay,weakToStrong,strongToWeak,label:n>=2?dom[1]:'観察中'}
-}
-function layoutPairHtml(x){const label=x.boundary?' <span class="pill event">機種境界</span>':'';const cls=x.n>=3&&x.rate>=.35?'good':x.n<2?'warn':'';return `<div class="row"><div class="rowtop"><div><b>${esc(x.pair[0])} ↔ ${esc(x.pair[1])}${label}</b><div class="tiny">両台を判定できた日 n=${x.n} ／ どちらか強め ${x.either}/${x.n||0}</div></div><span class="pill ${cls}">${x.rate===null?'-':'並び '+(x.rate*100).toFixed(1)+'%'}</span></div></div>`}
-function renderLayoutLab(){
- const map=$('layoutMapStatus');if(!map)return;map.innerHTML=`<b>通路側</b>：651–652–653–655–656–657–658–660 ｜通路｜ 661–662–663<br><b>壁側</b>：720–718–717–716–715–713–712–711 ｜通路｜ 710–708–707`;
- const ps=layoutPositionStats(),base=layoutBaseline(),corner=ps.find(x=>x.key==='corner'),corner2=ps.find(x=>x.key==='corner2'),boundaryPairs=TURKEY_LAYOUT.modelBoundaryPairs.map(p=>layoutPairStat(p,'boundary')),neighbor=turkeyNeighborPairs().map(p=>layoutPairStat(p,'neighbor')),pass=TURKEY_LAYOUT.passagePairs.map(p=>layoutPairStat(p,'passage'));
- const allPairN=neighbor.reduce((s,x)=>s+x.n,0),allPairBoth=neighbor.reduce((s,x)=>s+x.both,0),boundaryN=boundaryPairs.reduce((s,x)=>s+x.n,0),boundaryBoth=boundaryPairs.reduce((s,x)=>s+x.both,0);
- $('layoutSummary').innerHTML=`<div class="stat"><div class="k">角 強め率</div><div class="v">${corner?.rate==null?'-':(corner.rate*100).toFixed(0)+'%'}</div><div class="tiny">${corner?.hits||0}/${corner?.n||0}</div></div><div class="stat"><div class="k">角2 強め率</div><div class="v">${corner2?.rate==null?'-':(corner2.rate*100).toFixed(0)+'%'}</div><div class="tiny">${corner2?.hits||0}/${corner2?.n||0}</div></div><div class="stat"><div class="k">機種境界 並び</div><div class="v">${boundaryN?(boundaryBoth/boundaryN*100).toFixed(0)+'%':'-'}</div><div class="tiny">${boundaryBoth}/${boundaryN}</div></div><div class="stat"><div class="k">全隣接 並び</div><div class="v">${allPairN?(allPairBoth/allPairN*100).toFixed(0)+'%':'-'}</div><div class="tiny">${allPairBoth}/${allPairN}</div></div>`;
- $('layoutPositionTable').innerHTML=`<table><thead><tr><th>位置</th><th>対象台</th><th>判定</th><th>強め</th><th>強め率</th><th>平均差枚</th></tr></thead><tbody>${ps.map(x=>`<tr><td>${esc(x.label)}</td><td>${x.machines.join(',')}</td><td>${x.n}</td><td>${x.hits}</td><td>${x.rate===null?'-':(x.rate*100).toFixed(1)+'%'}</td><td class="${(x.avgDiff??0)>=0?'pos':'neg'}">${x.avgDiff===null?'-':signed(Math.round(x.avgDiff))}</td></tr>`).join('')}</tbody></table><div class="tiny" style="margin-top:6px">全体の強め候補率：${base.rate===null?'-':(base.rate*100).toFixed(1)+'%'}（${base.hits}/${base.n}）</div>`;
- const nr=neighbor.filter(x=>x.n).sort((a,b)=>((b.rate??-1)-(a.rate??-1))||(b.n-a.n));$('layoutNeighborPairs').innerHTML=nr.length?nr.slice(0,10).map(layoutPairHtml).join(''):'<div class="empty">両台を判定できる日が増えると、実配置の並び傾向が育つよ。</div>';
- $('layoutPassagePairs').innerHTML=pass.some(x=>x.n)?pass.map(layoutPairHtml).join(''):'<div class="empty">660↔661、711↔710を「隣」ではなく通路向かいとして別集計するよ。</div>';
- const trans=machineInferenceProfiles().map(p=>({p,t:machineTransitionStats(p.machine)})).filter(x=>x.t.n).sort((a,b)=>b.t.n-a.t.n||a.p.machine.localeCompare(b.p.machine));$('layoutTransitions').innerHTML=trans.length?trans.slice(0,10).map(({p,t})=>`<div class="row"><div class="rowtop"><div><b>${esc(p.machine)}番 ${turkeyLayoutRoleHtml(p.machine)}</b><div class="tiny">連続日 n=${t.n} ／ ↗${t.up} →${t.flat} ↘${t.down} ／ 強→強 ${t.strongStay}</div></div><span class="pill ${t.n<3?'warn':''}">${esc(t.label)}</span></div></div>`).join(''):'<div class="empty">1500G以上の閉店データが連続日で貯まると、台番ごとの判別推移を出すよ。</div>';
-}
-
 function renderMachineInference(){
  const box=$('machineProfiles'),sum=$('machineInferenceSummary');if(!box||!sum)return;
  const ps=machineInferenceProfiles();const eligible=ps.filter(x=>x.n>0),with5=ps.filter(x=>x.n>=5),hot=eligible.filter(x=>x.hitRate!==null&&x.hitRate>=.35);
@@ -551,13 +347,12 @@ function renderMachineInference(){
  box.innerHTML=ps.map((p,i)=>{
    const rate=p.hitRate===null?'-':(p.hitRate*100).toFixed(1)+'%';const temp=p.temp===null?'-':Math.round(p.temp);const interval=p.avgInterval===null?'-':p.avgInterval.toFixed(1)+'日';const repeat=p.repeatRate===null?'-':(p.repeatRate*100).toFixed(1)+'%';
    const last=p.lastStrong?p.lastStrong.r.date:'まだなし';const latest=p.latest?.e;const latestTxt=latest?`${Math.round(latest.score)}/100 ${scoreLabel(latest)}`:'-';const cls=p.n<5?'warn':(p.hitRate??0)>=.35?'good':'';
-   const tr=machineTransitionStats(p.machine),roles=turkeyLayoutRoleHtml(p.machine);
-   return `<div class="row"><div class="rowtop"><div><b><span class="rankNo">#${i+1}</span>${esc(p.machine)}番 ${esc(MODELS[p.model]||p.model)}</b>${roles?`<div style="margin-top:4px">${roles}</div>`:''}<div class="tiny">閉店判定 n=${p.n} ／ 観測 ${p.observed}日 ／ 最終投入候補 ${esc(last)}</div></div><span class="pill ${cls}">${esc(p.type)}</span></div><div class="inferMeta"><span class="pill">投入推定率 <b>${rate}</b> (${p.hits}/${p.n})</span><span class="pill">直近温度 <b>${temp}</b></span><span class="pill">平均間隔 <b>${interval}</b></span><span class="pill">連投率 <b>${repeat}</b>${p.repN?` (${Math.round((p.repeatRate||0)*p.repN)}/${p.repN})`:''}</span></div><div class="miniBar"><div style="width:${p.hitRate===null?0:clamp(p.hitRate*100,0,100)}%"></div></div><div class="tiny" style="margin-top:7px">直近の閉店スコア：<strong>${latestTxt}</strong>${p.n<5?' ／ まだサンプル少。率は参考値。':''}${tr.n?`<br>判別推移：<strong>${esc(tr.label)}</strong> ／ 連続日 ${tr.n}回（↗${tr.up} →${tr.flat} ↘${tr.down} / 強→強 ${tr.strongStay}）`:''}</div></div>`;
+   return `<div class="row"><div class="rowtop"><div><b><span class="rankNo">#${i+1}</span>${esc(p.machine)}番 ${esc(MODELS[p.model]||p.model)}</b><div class="tiny">閉店判定 n=${p.n} ／ 観測 ${p.observed}日 ／ 最終投入候補 ${esc(last)}</div></div><span class="pill ${cls}">${esc(p.type)}</span></div><div class="inferMeta"><span class="pill">投入推定率 <b>${rate}</b> (${p.hits}/${p.n})</span><span class="pill">直近温度 <b>${temp}</b></span><span class="pill">平均間隔 <b>${interval}</b></span><span class="pill">連投率 <b>${repeat}</b>${p.repN?` (${Math.round((p.repeatRate||0)*p.repN)}/${p.repN})`:''}</span></div><div class="miniBar"><div style="width:${p.hitRate===null?0:clamp(p.hitRate*100,0,100)}%"></div></div><div class="tiny" style="margin-top:7px">直近の閉店スコア：<strong>${latestTxt}</strong>${p.n<5?' ／ まだサンプル少。率は参考値。':''}</div></div>`;
  }).join('');
 }
 
 function profileMap(){return new Map(machineInferenceProfiles().map(p=>[String(p.machine),p]))}
-function latestLabDate(){return todayJST()}
+function latestLabDate(){const a=finalRows().map(r=>r.date).filter(Boolean).sort();return a.at(-1)||todayJST()}
 function daysSince(date,target){if(!date||!target)return null;return dateGap(date,target)}
 function confidenceLabel(n){if(n>=10)return '参考度 高め';if(n>=5)return '学習中';if(n>=3)return '観察中';return '材料少'}
 function candidateReasons(p,targetDate,isLive=false,liveRow=null,liveEvidence=null){
@@ -570,8 +365,6 @@ function candidateReasons(p,targetDate,isLive=false,liveRow=null,liveEvidence=nu
   else if(gap!==null)rs.push(`前回強日から${gap}日`);
   if(isEventDate(targetDate)&&p.evRate!==null)rs.push(`22日系投入率 ${(p.evRate*100).toFixed(1)}%`);
   if(p.repeatRate!==null&&gap===1)rs.push(`連投率 ${(p.repeatRate*100).toFixed(1)}%`);
-  const wd=machineWeekdayStats(p.machine,targetDate);if(wd.n>=2&&wd.rate!==null)rs.push(`${wd.weekday}曜の強め候補率 ${(wd.rate*100).toFixed(1)}%（${wd.hits}/${wd.n}）`);
-  const lb=layoutGroupForMachine(p.machine);if(lb&&lb.n>=5)rs.push(`${lb.label}の強め率 ${(lb.rate*100).toFixed(1)}%（n=${lb.n}）`);
  }
  if(isLive&&liveRow&&liveEvidence){
   const g=Number(liveRow.totalG)||0;
@@ -599,9 +392,6 @@ function morningCandidate(p,targetDate){
    const base=p.normRate??p.hitRate??.20;
    raw+=clamp((p.evRate-base)*30,-5,10);
   }
-  const wd=machineWeekdayStats(p.machine,targetDate);
-  if(wd.n>=2&&wd.rate!==null){const base=p.hitRate??.20;const weight=wd.n/(wd.n+4);raw+=clamp((wd.rate-base)*12*weight,-3,4)}
-  const lb=layoutGroupForMachine(p.machine);if(lb&&lb.n>=6&&lb.baseRate!==null){const weight=lb.n/(lb.n+8);raw+=clamp(lb.delta*12*weight,-2.5,3)}
  }
  const conf=n/(n+5);
  const score=clamp(50+(raw-50)*Math.max(.22,conf),0,100);
@@ -626,7 +416,8 @@ function liveCandidate(row,p,targetDate){
  score=clamp(score,0,100);
  return {score,confidence:confidenceLabel(Math.max(p?.n||0,Math.floor(g/1200))),reasons:candidateReasons(p,targetDate,true,row,e),n:p?.n||0,row,e,live:true};
 }
-// ===== v0.13.2 綾ちゃん脳：当日差枚 + 直近ペカ密度 =====
+
+// ===== v0.13 綾ちゃん脳：当日差枚 + 直近ペカ密度 =====
 function recentPekaWindow(row,windowG){
  const hist=Array.isArray(row?.history)?row.history:[];
  const totalG=Number(row?.totalG)||0;
@@ -660,19 +451,14 @@ function ayaCandidate(row){
  const g=Number(row?.totalG)||0,bb=Number(row?.big)||0,reg=Number(row?.reg)||0;
  const diff=Number(row?.diff),w500=recentPekaWindow(row,500),w1000=recentPekaWindow(row,1000);
  const allRate=g>0?(bb+reg)/g*1000:null;
- // 今の走りを主役(80%)にしつつ、過去の「実際に1000枚まで伸びた癖」を最大20%加味。
- // グラフ未取得日は thousandStats0135 側で母数から除外する。
- const hist14=machineHistoryRows0133(String(row?.machine||''),14);
- const hist7=hist14.slice(-7),t7=thousandStats0135(hist7),t14=thousandStats0135(hist14);
  const parts=[];
- if(Number.isFinite(diff))parts.push({w:.35,v:clamp(50+diff/40,0,100)});
- if(Number.isFinite(w500.per1000))parts.push({w:.25,v:pekaRateScore(w500.per1000)});
- if(Number.isFinite(w1000.per1000))parts.push({w:.15,v:pekaRateScore(w1000.per1000)});
+ if(Number.isFinite(diff))parts.push({w:.45,v:clamp(50+diff/40,0,100)});
+ if(Number.isFinite(w500.per1000))parts.push({w:.30,v:pekaRateScore(w500.per1000)});
+ if(Number.isFinite(w1000.per1000))parts.push({w:.20,v:pekaRateScore(w1000.per1000)});
  if(Number.isFinite(allRate))parts.push({w:.05,v:pekaRateScore(allRate)});
- if(t7.rate!==null)parts.push({w:.12,v:clamp(t7.rate*100,0,100)});
- if(t14.rate!==null)parts.push({w:.08,v:clamp(t14.rate*100,0,100)});
  const ws=parts.reduce((a,b)=>a+b.w,0)||1;
  let score=parts.reduce((a,b)=>a+b.w*b.v,0)/ws;
+ // 出玉が大きく沈んでいる台は「よくペカって差枚が多い」基準では明確に割引
  if(Number.isFinite(diff)&&diff<=-1000)score-=10;
  score=clamp(score,0,100);
  const reasons=[];
@@ -680,10 +466,9 @@ function ayaCandidate(row){
  if(w500.count!==null)reasons.push(`直近500G：${w500.count}ペカ（BB${w500.big}/RB${w500.reg}）${w500.count?`・約1/${Math.round(w500.coverage/w500.count)}`:''}`);
  if(w1000.count!==null)reasons.push(`直近1000G：${w1000.count}ペカ（BB${w1000.big}/RB${w1000.reg}）${w1000.count?`・約1/${Math.round(w1000.coverage/w1000.count)}`:''}`);
  if(Number.isFinite(allRate))reasons.push(`全日ペカ密度 ${allRate.toFixed(1)}回/1000G`);
- if(t7.valid)reasons.push(`過去7日：1000枚到達 ${t7.hits}/${t7.valid}日（${Math.round(t7.rate*100)}%）`);
- if(t14.valid)reasons.push(`過去14日：1000枚到達 ${t14.hits}/${t14.valid}日（${Math.round(t14.rate*100)}%）`);
- return {score,confidence:ayaConfidence(row),reasons,n:0,row,live:true,aya:true,w500,w1000,allRate,t7,t14};
+ return {score,confidence:ayaConfidence(row),reasons,n:0,row,live:true,aya:true,w500,w1000,allRate};
 }
+
 function pickBadge(score,index,aya=false){
  if(aya){if(index===0)return '🔥 本命';if(index===1)return '✨ 次候補';if(index===2)return '👀 3番手';return `#${index+1}`;}
  if(index===0&&score>=55)return '🥇 本命';
@@ -692,7 +477,9 @@ function pickBadge(score,index,aya=false){
  return `#${index+1}`;
 }
 function pickClass(score){return score>=65?'good':score>=55?'event':score<48?'bad':'warn'}
-const SEAT_SKIP_KEY='pekalog_live_occupied_v1';
+
+// 「座られてる」は当日だけ記憶。押した瞬間、次点を自動繰り上げ。
+const SEAT_SKIP_KEY='pekalog_live_occupied_v2';
 function seatSkipStore(){try{return JSON.parse(localStorage.getItem(SEAT_SKIP_KEY)||'{}')||{}}catch(e){return {}}}
 function occupiedMachines(date){const s=seatSkipStore(),a=s[String(date)]||[];return new Set(a.map(String))}
 function setOccupiedMachine(date,machine,on=true){
@@ -702,147 +489,51 @@ function setOccupiedMachine(date,machine,on=true){
  try{localStorage.setItem(SEAT_SKIP_KEY,JSON.stringify(s))}catch(e){}
  renderSeatPicks();
 }
-function markOccupied(machine){setOccupiedMachine(todayJST(),machine,true)}
-function unmarkOccupied(machine){setOccupiedMachine(todayJST(),machine,false)}
+function markOccupied(machine){setOccupiedMachine(latestLabDate(),machine,true)}
+function unmarkOccupied(machine){setOccupiedMachine(latestLabDate(),machine,false)}
 function clearOccupied(){
- const d=todayJST(),s=seatSkipStore();delete s[String(d)];
+ const d=latestLabDate(),s=seatSkipStore();delete s[String(d)];
  try{localStorage.setItem(SEAT_SKIP_KEY,JSON.stringify(s))}catch(e){}
  renderSeatPicks();
 }
+
 function pickHtml(c,index,model,machine,isLive=false){
  const reasons=(c.reasons||[]).map(x=>`<div class="reason">・${esc(x)}</div>`).join('');
- const seatBtn=`<button class="btn dark small" style="margin-top:10px;width:100%" onclick="markOccupied('${esc(machine)}')">🚫 座られてる → 次の候補</button>`;
+ const seatBtn=isLive?`<button class="btn dark small" style="margin-top:10px;width:100%" onclick="markOccupied('${esc(machine)}')">🚫 座られてる → 次の候補</button>`:'';
  const badge=pickBadge(c.score,index,!!c.aya);
  const label=c.aya?(c.score>=70?'🔥 ペカ差枚とも強め':c.score>=55?'✨ 今から候補':c.score>=42?'👀 観察':'💤 今は弱め'):(c.score>=65?'強め候補':c.score>=55?'候補':c.score>=48?'観察':'薄め');
- return `<div class="pickHero"><div class="rowtop"><div><div class="pickTitle"><span class="pickRank">${badge}</span><b>${esc(machine)}番 ${esc(MODELS[model]||model||'')}</b></div><div class="pickConfidence">${esc(c.confidence)}${c.n?` / 閉店n=${c.n}`:''}${c.aya?' / 綾ちゃん脳':''}</div></div><div class="right"><div class="pickScore">${Math.round(c.score)}<small>/100</small></div><span class="pill ${pickClass(c.score)}">${label}</span></div></div><details class="candidateDetails"><summary>なぜこの台？ 詳細を見る</summary><div class="reasonList">${reasons||'<div class="reason">・まだデータ不足</div>'}</div></details>${seatBtn}</div>`;
-}
-
-/* ===== v0.13.8 順位つき空き台チェッカー：既存の朝・今から採点を再利用 ===== */
-function checkVacantMachines0137(){
- const box=$('vacantMachineResult0137'),raw=($('vacantMachineInput0137')?.value||'').trim();
- if(!box)return;
- const nums=[...new Set(raw.split(/[,、，\s]+/).map(x=>x.replace(/[^0-9]/g,'')).filter(Boolean))].slice(0,8);
- if(!nums.length){box.innerHTML='<div class="tiny">台番号を入力してね。</div>';return}
- const today=todayJST(),rows=finalRows(),pm=profileMap(),occ=occupiedMachines(today);
- const historical=rows.filter(r=>r.isFinal!==false&&String(r.date||'')<today);
- // 全台の順位を同一採点式で算出。入力した台だけで順位を振らない。
- const liveAll=rows.filter(r=>r.date===today&&r.isFinal===false&&r.machine);
- const liveRank=[...new Map(liveAll.map(r=>[String(r.machine),r])).values()]
-   .map(r=>({machine:String(r.machine),score:ayaCandidate(r).score}))
-   .sort((a,b)=>b.score-a.score||a.machine.localeCompare(b.machine));
- const morningMachines=[...new Set(rows.filter(r=>r.isFinal!==false&&String(r.date||'')<today&&r.machine).map(r=>String(r.machine)))];
- const morningRank=morningMachines.map(machine=>({machine,score:morningCandidate(pm.get(machine),today).score}))
-   .sort((a,b)=>b.score-a.score||a.machine.localeCompare(b.machine));
- const ranking=(machine,isLive)=>{
-   const list=isLive?liveRank:morningRank;
-   const index=list.findIndex(r=>r.machine===machine);
-   return index<0?'順位なし':`${index+1}位 / ${list.length}台`;
- };
-
- const rankContext=(machine,isLive)=>{
-   const list=isLive?liveRank:morningRank;
-   const index=list.findIndex(r=>r.machine===machine);
-   if(index<0)return '<div class="tiny">ランキング対象外</div>';
-   const indices=[...new Set([0,1,2,index-1,index,index+1].filter(i=>i>=0&&i<list.length))].sort((a,b)=>a-b);
-   return `<div style="margin-top:12px;padding:10px;border-radius:12px;background:#121e2c"><div style="font-weight:800;margin-bottom:7px">🏆 全台ランキングと前後の順位</div>${indices.map((i,k)=>{
-     const entry=list[i],selected=entry.machine===machine;
-     const gap=k&&i>indices[k-1]+1?'<div class="tiny" style="text-align:center">⋮</div>':'';
-     const occupied=occ.has(entry.machine)?' 🚫着席指定':'';
-     return `${gap}<div style="padding:6px 8px;border-radius:8px;${selected?'background:#24465b;border:1px solid #7ee3ff;':''}"><b>${i+1}位</b>　${esc(entry.machine)}番　${Math.round(entry.score)}/100${selected?' ◀ この台':''}${occupied}</div>`;
-   }).join('')}<div class="tiny" style="margin-top:7px">※順位は採点上の比較。空席・勝率を保証するものではありません。</div></div>`;
- };
- const found=nums.map(machine=>{
-   const past=historical.filter(r=>String(r.machine)===machine);
-   const live=rows.filter(r=>String(r.machine)===machine&&r.date===today&&r.isFinal===false).at(-1);
-   const p=pm.get(machine),r=live||past.at(-1),model=r?.model||p?.model||'';
-   if(!r&&!p)return {machine,missing:true};
-   const morning=morningCandidate(p,today);
-   const now=live?ayaCandidate(live):null;
-   const seven=typeof machineHistoryRows0133==='function'?machineHistoryRows0133(machine,7):past.slice(-7);
-   const fourteen=typeof machineHistoryRows0133==='function'?machineHistoryRows0133(machine,14):past.slice(-14);
-   const a=typeof thousandStats0135==='function'?thousandStats0135(seven):null;
-   const b=typeof thousandStats0135==='function'?thousandStats0135(fourteen):null;
-   return {machine,model,live,morning,now,a,b,occupied:occ.has(machine)};
- });
- found.sort((a,b)=>(b.now?.score??b.morning?.score??-1)-(a.now?.score??a.morning?.score??-1));
- const rate=t=>t&&t.valid?`${t.hits}/${t.valid}日（${Math.round(100*t.hits/t.valid)}%）`:'グラフ不足';
- box.innerHTML=found.map(x=>{
-   if(x.missing)return `<div class="notice">⚠️ ${esc(x.machine)}番：保存データが見つからないよ。</div>`;
-   const score=x.now||x.morning,mode=x.now?'🔥 今から':'🌅 朝イチ参考';
-   const rank=ranking(x.machine,!!x.now);
-   const cautions=[];
-   if(!x.live)cautions.push('今日のLIVEデータがないため、当日の状況を評価できない');
-   if(x.live){
-     const d=x.live, diff=Number(d.diff),game=Number(d.currentGame),spins=Number(d.totalG);
-     if(d.diff!==null&&d.diff!==undefined&&d.diff!==''&&Number.isFinite(diff)&&diff<0)cautions.push(`現時点の推定差枚は${signed(Math.round(diff))}枚`);
-     if(d.currentGame!==null&&d.currentGame!==undefined&&d.currentGame!==''&&Number.isFinite(game)&&game>=500)cautions.push(`現在${Math.round(game)}Gでボーナス間のハマりが長め`);
-     if(Number.isFinite(spins)&&spins<1000)cautions.push(`今日の総回転${Math.round(spins)}Gでサンプルが少なめ`);
-   }
-   if(score?.score<45)cautions.push('採点スコアは控えめ。無理に座らない選択も');
-   if(!cautions.length)cautions.push('目立つ警戒条件は少ないけれど、短期の出玉は予測できない');
-   const cautionHtml=`<details class="candidateDetails"><summary>⚠️ 見送る理由・注意点</summary>${cautions.map(t=>`<div class="tiny" style="margin:6px 0">・${esc(t)}</div>`).join('')}</details>`;
-   const contextHtml=rankContext(x.machine,!!x.now);
-
-   const reasons=(score?.reasons||[]).map(t=>`<div class="tiny" style="margin:5px 0">・${esc(t)}</div>`).join('');
-   const d=x.live,stat=d?`今日 ${fmt(d.totalG)}G / BB${fmt(d.big)} RB${fmt(d.reg)} / 差枚 ${Number.isFinite(Number(d.diff))?signed(Math.round(d.diff))+'枚':'不明'} / 現在G ${d.currentGame??'不明'}`:'今日のLIVE未取得';
-   return `<div class="pickHero" style="margin:10px 0;padding:13px"><div class="rowtop"><b>${esc(x.machine)}番 ${esc(MODELS[x.model]||x.model||'機種不明')}</b><div class="right"><b>${Math.round(score?.score||0)}/100</b><div class="tiny">${mode}</div><div style="font-weight:800;color:#7ee3ff;margin-top:4px">🏅 おすすめ ${esc(rank)}</div></div></div><div class="tiny">${esc(stat)}</div><div style="margin-top:9px">🚀 1000枚到達：7日 ${esc(rate(x.a))} / 14日 ${esc(rate(x.b))}</div>${x.occupied?'<div class="tiny">🚫 座られてる指定中</div>':''}<details class="candidateDetails"><summary>なぜこの評価？</summary>${reasons||'<div class="tiny">根拠データ不足</div>'}</details>${cautionHtml}${contextHtml}</div>`;
- }).join('');
+ return `<div class="pickHero"><div class="rowtop"><div><div class="pickTitle"><span class="pickRank">${badge}</span><b>${esc(machine)}番 ${esc(MODELS[model]||model||'')}</b></div><div class="pickConfidence">${esc(c.confidence)}${c.n?` / 閉店n=${c.n}`:''}${c.aya?' / 綾ちゃん脳':''}</div></div><div class="right"><div class="pickScore">${Math.round(c.score)}<small>/100</small></div><span class="pill ${pickClass(c.score)}">${label}</span></div></div><div class="reasonList">${reasons||'<div class="reason">・まだデータ不足</div>'}</div>${seatBtn}</div>`;
 }
 function renderSeatPicks(){
  const mbox=$('morningPicks'),lbox=$('livePicks'),status=$('seatPickStatus');if(!mbox||!lbox||!status)return;
- const target=todayJST(),pm=profileMap(),occupied=occupiedMachines(target),rows=finalRows();
- const md=target.slice(5).replace('-','/');
- const mtitle=mbox.parentElement?.querySelector('.pickSub'),ltitle=lbox.parentElement?.querySelector('.pickSub');
- if(mtitle)mtitle.textContent=`🌅 ${md} 朝イチ作戦（設定脳）`;
- if(ltitle)ltitle.textContent=`🔥 ${md} 今から狙い（綾ちゃん脳）`;
-
- const historicalRows=rows.filter(r=>r.isFinal!==false&&String(r.date||'')<String(target)&&r.machine);
- const machines=[...new Set(historicalRows.map(r=>String(r.machine)).filter(Boolean))];
+ const target=latestLabDate(),pm=profileMap(),occupied=occupiedMachines(target);
+ const machines=[...new Set(finalRows().map(r=>String(r.machine)).filter(Boolean))];
  const morning=machines.map(machine=>{
-  const p=pm.get(machine),model=p?.model||historicalRows.filter(r=>String(r.machine)===machine).at(-1)?.model||'';
-  const c=morningCandidate(p,target);return {machine,model,...c};
+   const p=pm.get(machine),model=p?.model||finalRows().filter(r=>String(r.machine)===machine).at(-1)?.model||'';
+   const c=morningCandidate(p,target);return {machine,model,...c};
  }).sort((a,b)=>b.score-a.score);
- const morningAvailable=morning.filter(c=>!occupied.has(String(c.machine))),topM=morningAvailable.slice(0,3);
- mbox.innerHTML=topM.length?topM.map((c,i)=>pickHtml(c,i,c.model,c.machine,false)).join(''):(morning.length?'<div class="empty">朝イチ候補は全部「座られてる」指定中。空いた台があれば戻せるよ。</div>':'<div class="empty">昨日までのデータが入ると朝イチ候補を出すよ。</div>');
+ const topM=morning.slice(0,3);
+ mbox.innerHTML=topM.length?topM.map((c,i)=>pickHtml(c,i,c.model,c.machine,false)).join(''):'<div class="empty">閉店データが入ると朝イチ候補を出すよ。</div>';
 
- const liveRows=rows.filter(r=>r.date===target&&r.isFinal===false&&r.machine);
+ const liveRows=finalRows().filter(r=>r.date===target&&r.isFinal===false&&r.machine);
+ // 今から狙いは設定推測ではなく「現在差枚 + 直近ペカ密度」で独立採点
  const live=liveRows.map(r=>({machine:String(r.machine),model:r.model,...ayaCandidate(r)})).sort((a,b)=>b.score-a.score);
- const available=live.filter(c=>!occupied.has(String(c.machine))),topL=available.slice(0,3);
- lbox.innerHTML=topL.length?topL.map((c,i)=>pickHtml(c,i,c.model,c.machine,true)).join(''):(live.length?'<div class="empty">今から狙いは全部「座られてる」指定中。空いた台があれば戻せるよ。</div>':`<div class="empty">今日（${esc(target)}）のLIVEはまだ未取得。途中参戦候補はLIVE取込後に出すよ。</div>`);
+ const available=live.filter(c=>!occupied.has(String(c.machine)));
+ const topL=available.slice(0,3);
+ lbox.innerHTML=topL.length?topL.map((c,i)=>pickHtml(c,i,c.model,c.machine,true)).join(''):(live.length?'<div class="empty">候補台は全部「座られてる」指定中。空いた台があれば下から戻せるよ。</div>':'<div class="empty">今日のLIVEデータを取り込むと「今から狙い」を出すよ。</div>');
 
- const best=available[0]||morningAvailable[0]||null;
- const provisional=rows.filter(r=>r.provisionalFinal===true),provisionalDates=[...new Set(provisional.map(r=>r.date).filter(Boolean))].sort();
- let msg=`対象日 <strong>${esc(target)}（${esc(weekdayName(target))}）</strong>。朝は<strong>設定脳</strong>、途中参戦は<strong>綾ちゃん脳</strong>で別判定。`;
- if(provisionalDates.length)msg+=`<br><span class="pill warn">🌙 日付またぎ補正 ON</span> <span class="tiny">${provisionalDates.map(esc).join(', ')} の未確定LIVE最新値を暫定閉店として曜日・過去分析へ反映中。正式閉店データ取得後は自動でそちらを優先。</span>`;
- if(liveRows.length)msg+=` <span class="pill good">今日LIVE ${liveRows.length}台 反映中</span>`;else msg+=` <span class="pill warn">今日LIVE 未取得</span>`;
+ const best=available[0]||null;
+ let msg=`対象日 <strong>${esc(target)}</strong>。朝は設定脳、途中参戦は<strong>綾ちゃん脳</strong>で別判定。`;
  if(best){
-  if(available.length){
-   if(best.score<55)msg+=`<br>今から狙いは突出した台が薄め。<strong>🚫 無理に座らず様子見寄り</strong>。`;
-   else msg+=`<br>今からの最上位は <strong>${esc(best.machine)}番 ${esc(MODELS[best.model]||best.model||'')}</strong>、綾ちゃんスコア <strong>${Math.round(best.score)}/100</strong>。`;
-  }else msg+=`<br>朝イチ最上位は <strong>${esc(best.machine)}番 ${esc(MODELS[best.model]||best.model||'')}</strong>、候補優先度 <strong>${Math.round(best.score)}/100</strong>。`;
+   if(best.score<55)msg+=` 今から狙いは突出した台が薄いので <strong>🚫無理に座らず様子見寄り</strong>。`;
+   else msg+=` 今からの最上位は <strong>${esc(best.machine)}番 ${esc(MODELS[best.model]||best.model||'')}</strong>、綾ちゃんスコア <strong>${Math.round(best.score)}/100</strong>。`;
  }
  if(occupied.size){
-  const chips=[...occupied].map(m=>`<button class="btn dark small" style="margin:4px 4px 0 0" onclick="unmarkOccupied('${esc(m)}')">↩ ${esc(m)}番を戻す</button>`).join('');
-  msg+=`<div style="margin-top:9px"><b>🚫 座られてる：${occupied.size}台</b><br>${chips}<button class="btn dark small" style="margin-top:4px" onclick="clearOccupied()">全部解除</button></div>`;
+   const chips=[...occupied].map(m=>`<button class="btn dark small" style="margin:4px 4px 0 0" onclick="unmarkOccupied('${esc(m)}')">↩ ${esc(m)}番を戻す</button>`).join('');
+   msg+=`<div style="margin-top:9px"><b>🚫 座られてる：${occupied.size}台</b><br>${chips}<button class="btn dark small" style="margin-top:4px" onclick="clearOccupied()">全部解除</button></div>`;
  }
- msg+=`<br><span class="tiny">綾ちゃん脳は「現在差枚・直近500G/1000Gのペカ密度」を重視。「ハマっているからそろそろ当たる」は加点しない。候補点は未来の当たり・設定・勝利を保証するものではなく、保存データ内の比較順位。</span>`;
+ msg+=` <br><span class="tiny">「座られてる」を押した台は当日の今から狙いから一時除外し、次点を自動繰り上げ。綾ちゃんスコアは未来の当たりや勝利を保証せず、現在までのペカ頻度と差枚を比べる研究値。</span>`;
  status.innerHTML=msg;
- const hero=$('todayDecisionHero');
- if(hero){
-  const chosen=available[0]||morningAvailable[0]||null;
-  const mode=available.length?'🔥 今から狙うなら':'🌅 朝イチなら';
-  const next=(available.length?available:morningAvailable).slice(1,3);
-  if(chosen){
-   const scoreName=available.length?'綾ちゃんスコア':'候補優先度';
-   if(available.length&&chosen.score<55){
-    hero.innerHTML=`<div class="heroLabel">🚫 今からは様子見寄り</div><div class="heroMachine" style="font-size:24px">無理に座らない</div><div class="heroMeta">観察1位は ${esc(chosen.machine)}番 ${esc(MODELS[chosen.model]||chosen.model||'')} / ${scoreName} <strong>${Math.round(chosen.score)}/100</strong></div>`;
-   }else{
-    hero.innerHTML=`<div class="heroLabel">${mode}</div><div class="heroMachine">${esc(chosen.machine)}番 <span style="font-size:.52em;color:#aeb9c7">${esc(MODELS[chosen.model]||chosen.model||'')}</span></div><div class="heroMeta">${scoreName} <strong>${Math.round(chosen.score)}/100</strong>${next.length?` ／ 次：${next.map(x=>esc(x.machine)+'番').join('・')}`:''}</div>`;
-   }
-  }else{
-   hero.innerHTML='<div class="heroLabel">TODAY</div><div class="heroMachine" style="font-size:20px">候補データ待ち</div><div class="heroMeta">昨日までの閉店データ、または今日のLIVEを取り込むと表示するよ。</div>';
-  }
- }
 }
 
 function latestPeak(r){const a=[Number(r.diff),Number(r.maxDiff)].filter(Number.isFinite);return a.length?Math.max(...a):null}
@@ -876,17 +567,31 @@ function saveHyp(){const title=$('hTitle').value.trim(),date=$('hDate').value;if
 function avg(a,key){const b=a.map(x=>Number(x[key])).filter(Number.isFinite);return b.length?b.reduce((s,x)=>s+x,0)/b.length:null}
 function renderEvent(){const rows=finalRows().filter(r=>r.isFinal!==false&&Number.isFinite(Number(r.diff))),ev=rows.filter(r=>isEventDate(r.date)),norm=rows.filter(r=>!isEventDate(r.date));const evDates=[...new Set(ev.map(r=>r.date))];$('eventDays').textContent=evDates.length;$('eventAvgDiff').textContent=ev.length?signed(Math.round(avg(ev,'diff'))) : '-';$('event1000').textContent=pct(ev.filter(r=>Number(r.diff)>=1000).length,ev.length);$('event2000').textContent=pct(ev.filter(r=>Number(r.diff)>=2000).length,ev.length);
  const er=ev.length?ev.filter(r=>Number(r.diff)>=1000).length/ev.length:0,nr=norm.length?norm.filter(r=>Number(r.diff)>=1000).length/norm.length:0;const ratio=nr?er/nr:null;let score='-';if(ev.length>=3){let raw=(er*2)+(ev.filter(r=>Number(r.diff)>=2000).length/ev.length*1.5)+Math.max(0,Math.min(.3,(avg(ev,'diff')||0)/5000));score=Math.max(1,Math.min(5,1+raw*4)).toFixed(1)}$('eventScore').textContent=score==='-'?'-':score+'/5';$('eventCompare').innerHTML=ev.length?`22日の1000枚OVER率は <strong>${(er*100).toFixed(1)}%</strong>。通常日は <strong>${(nr*100).toFixed(1)}%</strong>${ratio?`、約 <strong>${ratio.toFixed(2)}倍</strong>`:''}。<br><span class="tiny">※サンプルが少ない間は「強い」と断定せず観察。</span>`:'22日データが入ると通常日との比較を開始する。';
- const by=rowsByDate(),trend=evDates.sort().map(d=>{const a=(by[d]||[]).filter(r=>Number.isFinite(Number(r.diff)));return {d,n:a.length,av:avg(a,'diff'),r1:a.filter(r=>Number(r.diff)>=1000).length,r2:a.filter(r=>Number(r.diff)>=2000).length,peka:Math.max(0,...a.map(r=>Number(r.big||0)+Number(r.reg||0)))}});$('eventTrend').innerHTML=trend.length?`<table><tr><th>22日</th><th>曜日</th><th>台数</th><th>平均差枚</th><th>1000</th><th>2000</th><th>最高ペカ</th></tr>${trend.map(x=>`<tr><td>${x.d}</td><td>${weekdayName(x.d)}</td><td>${x.n}</td><td class="${x.av>=0?'pos':'neg'}">${signed(Math.round(x.av||0))}</td><td>${pct(x.r1,x.n)}</td><td>${pct(x.r2,x.n)}</td><td>${x.peka}</td></tr>`).join('')}</table>`:'<div class="empty">22日データなし</div>';
+ const by=rowsByDate(),trend=evDates.sort().map(d=>{const a=(by[d]||[]).filter(r=>Number.isFinite(Number(r.diff)));return {d,n:a.length,av:avg(a,'diff'),r1:a.filter(r=>Number(r.diff)>=1000).length,r2:a.filter(r=>Number(r.diff)>=2000).length,peka:Math.max(0,...a.map(r=>Number(r.big||0)+Number(r.reg||0)))}});$('eventTrend').innerHTML=trend.length?`<table><tr><th>22日</th><th>台数</th><th>平均差枚</th><th>1000</th><th>2000</th><th>最高ペカ</th></tr>${trend.map(x=>`<tr><td>${x.d}</td><td>${x.n}</td><td class="${x.av>=0?'pos':'neg'}">${signed(Math.round(x.av||0))}</td><td>${pct(x.r1,x.n)}</td><td>${pct(x.r2,x.n)}</td><td>${x.peka}</td></tr>`).join('')}</table>`:'<div class="empty">22日データなし</div>';
  const last2=trend.slice(-2);if(last2.length>=2){const p=last2[0],c=last2[1],d=Math.round((c.av||0)-(p.av||0)),pp=(c.n?c.r1/c.n*100:0)-(p.n?p.r1/p.n*100:0);$('eventLatestDelta').innerHTML=`最新22日 <strong>${c.d}</strong> は前回 ${p.d} 比で、平均差枚 <strong class="${d>=0?'pos':'neg'}">${signed(d)}枚</strong>、1000枚率 <strong>${pp>=0?'+':''}${pp.toFixed(1)}pt</strong>。`; }else $('eventLatestDelta').textContent='22日が2回以上貯まると「前回から強くなった/弱くなった」を表示する。';
- const ew=JP_WEEK.map((name,wi)=>{const a=ev.filter(r=>weekdayIndex(r.date)===wi),dates=new Set(a.map(r=>r.date)),diffs=a.map(r=>Number(r.diff)).filter(Number.isFinite);return {name,days:dates.size,n:a.length,av:diffs.length?diffs.reduce((x,y)=>x+y,0)/diffs.length:null,r1:a.filter(r=>Number(r.diff)>=1000).length}}).filter(x=>x.n);$('eventWeekdays').innerHTML=ew.length?`<table><tr><th>曜日</th><th>イベント日数</th><th>台数</th><th>平均差枚</th><th>1000枚率</th></tr>${ew.map(x=>`<tr><td>${x.name}曜</td><td>${x.days}</td><td>${x.n}</td><td class="${(x.av??0)>=0?'pos':'neg'}">${x.av===null?'-':signed(Math.round(x.av))}</td><td>${pct(x.r1,x.n)}</td></tr>`).join('')}</table>`:'<div class="empty">22日の曜日別データはまだなし。</div>';
  const mr=Object.entries(MODELS).map(([id,name])=>{const a=ev.filter(r=>r.model===id),b=norm.filter(r=>r.model===id);return {name,a,b}}).filter(x=>x.a.length||x.b.length);$('eventModels').innerHTML=mr.length?`<table><tr><th>機種</th><th>22日平均</th><th>通常平均</th><th>22日1000率</th><th>通常1000率</th></tr>${mr.map(x=>`<tr><td>${x.name}</td><td>${x.a.length?signed(Math.round(avg(x.a,'diff'))):'-'}</td><td>${x.b.length?signed(Math.round(avg(x.b,'diff'))):'-'}</td><td>${pct(x.a.filter(r=>Number(r.diff)>=1000).length,x.a.length)}</td><td>${pct(x.b.filter(r=>Number(r.diff)>=1000).length,x.b.length)}</td></tr>`).join('')}</table>`:'<div class="empty">機種比較データなし</div>';
  const pr=ev.slice().sort((a,b)=>(Number(b.big||0)+Number(b.reg||0))-(Number(a.big||0)+Number(a.reg||0))).slice(0,8);$('pekaRecords').innerHTML=pr.length?pr.map((r,i)=>`<div class="row"><div class="rowtop"><div><b>${i+1}. ${r.date} ${r.machine}番 ${esc(MODELS[r.model]||r.model)}</b><div class="tiny">BB${r.big||0} + RB${r.reg||0}</div></div><div class="right"><b style="font-size:20px">${Number(r.big||0)+Number(r.reg||0)}ペカ</b><div class="tiny">${signed(r.diff)}枚</div></div></div></div>`).join(''):'<div class="empty">22日のペカ記録はまだなし。</div>'}
-function ifAnalysis(a){const date=a.date,machine=String(a.machine||'');if(!date||!machine)return null;const final=latestSnapshot(date,machine);if(!final)return {kind:'nodata'};const endTs=Number(a.endedAt||a.id||a.history?.at(-1)?.ts||0);const near=endTs?nearestSnapshot(date,machine,endTs):null;if(near&&Number.isFinite(Number(near.diff))&&Number.isFinite(Number(final.diff))){const after=Number(final.diff)-Number(near.diff);return {kind:'snap',near,final,after}}if(a.diffCoins!==''&&Number.isFinite(Number(a.diffCoins))&&Number.isFinite(Number(final.diff))){return {kind:'finalonly',final,after:Number(final.diff)-Number(a.diffCoins)}}return {kind:'final',final}}
+function ifAnalysis(a){
+ const date=a.date,machine=normMachine(a.machine);if(!date||!machine)return null;
+ const all=(lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===machine&&x.diff!==null&&x.diff!==undefined&&x.diff!==''&&Number.isFinite(Number(x.diff)));
+ const finals=all.filter(x=>x.isFinal===true||x.snapshotType==='historical-final');
+ const final=(finals.length?finals:all.filter(x=>x.isFinal!==false)).sort((x,y)=>Number(y.ts||0)-Number(x.ts||0))[0];
+ if(!final)return {kind:'nodata'};
+ // 旧アーカイブのendedAtは再登録日かもしれない。日付一致だけでは正しいヤメ時刻と断定できない。
+ const endTs=Number(a.endedAt||0);
+ const sameDay=endTs&&new Date(endTs).toLocaleDateString('sv-SE',{timeZone:'Asia/Tokyo'})===date;
+ const trusted=!!(a.actualTimeVerified&&sameDay);
+ const near=trusted?all.filter(x=>x.isFinal===false&&x.snapshotType!=='historical-final'&&Number(x.ts)>0&&Number(x.ts)<=endTs+10*60000&&Math.abs(Number(x.ts)-endTs)<=30*60000).sort((x,y)=>Math.abs(x.ts-endTs)-Math.abs(y.ts-endTs))[0]:null;
+ if(near&&near!==final&&Number(final.ts)>Number(near.ts))return {kind:'snap',near,final,after:Number(final.diff)-Number(near.diff)};
+ const entered=a.diffCoins!==''&&a.diffCoins!==null&&a.diffCoins!==undefined&&Number.isFinite(Number(a.diffCoins));
+ if(entered)return {kind:'finalonly',final,after:Number(final.diff)-Number(a.diffCoins)};
+ return {kind:'final',final};
+}
 function renderIF(){
- const a=turkeyArchives().slice().sort((x,y)=>Number(y.endedAt||y.id||0)-Number(x.endedAt||x.id||0));if(!a.length){$('ifList').innerHTML='<div class="empty">PEKALOGで「ターキー」と店名を入れて実戦保存すると、ここに出てくるよ。</div>';$('reasonStats').innerHTML='';return}
+ const a=turkeyArchives().slice().sort((x,y)=>Number(y.endedAt||y.id||0)-Number(x.endedAt||x.id||0));if(!a.length){$('ifList').innerHTML='<div class="empty">PEKALOGで実戦保存すると、店名が空欄でもここに表示するよ。</div>';$('reasonStats').innerHTML='';return}
  let down=0,up=0,flat=0,valid=0;const reasonMap={};
- $('ifList').innerHTML=a.map(x=>{const z=ifAnalysis(x),model=MODELS[x.model]||x.model||'',reason=x.endReason||'未記録';let body='';if(!z||z.kind==='nodata')body='<span class="pill warn">LABデータ待ち</span> 同日の台データがまだない。';else if(z.kind==='snap'){valid++;if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;(reasonMap[reason]??=[]).push(z.after);body=`ヤメ時刻付近 <b>${signed(z.near.diff)}枚</b> → 閉店 <b>${signed(z.final.diff)}枚</b><br>その後 <b class="${z.after>0?'pos':'neg'}">${signed(z.after)}枚</b> ${z.after>=500?'😇 その後伸びた':z.after<=-500?'🏃 撤退成功寄り':'➖ ほぼ横ばい'}`;}else if(z.kind==='finalonly'){valid++;if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;(reasonMap[reason]??=[]).push(z.after);body=`PEKALOG記録 <b>${signed(x.diffCoins)}枚</b> → 店最終 <b>${signed(z.final.diff)}枚</b><br>差 <b class="${z.after>0?'pos':'neg'}">${signed(z.after)}枚</b> <span class="tiny">※時刻スナップショットなしの簡易比較</span>`;}else body=`店最終：<b>${signed(z.final.diff)}枚</b>。PEKALOG側の差枚か時刻スナップショットがあるとIF比較できる。`;
- return `<div class="row"><div class="rowtop"><div><b>${esc(x.date||'-')} ${esc(x.machine||'-')}番 ${esc(model)}</b><div class="tiny">PEKALOG ${fmt(x.totalG)}G / BB${fmt(x.big)} RB${fmt(x.reg)} ／ ヤメ理由：${esc(reason)}</div></div><span class="pill">${x.diffCoins!==''?signed(x.diffCoins)+'枚':'差枚未入力'}</span></div><div class="smalltext" style="margin-top:8px">${body}</div></div>`}).join('');
+ $('ifList').innerHTML=a.map(x=>{const z=ifAnalysis(x),model=MODELS[x.model]||x.model||'',reason=x.endReason||'未記録';let body='';if(!z||z.kind==='nodata')body='<span class="pill warn">LABデータ待ち</span> 同日の台データがまだない。';else if(z.kind==='snap'){valid++;if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;(reasonMap[reason]??=[]).push(z.after);body=`ヤメ時刻付近 <b>${signed(z.near.diff)}枚</b> → 閉店 <b>${signed(z.final.diff)}枚</b><br>その後 <b class="${z.after>0?'pos':'neg'}">${signed(z.after)}枚</b> ${z.after>=500?'😇 その後伸びた':z.after<=-500?'🏃 撤退成功寄り':'➖ ほぼ横ばい'}`;}else if(z.kind==='finalonly'){valid++;if(z.after<=-500)down++;else if(z.after>=500)up++;else flat++;(reasonMap[reason]??=[]).push(z.after);body=`PEKALOG記録 <b>${signed(x.diffCoins)}枚</b> → 店最終 <b>${signed(z.final.diff)}枚</b><br>差 <b class="${z.after>0?'pos':'neg'}">${signed(z.after)}枚</b> <span class="tiny">※時刻スナップショットなしの簡易比較</span>`;}else body=`店最終：<b>${signed(z.final.diff)}枚</b>。ヤメ時点の差枚が不明のため比較不可。途中スナップショットと実際のヤメ時刻が揃えば分析できる。`;
+ return `<div class="row"><div class="rowtop"><div><b>${esc(x.date||'-')} ${esc(x.machine||'-')}番 ${esc(model)}</b><div class="tiny">PEKALOG ${fmt(x.totalG)}G / BB${fmt(x.big)} RB${fmt(x.reg)} ／ ヤメ理由：${esc(reason)}</div></div><span class="pill">${x.diffCoins!==''&&x.diffCoins!=null?signed(x.diffCoins)+'枚':'差枚未入力'}</span></div><div class="smalltext" style="margin-top:8px">${body}</div></div>`}).join('');
  $('decisionSummary').innerHTML=valid?`IF比較できた実戦 <strong>${valid}件</strong>。その後 +500枚以上 ${up}件 ／ -500枚以下 ${down}件 ／ 横ばい ${flat}件。<br><span class="tiny">「勝ってた/負けてた」ではなく、その後実績として判断ルールを検証する。</span>`:'実戦とLABデータが一致すると判断クセ集計を開始する。';
  const rs=Object.entries(reasonMap).map(([reason,vals])=>({reason,n:vals.length,av:vals.reduce((a,b)=>a+b,0)/vals.length,up:vals.filter(v=>v>=500).length,down:vals.filter(v=>v<=-500).length})).sort((a,b)=>b.n-a.n);
  $('reasonStats').innerHTML=rs.length?rs.map(r=>`<div class="row"><div class="rowtop"><div><b>${esc(r.reason)}</b><div class="tiny">n=${r.n} ／ その後+500 ${r.up} ／ -500 ${r.down}</div></div><div class="right"><b class="${r.av>=0?'pos':'neg'}">平均 ${signed(Math.round(r.av))}枚</b></div></div></div>`).join(''):'<div class="empty">ヤメ理由つき実戦が貯まると理由別に比較する。</div>';
@@ -1003,467 +708,20 @@ async function importCollectorClipboard(){
 }
 
 async function loadRemote(silent=false){try{const r=await fetch('./daily.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error(r.status);const j=await r.json();mergeData(j);if(!silent)alert('daily.jsonを読み込んだよ')}catch(e){if(!silent)alert('daily.jsonはまだ接続されてないよ。今はJSON読込かデモで試せる。')}renderAll()}
-function mergeData(j){const incoming=Array.isArray(j)?j:(j.snapshots||[]);if(!Array.isArray(incoming))return;const map=new Map((lab.snapshots||[]).map(s=>[(s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s]));for(const raw of incoming){const s={...raw,machine:normMachine(raw.machine)};map.set((s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s);}lab.snapshots=[...map.values()];__finalRowsCache0132=null;persist()}
+function mergeData(j){const incoming=Array.isArray(j)?j:(j.snapshots||[]);if(!Array.isArray(incoming))return;const map=new Map((lab.snapshots||[]).map(s=>[(s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s]));for(const raw of incoming){const s={...raw,machine:normMachine(raw.machine)};map.set((s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s);}lab.snapshots=[...map.values()];persist()}
 function demoData(){if(!confirm('分析画面確認用のDEMOデータを追加する？（実データではありません）'))return;const models=['gogo3','gogo3','gogo3','my5','my5','neoim'];const machines=['301','302','303','311','312','321'];const dates=['2026-06-22','2026-07-22','2026-08-22','2026-09-10','2026-09-11'];let arr=[];dates.forEach((d,di)=>machines.forEach((m,i)=>{let g=4200+((di*777+i*433)%3500),big=14+((di*7+i*5)%20),reg=10+((di*5+i*3)%18),diff=((di*911+i*733)%4200)-1500;if(d.endsWith('-22')){g+=1300;big+=7;reg+=6;diff+=700}arr.push({date:d,ts:new Date(d+'T22:35:00+09:00').getTime(),machine:m,model:models[i],totalG:g,big,reg,diff,demo:true})}));
  // one unmistakable 72-peka DEMO record, explicitly demo only
  arr.push({date:'2026-08-22',ts:new Date('2026-08-22T22:36:00+09:00').getTime(),machine:'399-DEMO',model:'gogo3',totalG:8000,big:39,reg:33,diff:2600,demo:true});mergeData({snapshots:arr});renderAll()}
 function renderData(){const demos=(lab.snapshots||[]).filter(x=>x.demo).length,live=(lab.snapshots||[]).filter(x=>['pscube-live','pscube-collector','pscube-dom-collector','pscube-auto-sync'].includes(x.source)).length;let sync='';try{const m=JSON.parse(localStorage.getItem('pekalog_turkey_sync_meta_v1')||'null');if(m)sync=`<br>🦃 最終自動同期：<strong>${new Date(m.syncedAt).toLocaleString('ja-JP')}</strong> ／ ${m.machines}台`;}catch(e){}const imp=importMetaText();$('dataStatus').innerHTML=`スナップショット <strong>${(lab.snapshots||[]).length}件</strong>${live?` ／ P's CUBE ${live}件`:''}${demos?`（DEMO ${demos}件）`:''}。${sync}${imp?`<br>${imp}`:''}<br>収集JSON・<code>daily.json</code>・CSV/JSONは全部同じ分析エンジンに入る。`}
-function exportData(){const blob=new Blob([JSON.stringify({version:'0.13.6-live-plus-1000',exportedAt:new Date().toISOString(),snapshots:lab.snapshots,hypotheses},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pekalog_lab_backup.json';a.click();URL.revokeObjectURL(a.href)}
+function exportData(){const blob=new Blob([JSON.stringify({version:'0.13-ayachan-hunt',exportedAt:new Date().toISOString(),snapshots:lab.snapshots,hypotheses},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pekalog_lab_backup.json';a.click();URL.revokeObjectURL(a.href)}
 function importFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(j.kind==='pekalog-collector'||j.kind==='pekalog-turkey-bundle'){const z=importCollectorObject(j);alert(`${z.count}台ぶんの収集JSONを読み込んだよ`)}else{if(j.snapshots)mergeData(j);if(Array.isArray(j.hypotheses)){hypotheses=j.hypotheses;persist()}renderAll();alert('LABデータを読み込んだよ')}}catch(e){alert('JSONを読み込めなかったよ')}ev.target.value=''};r.readAsText(f)}
 function parseCSVLine(line){const out=[];let cur='',q=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'){if(q&&line[i+1]==='"'){cur+='"';i++}else q=!q}else if(c===','&&!q){out.push(cur.trim());cur=''}else cur+=c}out.push(cur.trim());return out}
 function importCSVText(){const text=$('csvPaste').value.trim();if(!text)return alert('CSVを貼ってね');const lines=text.split(/\r?\n/).filter(Boolean),first=parseCSVLine(lines[0]);const expected=['date','ts','machine','model','totalG','big','reg','diff'];let start=0,headers=expected;if(first.some(x=>expected.includes(x))){headers=first;start=1}let arr=[];for(let i=start;i<lines.length;i++){const vals=parseCSVLine(lines[i]),o={};headers.forEach((h,j)=>o[h]=vals[j]);['ts','totalG','big','reg','diff'].forEach(k=>{if(o[k]!==undefined&&o[k]!=='')o[k]=Number(o[k])});if(o.date&&o.machine)arr.push(o)}if(!arr.length)return alert('取り込める行がなかったよ');mergeData({snapshots:arr});$('csvPaste').value='';renderAll();alert(`${arr.length}件取り込んだよ`)}
 function saveEventConfig(){const d=Number($('eventDay').value||22);if(d<1||d>31)return alert('特定日は1〜31で入れてね');cfg.eventDay=d;cfg.extraEvents=$('extraEvents').value.split(',').map(x=>x.trim()).filter(Boolean);persist();renderAll();alert('イベント設定を保存したよ 🔥')}
 function renderConfig(){if($('eventDay'))$('eventDay').value=cfg.eventDay||22;if($('extraEvents'))$('extraEvents').value=(cfg.extraEvents||[]).join(',')}
-
-/* ===== v0.13.3 オンデマンド研究パネル + 台別7/14日 ===== */
-let activeResearchTool0133=null;
-let machinePeriod0133=14;
-let selectedMachine0133=null;
-
-function openResearchTool0133(type){
- const overlay=$('researchOverlay0133');if(!overlay)return;
- activeResearchTool0133=type;
- const titles={pattern:'📅 曜日・時間カルテ',special:'🔥 特定日推測',layout:'🗺 並び・配置',machine:'📈 台別 7日・14日'};
- if($('researchTitle0133'))$('researchTitle0133').textContent=titles[type]||'研究';
- document.querySelectorAll('.researchPanel').forEach(x=>x.classList.remove('active'));
- const ids={pattern:'researchPattern0133',special:'specialTailLabCard',layout:'researchLayout0133',machine:'researchMachine0133'};
- $(ids[type])?.classList.add('active');
- overlay.classList.add('open');
- document.body.style.overflow='hidden';
- renderResearchToolContent0133();
-}
-function closeResearchTool0133(){
- const overlay=$('researchOverlay0133');if(overlay)overlay.classList.remove('open');
- document.body.style.overflow='';activeResearchTool0133=null;
-}
-function renderResearchToolContent0133(){
- if(activeResearchTool0133==='pattern')renderPatternLab();
- else if(activeResearchTool0133==='layout')renderLayoutLab();
- else if(activeResearchTool0133==='special'&&typeof renderSpecialTailLab==='function')renderSpecialTailLab();
- else if(activeResearchTool0133==='machine')renderMachineExplorer0133();
-}
-
-function machineHistoryRows0133(machine,days=14){
- const m=String(machine);
- return finalRows().filter(r=>r.isFinal!==false&&String(r.machine)===m&&r.date&&String(r.date)<todayJST()).sort((a,b)=>a.date.localeCompare(b.date)).slice(-days);
-}
-function sumDiff0133(rows){const a=rows.map(r=>Number(r.diff)).filter(Number.isFinite);return a.length?a.reduce((s,v)=>s+v,0):null}
-function thousandStats0135(rows){
- const valid=rows.filter(r=>{
-  const v=r?.maxDiff;
-  return r?.peak1000===true||r?.peak2000===true||(v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v)));
- });
- const hits=valid.filter(r=>r?.peak1000===true||r?.peak2000===true||(r?.maxDiff!==null&&r?.maxDiff!==undefined&&r?.maxDiff!==''&&Number(r.maxDiff)>=1000));
- return {hits:hits.length,valid:valid.length,rate:valid.length?hits.length/valid.length:null};
-}
-function machineExplorerData0133(){
- const profiles=profileMap(),hist=finalRows().filter(r=>r.isFinal!==false&&r.machine&&String(r.date)<todayJST());
- const machines=[...new Set(hist.map(r=>String(r.machine)))];
- return machines.map(machine=>{
-  const p=profiles.get(machine)||null,all=hist.filter(r=>String(r.machine)===machine).sort((a,b)=>a.date.localeCompare(b.date)),last=all.at(-1)||null,e=last?settingEvidence(last):null;
-  const periodRows=all.slice(-machinePeriod0133),d7=all.slice(-7),d14=all.slice(-14);
-  return {machine,model:last?.model||p?.model||'',p,last,e,periodRows,diffPeriod:sumDiff0133(periodRows),diff7:sumDiff0133(d7),diff14:sumDiff0133(d14)};
- });
-}
-function setMachinePeriod0133(n){
- machinePeriod0133=n===7?7:14;
- $('period7Btn0133')?.classList.toggle('active',machinePeriod0133===7);$('period7Btn0133')?.classList.toggle('cyan',machinePeriod0133===7);$('period7Btn0133')?.classList.toggle('dark',machinePeriod0133!==7);
- $('period14Btn0133')?.classList.toggle('active',machinePeriod0133===14);$('period14Btn0133')?.classList.toggle('cyan',machinePeriod0133===14);$('period14Btn0133')?.classList.toggle('dark',machinePeriod0133!==14);
- renderMachineExplorer0133();
-}
-function machineChartSvg0133(rows){
- if(!rows.length)return '<div class="empty">この期間の閉店データがまだないよ。</div>';
- const W=720,H=205,px=34,py=24,vals=rows.map(r=>Number(r.diff)).map(v=>Number.isFinite(v)?v:0),maxAbs=Math.max(500,...vals.map(Math.abs));
- const x=i=>rows.length===1?W/2:px+i*((W-px*2)/(rows.length-1));
- const y=v=>py+(maxAbs-v)/(maxAbs*2)*(H-py*2);
- const pts=vals.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' '),zero=y(0);
- const labels=rows.map((r,i)=>{if(rows.length>8&&i%2===1&&i!==rows.length-1)return '';return `<text class="chartLabel" x="${x(i).toFixed(1)}" y="${H-5}" text-anchor="middle">${esc(String(r.date).slice(5).replace('-','/'))}</text>`}).join('');
- const circles=vals.map((v,i)=>`<circle class="chartPoint" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="4"><title>${esc(rows[i].date)} ${signed(Math.round(v))}枚</title></circle>`).join('');
- return `<div class="machineChartWrap"><svg class="machineChart" viewBox="0 0 ${W} ${H}" aria-label="日別閉店差枚グラフ"><line class="chartZero" x1="${px}" y1="${zero}" x2="${W-px}" y2="${zero}"></line><text class="chartLabel" x="5" y="${Math.max(12,py)}">+${fmt(maxAbs)}</text><text class="chartLabel" x="5" y="${H-py}">-${fmt(maxAbs)}</text><polyline class="chartLine" points="${pts}"></polyline>${circles}${labels}</svg></div>`;
-}
-function showMachineDetail0133(machine){selectedMachine0133=String(machine);renderMachineDetail0133();$('machineDetail0133')?.scrollIntoView({behavior:'smooth',block:'start'})}
-function renderMachineDetail0133(){
- const box=$('machineDetail0133');if(!box)return;
- if(!selectedMachine0133){box.innerHTML='<div class="notice">一覧から台をタップすると、ここに週間グラフを開くよ。</div>';return}
- const rows=machineHistoryRows0133(selectedMachine0133,machinePeriod0133),last=rows.at(-1),p=profileMap().get(selectedMachine0133),sum=sumDiff0133(rows),ev=last?settingEvidence(last):null,strong=rows.map(r=>settingEvidence(r)).filter(e=>e?.strong).length,avgd=rows.length?sumDiff0133(rows)/rows.length:null,t1000=thousandStats0135(rows);
- box.innerHTML=`<div class="pickHero"><div class="rowtop"><div><b style="font-size:19px">${esc(selectedMachine0133)}番 ${esc(MODELS[last?.model||p?.model]||last?.model||p?.model||'')}</b><div class="tiny">直近${machinePeriod0133}日カルテ / ${rows.length}日ぶん</div></div><span class="pill ${ev?.score>=62?'good':'warn'}">直近設定スコア ${ev?Math.round(ev.score):'-'}</span></div><div class="grid4" style="margin-top:10px"><div class="stat"><div class="k">期間累計差枚</div><div class="v ${(sum??0)>=0?'pos':'neg'}">${sum===null?'-':signed(Math.round(sum))}</div></div><div class="stat"><div class="k">1000枚到達</div><div class="v">${t1000.valid?t1000.hits+'/'+t1000.valid+'日':'-'}</div><div class="tiny">${t1000.rate==null?'グラフ取得待ち':(t1000.rate*100).toFixed(0)+'% ／ グラフ取得済みのみ'}</div></div><div class="stat"><div class="k">強め判定</div><div class="v">${strong}/${rows.length}</div></div><div class="stat"><div class="k">投入推定率</div><div class="v">${p?.hitRate==null?'-':(p.hitRate*100).toFixed(0)+'%'}</div></div></div><div style="margin-top:10px">${machineChartSvg0133(rows)}</div><div class="tiny" style="margin-top:7px">日別の閉店差枚を線で接続。店内の週間グラフそのものではなく、PEKALOGに保存された各日の閉店値から作るカルテ。</div><div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>日</th><th>差枚</th><th>G</th><th>BB</th><th>RB</th><th>設定score</th></tr></thead><tbody>${rows.slice().reverse().map(r=>{const e=settingEvidence(r),d=Number(r.diff);return `<tr><td>${esc(r.date.slice(5).replace('-','/'))}</td><td class="${d>=0?'pos':'neg'}">${Number.isFinite(d)?signed(Math.round(d)):'-'}</td><td>${fmt(r.totalG)}</td><td>${fmt(r.big)}</td><td>${fmt(r.reg)}</td><td>${e?Math.round(e.score):'-'}</td></tr>`}).join('')}</tbody></table></div></div>`;
-}
-function renderMachineExplorer0133(){
- const list=$('machineExplorerList0133');if(!list)return;
- const sel=$('machineSort0133'),sort=sel?.value||'setting';let xs=machineExplorerData0133();
- if(sort==='machine')xs.sort((a,b)=>Number(a.machine)-Number(b.machine)||a.machine.localeCompare(b.machine));
- else if(sort==='diff')xs.sort((a,b)=>(b.diffPeriod??-1e12)-(a.diffPeriod??-1e12));
- else if(sort==='temp')xs.sort((a,b)=>(b.p?.temp??-1)-(a.p?.temp??-1));
- else xs.sort((a,b)=>(b.p?.hitRate??-1)-(a.p?.hitRate??-1)||(b.p?.temp??-1)-(a.p?.temp??-1)||Number(a.machine)-Number(b.machine));
- list.innerHTML=xs.length?xs.map((x,i)=>{const rate=x.p?.hitRate==null?'-':(x.p.hitRate*100).toFixed(1)+'%',temp=x.p?.temp==null?'-':Math.round(x.p.temp),score=x.e?Math.round(x.e.score):'-',diff=x.diffPeriod;return `<div class="row machineExplorerRow" onclick="showMachineDetail0133('${esc(x.machine)}')"><div class="rowtop"><div><b><span class="rankNo">#${i+1}</span>${esc(x.machine)}番 ${esc(MODELS[x.model]||x.model||'')}</b><div class="tiny">投入推定率 ${rate} ／ 直近温度 ${temp} ／ 直近閉店score ${score}</div></div><div class="right"><b class="${(diff??0)>=0?'pos':'neg'}">${machinePeriod0133}日 ${diff===null?'-':signed(Math.round(diff))}枚</b><div class="tiny">タップでグラフ</div></div></div></div>`}).join(''):'<div class="empty">閉店データが貯まると台別カルテを作るよ。</div>';
- if(selectedMachine0133&&!xs.some(x=>x.machine===selectedMachine0133))selectedMachine0133=null;
- renderMachineDetail0133();
-}
-
-function renderAll(){
- __finalRowsCache0132=null;
- const active=document.querySelector('.view.active')?.id||'dash';
- if(active==='dash'){
-  renderDash();
-  if(activeResearchTool0133)renderResearchToolContent0133();
- }else if(active==='hyp'){
-  renderHyp();
- }else if(active==='event'){
-  renderEvent();
- }else if(active==='iflab'){
-  renderIF();
- }else if(active==='data'){
-  renderData();
-  renderConfig();
- }
-}
-
-/* ===== 特定日・末尾LAB（統合済み / UTF-8修復済み） ===== */
-function dateDom(d){
-    const m=String(d||'').match(/^\d{4}-\d{2}-(\d{2})$/);
-    return m?Number(m[1]):null;
-  }
-  function daysInMonth(d){
-    const p=String(d||'').split('-').map(Number);
-    if(p.length!==3||p.some(x=>!x))return null;
-    return new Date(Date.UTC(p[0],p[1],0)).getUTCDate();
-  }
-  function isMonthEnd3(d){
-    const dom=dateDom(d),last=daysInMonth(d);
-    return dom!=null&&last!=null&&(last-dom)<=2;
-  }
-  function machineTail(m){
-    const s=String(normMachine(m)||'');
-    const x=s.match(/(\d)$/);
-    return x?Number(x[1]):null;
-  }
-  function dayTail(d){
-    const dom=dateDom(d);
-    return dom==null?null:dom%10;
-  }
-  function closedEligible(){
-    return finalRows()
-      .filter(r=>r.isFinal!==false&&SETTING_SPECS[r.model])
-      .map(r=>({r,e:settingEvidence(r)}))
-      .filter(x=>x.e?.eligible);
-  }
-  function avgDiff(xs){
-    const a=xs.map(x=>Number(x.r.diff)).filter(Number.isFinite);
-    return a.length?a.reduce((s,v)=>s+v,0)/a.length:null;
-  }
-  function rowStat(xs){
-    const hits=xs.filter(x=>x.e.strong).length;
-    return {
-      n:xs.length,
-      hits,
-      rate:xs.length?hits/xs.length:null,
-      days:new Set(xs.map(x=>x.r.date)).size,
-      avgDiff:avgDiff(xs)
-    };
-  }
-  function pp(v){
-    return v==null?'-':`${v>=0?'+':''}${(v*100).toFixed(1)}pt`;
-  }
-  function rate(v){
-    return v==null?'-':(v*100).toFixed(1)+'%';
-  }
-  function trendLabel(n,delta){
-    if(n<3)return '材料少';
-    if(n<5)return '観察中';
-    if(delta==null)return '比較待ち';
-    if(delta>=.15)return '🔥 連動強め';
-    if(delta>=.08)return '↗ やや連動';
-    if(delta<=-.12)return '↘ 逆傾向';
-    return '↔ 差小';
-  }
-
-  const SPECIAL_DEFS=[
-    {key:'d5',label:'5のつく日',test:d=>dateDom(d)%10===5},
-    {key:'d7',label:'7のつく日',test:d=>dateDom(d)%10===7},
-    {key:'d22',label:'22日',test:d=>dateDom(d)===22},
-    {key:'monthEnd',label:'月末3日',test:d=>isMonthEnd3(d)},
-    {key:'event',label:'登録EVENT',test:d=>isEventDate(d)}
-  ];
-
-  function specialStat(def,all){
-    const a=all.filter(x=>def.test(x.r.date));
-    const b=all.filter(x=>!def.test(x.r.date));
-    const sa=rowStat(a),sb=rowStat(b);
-    return {...def,...sa,baseN:sb.n,baseRate:sb.rate,delta:sa.rate!=null&&sb.rate!=null?sa.rate-sb.rate:null};
-  }
-
-  function tailMatchStats(all){
-    const available=new Set(all.map(x=>machineTail(x.r.machine)).filter(x=>x!=null));
-    const eligibleDates=new Set(all.map(x=>x.r.date).filter(d=>available.has(dayTail(d))));
-    const a=all.filter(x=>eligibleDates.has(x.r.date)&&machineTail(x.r.machine)===dayTail(x.r.date));
-    const b=all.filter(x=>eligibleDates.has(x.r.date)&&machineTail(x.r.machine)!==dayTail(x.r.date));
-    const sa=rowStat(a),sb=rowStat(b);
-    return {
-      label:'全日：日付末尾＝台番末尾',
-      baseLabel:'同日の末尾不一致',
-      ...sa,baseN:sb.n,baseRate:sb.rate,
-      delta:sa.rate!=null&&sb.rate!=null?sa.rate-sb.rate:null
-    };
-  }
-
-  function specificTailStat(all,label,test,tail){
-    const a=all.filter(x=>test(x.r.date)&&machineTail(x.r.machine)===tail);
-    const b=all.filter(x=>!test(x.r.date)&&machineTail(x.r.machine)===tail);
-    const sa=rowStat(a),sb=rowStat(b);
-    return {
-      label,
-      baseLabel:`末尾${tail}・その他日`,
-      ...sa,baseN:sb.n,baseRate:sb.rate,
-      delta:sa.rate!=null&&sb.rate!=null?sa.rate-sb.rate:null
-    };
-  }
-
-  function tailTopFor(def,all){
-    const group=all.filter(x=>def.test(x.r.date));
-    if(!group.length)return [];
-    const overall=rowStat(group);
-    const tails=[...new Set(group.map(x=>machineTail(x.r.machine)).filter(x=>x!=null))];
-    return tails.map(t=>{
-      const a=group.filter(x=>machineTail(x.r.machine)===t);
-      const rest=group.filter(x=>machineTail(x.r.machine)!==t);
-      const sa=rowStat(a),sr=rowStat(rest);
-      const prior=overall.rate??.2;
-      const shrink=(sa.hits+prior*4)/(sa.n+4);
-      return {
-        tail:t,...sa,restRate:sr.rate,
-        delta:sa.rate!=null&&sr.rate!=null?sa.rate-sr.rate:null,
-        shrink
-      };
-    }).filter(x=>x.n>=2)
-      .sort((a,b)=>b.shrink-a.shrink||b.n-a.n)
-      .slice(0,3);
-  }
-
-  function ensureSpecialTailUI(){
-    if(document.getElementById('specialTailLabCard'))return;
-
-    const anchor=document.getElementById('weekdayTrendBody')?.closest('.card')
-      ||document.getElementById('layoutMapStatus')?.closest('.card');
-    if(!anchor)return;
-
-    const sec=document.createElement('section');
-    sec.className='card';
-    sec.id='specialTailLabCard';
-    sec.innerHTML=`
-      <div class="sectionTitle">
-        <div>
-          <h3>🔢 特定日・末尾 LAB</h3>
-          <div class="tiny">5の日・7の日・22日・月末と、台番末尾の連動を閉店データだけで比較。</div>
-        </div>
-        <span class="pill event">SPECIAL</span>
-      </div>
-
-      <div class="notice" style="margin-top:8px">
-        <strong>「通常日比 +○pt」</strong>は独自点数ではなく、強め率の差（パーセントポイント）。
-        例：63% − 24% ＝ <strong>+39pt</strong>。<br>
-        <span class="tiny">平均差枚の＋は客側プラス。サンプルが少ない間は候補点にはまだ加えず、研究表示だけにする。</span>
-      </div>
-
-      <div id="specialDaySummary" class="grid4" style="margin-top:10px"></div>
-
-      <div class="pickSub" style="margin-top:12px">📆 特定日 vs その他日</div>
-      <div id="specialDayTable" class="tablewrap"></div>
-
-      <div class="pickSub" style="margin-top:12px">🎯 日付末尾 × 台番末尾</div>
-      <div id="dateTailTable" class="tablewrap"></div>
-
-      <div class="pickSub" style="margin-top:12px">👀 特定日の末尾TOP</div>
-      <div id="specialTailTop" class="list"></div>
-
-      <div class="tiny" style="margin-top:8px">
-        ※「強め」は既存の設定推定ロジックと同じ。実設定の断定ではないよ。
-        月末は「各月の最終3日」で集計。
-      </div>`;
-    anchor.insertAdjacentElement('afterend',sec);
-  }
-
-  function renderSpecialTailLab(){
-    ensureSpecialTailUI();
-    const sum=document.getElementById('specialDaySummary');
-    const table=document.getElementById('specialDayTable');
-    const tailTable=document.getElementById('dateTailTable');
-    const top=document.getElementById('specialTailTop');
-    if(!sum||!table||!tailTable||!top)return;
-
-    const all=closedEligible();
-    const stats=SPECIAL_DEFS.map(d=>specialStat(d,all));
-
-    sum.innerHTML=stats.slice(0,4).map(x=>`
-      <div class="stat">
-        <div class="k">${esc(x.label)} 強め率</div>
-        <div class="v">${rate(x.rate)}</div>
-        <div class="tiny">${x.hits}/${x.n||0}台日 ／ ${x.days}日<br>${x.delta==null?'比較待ち':'その他日比 '+pp(x.delta)}</div>
-      </div>`).join('');
-
-    table.innerHTML=`
-      <table>
-        <thead>
-          <tr>
-            <th>条件</th><th>日数</th><th>判定台</th><th>強め</th><th>強め率</th>
-            <th>その他日率</th><th>通常日比</th><th>平均差枚(客)</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${stats.map(x=>`
-            <tr>
-              <td>${esc(x.label)}</td>
-              <td>${x.days}</td>
-              <td>${x.n}</td>
-              <td>${x.hits}</td>
-              <td>${rate(x.rate)}</td>
-              <td>${rate(x.baseRate)}</td>
-              <td class="${(x.delta??0)>=0?'pos':'neg'}">${pp(x.delta)}</td>
-              <td class="${(x.avgDiff??0)>=0?'pos':'neg'}">${x.avgDiff==null?'-':signed(Math.round(x.avgDiff))}</td>
-            </tr>`).join('')}
-        </tbody>
-      </table>`;
-
-    const d5=SPECIAL_DEFS.find(x=>x.key==='d5');
-    const d7=SPECIAL_DEFS.find(x=>x.key==='d7');
-    const d22=SPECIAL_DEFS.find(x=>x.key==='d22');
-
-    const tailStats=[
-      tailMatchStats(all),
-      specificTailStat(all,'5の日 × 末尾5',d5.test,5),
-      specificTailStat(all,'7の日 × 末尾7',d7.test,7),
-      specificTailStat(all,'22日 × 末尾2',d22.test,2)
-    ];
-
-    tailTable.innerHTML=`
-      <table>
-        <thead>
-          <tr>
-            <th>条件</th><th>対象n</th><th>強め率</th><th>比較基準</th><th>基準率</th>
-            <th>差</th><th>平均差枚(客)</th><th>判定</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${tailStats.map(x=>`
-            <tr>
-              <td>${esc(x.label)}</td>
-              <td>${x.n}</td>
-              <td>${rate(x.rate)}</td>
-              <td>${esc(x.baseLabel)}</td>
-              <td>${rate(x.baseRate)}${x.baseN!=null?` <span class="tiny">(n=${x.baseN})</span>`:''}</td>
-              <td class="${(x.delta??0)>=0?'pos':'neg'}">${pp(x.delta)}</td>
-              <td class="${(x.avgDiff??0)>=0?'pos':'neg'}">${x.avgDiff==null?'-':signed(Math.round(x.avgDiff))}</td>
-              <td><span class="pill ${x.n<5?'warn':(x.delta??0)>=.08?'good':''}">${esc(trendLabel(x.n,x.delta))}</span></td>
-            </tr>`).join('')}
-        </tbody>
-      </table>`;
-
-    const topDefs=[d5,d7,d22,SPECIAL_DEFS.find(x=>x.key==='monthEnd')];
-    top.innerHTML=topDefs.map(def=>{
-      const xs=tailTopFor(def,all);
-      if(!xs.length){
-        return `<div class="row"><b>${esc(def.label)}</b><div class="tiny">末尾別の判定がまだ足りないよ。</div></div>`;
-      }
-      return `<div class="row">
-        <div class="rowtop">
-          <div><b>${esc(def.label)}</b><div class="tiny">同じ特定日の中で、各末尾を「他末尾」と比較。</div></div>
-          <span class="pill">${xs.reduce((s,x)=>s+x.n,0)}台日</span>
-        </div>
-        <div style="margin-top:7px">
-          ${xs.map((x,i)=>`
-            <span class="pill ${i===0&&x.n>=5?'good':''}" style="margin:2px">
-              #${i+1} 末尾${x.tail} ${rate(x.rate)} / 他末尾比 ${pp(x.delta)} / n=${x.n}
-            </span>`).join('')}
-        </div>
-      </div>`;
-    }).join('');
-  }
-
-/* ===== 更新ボタン（統合済み） ===== */
-function initForceUpdateButton(){
- const btn = document.createElement('button');
-   btn.id = 'pekalogForceUpdateBtn';
-   btn.textContent = '🔄 更新';
-   btn.title = '最新版を読み直す';
-
-   Object.assign(btn.style,{
-     position:'fixed',
-     right:'14px',
-     bottom:'18px',
-     zIndex:'9999',
-     border:'1px solid #3a4556',
-     borderRadius:'999px',
-     padding:'11px 14px',
-     background:'#18202b',
-     color:'#fff',
-     fontSize:'13px',
-     fontWeight:'800',
-     boxShadow:'0 8px 24px rgba(0,0,0,.35)',
-     cursor:'pointer'
-   });
-
-   btn.addEventListener('click', async ()=>{
-     btn.disabled = true;
-     btn.textContent = '🔄 更新中...';
-
-     try{
-       /* localStorageは消さない */
-       if('serviceWorker' in navigator){
-         const regs = await navigator.serviceWorker.getRegistrations();
-         await Promise.all(
-           regs.map(r => r.update().catch(()=>{}))
-         );
-       }
-
-       /* ブラウザ/PWAのキャッシュだけ削除 */
-       if('caches' in window){
-         const keys = await caches.keys();
-         await Promise.all(
-           keys.map(k => caches.delete(k))
-         );
-       }
-     }catch(e){
-       console.warn('update refresh:', e);
-     }
-
-     const u = new URL(location.href);
-     u.searchParams.set('fresh', Date.now());
-     location.replace(u.toString());
-   });
-
-   document.body.appendChild(btn);
-}
-
-
-/* ===== 単一起動 ===== */
-
-document.title='PEKALOG LAB v0.13.8 順位つき空き台チェッカー';
-const __ver0132=document.querySelector('.ver');
-if(__ver0132)__ver0132.textContent='v0.13.8 順位つき空き台チェッカー';
-
-nav();
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&activeResearchTool0133)closeResearchTool0133()});
-$('saveHyp').onclick=saveHyp;
-$('jsonFile').onchange=importFile;
-$('collectorFile').onchange=importCollectorFile;
-$('collectorPasteBtn').onclick=importCollectorPaste;
-$('collectorClipboardBtn').onclick=importCollectorClipboard;
-$('exportBtn').onclick=exportData;
-$('reloadRemote').onclick=()=>loadRemote(false);
-$('demoBtn').onclick=demoData;
-$('csvImportBtn').onclick=importCSVText;
-$('saveEventCfg').onclick=saveEventConfig;
-$('hDate').value=todayJST();
-
-initLiveUI();
-initForceUpdateButton();
-
-/* まず保存済みデータで1回だけ描画。daily.jsonは初回描画後に更新 */
-renderAll();
-if(typeof requestAnimationFrame==='function'){
- requestAnimationFrame(()=>loadRemote(true));
-}else{
- setTimeout(()=>loadRemote(true),0);
-}
+function renderAll(){renderDash();renderHyp();renderEvent();renderIF();renderData();renderConfig()}
+nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collectorFile').onchange=importCollectorFile;$('collectorPasteBtn').onclick=importCollectorPaste;$('collectorClipboardBtn').onclick=importCollectorClipboard;$('exportBtn').onclick=exportData;$('reloadRemote').onclick=()=>loadRemote(false);$('demoBtn').onclick=demoData;$('csvImportBtn').onclick=importCSVText;$('saveEventCfg').onclick=saveEventConfig;$('hDate').value=todayJST();initLiveUI();renderAll();loadRemote(true);
 </script>
+
 </body>
 </html>
