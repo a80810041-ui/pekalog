@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.6.0 LAYOUT TAGS + ARCHIVE JUDGE</title>
+<title>ペカログ JUGGLER EDITION v3.6.1 ARCHIVE SAVE FIX</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -91,7 +91,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.6.0 LAYOUT TAGS + ARCHIVE JUDGE</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.6.1 ARCHIVE SAVE FIX</div>
 </header>
 
 <div class="card">
@@ -282,7 +282,8 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
   <button class="btn dark small" onclick="undoBonus()">↩ ボーナス1件戻す</button>
   <button class="btn dark small" onclick="undoCherry()">↩ チェリー1回戻す</button>
  </div>
- <button class="btn dark small wide" style="margin-top:9px" onclick="newSession()">🧹 新しい実戦を開始</button>
+ <div id="archiveSaveStatus" class="tiny" role="status" aria-live="polite" style="margin-top:8px"></div>
+  <button class="btn dark small wide" style="margin-top:9px" onclick="newSession()">🧹 新しい実戦を開始</button>
 </div>
 
 <div class="card"><h3>保存済み実戦 🧠</h3><div class="notice" style="margin-bottom:9px">保存一覧だけで設定判別を確認。BB・REG確率による相対整合度なので、短時間は「材料少」として見る。</div><div id="archives"></div></div>
@@ -644,7 +645,41 @@ function archiveJudgeHtml(x){
  const br=big?`1/${Math.round(g/big)}`:'-',rr=reg?`1/${Math.round(g/reg)}`:'-',cr=(big+reg)?`1/${Math.round(g/(big+reg))}`:'-';
  return `<div class="archiveJudge"><div class="archiveJudgeTop"><b>🧠 最大整合：設定${top.s} ／ 次点 設定${second.s}</b><span class="judgeTag ${cls}">${conf}</span></div><div class="tiny">BB ${br} ／ REG ${rr} ／ 合算 ${cr}</div><div class="judgeTags"><span class="judgeTag">相対整合 ${(top.p*100).toFixed(1)}%</span>${x.diffCoins!==''&&x.diffCoins!=null?`<span class="judgeTag">差枚 ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚</span>`:''}</div><div class="tiny" style="margin-top:5px">※設定確率ではなく、保存時のBB/RBが各設定スペックにどれだけ合うかの相対比較。</div></div>`;
 }
-function archiveSession(){if(!state.totalG&&!state.history.length)return alert('まだ保存する実戦データがないよ');let a=JSON.parse(localStorage.getItem(ARCH)||'[]');const now=Date.now();a.unshift({...state,id:now,endedAt:now});localStorage.setItem(ARCH,JSON.stringify(a.slice(0,60)));renderArchives();alert('実戦を保存したよ！')}
+function archiveSession(){
+ const status=$('archiveSaveStatus');
+ const say=(message,ok)=>{if(status){status.textContent=message;status.style.color=ok?'#58e39a':'#ff9b9b';}};
+ try{
+  ['date','shop','machine','diffCoins','sessionMemo','endReason'].forEach(k=>{
+   const el=$(k);if(el)state[k]=el.value;
+  });
+  if(!(Number(state.totalG)>0)&&!(state.history||[]).length){
+   say('⚠️ 総回転またはボーナス履歴が必要だよ。',false);
+   alert('まだ保存する実戦データがないよ');return;
+  }
+  const raw=localStorage.getItem(ARCH),archives=raw?JSON.parse(raw):[];
+  if(!Array.isArray(archives))throw new Error('Archive format invalid');
+  const lamp=JSON.parse(JSON.stringify(state.lamp||{start:null,end:null}));
+  // Photos remain in the active session; only numeric photo data goes into archives.
+  for(const kind of ['start','end'])if(lamp[kind])delete lamp[kind].img;
+  const now=Date.now(),id=now+Math.random();
+  const entry={...state,history:JSON.parse(JSON.stringify(state.history||[])),
+   quickFlags:{...(state.quickFlags||{})},lamp,id,endedAt:now};
+  localStorage.setItem(ARCH,JSON.stringify([entry,...archives].slice(0,60)));
+  const verify=JSON.parse(localStorage.getItem(ARCH)||'[]');
+  if(!verify.some(x=>x.id===id))throw new Error('Archive verification failed');
+  say('✅ 実戦を保存できたよ！',true);
+  try{renderArchives()}catch(err){
+   console.error('Archive display error:',err);
+   say('✅ 保存済み！ ただし一覧の表示でエラーが起きたよ。',true);
+  }
+  alert('実戦を保存したよ！');
+ }catch(err){
+  console.error('Archive save error:',err);
+  const quota=err&&(err.name==='QuotaExceededError'||err.code===22);
+  say(quota?'❌ 保存容量が足りないよ。先にJSON保存でバックアップしてね。':'❌ 保存に失敗したよ。先にJSON保存でバックアップしてね。',false);
+  alert('実戦を保存できなかったよ。JSON保存でバックアップしてね。');
+ }
+}
 function renderArchives(){
  const a=JSON.parse(localStorage.getItem(ARCH)||'[]');
  $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">${esc(x.shop||'')} 台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}${x.endReason?` / ${esc(x.endReason)}`:''}</div>${turkeyRoleHtml(x.machine)}</div><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button></div>${archiveJudgeHtml(x)}</div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'
