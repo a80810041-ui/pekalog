@@ -807,6 +807,137 @@ function saveEventConfig(){const d=Number($('eventDay').value||22);if(d<1||d>31)
 function renderConfig(){if($('eventDay'))$('eventDay').value=cfg.eventDay||22;if($('extraEvents'))$('extraEvents').value=(cfg.extraEvents||[]).join(',')}
 function renderAll(){renderDash();renderHyp();renderEvent();renderIF();renderData();renderConfig()}
 nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collectorFile').onchange=importCollectorFile;$('collectorPasteBtn').onclick=importCollectorPaste;$('collectorClipboardBtn').onclick=importCollectorClipboard;$('exportBtn').onclick=exportData;$('reloadRemote').onclick=()=>loadRemote(false);$('demoBtn').onclick=demoData;$('csvImportBtn').onclick=importCSVText;$('saveEventCfg').onclick=saveEventConfig;$('hDate').value=todayJST();initLiveUI();renderAll();loadRemote(true);
+// ===== PEKALOG LAB v0.16 : recommendation fix, preserves saved data =====
+(function () {
+  const isClosedRecord = r => r?.isFinal === true || r?.snapshotType === 'historical-final';
+  const oldDate = todayJST;
+  const jstDate = () => oldDate();
+  const gapDays = (a, b) => Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 86400000);
+
+  // For past dates, prefer final historical records over a later-imported LIVE row.
+  finalRows = function () {
+    const selected = new Map(), currentDate = jstDate();
+    for (const row of lab.snapshots || []) {
+      if (!row?.date || !row.machine) continue;
+      const key = row.date + '|' + normMachine(row.machine);
+      const old = selected.get(key);
+      if (!old) { selected.set(key, row); continue; }
+      const past = row.date < currentDate;
+      if (past && isClosedRecord(old) !== isClosedRecord(row)) {
+        if (isClosedRecord(row)) selected.set(key, row);
+      } else if (Number(row.ts || 0) >= Number(old.ts || 0)) {
+        selected.set(key, row);
+      }
+    }
+    return [...selected.values()].sort((a,b) => (a.date+a.machine).localeCompare(b.date+b.machine));
+  };
+
+  function morningRanking(date) {
+    const byMachine = new Map();
+    for (const row of finalRows()) {
+      if (!isClosedRecord(row) || row.demo || !SETTING_SPECS[row.model]) continue;
+      const age = gapDays(row.date, date);
+      if (age < 1 || age > 30) continue;
+      const evidence = settingEvidence(row);
+      if (!evidence?.eligible) continue;
+      const key = normMachine(row.machine);
+      const group = byMachine.get(key) || [];
+      group.push({age, hit: evidence.strong, evidence, row});
+      byMachine.set(key, group);
+    }
+    const weights = [[7,.55],[14,.30],[30,.15]];
+    return [...byMachine.entries()].map(([machine, entries]) => {
+      const windows = weights.map(([days, weight]) => {
+        const rows = entries.filter(x => x.age <= days);
+        return {days, weight, n: rows.length, hits: rows.filter(x => x.hit).length};
+      });
+      const present = windows.filter(x => x.n > 0);
+      const totalWeight = present.reduce((sum, x) => sum+x.weight, 0);
+      const rate = present.reduce((sum,x) => sum+x.weight*(x.hits+.4)/(x.n+2),0)/totalWeight;
+      const conf = Math.min(1, entries.length/8);
+      const recents = entries.slice().sort((a,b) => a.age-b.age).slice(0,3);
+      const temp = recents.reduce((sum,x) => sum+x.evidence.score,0)/recents.length;
+      const agePenalty = windows[0].n ? 0 : 3;
+      const score = clamp(50 + (rate-.2)*85*conf + (temp-50)*.16*conf - agePenalty,0,100);
+      const summary = x => x.n ? `${x.hits}/${x.n}` : 'ææãªã';
+      const reasons = [
+        `æå¥æ¨å®ï¼ç¢ºå®ãã¼ã¿ï¼ï¼7æ¥ ${summary(windows[0])} ï¼14æ¥ ${summary(windows[1])} ï¼30æ¥ ${summary(windows[2])}`,
+        `ç´è¿30æ¥ã§å¤å®å¯è½ ${entries.length}æ¥ãéå»ã®æç¸¾ããæè¿ã®å±¥æ­´ãåªå`,
+        'â»æ¨å®ã¹ã³ã¢ã§ãæ¬¡ã®å½ããã»åºçãäºæ¸¬ãããã®ã§ã¯ããã¾ãã'
+      ];
+      return {machine,model:entries[0].row.model,score,reasons,n:entries.length,
+        confidence:confidenceLabel(entries.length)};
+    }).sort((a,b) => b.score-a.score || Number(a.machine)-Number(b.machine));
+  }
+
+  // P's CUBE updated is JST; collectedAt/ts may be UTC or much later.
+  function observedTime(row) {
+    const dateText = String(row.updated || row.basicRawMeta?.updated || '');
+    const m = dateText.match(/(\d{4})[\/-](\d\d?)[\/-](\d\d?)[ T](\d\d?):(\d\d)(?::(\d\d))?/);
+    if (m) {
+      const pad = x => String(x).padStart(2,'0');
+      const t = Date.parse(`${m[1]}-${pad(m[2])}-${pad(m[3])}T${pad(m[4])}:${m[5]}:${pad(m[6] || '00')}+09:00`);
+      if (Number.isFinite(t)) return t;
+    }
+    const t = Number(row.ts);
+    return Number.isFinite(t) && t > 0 ? t : null;
+  }
+  function liveRanking(date, now) {
+    if (date !== jstDate()) return [];
+    const hour = new Date(now + 9*3600000).getUTCHours();
+    if (hour < 9 || hour >= 23) return [];
+    const selected = new Map();
+    for (const row of lab.snapshots || []) {
+      if (row?.date !== date || !row.machine || isClosedRecord(row) || row.demo || !SETTING_SPECS[row.model]) continue;
+      const ts = observedTime(row);
+      if (ts === null || ts > now + 5*60000 || now-ts > 30*60000) continue;
+      const key = normMachine(row.machine), old = selected.get(key);
+      if (!old || ts > old.ts) selected.set(key, {row,ts});
+    }
+    return [...selected.values()].map(({row}) => {
+      const safe = row.diff == null || row.diff === '' ? {...row,diff:'unknown'} : row;
+      return {machine:normMachine(row.machine),model:row.model,...ayaCandidate(safe)};
+    }).sort((a,b) => b.score-a.score);
+  }
+
+  markOccupied = machine => setOccupiedMachine(jstDate(),machine,true);
+  unmarkOccupied = machine => setOccupiedMachine(jstDate(),machine,false);
+  clearOccupied = function () {
+    const items = seatSkipStore(); delete items[jstDate()];
+    try { localStorage.setItem(SEAT_SKIP_KEY,JSON.stringify(items)); } catch(e) {}
+    renderSeatPicks();
+  };
+
+  renderSeatPicks = function () {
+    const morningEl = $('morningPicks'), liveEl = $('livePicks'), statusEl = $('seatPickStatus');
+    if (!morningEl || !liveEl || !statusEl) return;
+    const date = jstDate();
+    const morning = morningRanking(date).slice(0,3);
+    morningEl.innerHTML = morning.length ? morning.map((c,i) => pickHtml(c,i,c.model,c.machine)).join('') :
+      '<div class="empty">éå»30æ¥ã«å¤å®å¯è½ãªç¢ºå®ãã¼ã¿ãããã¾ãããéåºè¨é²ãéãã¦ã­ã</div>';
+    const occupied = occupiedMachines(date);
+    const allLive = liveRanking(date,Date.now());
+    const candidates = allLive.filter(c => !occupied.has(String(c.machine)));
+    const top = candidates.slice(0,3);
+    liveEl.innerHTML = top.length ? top.map((c,i) => pickHtml(c,i,c.model,c.machine,true)).join('') :
+      (allLive.length ? '<div class="empty">åè£å°ããã¹ã¦ãåº§ããã¦ããæå®ä¸­ã ãã</div>' :
+      '<div class="empty">å½æ¥30åä»¥åã®æ°ããLIVEãã¼ã¿ããªããããåè£ã¯è¡¨ç¤ºãã¦ãã¾ããã</div>');
+    let msg = `å¯¾è±¡æ¥ <strong>${esc(date)}</strong>ãæã¤ãã¯éå»7ã»14ã»30æ¥ã®ç¢ºå®å±¥æ­´ãä»ããçãã¯å½æ¥30åä»¥åã®LIVEã§å¥å¤å®ã`;
+    const best = candidates[0];
+    if (best && best.score >= 55) msg += ` ä»ããã®æä¸ä½ã¯ <strong>${esc(best.machine)}çª</strong>ãç ç©¶ã¹ã³ã¢ <strong>${Math.round(best.score)}/100</strong>ã`;
+    if (best && best.score < 55) msg += ' ç¾å¨ãå¼·ãåè£ã¯å°ãªããç¡çã«æã¤å¿è¦ã¯ãªããã';
+    if (occupied.size) {
+      msg += `<div style="margin-top:9px">åº§ããã¦ãï¼${occupied.size}å° `;
+      msg += [...occupied].map(m => `<button class="btn dark small" onclick="unmarkOccupied('${esc(m)}')">â© ${esc(m)}çªãæ»ã</button>`).join('');
+      msg += ' <button class="btn dark small" onclick="clearOccupied()">å¨é¨è§£é¤</button></div>';
+    }
+    msg += '<div class="tiny">ä¿å­ãã¼ã¿ã¯åé¤ãã¾ãããã¹ã³ã¢ã¯è¨­å®ãå½é¸ã®ä¿è¨¼ã§ã¯ããã¾ããã</div>';
+    statusEl.innerHTML = msg;
+  };
+  renderAll();
+  setInterval(renderSeatPicks,60*1000);
+})();
+// ===== end v0.16 patch =====
 </script>
 
 </body>
