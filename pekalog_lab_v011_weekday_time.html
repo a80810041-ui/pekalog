@@ -938,6 +938,53 @@ nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collecto
   setInterval(renderSeatPicks,60*1000);
 })();
 // ===== end v0.16 patch =====
+
+(() => {
+  const fix = el => {
+    const walker = document.createTreeWalker(
+      el, NodeFilter.SHOW_TEXT
+    );
+    let node;
+    while ((node = walker.nextNode())) {
+      const corrected = node.nodeValue.replace(
+        /[\u0080-\u00ff]+/g,
+        part => {
+          try {
+            return new TextDecoder('utf-8', {
+              fatal: true
+            }).decode(
+              Uint8Array.from(part, c => c.charCodeAt(0))
+            );
+          } catch {
+            return part;
+          }
+        }
+      );
+      if (corrected !== node.nodeValue) {
+        node.nodeValue = corrected;
+      }
+    }
+  };
+
+  for (const id of [
+    'morningPicks', 'livePicks', 'seatPickStatus'
+  ]) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    new MutationObserver(() => fix(el)).observe(
+      el, {
+        childList: true,
+        subtree: true,
+        characterData: true
+      }
+    );
+    fix(el);
+  }
+
+  document.title = 'PEKALOG LAB v0.16';
+  const version = document.querySelector('header .ver');
+  if (version) version.textContent = 'v0.16';
+})();
 </script>
 
 </body>
