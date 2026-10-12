@@ -260,10 +260,10 @@ function parseGraphJSON(j,requestedDate){const root=Array.isArray(j)?(j[0]||{}):
 async function turkeyFetch(endpoint,machine,date){const u=new URL(TURKEY_LIVE.base+endpoint);u.searchParams.set('cd_dai',apiMachine(machine));u.searchParams.set('YMD_biz',ymd8(date));u.searchParams.set('_',String(Date.now()));const r=await fetch(u.toString(),{method:'GET',cache:'no-store',mode:'cors',credentials:'omit'});if(!r.ok)throw new Error(`${endpoint}: HTTP ${r.status}`);const text=await r.text();try{return JSON.parse(text)}catch(e){throw new Error(`${endpoint}: JSONではない応答 (${text.slice(0,60).replace(/\s+/g,' ')})`)}}
 async function turkeyOne(machine,date,{full=true,captureRaw=false}={}){const basicJ=await turkeyFetch(TURKEY_LIVE.endpoints.basic,machine,date);const s=parseBasicJSON(basicJ,date,machine);let hist=null,graph=null;if(full){const results=await Promise.allSettled([turkeyFetch(TURKEY_LIVE.endpoints.history,machine,date),turkeyFetch(TURKEY_LIVE.endpoints.graph,machine,date)]);if(results[0].status==='fulfilled')hist=parseHistoryJSON(results[0].value);if(results[1].status==='fulfilled')graph=parseGraphJSON(results[1].value,date);if(captureRaw)lastLiveDebug={capturedAt:new Date().toISOString(),machine:normMachine(machine),date,basic:basicJ,history:results[0].status==='fulfilled'?results[0].value:{error:String(results[0].reason)},graph:results[1].status==='fulfilled'?results[1].value:{error:String(results[1].reason)}}}else if(captureRaw)lastLiveDebug={capturedAt:new Date().toISOString(),machine:normMachine(machine),date,basic:basicJ};Object.assign(s,hist||{});if(graph){s.diff=graph.diff;s.maxDiff=graph.maxDiff;s.minDiff=graph.minDiff;s.graphMode=graph.graphMode;s.graphPoints=graph.pointCount}else{s.diff=null;s.graphMode='not-fetched'}s.source='pscube-live';return s}
 function liveMachineList(){const v=($('liveMachines')?.value||'').split(',').map(normMachine).filter(Boolean);return [...new Set(v)]}
-function saveLiveSnapshot(s){mergeData({snapshots:[s]})}
+function saveLiveSnapshot(s){return mergeData({snapshots:[s]})}
 function liveRowHtml(s){const diff=Number.isFinite(Number(s.diff))?`<b class="${Number(s.diff)>=0?'pos':'neg'}">${signed(Math.round(s.diff))}枚</b>`:'<span class="pill warn">差枚解析待ち</span>';return `<div class="row"><div class="rowtop"><div><b>${esc(s.machine)}番 ${esc(MODELS[s.model]||s.modelName||s.model)}</b><div class="tiny">${fmt(s.totalG)}G / BB${fmt(s.big)} RB${fmt(s.reg)} / 合算 ${s.comb?`1/${s.comb}`:'-'}</div></div><div class="right">${diff}<div class="tiny">${esc(s.graphMode||'')}</div></div></div></div>`}
-async function liveTest(){if(liveBusy)return;liveBusy=true;const date=$('liveDate').value||todayJST();$('liveStatus').innerHTML='0711番へ接続中…';$('liveRows').innerHTML='';try{const s=await turkeyOne('711',date,{full:true,captureRaw:true});saveLiveSnapshot(s);$('liveStatus').innerHTML=`✅ <strong>接続成功</strong>。${esc(s.machine)}番 ${esc(MODELS[s.model]||s.modelName||s.model)} / BB${fmt(s.big)} RB${fmt(s.reg)} / ${fmt(s.totalG)}G。<br>${Number.isFinite(Number(s.diff))?`差枚も取得できた：<strong>${signed(Math.round(s.diff))}枚</strong>`:`基本データ・履歴は取得。グラフJSONは取れたが、差枚の点列はまだ自動判読できていない（${esc(s.graphMode)}）。`}<br><span class="tiny">取得時刻：${new Date(s.ts).toLocaleString('ja-JP')}</span>`;$('liveRows').innerHTML=liveRowHtml(s)}catch(e){$('liveStatus').innerHTML=`❌ <strong>接続できなかった</strong>：${esc(e.message)}<br><span class="tiny">GitHub Pages→P's CUBEの直接通信がCORS/セッション等で拒否された可能性がある。この場合は回避せず、次段階の収集係方式に切り替える。</span>`}finally{liveBusy=false;renderAll()}}
-async function liveScan(){if(liveBusy)return;const machines=liveMachineList();if(!machines.length)return alert('対象台を入れてね');liveBusy=true;const date=$('liveDate').value||todayJST(),ok=[],ng=[];$('liveRows').innerHTML='';for(let i=0;i<machines.length;i++){const m=machines[i];$('liveStatus').innerHTML=`📡 ${i+1}/${machines.length}台 取得中… <strong>${m}番</strong>`;try{const s=await turkeyOne(m,date,{full:true});saveLiveSnapshot(s);ok.push(s);$('liveRows').insertAdjacentHTML('beforeend',liveRowHtml(s))}catch(e){ng.push({m,e:e.message});$('liveRows').insertAdjacentHTML('beforeend',`<div class="row"><b>${esc(m)}番</b> <span class="pill bad">取得失敗</span><div class="tiny">${esc(e.message)}</div></div>`)}await new Promise(r=>setTimeout(r,180))}liveBusy=false;$('liveStatus').innerHTML=`✅ 取得完了：<strong>${ok.length}/${machines.length}台</strong>${ng.length?` ／ 失敗 ${ng.length}台`:''}。<br>${ok.some(s=>Number.isFinite(Number(s.diff)))?'差枚まで読めた台は1000/2000枚分析へ自動反映。':'BB/REG/合算は保存済み。差枚はグラフ解析が通った時点から自動反映する。'}`;renderAll()}
+async function liveTest(){if(liveBusy)return;liveBusy=true;const date=$('liveDate').value||todayJST();$('liveStatus').innerHTML='0711番へ接続中…';$('liveRows').innerHTML='';try{const s=await turkeyOne('711',date,{full:true,captureRaw:true});await saveLiveSnapshot(s);$('liveStatus').innerHTML=`✅ <strong>接続成功</strong>。${esc(s.machine)}番 ${esc(MODELS[s.model]||s.modelName||s.model)} / BB${fmt(s.big)} RB${fmt(s.reg)} / ${fmt(s.totalG)}G。<br>${Number.isFinite(Number(s.diff))?`差枚も取得できた：<strong>${signed(Math.round(s.diff))}枚</strong>`:`基本データ・履歴は取得。グラフJSONは取れたが、差枚の点列はまだ自動判読できていない（${esc(s.graphMode)}）。`}<br><span class="tiny">取得時刻：${new Date(s.ts).toLocaleString('ja-JP')}</span>`;$('liveRows').innerHTML=liveRowHtml(s)}catch(e){$('liveStatus').innerHTML=`❌ <strong>接続できなかった</strong>：${esc(e.message)}<br><span class="tiny">GitHub Pages→P's CUBEの直接通信がCORS/セッション等で拒否された可能性がある。この場合は回避せず、次段階の収集係方式に切り替える。</span>`}finally{liveBusy=false;renderAll()}}
+async function liveScan(){if(liveBusy)return;const machines=liveMachineList();if(!machines.length)return alert('対象台を入れてね');liveBusy=true;const date=$('liveDate').value||todayJST(),ok=[],ng=[];$('liveRows').innerHTML='';for(let i=0;i<machines.length;i++){const m=machines[i];$('liveStatus').innerHTML=`📡 ${i+1}/${machines.length}台 取得中… <strong>${m}番</strong>`;try{const s=await turkeyOne(m,date,{full:true});await saveLiveSnapshot(s);ok.push(s);$('liveRows').insertAdjacentHTML('beforeend',liveRowHtml(s))}catch(e){ng.push({m,e:e.message});$('liveRows').insertAdjacentHTML('beforeend',`<div class="row"><b>${esc(m)}番</b> <span class="pill bad">取得失敗</span><div class="tiny">${esc(e.message)}</div></div>`)}await new Promise(r=>setTimeout(r,180))}liveBusy=false;$('liveStatus').innerHTML=`✅ 取得完了：<strong>${ok.length}/${machines.length}台</strong>${ng.length?` ／ 失敗 ${ng.length}台`:''}。<br>${ok.some(s=>Number.isFinite(Number(s.diff)))?'差枚まで読めた台は1000/2000枚分析へ自動反映。':'BB/REG/合算は保存済み。差枚はグラフ解析が通った時点から自動反映する。'}`;renderAll()}
 function saveLiveDebug(){if(!lastLiveDebug)return alert('先に0711の接続テストをしてね');const blob=new Blob([JSON.stringify(lastLiveDebug,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_0711_debug_${lastLiveDebug.date||'today'}.json`;a.click();URL.revokeObjectURL(a.href)}
 function setupLiveAuto(){if(liveTimer){clearInterval(liveTimer);liveTimer=null}const mins=Number($('liveAuto')?.value||0);cfg.liveAuto=mins||'off';persist();if(mins>0)liveTimer=setInterval(()=>{if(!liveBusy)liveScan()},mins*60*1000)}
 function initLiveUI(){if(!$('liveDate'))return;$('liveDate').value=todayJST();$('liveAuto').value=String(cfg.liveAuto||'off');if(cfg.liveMachines?.length)$('liveMachines').value=cfg.liveMachines.join(',');$('liveTestBtn').onclick=liveTest;$('liveScanBtn').onclick=liveScan;$('liveDebugBtn').onclick=saveLiveDebug;$('liveAuto').onchange=setupLiveAuto;$('liveMachines').onchange=()=>{cfg.liveMachines=liveMachineList();persist()};setupLiveAuto()}
@@ -271,7 +271,74 @@ const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<
 let lab=loadLab(), hypotheses=JSON.parse(localStorage.getItem(HYP_KEY)||'[]'), cfg=loadCfg();
 function loadCfg(){try{return {...{eventDay:22,extraEvents:[]},...JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}}catch(e){return {eventDay:22,extraEvents:[]}}}
 function loadLab(){try{return JSON.parse(localStorage.getItem(LAB_KEY)||'{"snapshots":[]}')}catch(e){return {snapshots:[]}}}
-function persist(){localStorage.setItem(LAB_KEY,JSON.stringify(lab));localStorage.setItem(HYP_KEY,JSON.stringify(hypotheses));localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}
+
+/* LAB v0.18.1 - quota-safe durable snapshots. Existing backups remain compatible. */
+let labStoreDB=null, labStoreReady=false, labStoreProblem='', labWriteQueue=Promise.resolve();
+function openLabStore(){
+ return new Promise((resolve,reject)=>{
+  if(!window.indexedDB)return reject(new Error('IndexedDBが利用できません'));
+  const req=indexedDB.open('pekalog_lab_durable_v1',1);
+  req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('records'))req.result.createObjectStore('records')};
+  req.onsuccess=()=>{const db=req.result;db.onversionchange=()=>db.close();resolve(db)};
+  req.onerror=()=>reject(req.error||new Error('IndexedDBの接続に失敗'));
+  req.onblocked=()=>reject(new Error('別タブが保存処理をブロックしています'));
+ });
+}
+function readLabStore(){
+ return new Promise((resolve,reject)=>{
+  const t=labStoreDB.transaction('records','readonly'),q=t.objectStore('records').get('lab');
+  q.onsuccess=()=>resolve(q.result||null);
+  q.onerror=()=>reject(q.error||new Error('保存データの読込に失敗'));
+  t.onabort=()=>reject(t.error||new Error('保存データの読込が中断'));
+ });
+}
+function writeLabStore(value){
+ return new Promise((resolve,reject)=>{
+  const t=labStoreDB.transaction('records','readwrite');
+  t.objectStore('records').put(value,'lab');
+  t.oncomplete=()=>resolve();
+  t.onerror=()=>reject(t.error||new Error('保存できませんでした'));
+  t.onabort=()=>reject(t.error||new Error('保存が中断されました'));
+ });
+}
+function storeRowKey(s){return (s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0)}
+async function initializeLabStore(){
+ try{
+  labStoreDB=await openLabStore();
+  const saved=await readLabStore();
+  const oldRows=Array.isArray(lab.snapshots)?lab.snapshots:[];
+  if(saved&&Array.isArray(saved.snapshots)){
+   const merged=new Map(saved.snapshots.map(x=>[storeRowKey(x),x]));
+   for(const x of oldRows)if(!merged.has(storeRowKey(x)))merged.set(storeRowKey(x),x);
+   lab={...saved,snapshots:[...merged.values()]};
+  }
+  await writeLabStore(lab);
+  const verified=await readLabStore();
+  if(!verified||!Array.isArray(verified.snapshots)||verified.snapshots.length!==lab.snapshots.length)
+   throw new Error('移行先の保存件数を確認できませんでした');
+  try{localStorage.removeItem(LAB_KEY)}catch(e){console.warn('旧保存領域の解放に失敗',e)}
+  labStoreReady=true;
+  renderAll();
+ }catch(e){
+  labStoreProblem=String(e&&e.message||e);
+  console.error('[PEKALOG durable storage]',e);
+  renderAll();
+  alert('LABの保存先を準備できませんでした。元データは削除していません。バックアップは保持してね。詳細：'+labStoreProblem);
+ }
+}
+function persist(){
+ try{
+  localStorage.setItem(HYP_KEY,JSON.stringify(hypotheses));
+  localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
+ }catch(e){if(labStoreReady)throw e;console.warn('旧保存領域が満杯のため設定の保存を保留',e)}
+ if(!labStoreReady)return Promise.resolve();
+ const copy=structuredClone(lab);
+ const saving=labWriteQueue.then(()=>writeLabStore(copy));
+ labWriteQueue=saving.catch(()=>{});
+ return saving;
+}
+const labStoreInit=initializeLabStore();
+
 function fmt(n){if(n===null||n===undefined||Number.isNaN(Number(n)))return '-';return Number(n).toLocaleString('ja-JP')}
 function pct(n,d){return d?((n/d)*100).toFixed(1)+'%':'-'}
 function signed(n){if(n===null||n===undefined||n==='')return '-';n=Number(n);return `${n>0?'+':''}${fmt(n)}`}
@@ -709,7 +776,7 @@ function bundleSnapshot(rec,date,statKey,graphKey,isFinal){
   isFinal,snapshotType:isFinal?'historical-final':'live'
  };
 }
-function turkeyBundleToSnapshots(pkg){
+async function turkeyBundleToSnapshots(pkg){
  if(!pkg||pkg.kind!=='pekalog-turkey-bundle')throw new Error('ターキー22台JSONではないよ');
  const rows=Array.isArray(pkg.machines)?pkg.machines:[], snaps=[];
  for(const rec of rows){
@@ -718,11 +785,11 @@ function turkeyBundleToSnapshots(pkg){
   snaps.push(bundleSnapshot(rec,addDaysISO(pkg.date,-1),'prev1','prev1',true));
   snaps.push(bundleSnapshot(rec,addDaysISO(pkg.date,-2),'prev2','prev2',true));
  }
- if(snaps.length)mergeData({snapshots:snaps});
+ if(snaps.length)await mergeData({snapshots:snaps});
  return {count:snaps.length,machineCount:rows.length,graphOk:snaps.filter(x=>Number.isFinite(Number(x.diff))).length,histOk:rows.filter(x=>Array.isArray(x.historyRows)&&x.historyRows.length).length,errors:0,total:rows.length,bundle:true};
 }
 
-function collectorToSnapshots(pkg){
+async function collectorToSnapshots(pkg){
  if(pkg?.kind==='pekalog-turkey-bundle')return turkeyBundleToSnapshots(pkg);
  if(!pkg||pkg.kind!=='pekalog-collector')throw new Error('PEKALOG収集JSONではないよ');
  const rows=Array.isArray(pkg.machines)?pkg.machines:[];
@@ -738,7 +805,7 @@ function collectorToSnapshots(pkg){
    s.source='pscube-collector';snaps.push(s)
   }catch(e){errors++}
  }
- if(snaps.length)mergeData({snapshots:snaps});
+ if(snaps.length)await mergeData({snapshots:snaps});
  return {count:snaps.length,graphOk,histOk,errors,total:rows.length};
 }
 function collectorStatusText(r){if(r.bundle)return `✅ <strong>${r.machineCount}台の収集完了</strong>。本日LIVE＋1日前＋2日前を合わせて <strong>${r.count}件</strong> LABへ追加。差枚解析 ${r.graphOk}件 ／ 履歴 ${r.histOk}台。<br><span class="tiny">本日はLIVE、1日前・2日前は閉店データとして保存。翌日の収集で前日の閉店値が自動的に確定していく。</span>`;return `✅ <strong>${r.count}/${r.total}台をLABへ追加</strong>。履歴 ${r.histOk}台${r.graphOk?` ／ 差枚解析 ${r.graphOk}台`:''}${r.errors?` ／ 失敗 ${r.errors}台`:''}。${r.graphOk?'1000/2000枚分析へそのまま反映したよ。':'差枚はグラフ点列の解析が通った台から自動反映する。'}`}
@@ -766,9 +833,9 @@ function importMetaText(){
  return `📥 最終取込：<strong>${when||'不明'}</strong>${m.machines!=null?` ／ ${m.machines}台`:''}${m.snapshots!=null?` ／ ${m.snapshots}件`:''}${dataDate}`;
 }
 
-function importCollectorObject(j,source='collector'){const r=collectorToSnapshots(j);saveImportMeta(j,r,source);const el=$('collectorStatus');if(el)el.innerHTML=collectorStatusText(r)+'<br><span class="tiny">'+importMetaText()+'</span>';renderAll();return r}
-function importCollectorFile(ev){const f=ev.target.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const j=JSON.parse(rd.result);const r=importCollectorObject(j,'file');alert(`${r.machineCount??r.count}台ぶん読み込んだよ！`)}catch(e){alert('収集JSONを読み込めなかったよ：'+e.message)}ev.target.value=''};rd.readAsText(f)}
-function importCollectorPaste(){const t=$('collectorPaste')?.value.trim();if(!t)return alert('収集JSONを貼り付けてね');try{const j=JSON.parse(t);const r=importCollectorObject(j,'paste');$('collectorPaste').value='';alert(`${r.machineCount??r.count}台ぶん読み込んだよ！`)}catch(e){alert('貼り付けJSONを読み込めなかったよ：'+e.message)}}
+async function importCollectorObject(j,source='collector'){const r=await collectorToSnapshots(j);saveImportMeta(j,r,source);const el=$('collectorStatus');if(el)el.innerHTML=collectorStatusText(r)+'<br><span class="tiny">'+importMetaText()+'</span>';renderAll();return r}
+function importCollectorFile(ev){const f=ev.target.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=async()=>{try{const j=JSON.parse(rd.result);const r=await importCollectorObject(j,'file');alert(`${r.machineCount??r.count}台ぶん読み込んだよ！`)}catch(e){alert('収集JSONを読み込めなかったよ：'+e.message)}ev.target.value=''};rd.readAsText(f)}
+async function importCollectorPaste(){const t=$('collectorPaste')?.value.trim();if(!t)return alert('収集JSONを貼り付けてね');try{const j=JSON.parse(t);const r=await importCollectorObject(j,'paste');$('collectorPaste').value='';alert(`${r.machineCount??r.count}台ぶん読み込んだよ！`)}catch(e){alert('貼り付けJSONを読み込めなかったよ：'+e.message)}}
 async function importCollectorClipboard(){
  const btn=$('collectorClipboardBtn');
  const old=btn?.textContent;
@@ -778,7 +845,7 @@ async function importCollectorClipboard(){
   const t=(await navigator.clipboard.readText()).trim();
   if(!t)throw new Error('クリップボードが空だよ');
   const j=JSON.parse(t);
-  const r=importCollectorObject(j,'clipboard');
+  const r=await importCollectorObject(j,'clipboard');
   if($('collectorPaste'))$('collectorPaste').value='';
   alert(`✅ ${r.machineCount??r.count}台 ／ ${r.count}件を取り込んだよ！`);
  }catch(e){
@@ -793,16 +860,16 @@ async function importCollectorClipboard(){
  }
 }
 
-async function loadRemote(silent=false){try{const r=await fetch('./daily.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error(r.status);const j=await r.json();mergeData(j);if(!silent)alert('daily.jsonを読み込んだよ')}catch(e){if(!silent)alert('daily.jsonはまだ接続されてないよ。今はJSON読込かデモで試せる。')}renderAll()}
-function mergeData(j){const incoming=Array.isArray(j)?j:(j.snapshots||[]);if(!Array.isArray(incoming))return;const map=new Map((lab.snapshots||[]).map(s=>[(s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s]));for(const raw of incoming){const s={...raw,machine:normMachine(raw.machine)};map.set((s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s);}lab.snapshots=[...map.values()];persist()}
-function demoData(){if(!confirm('分析画面確認用のDEMOデータを追加する？（実データではありません）'))return;const models=['gogo3','gogo3','gogo3','my5','my5','neoim'];const machines=['301','302','303','311','312','321'];const dates=['2026-06-22','2026-07-22','2026-08-22','2026-09-10','2026-09-11'];let arr=[];dates.forEach((d,di)=>machines.forEach((m,i)=>{let g=4200+((di*777+i*433)%3500),big=14+((di*7+i*5)%20),reg=10+((di*5+i*3)%18),diff=((di*911+i*733)%4200)-1500;if(d.endsWith('-22')){g+=1300;big+=7;reg+=6;diff+=700}arr.push({date:d,ts:new Date(d+'T22:35:00+09:00').getTime(),machine:m,model:models[i],totalG:g,big,reg,diff,demo:true})}));
+async function loadRemote(silent=false){try{await labStoreInit;if(!labStoreReady)throw new Error(labStoreProblem||'保存先準備中');const r=await fetch('./daily.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error(r.status);const j=await r.json();await mergeData(j);if(!silent)alert('daily.jsonを読み込んだよ')}catch(e){if(!silent)alert('daily.jsonはまだ接続されてないよ。今はJSON読込かデモで試せる。')}renderAll()}
+async function mergeData(j){if(!labStoreReady)throw new Error('保存先の準備が終わっていません：'+(labStoreProblem||'少し待ってもう一度試してね'));const incoming=Array.isArray(j)?j:(j.snapshots||[]);if(!Array.isArray(incoming))return;const before=lab;const map=new Map((lab.snapshots||[]).map(s=>[(s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s]));for(const raw of incoming){const s={...raw,machine:normMachine(raw.machine)};map.set((s.date||'')+'|'+(s.machine||'')+'|'+(s.ts||0),s);}lab={...lab,snapshots:[...map.values()]};try{await persist()}catch(e){if(lab.snapshots.length===map.size)lab=before;throw e}}
+async function demoData(){if(!confirm('分析画面確認用のDEMOデータを追加する？（実データではありません）'))return;const models=['gogo3','gogo3','gogo3','my5','my5','neoim'];const machines=['301','302','303','311','312','321'];const dates=['2026-06-22','2026-07-22','2026-08-22','2026-09-10','2026-09-11'];let arr=[];dates.forEach((d,di)=>machines.forEach((m,i)=>{let g=4200+((di*777+i*433)%3500),big=14+((di*7+i*5)%20),reg=10+((di*5+i*3)%18),diff=((di*911+i*733)%4200)-1500;if(d.endsWith('-22')){g+=1300;big+=7;reg+=6;diff+=700}arr.push({date:d,ts:new Date(d+'T22:35:00+09:00').getTime(),machine:m,model:models[i],totalG:g,big,reg,diff,demo:true})}));
  // one unmistakable 72-peka DEMO record, explicitly demo only
- arr.push({date:'2026-08-22',ts:new Date('2026-08-22T22:36:00+09:00').getTime(),machine:'399-DEMO',model:'gogo3',totalG:8000,big:39,reg:33,diff:2600,demo:true});mergeData({snapshots:arr});renderAll()}
-function renderData(){const demos=(lab.snapshots||[]).filter(x=>x.demo).length,live=(lab.snapshots||[]).filter(x=>['pscube-live','pscube-collector','pscube-dom-collector','pscube-auto-sync'].includes(x.source)).length;let sync='';try{const m=JSON.parse(localStorage.getItem('pekalog_turkey_sync_meta_v1')||'null');if(m)sync=`<br>🦃 最終自動同期：<strong>${new Date(m.syncedAt).toLocaleString('ja-JP')}</strong> ／ ${m.machines}台`;}catch(e){}const imp=importMetaText();$('dataStatus').innerHTML=`スナップショット <strong>${(lab.snapshots||[]).length}件</strong>${live?` ／ P's CUBE ${live}件`:''}${demos?`（DEMO ${demos}件）`:''}。${sync}${imp?`<br>${imp}`:''}<br>収集JSON・<code>daily.json</code>・CSV/JSONは全部同じ分析エンジンに入る。`}
+ arr.push({date:'2026-08-22',ts:new Date('2026-08-22T22:36:00+09:00').getTime(),machine:'399-DEMO',model:'gogo3',totalG:8000,big:39,reg:33,diff:2600,demo:true});await mergeData({snapshots:arr});renderAll()}
+function renderData(){const demos=(lab.snapshots||[]).filter(x=>x.demo).length,live=(lab.snapshots||[]).filter(x=>['pscube-live','pscube-collector','pscube-dom-collector','pscube-auto-sync'].includes(x.source)).length;let sync='';try{const m=JSON.parse(localStorage.getItem('pekalog_turkey_sync_meta_v1')||'null');if(m)sync=`<br>🦃 最終自動同期：<strong>${new Date(m.syncedAt).toLocaleString('ja-JP')}</strong> ／ ${m.machines}台`;}catch(e){}const imp=importMetaText();$('dataStatus').innerHTML=`スナップショット <strong>${(lab.snapshots||[]).length}件</strong>${live?` ／ P's CUBE ${live}件`:''}${demos?`（DEMO ${demos}件）`:''}。${sync}${imp?`<br>${imp}`:''}<br>収集JSON・<code>daily.json</code>・CSV/JSONは全部同じ分析エンジンに入る。<br><span class="tiny">${labStoreReady?'🛡 保存方式：大容量データベース（保存確認済み）':labStoreProblem?'⚠️ 保存先準備エラー：'+esc(labStoreProblem):'⏳ 保存先を準備中…'}</span>`}
 function exportData(){const blob=new Blob([JSON.stringify({version:'0.13-ayachan-hunt',exportedAt:new Date().toISOString(),snapshots:lab.snapshots,hypotheses},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pekalog_lab_backup.json';a.click();URL.revokeObjectURL(a.href)}
-function importFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(j.kind==='pekalog-collector'||j.kind==='pekalog-turkey-bundle'){const z=importCollectorObject(j);alert(`${z.count}台ぶんの収集JSONを読み込んだよ`)}else{if(j.snapshots)mergeData(j);if(Array.isArray(j.hypotheses)){hypotheses=j.hypotheses;persist()}renderAll();alert('LABデータを読み込んだよ')}}catch(e){alert('JSONを読み込めなかったよ')}ev.target.value=''};r.readAsText(f)}
+function importFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=async()=>{try{const j=JSON.parse(r.result);if(j.kind==='pekalog-collector'||j.kind==='pekalog-turkey-bundle'){const z=await importCollectorObject(j);alert(`${z.count}台ぶんの収集JSONを読み込んだよ`)}else{if(j.snapshots)await mergeData(j);if(Array.isArray(j.hypotheses)){hypotheses=j.hypotheses;await persist()}renderAll();alert('LABデータを読み込んだよ')}}catch(e){alert('JSONを読み込めなかったよ')}ev.target.value=''};r.readAsText(f)}
 function parseCSVLine(line){const out=[];let cur='',q=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'){if(q&&line[i+1]==='"'){cur+='"';i++}else q=!q}else if(c===','&&!q){out.push(cur.trim());cur=''}else cur+=c}out.push(cur.trim());return out}
-function importCSVText(){const text=$('csvPaste').value.trim();if(!text)return alert('CSVを貼ってね');const lines=text.split(/\r?\n/).filter(Boolean),first=parseCSVLine(lines[0]);const expected=['date','ts','machine','model','totalG','big','reg','diff'];let start=0,headers=expected;if(first.some(x=>expected.includes(x))){headers=first;start=1}let arr=[];for(let i=start;i<lines.length;i++){const vals=parseCSVLine(lines[i]),o={};headers.forEach((h,j)=>o[h]=vals[j]);['ts','totalG','big','reg','diff'].forEach(k=>{if(o[k]!==undefined&&o[k]!=='')o[k]=Number(o[k])});if(o.date&&o.machine)arr.push(o)}if(!arr.length)return alert('取り込める行がなかったよ');mergeData({snapshots:arr});$('csvPaste').value='';renderAll();alert(`${arr.length}件取り込んだよ`)}
+async function importCSVText(){const text=$('csvPaste').value.trim();if(!text)return alert('CSVを貼ってね');const lines=text.split(/\r?\n/).filter(Boolean),first=parseCSVLine(lines[0]);const expected=['date','ts','machine','model','totalG','big','reg','diff'];let start=0,headers=expected;if(first.some(x=>expected.includes(x))){headers=first;start=1}let arr=[];for(let i=start;i<lines.length;i++){const vals=parseCSVLine(lines[i]),o={};headers.forEach((h,j)=>o[h]=vals[j]);['ts','totalG','big','reg','diff'].forEach(k=>{if(o[k]!==undefined&&o[k]!=='')o[k]=Number(o[k])});if(o.date&&o.machine)arr.push(o)}if(!arr.length)return alert('取り込める行がなかったよ');await mergeData({snapshots:arr});$('csvPaste').value='';renderAll();alert(`${arr.length}件取り込んだよ`)}
 function saveEventConfig(){const d=Number($('eventDay').value||22);if(d<1||d>31)return alert('特定日は1〜31で入れてね');cfg.eventDay=d;cfg.extraEvents=$('extraEvents').value.split(',').map(x=>x.trim()).filter(Boolean);persist();renderAll();alert('イベント設定を保存したよ 🔥')}
 function renderConfig(){if($('eventDay'))$('eventDay').value=cfg.eventDay||22;if($('extraEvents'))$('extraEvents').value=(cfg.extraEvents||[]).join(',')}
 function renderAll(){renderDash();renderHyp();renderEvent();renderIF();renderData();renderConfig()}
