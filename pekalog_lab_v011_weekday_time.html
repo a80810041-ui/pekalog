@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>PEKALOG LAB v0.17｜7日/14日＋店コンディション</title>
+<title>PEKALOG LAB v0.18｜ランキング＆店のバイオリズム</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -47,7 +47,7 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 </head>
 <body>
 <div class="wrap">
-<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.17｜7日/14日＋店コンディション</div></header>
+<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.18｜ランキング＆店のバイオリズム</div></header>
 <div class="nav" id="nav">
  <button class="btn dark active" data-view="dash">🏠 LAB</button>
  <button class="btn dark" data-view="hyp">🧠 仮説</button>
@@ -950,7 +950,7 @@ nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collecto
  existing.insertAdjacentHTML('beforebegin',"<button class=\"btn dark\" data-view=\"trend\">📈 7日/14日</button><button class=\"btn dark\" data-view=\"condition\">🏪 店コンディション</button>");
  const pane=document.getElementById('event');
  if(!pane)throw new Error('22日ページが見つかりません');
- pane.insertAdjacentHTML('beforebegin',"\n<section id=\"trend\" class=\"view\">\n <div class=\"card\"><h3>📈 7日/14日｜台別カルテ</h3><div class=\"tiny\">台番号ごとのBB・RB・合算・推定差枚の変化を見るよ。</div>\n <div class=\"labPeriod\"><button class=\"btn cyan small\" data-trend-days=\"7\">7日間</button><button class=\"btn dark small\" data-trend-days=\"14\">14日間</button></div>\n <label>台番号</label><select id=\"trendMachine\"><option value=\"\">データ読み込み中</option></select>\n <div id=\"trendStats\" class=\"grid3 labStat\"></div></div>\n <div class=\"card\"><h3>📊 日別推定差枚</h3><div id=\"trendGraph\" class=\"labGraph\"></div><div id=\"trendHint\" class=\"labMeta\"></div></div>\n <div class=\"card\"><h3>🎰 日別BB・RB・合算</h3><div id=\"trendTable\"></div></div>\n</section>\n<section id=\"condition\" class=\"view\">\n <div class=\"card\"><h3>🏪 店コンディション</h3><div class=\"tiny\">ターキー収集対象23台の推定差枚合計とプラス台率。</div>\n <div class=\"labPeriod\"><button class=\"btn cyan small\" data-condition-days=\"7\">7日間</button><button class=\"btn dark small\" data-condition-days=\"14\">14日間</button></div>\n <label>集計範囲</label><select id=\"conditionModel\"><option value=\"all\">全23台</option><option value=\"my5\">マイジャグV</option><option value=\"my6\">マイジャグVI</option><option value=\"gogo3\">ゴージャグ3</option><option value=\"neoim\">ネオアイム</option><option value=\"happy3\">ハッピー</option><option value=\"ultra\">ウルトラ</option><option value=\"hana\">ハナハナ</option></select>\n <div id=\"conditionStats\" class=\"grid3 labStat\"></div></div>\n <div class=\"card\"><h3>📊 日別・23台の推定差枚合計</h3><div id=\"conditionGraph\" class=\"labGraph\"></div><div id=\"conditionNote\" class=\"labMeta\"></div></div>\n <div class=\"card\"><h3>📅 日別のプラス台率</h3><div id=\"conditionTable\"></div></div>\n <div class=\"card\"><h3>🎰 最新日の機種別成績</h3><div id=\"conditionModels\"></div></div>\n</section>\n");
+ pane.insertAdjacentHTML('beforebegin',"\n<section id=\"trend\" class=\"view\">\n <div class=\"card\"><h3>📈 7日/14日｜台別カルテ</h3><div class=\"tiny\">台番号ごとのBB・RB・合算・推定差枚の変化を見るよ。</div>\n <div class=\"labPeriod\"><button class=\"btn cyan small\" data-trend-days=\"7\">7日間</button><button class=\"btn dark small\" data-trend-days=\"14\">14日間</button></div>\n <label>台番号</label><select id=\"trendMachine\"><option value=\"\">データ読み込み中</option></select>\n <div id=\"trendStats\" class=\"grid3 labStat\"></div></div>\n <div class=\"card\"><h3>📊 日別推定差枚</h3><div id=\"trendGraph\" class=\"labGraph\"></div><div id=\"trendHint\" class=\"labMeta\"></div></div>\n <div class=\"card\"><h3>🎰 日別BB・RB・合算</h3><div id=\"trendTable\"></div></div>\n</section>\n<section id=\"condition\" class=\"view\">\n <div class=\"card\"><h3>🏪 店コンディション</h3><div class=\"tiny\">ターキー収集対象23台の推定差枚合計とプラス台率。</div>\n <div class=\"labPeriod\"><button class=\"btn cyan small\" data-condition-days=\"7\">7日間</button><button class=\"btn dark small\" data-condition-days=\"14\">14日間</button><button class=\"btn dark small\" data-condition-days=\"30\">30日間</button></div>\n <label>集計範囲</label><select id=\"conditionModel\"><option value=\"all\">全23台</option><option value=\"my5\">マイジャグV</option><option value=\"my6\">マイジャグVI</option><option value=\"gogo3\">ゴージャグ3</option><option value=\"neoim\">ネオアイム</option><option value=\"happy3\">ハッピー</option><option value=\"ultra\">ウルトラ</option><option value=\"hana\">ハナハナ</option></select>\n <div id=\"conditionStats\" class=\"grid3 labStat\"></div></div>\n <div class=\"card\"><h3>📊 日別・23台の推定差枚合計</h3><div id=\"conditionGraph\" class=\"labGraph\"></div><div id=\"conditionNote\" class=\"labMeta\"></div></div>\n <div class=\"card\"><h3>📅 日別のプラス台率</h3><div id=\"conditionTable\"></div></div>\n <div class=\"card\"><h3>🎰 最新日の機種別成績</h3><div id=\"conditionModels\"></div></div>\n</section>\n");
  nav();
 })();
 // ===== LAB v0.17: 7/14 trend and store condition (non-destructive add-on) =====
@@ -1073,8 +1073,240 @@ updatePeriod('trend',7);updatePeriod('condition',7);
 })();
 // ===== end LAB v0.17 =====
 
-document.title='PEKALOG LAB v0.17';
-const pekalogVersion=document.querySelector('header .ver');if(pekalogVersion)pekalogVersion.textContent='v0.17｜7日/14日＋店コンディション';
+document.title='PEKALOG LAB v0.18';
+const pekalogVersion=document.querySelector('header .ver');if(pekalogVersion)pekalogVersion.textContent='v0.18｜ランキング＆店のバイオリズム';
+
+
+// ===== PEKALOG LAB v0.18: views and descriptive store cycle lab =====
+(function(){
+'use strict';
+const v18Target=[...new Set([...TURKEY_LIVE.defaultMachines,'687'])].map(normMachine);
+const v18TargetSet=new Set(v18Target);
+const EL=id=>document.getElementById(id);
+const VNUM=x=>(x!==null&&x!==undefined&&x!==''&&Number.isFinite(Number(x)))?Number(x):null;
+const FINAL=r=>r?.isFinal===true||r?.snapshotType==='historical-final';
+const N=(n)=>Number(n).toLocaleString('ja-JP');
+const SIGN=n=>n==null?'—':(n>0?'+':'')+N(Math.round(n));
+const COLOR=n=>n==null?'':n>=0?'pos':'neg';
+const DATE=d=>String(d).slice(5).replace('-','/');
+const MODEL=r=>MODELS[r?.model]||r?.modelName||'その他';
+const escapeText=x=>esc(String(x??''));
+const configKey='pekalog_lab_v018_display';
+let prefs={tab:'personal',rankDays:7,rankMetric:'diff',watchType:'morning',graph:{trend:'bar',condition:'bar'},metric:{trend:'daily',condition:'daily'},calendarMonth:''};
+try{const prev=JSON.parse(localStorage.getItem(configKey)||'null');if(prev&&typeof prev==='object')prefs={...prefs,...prev,graph:{...prefs.graph,...prev.graph},metric:{...prefs.metric,...prev.metric}}}catch(e){}
+function savePrefs(){try{localStorage.setItem(configKey,JSON.stringify(prefs))}catch(e){}}
+function setButtons(selector,predicate){document.querySelectorAll(selector).forEach(b=>{const yes=predicate(b);b.classList.toggle('cyan',yes);b.classList.toggle('dark',!yes)})}
+// No mutation of LAB_KEY or previous application configuration/data.
+const style=document.createElement('style');style.textContent="\n/* v0.18 additive laboratory interfaces */\nhtml{scroll-padding-top:110px}body{padding-top:env(safe-area-inset-top,0px)}.nav{top:env(safe-area-inset-top,0px)}\n.v18-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:10px 0 14px}\n.v18-menu button{font-size:12px;padding:11px 2px;min-width:0}\n.v18-toolbar{display:flex;gap:5px;flex-wrap:wrap;margin:5px 0 12px;align-items:center}\n.v18-toolbar .btn{flex:1 1 auto;padding:9px 8px;font-size:12px}\n.v18-toolbar .v18-title{font-size:11px;color:#9cabbc;width:100%}\n.v18-rankrow{border:1px solid #2a3542;background:#10161e;border-radius:14px;padding:11px 12px;margin:7px 0;cursor:pointer;text-align:left;width:100%;color:#f7f8fb;font:inherit}\n.v18-rankrow:active{background:#1b2633}\n.v18-rankmain{display:flex;gap:7px;align-items:center;justify-content:space-between}\n.v18-rankno{min-width:31px;color:#ffd166;font-weight:900;font-size:15px}\n.v18-rankname{font-weight:800;font-size:14px;flex:1}\n.v18-rankvalue{font-weight:900;font-size:17px;white-space:nowrap}\n.v18-rankdetail{font-size:11px;color:#9cabbc;margin-top:6px;line-height:1.5}\n.v18-mini{font-size:12px;line-height:1.65;color:#a8b6c5}\n.v18-intro{background:#101722;border:1px solid #303e50;border-radius:12px;padding:10px;font-size:12px;line-height:1.7;color:#c5d1df}\n.v18-empty{border:1px dashed #364150;border-radius:12px;padding:17px 10px;text-align:center;color:#a3acb9;font-size:12px;line-height:1.7}\n.v18-cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:9px}\n.v18-calhdr{text-align:center;color:#94a3b5;font-size:11px;padding:4px 0}\n.v18-day{border:1px solid #283545;background:#151c27;border-radius:10px;min-height:58px;padding:4px 2px;text-align:center;display:flex;flex-direction:column;justify-content:space-between;gap:3px}\n.v18-day .v18-daynum{font-size:12px;font-weight:800}.v18-day .v18-daydiff{font-size:10px;font-weight:700;white-space:nowrap}\n.v18-day.v18-pos{background:#173729;border-color:#276a43;color:#a5f7bd}\n.v18-day.v18-neg{background:#3b222b;border-color:#763646;color:#ffabb7}\n.v18-day.v18-part{border-style:dashed;opacity:.70}\n.v18-day.v18-event{outline:2px solid #ffd166;outline-offset:0}\n.v18-day.v18-missing{opacity:.55}\n.v18-pill{display:inline-block;border:1px solid #364354;background:#1a2430;padding:4px 8px;border-radius:999px;font-size:11px;color:#c3d1df}\n.v18-cycle{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:9px}\n.v18-cyclecell{background:#111923;border:1px solid #293441;border-radius:9px;padding:8px 2px;text-align:center;font-size:10px;min-width:0}\n.v18-cyclecell strong{display:block;font-size:11px;margin:4px 0}\n.v18-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}\n.v18-status{border-left:4px solid #97a4b8;background:#141c27;border-radius:10px;padding:13px;margin-top:9px}\n.v18-status.warn{border-left-color:#ffbf75}.v18-status.calm{border-left-color:#80dbaa}.v18-status.wait{border-left-color:#98a6b6}\n.v18-status strong{font-size:17px}\n.v18-chart-hint{font-size:11px;color:#9eacbd;line-height:1.6;margin-top:4px}\n@media(max-width:420px){.v18-menu button{font-size:11px}.v18-day{min-height:53px}.v18-day .v18-daydiff{font-size:9px}.v18-rankvalue{font-size:15px}}\n";document.head.appendChild(style);
+const trend=EL('trend'),condition=EL('condition');
+if(!trend||!condition)return;
+const tabdiv=document.createElement('div');tabdiv.innerHTML="\n<div id=\"v18Subtab\" class=\"v18-menu\" role=\"group\" aria-label=\"台分析ページ\">\n <button class=\"btn cyan\" data-v18tab=\"personal\">🎰 個別台</button>\n <button class=\"btn dark\" data-v18tab=\"rank\">🏆 ランキング</button>\n <button class=\"btn dark\" data-v18tab=\"watch\">🔮 注目台</button>\n</div>\n";
+trend.insertBefore(tabdiv.firstElementChild,trend.firstElementChild);
+const personal=document.createElement('div');personal.id='v18PersonalPane';
+for(const child of [...trend.children])if(child.id!=='v18Subtab')personal.appendChild(child);
+trend.appendChild(personal);
+trend.insertAdjacentHTML('beforeend',"\n<div id=\"v18RankPane\" style=\"display:none\">\n <div class=\"card\"><h3>🏆 23台ランキング</h3><div class=\"v18-mini\">集計基準日は最後に取得した日。台番号を押すと個別カルテが開くよ。</div>\n <div class=\"v18-toolbar\" id=\"v18RankDays\"><button class=\"btn cyan small\" data-v18days=\"7\">7日間</button><button class=\"btn dark small\" data-v18days=\"14\">14日間</button></div>\n <label for=\"v18RankMetric\">ランキングの指標</label><select id=\"v18RankMetric\"><option value=\"diff\">💰 推定差枚合計</option><option value=\"hits\">🤹 ペカ頻度（BB＋RB）</option><option value=\"positive\">🔥 プラス日率</option><option value=\"momentum\">📈 前半・後半の変化</option></select>\n <div id=\"v18RankResults\" style=\"margin-top:12px\"></div></div>\n</div>\n<div id=\"v18WatchPane\" style=\"display:none\">\n <div class=\"card\"><h3>🔮 次回の注目台</h3><div class=\"v18-mini\">未来の当たり予測ではなく、調査してみたい台の候補。根拠が薄い台は表示しないよ。</div>\n <div class=\"v18-toolbar\" id=\"v18WatchType\"><button class=\"btn cyan small\" data-v18watch=\"morning\">🌅 朝イチ</button><button class=\"btn dark small\" data-v18watch=\"live\">🔥 今から</button></div>\n <div id=\"v18WatchResults\"></div></div>\n</div>\n");
+const tGraph=EL('trendGraph');tGraph.parentElement.insertAdjacentHTML('afterbegin',"\n<div id=\"v18TrendGraphControl\" class=\"v18-toolbar\">\n <span class=\"v18-title\">グラフの表示</span>\n <button class=\"btn cyan small\" data-v18graph=\"trend\" data-v18type=\"bar\">📊 棒</button><button class=\"btn dark small\" data-v18graph=\"trend\" data-v18type=\"line\">📈 線</button>\n <button class=\"btn cyan small\" data-v18metric=\"trend\" data-v18measure=\"daily\">日別</button><button class=\"btn dark small\" data-v18metric=\"trend\" data-v18measure=\"cumulative\">累積</button>\n</div>");
+const cGraph=EL('conditionGraph');cGraph.parentElement.insertAdjacentHTML('afterbegin',"\n<div id=\"v18ConditionGraphControl\" class=\"v18-toolbar\">\n <span class=\"v18-title\">グラフの表示</span>\n <button class=\"btn cyan small\" data-v18graph=\"condition\" data-v18type=\"bar\">📊 棒</button><button class=\"btn dark small\" data-v18graph=\"condition\" data-v18type=\"line\">📈 線</button>\n <button class=\"btn cyan small\" data-v18metric=\"condition\" data-v18measure=\"daily\">日別</button><button class=\"btn dark small\" data-v18metric=\"condition\" data-v18measure=\"cumulative\">累積</button>\n</div>");
+condition.insertAdjacentHTML('beforeend',"\n<div class=\"card\" id=\"v18BioPane\">\n <h3>🌙 店のバイオリズム</h3>\n <div class=\"v18-mini\">収集対象23台のお客さん側推定差枚を分析。緑は客側プラス、赤は客側マイナス（店側の回収方向）。</div>\n <div id=\"v18BioStatus\"></div>\n <div id=\"v18BioDetail\" style=\"margin-top:10px\"></div>\n</div>\n<div class=\"card\" id=\"v18CalendarPane\">\n <h3>📅 月間回収カレンダー</h3>\n <div class=\"v18-mini\">客側プラスなら緑、マイナスなら赤。数字は取得できた台の合計で、店の利益ではないよ。</div>\n <div class=\"row\" align=\"center\" justify=\"space-between\" style=\"margin-top:10px;display:flex;align-items:center;gap:8px\">\n <button id=\"v18CalPrev\" class=\"btn dark small\">◀ 前月</button><strong id=\"v18CalTitle\"></strong><button id=\"v18CalNext\" class=\"btn dark small\">翌月 ▶</button></div>\n <div id=\"v18Calendar\" class=\"v18-cal\"></div><div id=\"v18CalNote\" class=\"v18-chart-hint\"></div>\n</div>\n<div class=\"card\" id=\"v18CyclePane\">\n <h3>🔥 22日前後の回収周期</h3>\n <div class=\"v18-mini\">過去の特定日を起点に前後7日を比較。月ごとに同じ日付位置の実績を重ねて見るよ。</div>\n <div id=\"v18CycleSummary\" style=\"margin-top:9px\"></div><div id=\"v18CycleList\"></div>\n</div>\n");
+const today=todayJST();
+function relevantRows(){return finalRows().filter(r=>r&&v18TargetSet.has(normMachine(r.machine))&&!r.demo&&/^\d{4}-\d{2}-\d{2}$/.test(String(r.date)))}
+function snapshot(){const rows=relevantRows();const latest=rows.map(r=>r.date).sort().at(-1)||today;return {rows,latest}}
+function endDates(date,days){return Array.from({length:days},(_,i)=>addDaysISO(date,i-days+1))}
+function machineStats(rows,latest,days){
+ const start=addDaysISO(latest,1-days),map=new Map();
+ for(const r of rows)if(r.date>=start&&r.date<=latest){const k=normMachine(r.machine);if(!map.has(k))map.set(k,[]);map.get(k).push(r)}
+ return [...map.entries()].map(([machine,rs])=>{
+  const known=rs.filter(r=>VNUM(r.diff)!==null);const n=known.length;
+  const total=known.reduce((sum,r)=>sum+VNUM(r.diff),0);
+  const positive=known.filter(r=>VNUM(r.diff)>0).length;
+  const validHits=rs.filter(r=>VNUM(r.totalG)!==null&&VNUM(r.big)!==null&&VNUM(r.reg)!==null&&Number(r.totalG)>0);
+  const games=validHits.reduce((sum,r)=>sum+Number(r.totalG),0);
+  const hits=validHits.reduce((sum,r)=>sum+Number(r.big)+Number(r.reg),0);
+  const mid=addDaysISO(latest,-Math.floor(days/2));
+  const first=known.filter(r=>r.date<mid),second=known.filter(r=>r.date>=mid);
+  const momentum=first.length>=2&&second.length>=2?(second.reduce((s,r)=>s+Number(r.diff),0)/second.length-first.reduce((s,r)=>s+Number(r.diff),0)/first.length):null;
+  const recent=rs.slice().sort((a,b)=>b.date.localeCompare(a.date))[0];
+  return {machine,model:MODEL(recent),modelId:recent?.model,rs,n,days,total,positive,ratio:n?positive/n:null,hits,games,comb:hits>0?games/hits:null,momentum,eligible:n>=Math.ceil(days*.5),confidence:n>=days?'高':n>=Math.ceil(days*.75)?'中':'低'};
+ });
+}
+function rankingEntries(metric,days){const {rows,latest}=snapshot();const all=machineStats(rows,latest,days),eligible=all.filter(x=>x.eligible&&(metric!=='hits'||x.games>=1000)&&(metric!=='momentum'||x.momentum!==null));
+ const score=x=>metric==='diff'?x.total:metric==='hits'?(x.comb?1/x.comb:0):metric==='positive'?x.ratio:x.momentum;
+ return {latest,all,eligible:eligible.sort((a,b)=>score(b)-score(a)||b.n-a.n||Number(a.machine)-Number(b.machine))};}
+function openMachine(machine){prefs.tab='personal';savePrefs();displayTab();const s=EL('trendMachine');
+ if(s){const wanted=String(machine);if([...s.options].some(o=>o.value===wanted)){s.value=wanted;s.dispatchEvent(new Event('change'))}}
+ EL('v18Subtab')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function rankValue(r,metric){if(metric==='hits')return r.comb?'1/'+r.comb.toFixed(1):'—';if(metric==='positive')return r.n?Math.round(100*r.ratio)+'%':'—';if(metric==='momentum')return SIGN(r.momentum)+'枚/日';return SIGN(r.total)+'枚'}
+function displayRanking(){
+ const {latest,all,eligible}=rankingEntries(prefs.rankMetric,prefs.rankDays);
+ setButtons('#v18RankDays button',b=>Number(b.dataset.v18days)===prefs.rankDays);
+ EL('v18RankMetric').value=prefs.rankMetric;
+ const names={diff:'推定差枚合計',hits:'BB＋REGの合算（小さいほど頻繁）',positive:'プラス日率',momentum:'後半−前半の平均差枚変化'};
+ let html=`<div class="v18-intro"><b>基準日 ${escapeText(latest)} ／ ${prefs.rankDays}日間</b><br>${names[prefs.rankMetric]}で順位付け。取得率が50%以上の台のみ順位対象。取得不足の台は順位に含めないよ。<br>※順位は過去の実績で、次回の勝率や設定を示さないよ。</div>`;
+ if(!eligible.length)html+='<div class="v18-empty">比較に十分な台データがまだないよ。<br>収集した閉店データが増えると順位が表示されるよ。</div>';
+ html+=eligible.map((r,i)=>`<button type="button" class="v18-rankrow" data-v18machine="${escapeText(r.machine)}"><div class="v18-rankmain"><span class="v18-rankno">${i+1}位</span><span class="v18-rankname">${escapeText(r.machine)}番 <span class="v18-mini">${escapeText(r.model)}</span></span><span class="v18-rankvalue ${COLOR(prefs.rankMetric==='hits'?null:prefs.rankMetric==='momentum'?r.momentum:r.total)}">${rankValue(r,prefs.rankMetric)}</span></div><div class="v18-rankdetail">取得 ${r.n}/${prefs.rankDays}日 ／ プラス ${r.positive}/${r.n}日 ／ 推定差枚 ${SIGN(r.total)}枚 ／ ペカ頻度 ${r.comb?'1/'+r.comb.toFixed(1):'—'} ／ 資料${r.confidence}</div></button>`).join('');
+ const excluded=all.filter(x=>!eligible.includes(x));
+ if(excluded.length)html+=`<div class="v18-mini" style="margin-top:12px">順位対象外（取得日数・比較情報が不足）：${excluded.map(x=>escapeText(x.machine)+'番').join('・')}</div>`;
+ EL('v18RankResults').innerHTML=html;
+}
+function displayWatch(){
+ setButtons('#v18WatchType button',b=>b.dataset.v18watch===prefs.watchType);
+ const dest=EL('v18WatchResults');
+ if(prefs.watchType==='morning'){
+  const closedRows=snapshot().rows.filter(r=>FINAL(r)&&r.date<todayJST());
+  const latest=closedRows.map(r=>r.date).sort().at(-1)||addDaysISO(todayJST(),-1);
+  const eligible=machineStats(closedRows,latest,prefs.rankDays).filter(x=>x.eligible);
+  const list=eligible.filter(x=>x.games>=1000).map(x=>{
+   const avg=x.total/x.n,hitRate=x.comb?Math.max(-2,Math.min(2,145/x.comb-1)):0;
+   const adjusted=avg*.6+Math.min(2,x.ratio)*350+hitRate*180 + (x.n/x.days)*90;
+   return {...x,adjusted};
+  }).sort((a,b)=>b.adjusted-a.adjusted).slice(0,5);
+  let html=`<div class="v18-intro">🌅 <b>朝イチ調査候補（閉店データ基準 ${escapeText(latest)}）</b><br>過去${prefs.rankDays}日の推定差枚・プラス日率・ペカ頻度・取得日数を組み合わせた観察優先リスト。出玉の予測や高設定の判定ではないよ。</div>`;
+  if(!list.length)html+='<div class="v18-empty">十分な確定・回転データがないよ。現時点では無理に候補を作らないね。</div>';
+  html+=list.map((r,i)=>`<button class="v18-rankrow" data-v18machine="${escapeText(r.machine)}"><div class="v18-rankmain"><span class="v18-rankno">${i+1}</span><span class="v18-rankname">${escapeText(r.machine)}番　${escapeText(r.model)}</span><span class="v18-rankvalue ${COLOR(r.total)}">${SIGN(r.total)}枚</span></div><div class="v18-rankdetail">プラス${r.positive}/${r.n}日 ／ ペカ頻度 ${r.comb?'1/'+r.comb.toFixed(1):'—'} ／ 取得${r.n}/${prefs.rankDays}日 ／ 資料${r.confidence}<br>選定理由：${r.ratio>=.5?'プラス日が半分以上':'差枚・ペカ頻度などを総合比較'}。次回の結果は未知。</div></button>`).join('');
+  dest.innerHTML=html;return;
+ }
+ const now=Date.now(),date=todayJST(),hour=new Date(now+9*3600000).getUTCHours();
+ const by=new Map();
+ for(const r of lab.snapshots||[]){
+  if(r?.date!==date||!v18TargetSet.has(normMachine(r.machine))||FINAL(r)||r.demo||hour<9||hour>=23)continue;
+  const match=String(r.updated||r.basicRawMeta?.updated||'').match(/(\d{4})[\/-](\d\d?)[\/-](\d\d?)[ T](\d\d?):(\d\d)(?::(\d\d))?/);
+  let ms=match?Date.parse(`${match[1]}-${String(match[2]).padStart(2,'0')}-${String(match[3]).padStart(2,'0')}T${String(match[4]).padStart(2,'0')}:${match[5]}:${match[6]||'00'}+09:00`):Number(r.ts);
+  if(!Number.isFinite(ms)||ms>now+5*60000||now-ms>30*60000)continue;
+  const k=normMachine(r.machine),old=by.get(k);if(!old||ms>old.ms)by.set(k,{r,ms});
+ }
+ const occupied=typeof occupiedMachines==='function'?occupiedMachines(date):new Set();
+ const live=[...by.values()].map(({r,ms})=>{const g=VNUM(r.totalG),b=VNUM(r.big),rg=VNUM(r.reg),diff=VNUM(r.diff);const comb=g>0&&b!=null&&rg!=null&&b+rg>0?g/(b+rg):null;return {...r,machine:normMachine(r.machine),ms,g,comb,diff,score:(g||0)*.001+(comb?150/comb*4:0)+(diff!=null?Math.max(-3,Math.min(3,diff/700)):0)}})
+  .filter(x=>x.g>=400&&x.comb!=null&&!occupied.has(x.machine)).sort((a,b)=>b.score-a.score).slice(0,5);
+ let html=`<div class="v18-intro">🔥 <b>今から調査候補（${escapeText(date)}）</b><br>当日30分以内に更新されたLIVE情報だけ。400G未満・着席済み・営業時間外・古い取得情報の台は候補から除外するよ。</div>`;
+ if(!live.length)html+='<div class="v18-empty">新しいLIVEデータのある台が不足しているよ。<br>今日は「候補なし」で、古いデータから推測しないね。</div>';
+ html+=live.map((r,i)=>`<button class="v18-rankrow" data-v18machine="${escapeText(r.machine)}"><div class="v18-rankmain"><span class="v18-rankno">${i+1}</span><span class="v18-rankname">${escapeText(r.machine)}番 ${escapeText(MODEL(r))}</span><span class="v18-rankvalue">1/${r.comb.toFixed(1)}</span></div><div class="v18-rankdetail">${N(r.g)}G / BB ${N(r.big)}・RB ${N(r.reg)} ／ 差枚 ${r.diff!=null?SIGN(r.diff)+'枚':'不明'} ／ 更新 ${new Date(r.ms).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Tokyo'})}<br>現在の状況を確認する候補。今後の当選や差枚の予測ではないよ。</div></button>`).join('');
+ dest.innerHTML=html;
+}
+function displayTab(){setButtons('#v18Subtab button',b=>b.dataset.v18tab===prefs.tab);
+ for(const [name,id] of [['personal','v18PersonalPane'],['rank','v18RankPane'],['watch','v18WatchPane']])EL(id).style.display=prefs.tab===name?'':'none';
+ if(prefs.tab==='rank')displayRanking();if(prefs.tab==='watch')displayWatch();}
+function graphSVG(entries,{cumulative=false,style='line'}={}){
+ const data=[];let running=0;
+ for(const e of entries){if(e.v!=null){running+=e.v;data.push({...e,y:cumulative?running:e.v})}else data.push({...e,y:null})}
+ const W=760,H=264,L=55,R=16,T=30,B=56,rangeH=H-T-B;
+ const ys=data.map(x=>x.y).filter(Number.isFinite);const top=Math.max(100,Math.max(0,...ys)*1.2),bot=Math.max(100,Math.max(0,...ys.map(x=>-x))*1.2);
+ const y=v=>T+(top-v)*rangeH/(top+bot),x=i=>L+(W-L-R)*(i+.5)/Math.max(1,data.length),zero=y(0);
+ let svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${cumulative?'取得できた日の累積':'日別'}推定差枚${style==='line'?'折れ線':'棒'}グラフ" style="width:100%;height:auto"><line x1="${L}" y1="${zero}" x2="${W-R}" y2="${zero}" stroke="#8293a5" stroke-width="1"/><text x="${L-5}" y="${T+3}" font-size="11" fill="#cad7e6" text-anchor="end">+${N(Math.round(top))}</text><text x="${L-5}" y="${H-B+3}" font-size="11" fill="#cad7e6" text-anchor="end">−${N(Math.round(bot))}</text>`;
+ if(style==='line'){
+   // A gap stays a gap: never interpolate over dates with no data.
+   let seg=[];function flush(){if(seg.length>1){svg+=`<polyline points="${seg.join(' ')}" stroke="#81bbff" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;}seg=[]}
+   for(let i=0;i<data.length;i++){const item=data[i];if(item.y==null){flush();continue}seg.push(`${x(i).toFixed(2)},${y(item.y).toFixed(2)}`)}flush();
+ }
+ for(let i=0;i<data.length;i++){
+   const e=data[i],cx=x(i),show=i%Math.max(1,Math.ceil(data.length/8))===0||i===data.length-1;
+   if(e.y==null){svg+=`<text x="${cx}" y="${zero-8}" font-size="13" text-anchor="middle" fill="#8f9db1">×</text>`}
+   else if(style==='line'){svg+=`<circle cx="${cx}" cy="${y(e.y)}" r="5" fill="${e.y>=0?'#58e39a':'#ff788c'}" stroke="#0d1117" stroke-width="2"><title>${escapeText(e.date)} ${cumulative?'累積':'当日'} ${SIGN(e.y)}枚</title></circle>`}
+   else{const width=Math.min(46,(W-L-R)/Math.max(1,data.length)*.62);svg+=`<rect x="${cx-width/2}" y="${Math.min(y(e.y),zero)}" width="${width}" height="${Math.max(2,Math.abs(zero-y(e.y)))}" rx="3" fill="${e.y>=0?'#58e39a':'#ff788c'}"><title>${escapeText(e.date)} ${cumulative?'累積':'当日'} ${SIGN(e.y)}枚</title></rect>`}
+   if(show)svg+=`<text x="${cx}" y="${H-B+18}" font-size="11" fill="#c2cfdf" text-anchor="middle">${DATE(e.date)}</text>`;
+   if(isEventDate(e.date))svg+=`<circle cx="${cx}" cy="${H-16}" r="4" fill="#ffd166"/>`;
+ }
+ return svg+'</svg>';
+}
+function graphEntries(which){const {rows,latest}=snapshot();const days=which==='trend'?(typeof trendDays==='undefined'?7:trendDays):(typeof conditionDays==='undefined'?7:conditionDays);
+ // v0.17 locals are lexical inside an IIFE; read active period buttons instead.
+ const active=[...document.querySelectorAll(`[data-${which}-days]`)].find(b=>b.classList.contains('cyan'));
+ const period=active?Number(active.dataset[which+'Days']):days;
+ const dates=endDates(latest,period),result=[];
+ if(which==='trend'){
+  const machine=normMachine(EL('trendMachine')?.value);const by=new Map(rows.filter(r=>normMachine(r.machine)===machine).map(r=>[r.date,r]));
+  for(const date of dates){const r=by.get(date);result.push({date,v:r?VNUM(r.diff):null});}
+ }else{
+  const model=EL('conditionModel')?.value||'all';
+  for(const date of dates){const x=rows.filter(r=>r.date===date&&(model==='all'||(model==='hana'?String(r.modelName||'').includes('ハナハナ'):r.model===model))).map(r=>VNUM(r.diff)).filter(v=>v!==null);
+   result.push({date,v:x.length?x.reduce((a,b)=>a+b,0):null});}
+ }
+ return result;
+}
+function redrawGraph(which){
+ const graph=EL(which==='trend'?'trendGraph':'conditionGraph');if(!graph)return;
+ const type=prefs.graph[which],metric=prefs.metric[which];
+ setButtons(`[data-v18graph="${which}"]`,b=>b.dataset.v18type===type);
+ setButtons(`[data-v18metric="${which}"]`,b=>b.dataset.v18measure===metric);
+ if(type==='bar'&&metric==='daily')return; // keep original v0.17 SVG renderer
+ const entries=graphEntries(which);graph.innerHTML=graphSVG(entries,{cumulative:metric==='cumulative',style:type});
+ const hint=which==='trend'?EL('trendHint'):EL('conditionNote');
+ if(hint){const original=hint.dataset.v18Base||hint.textContent||'';hint.dataset.v18Base=original;
+  hint.textContent=original+(metric==='cumulative'?' ※累積は取得できた日だけの合計。未取得日は線をつながず、0枚として計算しません。':' ※未取得日は線をつなぎません。');}
+}
+function coverageByDay(rows){const by=new Map();for(const r of rows){let d=by.get(r.date);if(!d){d={date:r.date,n:0,finalCount:0,sum:0,positive:0,closedSum:0,closedN:0};by.set(r.date,d)}
+ const v=VNUM(r.diff);if(v==null)continue;d.n++;d.sum+=v;if(v>0)d.positive++;if(FINAL(r)){d.finalCount++;d.closedSum+=v;d.closedN++;}}
+ return by;
+}
+function displayBio(){
+ const {rows,latest}=snapshot(),by=coverageByDay(rows),until=latest<today?latest:addDaysISO(today,-1),last7=endDates(until,7),previous=endDates(addDaysISO(until,-7),7);
+ const valid=d=>{const s=by.get(d);return s&&s.closedN>=18?s:null};
+ const recent=last7.map(valid).filter(Boolean),old=previous.map(valid).filter(Boolean);
+ const perMachine=x=>x?.closedN?x.closedSum/x.closedN:null;
+ const avg=r=>r.length?r.reduce((sum,d)=>sum+perMachine(d),0)/r.length:null;
+ const av=avg(recent),prior=avg(old),good=recent.filter(d=>d.closedSum>0).length;
+ const stale=(Date.parse(today+'T00:00:00Z')-Date.parse(until+'T00:00:00Z'))/86400000>3;
+ let type='wait',headline='判定保留',detail='直近7日間で、閉店差枚が18台以上揃った日を4日以上必要とします。';
+ if(!stale&&recent.length>=4){
+  if(av<=-150&&good/recent.length<=.35){type='warn';headline='⚠️ 回収傾向注意！';detail='直近の集計対象は客側マイナスが優勢。今日は無理に打たず、様子見も選択肢。'}
+  else if(av>=100&&good/recent.length>=.6){type='calm';headline='✨ 客側プラス優勢';detail='直近の集計対象では客側プラスの日が比較的多い状態。次回の結果は分かりません。'}
+  else{type='wait';headline='🌥️ 明確な偏りなし';detail='直近の差枚には大きな一方向の偏りが見えていないよ。'}
+ }else if(stale)detail='最新の閉店データが古いため、現在の傾向は判定しないよ。';
+ EL('v18BioStatus').innerHTML=`<div class="v18-status ${type}"><strong>${headline}</strong><div class="v18-mini" style="margin-top:6px">${detail}</div></div>`;
+ EL('v18BioDetail').innerHTML=`<div class="v18-grid"><div class="stat"><div class="k">直近7日・1台あたり平均</div><div class="v ${COLOR(av)}">${av==null?'—':SIGN(av)+'枚'}</div><div class="tiny">閉店18台以上の日 ${recent.length}/7日</div></div><div class="stat"><div class="k">客側プラスの日</div><div class="v">${recent.length?good+'/'+recent.length+'日':'—'}</div><div class="tiny">期間終了 ${escapeText(until)}</div></div><div class="stat"><div class="k">その前の7日・平均</div><div class="v ${COLOR(prior)}">${prior==null?'—':SIGN(prior)+'枚'}</div><div class="tiny">比較可能 ${old.length}/7日</div></div><div class="stat"><div class="k">今の判定条件</div><div class="v" style="font-size:17px">${stale?'期限切れ':recent.length<4?'資料不足':'参考判定'}</div><div class="tiny">全23台のうち閉店18台以上</div></div></div><div class="v18-chart-hint">判定ルール（暫定）：閉店18台以上の集計日が直近7日に4日以上。1台あたり平均−150枚以下かつ客側プラス日が35%以下なら「回収傾向注意」。＋100枚以上かつプラス日60%以上なら「客側プラス優勢」。データ未取得・LIVE日は判定から除外。これは次の営業日の予報ではありません。</div>`;
+}
+function monthString(d){return String(d).slice(0,7)}
+function shiftMonth(m,delta){const [y,mo]=m.split('-').map(Number);const date=new Date(Date.UTC(y,mo-1+delta,1));return date.getUTCFullYear()+'-'+String(date.getUTCMonth()+1).padStart(2,'0')}
+function displayCalendar(){
+ const {rows,latest}=snapshot(),by=coverageByDay(rows);
+ if(!/^\d{4}-\d{2}$/.test(prefs.calendarMonth))prefs.calendarMonth=monthString(latest);
+ const m=prefs.calendarMonth,[year,month]=m.split('-').map(Number),days=new Date(Date.UTC(year,month,0)).getUTCDate(),first=new Date(Date.UTC(year,month-1,1)).getUTCDay();
+ EL('v18CalTitle').textContent=`${year}年${month}月`;
+ let html=['日','月','火','水','木','金','土'].map(x=>`<div class="v18-calhdr">${x}</div>`).join('');
+ for(let i=0;i<first;i++)html+='<div></div>';
+ for(let day=1;day<=days;day++){
+ const d=m+'-'+String(day).padStart(2,'0'),s=by.get(d),full=s?.n>=18,val=s?.n?s.sum:null;
+ const isEvent=isEventDate(d),part=s?.n&&!full;
+ html+=`<div class="v18-day ${s?.n?(val>=0?'v18-pos':'v18-neg'):'v18-missing'} ${part?'v18-part':''} ${isEvent?'v18-event':''}" title="${escapeText(d)} ${val===null?'未取得':SIGN(val)+'枚'} ${s?.n||0}/23台"><span class="v18-daynum">${day}${isEvent?'★':''}</span><span class="v18-daydiff">${val===null?'未':SIGN(val)}</span><span style="font-size:9px">${s?.n?s.n+'/23台':''}</span></div>`;
+ }
+ EL('v18Calendar').innerHTML=html;
+ EL('v18CalNote').textContent='★ は設定済みの特定日。破線は18台未満の部分収集。未取得は「未」と表示して0枚扱いしません。赤・緑は収集対象台の客側推定差枚で、店舗の会計上の利益ではありません。';
+ EL('v18CalNext').disabled=m>=monthString(today);
+}
+function cycleMonths(rows,eventDay){const months=[...new Set(rows.map(r=>monthString(r.date)))].sort();return months.filter(m=>{
+ const d=m+'-'+String(eventDay).padStart(2,'0');return d<=today&&new Date(d+'T00:00:00Z').getUTCDate()===eventDay;
+ });}
+function displayCycle(){
+ const {rows}=snapshot(),by=coverageByDay(rows),eventDay=Number(cfg?.eventDay||22),months=cycleMonths(rows,eventDay);
+ const data=[];for(let offset=-7;offset<=7;offset++){
+  const values=[];for(const m of months){const d=addDaysISO(m+'-'+String(eventDay).padStart(2,'0'),offset),s=by.get(d);
+   if(s?.closedN>=18)values.push(s.closedSum/s.closedN);}
+  data.push({offset,n:values.length,avg:values.length?values.reduce((a,b)=>a+b,0)/values.length:null});
+ }
+ const eventSamples=data.find(x=>x.offset===0).n,ready=eventSamples>=3;
+ EL('v18CycleSummary').innerHTML=`<div class="v18-intro">比較可能な特定日：<b>${eventSamples}回</b>。${ready?'複数のイベント前後を比べられるようになったよ。':'3回以上の閉店データが揃うまでは周期の有無を判断しないよ。'}<br>各マスの数値は「対象23台中、閉店18台以上揃った日」の1台あたり平均差枚。未来の日付や未取得は含めません。</div>`;
+ EL('v18CycleList').innerHTML='<div class="v18-cycle">'+data.map(x=>`<div class="v18-cyclecell" ${x.offset===0?'style="border-color:#ffd166"':''}><span>${x.offset===0?'★ 当日':x.offset<0?x.offset+'日前':'+'+x.offset+'日'}</span><strong class="${COLOR(x.avg)}">${x.avg==null?'—':SIGN(x.avg)}</strong><span>${x.n}回</span></div>`).join('')+'</div><div class="v18-chart-hint">★の日付は設定された特定日（現在'+eventDay+'日）。マスの平均との差だけで「イベント前の回収」を断定しないでね。営業日ごとの遊技客数や稼働量も違うよ。</div>';
+}
+function redrawAll(){try{displayTab();redrawGraph('trend');redrawGraph('condition');displayBio();displayCalendar();displayCycle()}catch(e){console.error('[LAB v0.18 refresh]',e)}}
+const previousRender=renderAll;renderAll=function(){previousRender();redrawAll()};
+EL('v18Subtab').addEventListener('click',e=>{const b=e.target.closest('[data-v18tab]');if(!b)return;prefs.tab=b.dataset.v18tab;savePrefs();displayTab()});
+EL('v18RankDays').addEventListener('click',e=>{const b=e.target.closest('[data-v18days]');if(!b)return;prefs.rankDays=Number(b.dataset.v18days);savePrefs();displayRanking();if(prefs.watchType==='morning')displayWatch()});
+EL('v18RankMetric').addEventListener('change',e=>{prefs.rankMetric=e.target.value;savePrefs();displayRanking()});
+EL('v18WatchType').addEventListener('click',e=>{const b=e.target.closest('[data-v18watch]');if(!b)return;prefs.watchType=b.dataset.v18watch;savePrefs();displayWatch()});
+trend.addEventListener('click',e=>{const b=e.target.closest('[data-v18machine]');if(b){openMachine(b.dataset.v18machine)} });
+for(const which of ['trend','condition']){
+ document.querySelectorAll(`[data-v18graph="${which}"]`).forEach(b=>b.addEventListener('click',()=>{prefs.graph[which]=b.dataset.v18type;savePrefs();renderAll()}));
+ document.querySelectorAll(`[data-v18metric="${which}"]`).forEach(b=>b.addEventListener('click',()=>{prefs.metric[which]=b.dataset.v18measure;savePrefs();renderAll()}));
+ document.querySelectorAll(`[data-${which}-days]`).forEach(b=>b.addEventListener('click',()=>{redrawGraph(which)}));
+}
+EL('trendMachine').addEventListener('change',()=>redrawGraph('trend'));
+EL('conditionModel').addEventListener('change',()=>redrawGraph('condition'));
+EL('v18CalPrev').addEventListener('click',()=>{prefs.calendarMonth=shiftMonth(prefs.calendarMonth,-1);savePrefs();displayCalendar()});
+EL('v18CalNext').addEventListener('click',()=>{prefs.calendarMonth=shiftMonth(prefs.calendarMonth,1);savePrefs();displayCalendar()});
+redrawAll();
+})();
+// ===== END LAB v0.18 =====
 
 </script>
 
