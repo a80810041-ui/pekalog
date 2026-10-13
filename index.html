@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.6.5 PHOTO CLEAR</title>
+<title>ペカログ JUGGLER EDITION v3.6.6 GRAPE</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -92,7 +92,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍒✨</div></div><div class="ver">v3.6.5 PHOTO CLEAR</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍇🍒✨</div></div><div class="ver">v3.6.6 🍇</div>
 </header>
 
 <div class="card">
@@ -202,9 +202,8 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 
 <div class="card">
  <h3>⚡ クイック実戦ログ</h3>
- <div class="notice">現在Gを合わせて、必要なら 🍒 / ✨ を先にタップ → BIG / REG。例：<b>88G → 🍒 → BIG</b> で「88G BIG 🍒」を即記録。</div>
- <div class="quickFlags">
-  <button id="quickCherryBtn" class="btn quickFlag" onclick="toggleQuickFlag('cherry')">🍒 チェリー重複</button>
+ <div class="notice">現在Gを合わせて BIG / REG をタップ！ <b>🍇はブドウが出るたびに＋1</b>。G数は今までどおり入力してね。🍒チェリー重複は下の「BIG詳細」「REG詳細」から記録。</div>
+ <div class="quickFlags" style="grid-template-columns:1fr">
   <button id="quickPremiumBtn" class="btn quickFlag prem" onclick="toggleQuickFlag('premium')">✨ プレミア</button>
  </div>
  <div class="grid2" style="margin-top:9px">
@@ -213,8 +212,12 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
  </div>
  <div id="quickPreview" class="quickHint">次のボーナス：通常</div>
  <div class="grid2" style="margin-top:9px">
-  <button class="btn cherry small" onclick="addCherry()">🍒 チェリーだけ +1</button>
-  <button class="btn dark small" onclick="openBonus('BIG')">✏️ 詳細登録を開く</button>
+  <button class="btn green quickBonus" onclick="addGrape()">🍇 +1</button>
+  <button class="btn dark small" onclick="undoGrape()">↩ 🍇 −1</button>
+ </div>
+ <div class="grid2" style="margin-top:9px">
+  <button class="btn dark small" onclick="openBonus('BIG')">✏️ BIG詳細（🍒含む）</button>
+  <button class="btn dark small" onclick="openBonus('REG')">✏️ REG詳細（🍒含む）</button>
  </div>
 </div>
 
@@ -229,13 +232,20 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 </div>
 
 <div class="card">
- <h3>🍒・✨ 集計</h3>
+ <h3>🍇 ブドウ・🍒重複・✨集計</h3>
  <div class="grid4">
-  <div class="stat"><div class="k">チェリー参考数</div><div class="v" id="cherryCount">0</div></div>
+  <div class="stat"><div class="k">🍇 ブドウ回数</div><div class="v" id="grapeCount">0</div></div>
+  <div class="stat"><div class="k">🍇 確率（参考）</div><div class="v" id="grapeRate">—</div></div>
   <div class="stat"><div class="k">🍒BIG</div><div class="v" id="chBig">0</div></div>
   <div class="stat"><div class="k">🍒REG</div><div class="v" id="chReg">0</div></div>
   <div class="stat"><div class="k">プレミア</div><div class="v" id="premCount">0</div></div>
  </div>
+ <div id="grapeNote" class="tiny" style="margin-top:9px">ブドウの計測はまだ始まっていないよ。</div>
+ <div class="grid2" style="margin-top:8px">
+  <button class="btn dark small" onclick="startGrapeCount()">🎯 ここから計測</button>
+  <button class="btn dark small" onclick="resetGrapeCount()">🧹 🍇だけリセット</button>
+ </div>
+ <div id="legacyCherry" class="tiny" style="margin-top:7px"></div>
  <div id="premiumList" class="tiny" style="margin-top:9px"></div>
 </div>
 
@@ -243,7 +253,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
  <h3>設定推測（参考）</h3>
  <div id="settingSummary" class="notice">まだデータがありません。</div>
  <div id="settingBars" style="margin-top:10px"></div>
- <div class="notice" style="margin-top:10px">選んだ機種のBB・REG確率から参考推定。チェリー参考数は推測から除外。短時間はかなりブレるので「確定」表示はしません。</div>
+ <div class="notice" style="margin-top:10px">選んだ機種のBB・REG確率から参考推定。🍇回数とチェリー重複は現在の設定推測スコアには未反映。短時間はかなりブレるので「確定」表示はしません。</div>
 </div>
 
 <div class="card">
@@ -283,7 +293,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
   <button class="btn dark small" onclick="downloadJSON()">⬇ JSON保存</button>
   <label class="btn dark small" style="text-align:center;cursor:pointer">⬆ JSON読込<input id="jsonFile" type="file" accept=".json,application/json" style="display:none" onchange="importJSON(event)"></label>
   <button class="btn dark small" onclick="undoBonus()">↩ ボーナス1件戻す</button>
-  <button class="btn dark small" onclick="undoCherry()">↩ チェリー1回戻す</button>
+  <button class="btn dark small" onclick="undoGrape()">↩ ブドウ1回戻す</button>
  </div>
  <div id="archiveSaveStatus" class="tiny" role="status" aria-live="polite" style="margin-top:8px"></div>
   <button class="btn dark small wide" style="margin-top:9px" onclick="newSession()">🧹 新しい実戦を開始</button>
@@ -362,10 +372,13 @@ const $=id=>document.getElementById(id);
 let state=JSON.parse(localStorage.getItem(KEY)||'null')||blankState();
 if(!MODELS[state.model]) state.model='gogo3';
 if(!state.quickFlags) state.quickFlags={cherry:false,premium:false};
+state.quickFlags.cherry=false; // 旧UIの未確定チェリー選択は引き継がない
+if(!Number.isFinite(Number(state.grape))||Number(state.grape)<0)state.grape=0;
+if(state.grapeBaseG===undefined)state.grapeBaseG=null;
 if(!state.lamp) state.lamp={start:null,end:null};
 let pendingType=null,lastReport='';
 
-function blankState(){return {actualStartTime:'',actualEndTime:'',model:'gogo3',date:new Date().toISOString().slice(0,10),shop:'',machine:'',diffCoins:'',sessionMemo:'',endReason:'',startedAt:Date.now(),totalG:0,currentG:0,big:0,reg:0,cherry:0,history:[],quickFlags:{cherry:false,premium:false},lamp:{start:null,end:null}}}
+function blankState(){return {actualStartTime:'',actualEndTime:'',model:'gogo3',date:new Date().toISOString().slice(0,10),shop:'',machine:'',diffCoins:'',sessionMemo:'',endReason:'',startedAt:Date.now(),totalG:0,currentG:0,big:0,reg:0,cherry:0,grape:0,grapeBaseG:null,history:[],quickFlags:{cherry:false,premium:false},lamp:{start:null,end:null}}}
 function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function specs(){const a=MODELS[state.model].spec;return [0,1,2,3,4,5].map(i=>({s:i+1,bb:a[i*3],rb:a[i*3+1],all:a[i*3+2]}))}
 function rate(n){return n>0&&state.totalG>0?'1/'+(state.totalG/n).toFixed(1):'-'}
@@ -389,7 +402,19 @@ function render(){
  const pos=$('machinePosition');if(pos){const rr=turkeyRoleTags(state.machine);pos.innerHTML=rr.length?`🗺 ターキー配置：${rr.map(x=>`<span class="judgeTag">${esc(x)}</span>`).join(' ')}`:''}
  $('totalG').textContent=state.totalG;$('currentG').textContent=state.currentG;$('bigCount').textContent=state.big;$('regCount').textContent=state.reg;
  $('bigRate').textContent=rate(state.big);$('regRate').textContent=rate(state.reg);$('allRate').textContent=rate(state.big+state.reg);$('maxHamar').textContent=Math.max(0,state.currentG,...state.history.map(x=>x.g));
- $('cherryCount').textContent=state.cherry;
+  if(!Number.isFinite(Number(state.grape))||Number(state.grape)<0)state.grape=0;
+  state.grape=Math.trunc(Number(state.grape));
+  if(state.grapeBaseG===undefined)state.grapeBaseG=null;
+  state.quickFlags=state.quickFlags||{cherry:false,premium:false};
+  state.quickFlags.cherry=false;
+  $('grapeCount').textContent=state.grape;
+  $('grapeRate').textContent=grapeRateText();
+  const measured=grapeMeasuredG();
+  $('grapeNote').textContent=state.grapeBaseG===null
+   ?'まだ計測前。最初の🍇＋1で自動開始するよ。正確に数えるなら先に「ここから計測」を押してね。'
+   :measured===null?'計測開始時より総Gが小さくなっているよ。G数を確認してね。'
+   :'計測開始 '+state.grapeBaseG+'G → 現在 '+state.totalG+'G / 区間 '+measured+'G。総Gを更新すると🍇確率も更新されるよ。';
+  $('legacyCherry').textContent=Number(state.cherry)>0?'旧チェリー単独カウント '+state.cherry+'回は過去データとして保存（🍇には変換していません）。':'';
  const cb=state.history.filter(x=>x.type==='BIG'&&x.trigger==='チェリー重複').length,cr=state.history.filter(x=>x.type==='REG'&&x.trigger==='チェリー重複').length,p=state.history.filter(x=>x.premium);
  $('chBig').textContent=cb;$('chReg').textContent=cr;$('premCount').textContent=p.length;
  $('premiumList').innerHTML=p.length?'✨ '+p.map(x=>`${x.g}G ${x.type}：${esc(x.premium)}${x.memo?'（'+esc(x.memo)+'）':''}`).join('<br>'):'プレミア記録なし';
@@ -402,7 +427,28 @@ function render(){
 }
 function addG(n){state.currentG+=n;state.totalG+=n;render()}
 function setCurrentG(){const v=parseInt($('manualG').value);if(isNaN(v)||v<0)return;state.totalG+=v-state.currentG;if(state.totalG<0)state.totalG=0;state.currentG=v;$('manualG').value='';render()}
-function addCherry(){state.cherry++;render()}
+function grapeMeasuredG(){
+  if(state.grapeBaseG===null||state.grapeBaseG===undefined||!Number.isFinite(Number(state.grapeBaseG)))return null;
+  const n=Number(state.totalG)-Number(state.grapeBaseG);
+  return Number.isFinite(n)&&n>=0?n:null;
+}
+function grapeRateText(){
+  const g=grapeMeasuredG(),n=Number(state.grape)||0;
+  return g!==null&&g>0&&n>0?'1/'+(g/n).toFixed(1):'—';
+}
+function startGrapeCount(){
+  if((Number(state.grape)||0)>0&&!confirm('ブドウを0回にして、現在の総Gから計測し直す？'))return;
+  state.grape=0;state.grapeBaseG=Number(state.totalG)||0;render();
+}
+function resetGrapeCount(){
+  if((Number(state.grape)||0)>0&&!confirm('ブドウのカウントだけ消す？ BIG・REG、G数、当たり履歴は残るよ。'))return;
+  state.grape=0;state.grapeBaseG=null;render();
+}
+function addGrape(){
+  if(state.grapeBaseG===null||state.grapeBaseG===undefined)state.grapeBaseG=Number(state.totalG)||0;
+  state.grape=(Number(state.grape)||0)+1;render();
+}
+function undoGrape(){if((Number(state.grape)||0)>0){state.grape--;render()}}
 
 function toggleQuickFlag(k){
  state.quickFlags=state.quickFlags||{cherry:false,premium:false};
@@ -411,15 +457,14 @@ function toggleQuickFlag(k){
 }
 function renderQuickFlags(){
  state.quickFlags=state.quickFlags||{cherry:false,premium:false};
- const c=$('quickCherryBtn'),p=$('quickPremiumBtn'),q=$('quickPreview');
- if(c)c.classList.toggle('active',!!state.quickFlags.cherry);
+  const p=$('quickPremiumBtn'),q=$('quickPreview');
  if(p)p.classList.toggle('active',!!state.quickFlags.premium);
- const tags=[state.quickFlags.cherry?'🍒チェリー重複':'',state.quickFlags.premium?'✨プレミア':''].filter(Boolean);
+  const tags=[state.quickFlags.premium?'✨プレミア':''].filter(Boolean);
  if(q)q.textContent='次のボーナス：'+(tags.length?tags.join(' ＋ '):'通常');
 }
 function quickLogBonus(type){
  state.quickFlags=state.quickFlags||{cherry:false,premium:false};
- const trigger=state.quickFlags.cherry?'チェリー重複':'不明';
+  const trigger='不明'; // チェリー重複はBIG/REG詳細から登録
  const premium=state.quickFlags.premium?'プレミア':'';
  state.history.push({g:state.currentG,type,trigger,premium,memo:'',ts:Date.now(),quick:true});
  type==='BIG'?state.big++:state.reg++;
@@ -616,7 +661,7 @@ function openBonus(t){pendingType=t;$('bonusTitle').textContent=t+' 登録';upda
 function closeBonus(){pendingType=null;$('bonusPanel').classList.add('hidden');$('trigger').value='不明';$('memo').value='';updatePremiumOptions()}
 function saveBonus(){if(!pendingType)return;state.history.push({g:state.currentG,type:pendingType,trigger:$('trigger').value,premium:$('premium').value,memo:$('memo').value.trim(),ts:Date.now()});pendingType==='BIG'?state.big++:state.reg++;state.currentG=0;closeBonus();render()}
 function undoBonus(){const x=state.history.pop();if(!x)return alert('戻せるボーナス履歴がないよ');x.type==='BIG'?state.big--:state.reg--;state.currentG=x.g;render()}
-function undoCherry(){if(state.cherry>0)state.cherry--;render()}
+// 旧チェリー参考数は過去記録として残し、今後の増減はしない。
 function poissonLog(k,l){if(l<=0)return -1e99;let f=0;for(let i=2;i<=k;i++)f+=Math.log(i);return k*Math.log(l)-l-f}
 function estimate(){if(state.totalG<1)return specs().map(x=>({s:x.s,p:1/6}));let logs=specs().map(x=>({s:x.s,l:poissonLog(state.big,state.totalG/x.bb)+poissonLog(state.reg,state.totalG/x.rb)}));const mx=Math.max(...logs.map(x=>x.l));const ex=logs.map(x=>({s:x.s,e:Math.exp(x.l-mx)})),sum=ex.reduce((a,b)=>a+b.e,0);return ex.map(x=>({s:x.s,p:x.e/sum}))}
 function renderSettings(){
@@ -635,8 +680,9 @@ ${state.totalG}G
 BIG ${state.big}（${rate(state.big)}）
 REG ${state.reg}（${rate(state.reg)}）
 合算 ${rate(state.big+state.reg)}
-現在 ${state.currentG}G
-✨プレミア ${p}回${diff}
+ 現在 ${state.currentG}G
+ 🍇ブドウ ${Number(state.grape)||0}（${grapeRateText()}）
+ ✨プレミア ${p}回${diff}
 ${state.shop?`📍${state.shop}`:''}
 #ペカログ`;
 }
@@ -653,8 +699,8 @@ BIG ${state.big}（${rate(state.big)}）
 REG ${state.reg}（${rate(state.reg)}）
 合算 ${rate(state.big+state.reg)}
 最大ハマり ${Math.max(0,state.currentG,...state.history.map(x=>x.g))}G
-チェリー参考数 ${state.cherry}
-🍒重複 BIG ${cb} / REG ${cr}
+ 🍇ブドウ ${Number(state.grape)||0} / 確率 ${grapeRateText()}（計測区間 ${grapeMeasuredG()??'未設定'}G）
+ ${Number(state.cherry)>0?`旧チェリー参考数 ${state.cherry}\n`:''}🍒重複 BIG ${cb} / REG ${cr}
 プレミア ${p.length}回
 ${state.diffCoins!==''?`差枚 ${state.diffCoins}枚\n`:''}${state.endReason?`ヤメ理由：${state.endReason}\n`:''}${state.sessionMemo?`メモ：${state.sessionMemo}\n`:''}
 ${state.lamp?.start?.confirmed&&state.lamp?.end?.confirmed?`写真差分: ${photoDeltaData()?.totalG??'-'}G / BB+${photoDeltaData()?.big??'-'} / RB+${photoDeltaData()?.reg??'-'}\n`:''}履歴：
@@ -989,3 +1035,4 @@ window.addEventListener('load',updateTurkeySyncStatus);
 </script>
 
 </body></html>
+
