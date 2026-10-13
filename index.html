@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.6.6 GRAPE</title>
+<title>ペカログ JUGGLER EDITION v3.6.7 BONUS EDIT</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -92,7 +92,7 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 <body>
 <div class="wrap">
 <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍇🍒✨</div></div><div class="ver">v3.6.6 🍇</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍇🍒✨</div></div><div class="ver">v3.6.7 🍇✏️</div>
 </header>
 
 <div class="card">
@@ -257,8 +257,29 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 </div>
 
 <div class="card">
- <h3>ボーナス履歴</h3>
+ <h3>ボーナス履歴 <span style="font-size:12px;color:#a1b4c6;font-weight:500">✏️ 登録後も修正OK</span></h3>
+ <div id="bonusEditStatus" class="tiny" role="status" aria-live="polite" style="margin-bottom:8px"></div>
  <div id="history" class="hist"></div>
+ <div id="bonusEditPanel" class="notice hidden" style="margin-top:12px;border-color:#527797;padding:13px">
+  <h3 id="bonusEditTitle">✏️ ボーナス履歴の修正</h3>
+  <div class="grid2">
+   <div><label>当選までのG数</label><input id="editHitG" type="number" inputmode="numeric" min="0" step="1"></div>
+   <div><label>ボーナス種別</label><select id="editHitType"><option value="BIG">BIG</option><option value="REG">REG</option></select></div>
+   <div><label>当選契機</label><select id="editHitTrigger"><option value="不明">？ 不明</option><option value="単独">単独</option><option value="チェリー重複">🍒 チェリー重複</option></select></div>
+   <div><label>プレミア</label><select id="editHitPremium"></select></div>
+  </div>
+  <div style="margin-top:9px"><label>メモ</label><textarea id="editHitMemo" rows="2" placeholder="例：当選G数や告知の補足"></textarea></div>
+  <div class="tiny" style="margin-top:8px">※履歴の当選Gを直しても総回転数・現在Gは変わらないよ。BIG⇄REGは集計も連動。🍇の回数はそのまま！</div>
+  <div class="grid2" style="margin-top:10px">
+   <button class="btn green small" onclick="saveBonusEdit()">✅ 修正を保存</button>
+   <button class="btn dark small" onclick="cancelBonusEdit()">キャンセル</button>
+  </div>
+  <button class="btn small wide" style="background:#48212a;color:#ffd5dd;margin-top:10px" onclick="deleteBonusEntry()">🗑️ この当たり1件を削除</button>
+ </div>
+ <div id="archiveCorrectionBar" class="notice hidden" style="margin-top:12px">
+  <div>💾 保存済み実戦を開いているよ。履歴の修正後は、元の保存記録にも反映できる！</div>
+  <button class="btn blue small wide" style="margin-top:8px" onclick="saveCorrectionToArchive()">💾 元の保存済み実戦に修正を反映</button>
+ </div>
 </div>
 
 <div class="card">
@@ -421,8 +442,9 @@ function render(){
  $('history').innerHTML=state.history.length?state.history.slice().reverse().map((x,i)=>{
   const tr=x.trigger==='チェリー重複'?'<span class="tag chTag">🍒チェリー重複</span>':x.trigger==='不明'?'<span class="tag unknown">？不明</span>':`<span class="tag">${esc(x.trigger)}</span>`;
   const pr=x.premium?`<span class="tag premium">✨${esc(x.premium)}</span>`:'';
-  return `<div class="item"><div><b>${x.g}G ${x.type}</b><div class="tags">${tr}${pr}</div>${x.memo?`<div class="tiny">${esc(x.memo)}</div>`:''}</div><div class="tiny">#${state.history.length-i}</div></div>`
+  return `<div class="item"><div style="min-width:0"><b>${x.g}G ${x.type}</b><div class="tags">${tr}${pr}</div>${x.memo?`<div class="tiny">${esc(x.memo)}</div>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0"><div class="tiny">#${state.history.length-i}</div><button class="btn blue small" style="padding:7px 11px;font-size:12px" onclick="editBonus(${state.history.length-1-i})">✏️ 修正</button></div></div>`
  }).join(''):'<div class="tiny">まだボーナス履歴なし</div>';
+ $('archiveCorrectionBar').classList.toggle('hidden',!state.loadedArchiveId);
  renderQuickFlags();renderPhotoUI();renderSettings();renderArchives();persist();
 }
 function addG(n){state.currentG+=n;state.totalG+=n;render()}
@@ -661,6 +683,96 @@ function openBonus(t){pendingType=t;$('bonusTitle').textContent=t+' 登録';upda
 function closeBonus(){pendingType=null;$('bonusPanel').classList.add('hidden');$('trigger').value='不明';$('memo').value='';updatePremiumOptions()}
 function saveBonus(){if(!pendingType)return;state.history.push({g:state.currentG,type:pendingType,trigger:$('trigger').value,premium:$('premium').value,memo:$('memo').value.trim(),ts:Date.now()});pendingType==='BIG'?state.big++:state.reg++;state.currentG=0;closeBonus();render()}
 function undoBonus(){const x=state.history.pop();if(!x)return alert('戻せるボーナス履歴がないよ');x.type==='BIG'?state.big--:state.reg--;state.currentG=x.g;render()}
+
+// ===== PEKALOG v3.6.7 BONUS HISTORY EDIT =====
+let editingBonusIndex=null;
+function cancelBonusEdit(){
+ editingBonusIndex=null;
+ $('bonusEditPanel').classList.add('hidden');
+}
+function editBonus(index){
+ if(!Array.isArray(state.history)||!Number.isInteger(index)||index<0||index>=state.history.length)return;
+ const hit=state.history[index];
+ editingBonusIndex=index;
+ $('bonusEditTitle').textContent='✏️ #'+(index+1)+' '+hit.type+' の修正';
+ $('editHitG').value=String(hit.g??0);
+ $('editHitType').value=hit.type==='REG'?'REG':'BIG';
+ const trig=$('editHitTrigger');
+ trig.innerHTML='<option value="不明">？ 不明</option><option value="単独">単独</option><option value="チェリー重複">🍒 チェリー重複</option>';
+ if(hit.trigger&&!Array.from(trig.options).some(o=>o.value===hit.trigger))trig.add(new Option(hit.trigger,hit.trigger));
+ trig.value=hit.trigger||'不明';
+ const premium=$('editHitPremium');
+ premium.replaceChildren();
+ for(const name of MODELS[state.model].premiums){const val=name==='なし'?'':name;premium.add(new Option(name,val));}
+ if(hit.premium&&!Array.from(premium.options).some(o=>o.value===hit.premium))premium.add(new Option(hit.premium,hit.premium));
+ premium.value=hit.premium||'';
+ $('editHitMemo').value=hit.memo||'';
+ $('bonusEditPanel').classList.remove('hidden');
+ $('bonusEditStatus').textContent='';
+ $('bonusEditPanel').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function saveBonusEdit(){
+ const index=editingBonusIndex;
+ if(index===null||!state.history[index])return alert('修正する当たりをもう一度選んでね');
+ const raw=$('editHitG').value.trim();
+ if(!/^\d+$/.test(raw)||!Number.isSafeInteger(Number(raw)))return alert('G数は0以上の整数で入力してね');
+ const hit=state.history[index],oldType=hit.type,newType=$('editHitType').value;
+ if(!['BIG','REG'].includes(newType))return alert('BIGかREGを選んでね');
+ if(!['BIG','REG'].includes(oldType))return alert('以前のボーナス種別を判別できないよ。データを確認してね');
+ if(oldType!==newType){
+  if(!(Number(state[oldType.toLowerCase()==='big'?'big':'reg'])>0))return alert('集計のBB/RBと履歴が合っていないよ。先に写真差分を確認してね');
+  if(oldType==='BIG'){state.big--;state.reg++;}else{state.reg--;state.big++;}
+ }
+ state.history[index]={...hit,g:Number(raw),type:newType,trigger:$('editHitTrigger').value,premium:$('editHitPremium').value,memo:$('editHitMemo').value.trim()};
+ cancelBonusEdit();render();
+ $('bonusEditStatus').textContent='✅ #'+(index+1)+' を修正したよ。BB/RB集計も更新済み！';
+}
+function deleteBonusEntry(){
+ const index=editingBonusIndex;
+ if(index===null||!state.history[index])return alert('削除する当たりを選び直してね');
+ const hit=state.history[index],last=index===state.history.length-1;
+ if(!confirm('#'+(index+1)+' 『'+hit.g+'G '+hit.type+'』を1件だけ削除する？\n他の当たりや🍇の記録は残すよ。'))return;
+ if(hit.type!=='BIG'&&hit.type!=='REG')return alert('種別が不明のため削除できないよ');
+ const counter=hit.type==='BIG'?'big':'reg';
+ if(!(Number(state[counter])>0))return alert('集計件数と履歴が合わないため削除を中止したよ');
+ state[counter]--;
+ // When deleting a false bonus, preserve elapsed spins by adding its interval to the following bonus.
+ // If it was the latest bonus, restore the span to the current unhit-game counter.
+ const removedG=Number(hit.g);
+ if(Number.isSafeInteger(removedG)&&removedG>=0){
+  if(last)state.currentG=Number(state.currentG||0)+removedG;
+  else if(state.history[index+1])state.history[index+1].g=Number(state.history[index+1].g||0)+removedG;
+ }
+ state.history.splice(index,1);
+ cancelBonusEdit();render();
+ $('bonusEditStatus').textContent='✅ #'+(index+1)+' を削除したよ。BB/RB集計を更新した！';
+}
+function saveCorrectionToArchive(){
+ const id=state.loadedArchiveId;
+ if(id==null)return alert('保存済み実戦を「開く」で読み込んだ時に使えるよ');
+ const archives=JSON.parse(localStorage.getItem(ARCH)||'[]');
+ if(!Array.isArray(archives))return alert('保存一覧が正しく読み込めなかったよ。バックアップを確認してね');
+ const index=archives.findIndex(a=>String(a.id)===String(id));
+ if(index<0)return alert('元の保存記録が見つからなかったよ。JSON保存でバックアップしてね');
+ if(!confirm('元の保存済み実戦の内容を現在の修正内容で上書きする？\n（ほかの保存済み実戦は変更しないよ）'))return;
+ const old=archives[index];
+ const snapshot={...state,id:old.id,recordedAt:old.recordedAt,startedAt:old.startedAt,endedAt:old.endedAt,updatedAt:Date.now(),loadedFromArchive:false};
+ delete snapshot.loadedArchiveId;
+ snapshot.history=JSON.parse(JSON.stringify(state.history||[]));
+ snapshot.quickFlags={...(state.quickFlags||{})};
+ snapshot.lamp=JSON.parse(JSON.stringify(state.lamp||{start:null,end:null}));
+ for(const kind of ['start','end'])if(snapshot.lamp[kind])delete snapshot.lamp[kind].img;
+ archives[index]=snapshot;
+ try{
+  localStorage.setItem(ARCH,JSON.stringify(archives));
+  const check=JSON.parse(localStorage.getItem(ARCH)||'[]');
+  if(!check[index]||String(check[index].id)!==String(id))throw new Error('verification failed');
+  renderArchives();
+  $('bonusEditStatus').textContent='✅ 元の保存済み実戦にも修正を反映したよ！';
+ }catch(e){console.error('Bonus archive update',e);alert('保存記録の更新に失敗したよ。JSON保存でバックアップしてね');}
+}
+// ===== END PEKALOG v3.6.7 BONUS EDIT =====
+
 // 旧チェリー参考数は過去記録として残し、今後の増減はしない。
 function poissonLog(k,l){if(l<=0)return -1e99;let f=0;for(let i=2;i<=k;i++)f+=Math.log(i);return k*Math.log(l)-l-f}
 function estimate(){if(state.totalG<1)return specs().map(x=>({s:x.s,p:1/6}));let logs=specs().map(x=>({s:x.s,l:poissonLog(state.big,state.totalG/x.bb)+poissonLog(state.reg,state.totalG/x.rb)}));const mx=Math.max(...logs.map(x=>x.l));const ex=logs.map(x=>({s:x.s,e:Math.exp(x.l-mx)})),sum=ex.reduce((a,b)=>a+b.e,0);return ex.map(x=>({s:x.s,p:x.e/sum}))}
@@ -788,9 +900,9 @@ function deleteArchive(id){
   alert('選んだ実戦を1件削除したよ！');
  }catch(err){console.error('Archive delete error:',err);alert('削除できなかったよ。データは確認してからもう一度試してね。');}
 }
-function loadArchive(id){const a=JSON.parse(localStorage.getItem(ARCH)||'[]'),x=a.find(v=>v.id===id);if(!x)return;if(!confirm('この実戦を現在の画面に読み込む？'))return;const {id:_,...rest}=x;state=rest;state.loadedFromArchive=true;state.actualStartTime=state.actualStartTime||'';state.actualEndTime=state.actualEndTime||'';if(!state.quickFlags)state.quickFlags={cherry:false,premium:false};if(!state.lamp)state.lamp={start:null,end:null};updatePremiumOptions();render();window.scrollTo({top:0,behavior:'smooth'})}
+function loadArchive(id){const a=JSON.parse(localStorage.getItem(ARCH)||'[]'),x=a.find(v=>v.id===id);if(!x)return;if(!confirm('この実戦を現在の画面に読み込む？'))return;const {id:_,...rest}=x;cancelBonusEdit();state=rest;state.loadedArchiveId=id;state.loadedFromArchive=true;state.actualStartTime=state.actualStartTime||'';state.actualEndTime=state.actualEndTime||'';if(!state.quickFlags)state.quickFlags={cherry:false,premium:false};if(!state.lamp)state.lamp={start:null,end:null};updatePremiumOptions();render();window.scrollTo({top:0,behavior:'smooth'})}
 function downloadJSON(){const payload={version:'3.0',current:state,archives:JSON.parse(localStorage.getItem(ARCH)||'[]')};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pekalog_${state.date||'data'}_${state.machine||'machine'}.json`;a.click();URL.revokeObjectURL(a.href)}
-function importJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);if(p.current)state=p.current;if(Array.isArray(p.archives))localStorage.setItem(ARCH,JSON.stringify(p.archives));updatePremiumOptions();render();alert('データを読み込んだよ！')}catch(e){alert('JSONを読み込めなかったよ')}};r.readAsText(f);ev.target.value=''}
+function importJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);if(p.current){cancelBonusEdit();state=p.current;}if(Array.isArray(p.archives))localStorage.setItem(ARCH,JSON.stringify(p.archives));updatePremiumOptions();render();alert('データを読み込んだよ！')}catch(e){alert('JSONを読み込めなかったよ')}};r.readAsText(f);ev.target.value=''}
 function clearPhotoInputsForNewSession(){
  for(const kind of ['start','end']){
   const ids=lampIds(kind);
@@ -811,6 +923,7 @@ function newSession(){
  if(!confirm('現在の実戦をリセットして、新しい実戦を始める？\\n必要なら先に「実戦を保存」してね。'))return;
  photoLoadGeneration++;
  const m=state.model;
+ cancelBonusEdit();
  state=blankState();
  state.model=m;
  clearPhotoInputsForNewSession();
@@ -1035,4 +1148,3 @@ window.addEventListener('load',updateTurkeySyncStatus);
 </script>
 
 </body></html>
-
