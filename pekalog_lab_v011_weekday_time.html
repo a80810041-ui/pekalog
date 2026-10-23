@@ -180,7 +180,8 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
    <label class="btn blue" style="text-align:center;cursor:pointer">⬆ JSON読込<input id="jsonFile" type="file" accept=".json,application/json" style="display:none"></label>
    <button class="btn dark" id="exportBtn">⬇ LABデータ保存</button>
    <button class="btn cyan" id="reloadRemote">🔄 daily.json再読込</button>
-   <button class="btn violet" id="demoBtn">🧪 デモデータ</button>
+   <button class="btn violet" id="demoBtn" disabled title="実データ分析中はデモの追加を停止">🧪 デモ追加（停止）</button>
+   <button class="btn dark" id="removeDemoBtn">🧹 デモだけ削除</button>
   </div>
   <div class="tiny" style="margin-top:9px">収集JSON・LABバックアップ・CSV・daily.jsonは全部同じ分析エンジンに入る。</div>
  </div>
@@ -1374,6 +1375,73 @@ EL('v18CalNext').addEventListener('click',()=>{prefs.calendarMonth=shiftMonth(pr
 redrawAll();
 })();
 // ===== END LAB v0.18 =====
+
+// ===== PEKALOG LAB v0.19: demo isolation, real-date event preview, and safe cleanup =====
+(function(){
+ 'use strict';
+ const targetMachines=new Set(['651','652','653','655','656','657','658','660','661','662','663','707','708','710','711','712','713','715','716','717','718','720','687']);
+ const beforeFinalRows=finalRows; // v0.16 already prefers confirmed historical records.
+ finalRows=function(){return beforeFinalRows().filter(r=>r&&!r.demo&&targetMachines.has(normMachine(r.machine)))};
+ const beforeRenderEvent=renderEvent;
+ renderEvent=function(){
+  // Only a complete, past-day, late-updated 23-machine capture can be shown as PRELIMINARY.
+  // This is *not* stored as a finalized record. A later historical-final replaces it normally.
+  const buckets=new Map(), current=todayJST();
+  for(const r of finalRows()){
+   if(!isEventDate(r.date))continue;
+   const a=buckets.get(r.date)||[];a.push(r);buckets.set(r.date,a);
+  }
+  const preliminary=new Set();
+  for(const [date,rows] of buckets){
+   if(date>=current||rows.length!==targetMachines.size||rows.every(r=>r.isFinal===true))continue;
+   const dateJp=date.replace(/-/g,'/');
+   const late=rows.filter(r=>{
+    const m=String(r.updated||'').match(/^(\d{4}\/\d{2}\/\d{2})\s+(\d{2}):(\d{2})/);
+    return m&&m[1]===dateJp&&Number(m[2])>=22;
+   }).length;
+   if(late>=18)preliminary.add(date);
+  }
+  const realRows=finalRows;
+  if(preliminary.size){
+   finalRows=function(){return realRows().map(r=>preliminary.has(r.date)&&r.isFinal!==true?{...r,isFinal:true,snapshotType:'event-preview-only'}:r)};
+  }
+  try{beforeRenderEvent()}finally{finalRows=realRows}
+  const includedDates=[...buckets].filter(([d,rows])=>rows.some(r=>r.isFinal===true)||preliminary.has(d)).map(([d])=>d).sort();
+  const score=$('eventScore');
+  if(score){
+   if(includedDates.length<3){score.textContent='検証中';score.style.fontSize='24px'}
+   else score.style.fontSize='';
+  }
+  if(preliminary.size){
+   const label=[...preliminary].sort().join('・');
+   const note=`<br><span class="tiny">⚠️ ${label}は22時台に取得した23台分の暫定値です。閉店確定データではありません。翌日の履歴が入ると確定値を優先します。</span>`;
+   const compare=$('eventCompare');if(compare)compare.innerHTML+=note;
+   const trend=$('eventTrend');
+   if(trend)for(const d of preliminary)trend.innerHTML=trend.innerHTML.replace(`<td>${d}</td>`,`<td>${d}（暫定）</td>`);
+   const delta=$('eventLatestDelta');if(delta)delta.innerHTML+=note;
+  }
+  if(includedDates.length<3){
+   const compare=$('eventCompare');
+   if(compare)compare.innerHTML+=`<br><span class="tiny">評価スコアは22日の比較可能な実施日が3回以上揃うまで保留します（現在${includedDates.length}回）。</span>`;
+  }
+ };
+ async function deleteDemoSafely(){
+  const existing=lab.snapshots||[],count=existing.filter(r=>r.demo===true).length;
+  if(!count){alert('デモデータは0件。すでにきれいだよ！');return}
+  if(!labStoreReady){alert('保存先の準備がまだ終わっていません。🗃データの保存確認が出てから押してね。');return}
+  if(!confirm(`デモ印のある${count}件だけを削除します。先にLABバックアップを保存したことを確認してね。実データと仮説は残ります。続ける？`))return;
+  const before=lab;
+  lab={...lab,snapshots:existing.filter(r=>r.demo!==true)};
+  try{await persist();renderAll();alert(`デモ${count}件だけを削除しました。実データと仮説は保存済みです。`)}
+  catch(e){lab=before;renderAll();alert('保存に失敗したため画面上のデータを元に戻しました：'+e.message)}
+ }
+ const btn=$('removeDemoBtn');if(btn)btn.onclick=deleteDemoSafely;
+ document.title='PEKALOG LAB v0.19｜実データ修正版';
+ const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.19｜実データ＆22日分析修正';
+ renderAll();
+})();
+// ===== END LAB v0.19 =====
+
 
 </script>
 
