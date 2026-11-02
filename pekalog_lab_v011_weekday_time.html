@@ -214,6 +214,27 @@ const IMPORT_META_KEY='pekalog_lab_last_import_v09';
 const LAB_KEY='pekalog_lab_v02_data', HYP_KEY='pekalog_lab_v02_hypotheses', CFG_KEY='pekalog_lab_v02_config';
 const PEKA_ARCH='pekalog_v2_archives';
 const MODELS={gogo3:'ゴージャグ3',neoim:'ネオアイム',my5:'マイジャグV',my6:'マイジャグVI',happy3:'ハッピーV III',ultra:'ウルトラミラクル'};
+function createPekaTransition(){
+ const date='2026-11-02',changed=new Set(['651','652','653','716','717','718','720']);
+ const groups={my6:['651','652','653','716','717','718','720'],my5:['655','656','657','713','715'],neoim:['661','662','663','707','708','710'],gogo3:['658','660','711','712']};
+ const norm=x=>String(Number(x)),number=x=>x!==null&&x!==undefined&&x!==''&&Number.isFinite(Number(x))?Number(x):null;
+ const add=(d,n)=>new Date(Date.parse(d+'T12:00:00Z')+n*86400000).toISOString().slice(0,10);
+ const distance=(a,b)=>Math.round((Date.parse(b+'T12:00:00Z')-Date.parse(a+'T12:00:00Z'))/86400000);
+ function currentModel(machine,asOf){const m=norm(machine);if(changed.has(m))return asOf>=date?'my6':'my5';for(const [model,ms]of Object.entries(groups))if(ms.includes(m))return model;return null;}
+ function normalize(r){if(!r||!changed.has(norm(r.machine))||!/^\d{4}-\d{2}-\d{2}$/.test(r.date||''))return r;const expected=r.date>=date?'my6':'my5';return {...r,model:expected,modelName:expected==='my6'?'マイジャグラーVI':'マイジャグラーV',transitionReportedModel:r.transitionReportedModel??r.model,transitionAdjusted:(r.transitionReportedModel??r.model)!==expected};}
+ function isCurrent(r,asOf){if(!r||r.date>asOf)return false;if(!changed.has(norm(r.machine)))return true;return asOf>=date?r.date>=date&&r.model==='my6':r.date<date&&r.model==='my5';}
+ const selectCurrent=(rows,asOf)=>rows.filter(r=>isCurrent(r,asOf));
+ function summary(rows){const known=rows.filter(r=>number(r.diff)!==null),valid=rows.filter(r=>number(r.totalG)>0&&number(r.big)!==null&&number(r.reg)!==null),games=valid.reduce((s,r)=>s+number(r.totalG),0),hits=valid.reduce((s,r)=>s+number(r.big)+number(r.reg),0),total=known.reduce((s,r)=>s+number(r.diff),0);return {observed:rows.length,n:known.length,days:new Set(rows.map(r=>r.date)).size,positive:known.filter(r=>number(r.diff)>0).length,rate:known.length?known.filter(r=>number(r.diff)>0).length/known.length:null,total:known.length?total:null,avg:known.length?total/known.length:null,comb:hits?games/hits:null};}
+ function comparison(rows,days,asOf){const beforeStart=add(date,-days),beforeEnd=add(date,-1),afterEnd=add(date,days-1),end=asOf<afterEnd?asOf:afterEnd;const final=rows.filter(r=>!r.demo&&(r.isFinal===true||r.snapshotType==='historical-final')).map(normalize);const before=final.filter(r=>r.date>=beforeStart&&r.date<=beforeEnd),after=final.filter(r=>r.date>=date&&r.date<=end);const packs={};for(const [id,ms]of Object.entries(groups)){packs[id]={before:summary(before.filter(r=>ms.includes(norm(r.machine)))),after:summary(after.filter(r=>ms.includes(norm(r.machine))))};}return {beforeStart,beforeEnd,afterStart:date,afterEnd:end<date?null:end,packs,before,after};}
+ return {date,changed,groups,currentModel,normalize,isCurrent,selectCurrent,summary,comparison,number,add,distance};
+}
+if(typeof module!=='undefined')module.exports={createPekaTransition};
+
+const pekaTransition=createPekaTransition();
+let transitionHistoryMode='current';
+function transitionNormalizeRow(r){return pekaTransition.normalize(r)}
+function transitionCurrentRows(rows,asOf=todayJST()){return pekaTransition.selectCurrent(rows,asOf)}
+function transitionResearchRows(rows){return transitionHistoryMode==='number'?rows:transitionCurrentRows(rows)}
 const SETTING_SPECS={
  gogo3:[259.0,354.2,149.6,258.0,332.7,145.3,257.0,306.2,139.7,254.0,268.6,130.5,247.3,247.3,123.7,234.9,234.9,117.4],
  neoim:[273.1,439.8,168.5,269.7,399.6,161.0,269.7,331.0,148.6,259.0,315.1,142.2,259.0,255.0,128.5,255.0,255.0,127.5],
@@ -344,7 +365,7 @@ function fmt(n){if(n===null||n===undefined||Number.isNaN(Number(n)))return '-';r
 function pct(n,d){return d?((n/d)*100).toFixed(1)+'%':'-'}
 function signed(n){if(n===null||n===undefined||n==='')return '-';n=Number(n);return `${n>0?'+':''}${fmt(n)}`}
 function isEventDate(d){const day=Number(String(d).slice(8,10));return day===Number(cfg.eventDay||22)||(cfg.extraEvents||[]).includes(String(d))}
-function finalRows(){const map=new Map();for(const s of lab.snapshots||[]){if(!s.date||!s.machine)continue;const k=s.date+'|'+s.machine;const old=map.get(k);if(!old||Number(s.ts||0)>=Number(old.ts||0))map.set(k,s)}return [...map.values()].sort((a,b)=>(a.date+a.machine).localeCompare(b.date+b.machine))}
+function finalRows(){const map=new Map();for(const s of lab.snapshots||[]){if(!s.date||!s.machine)continue;const k=s.date+'|'+s.machine;const old=map.get(k);if(!old||Number(s.ts||0)>=Number(old.ts||0))map.set(k,s)}return [...map.values()].map(transitionNormalizeRow).sort((a,b)=>(a.date+a.machine).localeCompare(b.date+b.machine))}
 function rowsByDate(){const m={};for(const r of finalRows())(m[r.date]??=[]).push(r);return m}
 function latestSnapshot(date,machine){return (lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===normMachine(machine)).sort((a,b)=>Number(a.ts||0)-Number(b.ts||0)).at(-1)||null}
 function nearestSnapshot(date,machine,ts){const a=(lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===normMachine(machine)&&x.ts).sort((x,y)=>Math.abs(x.ts-ts)-Math.abs(y.ts-ts));return a[0]||null}
@@ -376,7 +397,7 @@ function scoreLabel(e){if(!e)return '判定不可';if(e.g<1000)return '材料少
 function scoreClass(e){if(!e||e.g<1000)return 'warn';if(e.score>=62)return 'good';if(e.score<42)return 'bad';return ''}
 function dateGap(a,b){const x=new Date(a+'T00:00:00Z'),y=new Date(b+'T00:00:00Z');return Math.round((y-x)/86400000)}
 function machineInferenceProfiles(){
- const rows=finalRows().filter(r=>r.isFinal!==false&&r.machine&&SETTING_SPECS[r.model]);
+ const rows=transitionCurrentRows(finalRows()).filter(r=>r.isFinal!==false&&r.machine&&SETTING_SPECS[r.model]);
  const by={};for(const r of rows)(by[r.machine]??=[]).push(r);
  const out=[];
  for(const [machine,arr0] of Object.entries(by)){
@@ -898,13 +919,13 @@ nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collecto
         selected.set(key, row);
       }
     }
-    return [...selected.values()].sort((a,b) => (a.date+a.machine).localeCompare(b.date+b.machine));
+    return [...selected.values()].map(transitionNormalizeRow).sort((a,b) => (a.date+a.machine).localeCompare(b.date+b.machine));
   };
 
   function morningRanking(date) {
     const byMachine = new Map();
     for (const row of finalRows()) {
-      if (!isClosedRecord(row) || row.demo || !SETTING_SPECS[row.model]) continue;
+      if (!isClosedRecord(row) || row.demo || !SETTING_SPECS[row.model] || !pekaTransition.isCurrent(row,date)) continue;
       const age = gapDays(row.date, date);
       if (age < 1 || age > 30) continue;
       const evidence = settingEvidence(row);
@@ -956,7 +977,8 @@ nav();$('saveHyp').onclick=saveHyp;$('jsonFile').onchange=importFile;$('collecto
     const hour = new Date(now + 9*3600000).getUTCHours();
     if (hour < 9 || hour >= 23) return [];
     const selected = new Map();
-    for (const row of lab.snapshots || []) {
+    for (const rawRow of lab.snapshots || []) {
+      const row=transitionNormalizeRow(rawRow);
       if (row?.date !== date || !row.machine || isClosedRecord(row) || row.demo || !SETTING_SPECS[row.model]) continue;
       const ts = observedTime(row);
       if (ts === null || ts > now + 5*60000 || now-ts > 30*60000) continue;
@@ -1068,7 +1090,7 @@ function modelOptions(select,rows){
  const machineSignature=[...new Set(rows.map(r=>normMachine(r.machine)))].sort().join(',');
  if(select.dataset.machineSignature===machineSignature)return;
  const prior=select.value;
- const ms=[...new Map(rows.map(r=>[r.machine,`${r.machine}番 ${MODELS[r.model]||r.modelName||'その他'}`])).entries()].sort((a,b)=>Number(a[0])-Number(b[0]));
+ const ms=[...new Map(rows.map(r=>[r.machine,`${r.machine}番 ${MODELS[pekaTransition.currentModel(r.machine,todayJST())]||MODELS[r.model]||r.modelName||'その他'}`])).entries()].sort((a,b)=>Number(a[0])-Number(b[0]));
  select.innerHTML='<option value="">台を選んでね</option>'+ms.map(([id,t])=>`<option value="${escHTML(id)}">${escHTML(t)}</option>`).join('');
  select.dataset.machineSignature=machineSignature;
  if(prior&&ms.some(([id])=>id===prior))select.value=prior;
@@ -1084,11 +1106,12 @@ function updatePeriod(kind,days){
 }
 function renderTrend(){
  const s=$('trendMachine'),stats=$('trendStats'),graph=$('trendGraph'),table=$('trendTable'),hint=$('trendHint');
- if(!s)return;const {rows,newest,dates,map}=datesAndRows(trendDays);
+ if(!s)return;let {rows,newest,dates,map}=datesAndRows(trendDays);
  modelOptions(s,rows);
  if(!s.value&&s.options.length>1)s.value=s.options[1].value;
  const machine=s.value;if(!machine){stats.innerHTML='';graph.innerHTML='<div class="empty">まだ台データがないよ。収集JSONを取り込んでね。</div>';table.innerHTML='';return}
- const items=dates.map(d=>({date:d, r:map.get(d+'|'+machine)||null}));
+ if(transitionHistoryMode==='current'&&pekaTransition.changed.has(machine)&&todayJST()>=pekaTransition.date){newest=[newest,todayJST()].sort().at(-1);dates=Array.from({length:trendDays},(_,i)=>addDaysISO(newest,i-trendDays+1));}
+ const items=dates.map(d=>{const r=map.get(d+'|'+machine)||null;const include=r&&(transitionHistoryMode==='number'||pekaTransition.isCurrent(r,todayJST()));return {date:d,r:include?r:null,excluded:!!r&&!include}});
  const diffs=items.map(x=>x.r).filter(r=>dnum(r?.diff)!==null),total=diffs.reduce((n,r)=>n+Number(r.diff),0);
  const latest=items.filter(x=>x.r).at(-1)?.r;
  const pos=diffs.filter(r=>Number(r.diff)>0).length;
@@ -1098,12 +1121,12 @@ function renderTrend(){
  +statBox('プラス日数',`${pos}/${diffs.length}`,`差枚判明日のみ`)
  +statBox('最新の合算',comb?'1/'+comb:'—',latest?`${latest.date} / BB${latest.big||0} RB${latest.reg||0}`:'未収集');
  graph.innerHTML=renderBars(items.map(x=>({date:x.date,v:dnum(x.r?.diff),event:isEventDate(x.date)})));
- table.innerHTML='<div class="tablewrap"><table><thead><tr><th>日付</th><th>BB</th><th>RB</th><th>合算</th><th>推定差枚</th><th>区分</th></tr></thead><tbody>'
- +items.map(({date,r})=>{if(!r)return `<tr><td>${labelDate(date)}(${weekday(date)})</td><td colspan="5" style="text-align:center;color:#8694a7">未取得</td></tr>`;
+ table.innerHTML='<div class="tablewrap"><table><thead><tr><th>日付</th><th>機種</th><th>BB</th><th>RB</th><th>合算</th><th>推定差枚</th><th>区分</th></tr></thead><tbody>'
+ +items.map(({date,r,excluded})=>{if(!r)return `<tr><td>${labelDate(date)}(${weekday(date)})</td><td colspan="6" style="text-align:center;color:#8694a7">${excluded?"旧機種の記録（対象外）":"未取得"}</td></tr>`;
  const g=dnum(r.totalG),hits=Number(r.big||0)+Number(r.reg||0),co=hits&&g!=null?'1/'+(g/hits).toFixed(1):'—';const dif=dnum(r.diff);
- return `<tr><td>${labelDate(date)}(${weekday(date)})${isEventDate(date)?' ⭐':''}</td><td>${fmt(r.big)}</td><td>${fmt(r.reg)}</td><td>${co}</td><td class="${dif>=0?'pos':'neg'}">${dif==null?'—':FMT(dif)}</td><td>${isClosed(r)?'閉店':'LIVE/暫定'}</td></tr>`;
+ return `<tr><td>${labelDate(date)}(${weekday(date)})${isEventDate(date)?' ⭐':''}</td><td>${esc(MODELS[r.model]||r.modelName||'不明')}</td><td>${fmt(r.big)}</td><td>${fmt(r.reg)}</td><td>${co}</td><td class="${dif>=0?'pos':'neg'}">${dif==null?'—':FMT(dif)}</td><td>${isClosed(r)?'閉店':'LIVE/暫定'}</td></tr>`;
  }).join('')+'</tbody></table></div>';
- hint.textContent=`直近${trendDays}日（${dates[0]}〜${newest}）・推定差枚。未取得日は0枚に置き換えません。LIVE値は翌日の閉店データ収集で確定します。`;
+ hint.textContent=`${transitionHistoryMode==='number'?'台番号継続（旧機種を含む）':'現機種区間のみ'} ／ 直近${trendDays}日（${dates[0]}〜${newest}）・推定差枚。未取得日は0枚に置き換えません。LIVE値は翌日の閉店データ収集で確定します。`;
 }
 function daySummary(rows,date,model){
  const relevant=rows.filter(r=>r.date===date&&filtered(r,model));
@@ -1182,6 +1205,7 @@ function relevantRows(){return finalRows().filter(r=>r&&v18TargetSet.has(normMac
 function snapshot(){const rows=relevantRows();const latest=rows.map(r=>r.date).sort().at(-1)||today;return {rows,latest}}
 function endDates(date,days){return Array.from({length:days},(_,i)=>addDaysISO(date,i-days+1))}
 function machineStats(rows,latest,days){
+ rows=transitionResearchRows(rows);
  const start=addDaysISO(latest,1-days),map=new Map();
  for(const r of rows)if(r.date>=start&&r.date<=latest){const k=normMachine(r.machine);if(!map.has(k))map.set(k,[]);map.get(k).push(r)}
  return [...map.entries()].map(([machine,rs])=>{
@@ -1222,7 +1246,7 @@ function displayWatch(){
  setButtons('#v18WatchType button',b=>b.dataset.v18watch===prefs.watchType);
  const dest=EL('v18WatchResults');
  if(prefs.watchType==='morning'){
-  const closedRows=snapshot().rows.filter(r=>FINAL(r)&&r.date<todayJST());
+  const closedRows=transitionCurrentRows(snapshot().rows.filter(r=>FINAL(r)&&r.date<todayJST()));
   const latest=closedRows.map(r=>r.date).sort().at(-1)||addDaysISO(todayJST(),-1);
   const eligible=machineStats(closedRows,latest,prefs.rankDays).filter(x=>x.eligible);
   const list=eligible.filter(x=>x.games>=1000).map(x=>{
@@ -1237,7 +1261,8 @@ function displayWatch(){
  }
  const now=Date.now(),date=todayJST(),hour=new Date(now+9*3600000).getUTCHours();
  const by=new Map();
- for(const r of lab.snapshots||[]){
+ for(const rawRow of lab.snapshots||[]){
+  const r=transitionNormalizeRow(rawRow);
   if(r?.date!==date||!v18TargetSet.has(normMachine(r.machine))||FINAL(r)||r.demo||hour<9||hour>=23)continue;
   const match=String(r.updated||r.basicRawMeta?.updated||'').match(/(\d{4})[\/-](\d\d?)[\/-](\d\d?)[ T](\d\d?):(\d\d)(?::(\d\d))?/);
   let ms=match?Date.parse(`${match[1]}-${String(match[2]).padStart(2,'0')}-${String(match[3]).padStart(2,'0')}T${String(match[4]).padStart(2,'0')}:${match[5]}:${match[6]||'00'}+09:00`):Number(r.ts);
@@ -1281,9 +1306,10 @@ function graphEntries(which){const {rows,latest}=snapshot();const days=which==='
  // v0.17 locals are lexical inside an IIFE; read active period buttons instead.
  const active=[...document.querySelectorAll(`[data-${which}-days]`)].find(b=>b.classList.contains('cyan'));
  const period=active?Number(active.dataset[which+'Days']):days;
- const dates=endDates(latest,period),result=[];
+ const anchor=which==='trend'&&transitionHistoryMode==='current'&&pekaTransition.changed.has(normMachine(EL('trendMachine')?.value))&&todayJST()>=pekaTransition.date?[latest,todayJST()].sort().at(-1):latest;
+ const dates=endDates(anchor,period),result=[];
  if(which==='trend'){
-  const machine=normMachine(EL('trendMachine')?.value);const by=new Map(rows.filter(r=>normMachine(r.machine)===machine).map(r=>[r.date,r]));
+  const machine=normMachine(EL('trendMachine')?.value);const by=new Map(transitionResearchRows(rows).filter(r=>normMachine(r.machine)===machine).map(r=>[r.date,r]));
   for(const date of dates){const r=by.get(date);result.push({date,v:r?VNUM(r.diff):null});}
  }else{
   const model=EL('conditionModel')?.value||'all';
@@ -1300,7 +1326,7 @@ function redrawGraph(which){
  if(type==='bar'&&metric==='daily')return; // keep original v0.17 SVG renderer
  const entries=graphEntries(which);graph.innerHTML=graphSVG(entries,{cumulative:metric==='cumulative',style:type});
  const hint=which==='trend'?EL('trendHint'):EL('conditionNote');
- if(hint){const original=hint.dataset.v18Base||hint.textContent||'';hint.dataset.v18Base=original;
+ if(hint){const original=(hint.textContent||'').split(' ※累積は')[0].split(' ※未取得日は')[0];hint.dataset.v18Base=original;
   hint.textContent=original+(metric==='cumulative'?' ※累積は取得できた日だけの合計。未取得日は線をつながず、0枚として計算しません。':' ※未取得日は線をつなぎません。');}
 }
 function coverageByDay(rows){const by=new Map();for(const r of rows){let d=by.get(r.date);if(!d){d={date:r.date,n:0,finalCount:0,sum:0,positive:0,closedSum:0,closedN:0};by.set(r.date,d)}
@@ -1445,5 +1471,27 @@ redrawAll();
 
 </script>
 
+<script>
+(function(){
+ const E=pekaTransition, get=id=>document.getElementById(id), names={my5:'マイジャグⅤ',my6:'マイジャグⅥ',neoim:'ネオアイム',gogo3:'ゴージャグ3'}, percent=x=>x==null?'—':(x*100).toFixed(1)+'%',f=x=>x==null?'—':Math.round(x).toLocaleString('ja-JP'),sig=x=>x==null?'—':(x>0?'+':'')+f(x),comb=x=>x==null?'—':'1/'+x.toFixed(1),safe=esc;
+ const btn=document.createElement('button');btn.className='btn dark';btn.dataset.view='transition';btn.textContent='🔁 入替研究';get('nav').appendChild(btn);
+ const panel=document.createElement('section');panel.id='transition';panel.className='view';panel.innerHTML=`<div class="card" style="background:linear-gradient(130deg,#172d3d,#191e2b)"><div class="tiny" style="color:#7de3ff">PEKALOG / 2026.11.02</div><h2 style="margin-top:5px">番号の傾向？ 機種の傾向？</h2><p class="smalltext">マイジャグⅥの7台導入を起点に、同じ台番号の入替前後と、入替のないグループを比較するよ。</p><div class="notice">この画面の台番号は綾ちゃんが確認した配置情報。物理的な設置場所は未確認。新台だから高設定、という加点はしません。</div></div><div class="card"><h3>11/2からの機種対応</h3><div id="tMapping"></div><div class="tiny" style="margin-top:10px">この22台と、従来の収集対象687番で計23台。687番の機種・設置状況は今回変更していません。</div></div><div class="card"><h3>比較する期間</h3><div class="grid2"><div><label for="tDays">入替前後の期間</label><select id="tDays"><option value="7">前7日・後7日</option><option value="14">前14日・後14日</option></select></div><div><label for="tAsOf">結果を確認する基準日</label><input id="tAsOf" type="date" min="2026-11-02"></div></div><div id="tCoverage" class="notice" style="margin-top:12px" aria-live="polite"></div></div><div class="card"><h3>グループで比較</h3><div id="tGroupTable"></div><p class="tiny">平均差枚は取得できた台日の平均。合算は総ゲーム数÷BB・RB合計。欠損を0枚や負けにしません。LIVEはこの比較から除外します。</p></div><div class="card"><h3>Ⅵへ変わった7台の答え合わせ</h3><div id="tMachineTable"></div><p class="tiny">入替前はⅤ、入替後はⅥ。同じ番号が継続して良いかを観察します。ただし機種変更と場所が重なるため、原因の断定はできません。</p></div><div class="card"><h3>履歴とおすすめの扱い</h3><p class="smalltext">朝イチ候補・台別の設定推理・今から候補は、現在の機種区間だけを材料にします。Ⅵの履歴が足りない間は材料不足。旧Ⅴの成績で穴埋めしません。</p><p class="tiny">「7日/14日」の履歴モードでは、同じ番号の旧ⅤとⅥを機種名付きで確認できます。店コンディションは各日の機種区分を使い、23台全体の履歴を維持します。元の保存スナップショットは書き換えず、分析表示で日付別に対応付けます。</p></div>`;
+ document.querySelector('.wrap').insertBefore(panel,document.querySelector('.footer'));
+ function table(head,rows){return '<div class="tablewrap"><table><thead><tr>'+head.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';}
+ get('tMapping').innerHTML=table(['機種','台番号','台数'],Object.entries(E.groups).map(([id,ms])=>[names[id],ms.join('・'),ms.length]));
+ const ctrl=document.createElement('div');ctrl.style.margin='10px 0';ctrl.innerHTML='<label for="transitionScope">履歴の比較軸（台別カルテ・ランキング）</label><select id="transitionScope"><option value="current">現機種になってから（おすすめ）</option><option value="number">同じ番号を継続（入替前も含む）</option></select><div class="tiny" style="margin-top:7px">朝イチ／今から候補は常に現機種区間のみ。履歴モードにしても候補の材料には旧機種を混ぜません。</div>';get('trend').insertBefore(ctrl,get('trend').firstChild);
+ get('transitionScope').value=transitionHistoryMode;get('transitionScope').onchange=ev=>{transitionHistoryMode=ev.target.value;renderAll();};
+ function cell(s){return s.n?`${sig(s.avg)}枚 / ${percent(s.rate)}<br><span class="tiny">合算 ${comb(s.comb)} ／ 差枚判明${s.n}台日・観測${s.days}日</span>`:'<span class="muted">確定・差枚データなし</span>';}
+ function render(){const asOf=get('tAsOf').value||todayJST(),days=Number(get('tDays').value),rows=finalRows(),c=E.comparison(rows,days,asOf),latest=rows.map(r=>r.date).sort().at(-1)||'なし',finals=rows.filter(r=>r.isFinal===true||r.snapshotType==='historical-final'),latestFinal=finals.map(r=>r.date).sort().at(-1)||'なし';const expectedAfter=c.afterEnd?E.distance(E.date,c.afterEnd)+1:0;
+ get('tCoverage').textContent=`入替前 ${c.beforeStart}〜${c.beforeEnd} ／ 入替後 ${c.afterEnd?E.date+'〜'+c.afterEnd:'まだ対象日なし'}。最新取得日 ${latest}・最新閉店日 ${latestFinal}。入替後の観測 ${new Set(c.after.map(r=>r.date)).size}/${expectedAfter}日。データがなくても0枚にはしません。`;
+ const labels={my6:'Ⅵへ変更した7台（前はⅤ）',my5:'Ⅴのままの5台',neoim:'ネオアイム6台（入替なし）',gogo3:'ゴージャグ3・4台（入替なし）'};get('tGroupTable').innerHTML=table(['グループ','入替前：平均差枚／プラス率','入替後：平均差枚／プラス率'],Object.entries(c.packs).map(([id,x])=>[labels[id],cell(x.before),cell(x.after)]));get('tMachineTable').innerHTML=table(['台番号','前：マイⅤ','後：マイⅥ'],[...E.changed].map(m=>[m+'番',cell(E.summary(c.before.filter(r=>normMachine(r.machine)===m))),cell(E.summary(c.after.filter(r=>normMachine(r.machine)===m)))]));
+ const date=todayJST(),absent=[...E.changed].filter(m=>!finals.some(r=>normMachine(r.machine)===m&&E.isCurrent(r,date)));const old=get('transitionMorningNote');if(old)old.remove();const note=document.createElement('div');note.id='transitionMorningNote';note.className='notice';note.style.marginTop='9px';note.textContent=absent.length?'マイⅥの閉店データ未取得：'+absent.join('・')+'番。旧Ⅴの履歴からⅥの朝イチ候補は作りません。':'朝イチ候補は現機種区間の履歴で判定。履歴モードの切替とは独立です。';get('seatPickStatus').after(note);
+ }
+ get('tAsOf').value=todayJST();get('tAsOf').max=todayJST();get('tDays').onchange=render;get('tAsOf').onchange=()=>{if(get('tAsOf').value>todayJST())get('tAsOf').value=todayJST();render();};
+ const oldRender=renderAll;renderAll=function(){oldRender();render();};nav();render();Promise.resolve(labStoreInit).then(()=>renderAll());
+ document.title='PEKALOG LAB v0.20｜入替研究';const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.20｜機種区間・入替研究';
+})();
+
+</script>
 </body>
 </html>
