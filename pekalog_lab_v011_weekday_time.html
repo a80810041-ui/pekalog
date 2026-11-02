@@ -221,11 +221,11 @@ function createPekaTransition(){
  const add=(d,n)=>new Date(Date.parse(d+'T12:00:00Z')+n*86400000).toISOString().slice(0,10);
  const distance=(a,b)=>Math.round((Date.parse(b+'T12:00:00Z')-Date.parse(a+'T12:00:00Z'))/86400000);
  function currentModel(machine,asOf){const m=norm(machine);if(changed.has(m))return asOf>=date?'my6':'my5';for(const [model,ms]of Object.entries(groups))if(ms.includes(m))return model;return null;}
- function normalize(r){if(!r||!changed.has(norm(r.machine))||!/^\d{4}-\d{2}-\d{2}$/.test(r.date||''))return r;const expected=r.date>=date?'my6':'my5';return {...r,model:expected,modelName:expected==='my6'?'マイジャグラーVI':'マイジャグラーV',transitionReportedModel:r.transitionReportedModel??r.model,transitionAdjusted:(r.transitionReportedModel??r.model)!==expected};}
+ function normalize(r){if(r&&r.date==='2026-10-22'&&r.isFinal!==true){const m=String(r.updated||'').match(/^2026\/10\/22\s+(\d{2}):(\d{2})/);if(m&&Number(m[1])*60+Number(m[2])>=22*60+30){r={...r,isFinal:true,snapshotType:'post-close-confirmed',finalEvidence:'user-confirmed-post-close',originalSnapshotType:r.originalSnapshotType??r.snapshotType};}}if(!r||!changed.has(norm(r.machine))||!/^\d{4}-\d{2}-\d{2}$/.test(r.date||''))return r;const expected=r.date>=date?'my6':'my5';return {...r,model:expected,modelName:expected==='my6'?'マイジャグラーVI':'マイジャグラーV',transitionReportedModel:r.transitionReportedModel??r.model,transitionAdjusted:(r.transitionReportedModel??r.model)!==expected};}
  function isCurrent(r,asOf){if(!r||r.date>asOf)return false;if(!changed.has(norm(r.machine)))return true;return asOf>=date?r.date>=date&&r.model==='my6':r.date<date&&r.model==='my5';}
  const selectCurrent=(rows,asOf)=>rows.filter(r=>isCurrent(r,asOf));
  function summary(rows){const known=rows.filter(r=>number(r.diff)!==null),valid=rows.filter(r=>number(r.totalG)>0&&number(r.big)!==null&&number(r.reg)!==null),games=valid.reduce((s,r)=>s+number(r.totalG),0),hits=valid.reduce((s,r)=>s+number(r.big)+number(r.reg),0),total=known.reduce((s,r)=>s+number(r.diff),0);return {observed:rows.length,n:known.length,days:new Set(rows.map(r=>r.date)).size,positive:known.filter(r=>number(r.diff)>0).length,rate:known.length?known.filter(r=>number(r.diff)>0).length/known.length:null,total:known.length?total:null,avg:known.length?total/known.length:null,comb:hits?games/hits:null};}
- function comparison(rows,days,asOf){const beforeStart=add(date,-days),beforeEnd=add(date,-1),afterEnd=add(date,days-1),end=asOf<afterEnd?asOf:afterEnd;const final=rows.filter(r=>!r.demo&&(r.isFinal===true||r.snapshotType==='historical-final')).map(normalize);const before=final.filter(r=>r.date>=beforeStart&&r.date<=beforeEnd),after=final.filter(r=>r.date>=date&&r.date<=end);const packs={};for(const [id,ms]of Object.entries(groups)){packs[id]={before:summary(before.filter(r=>ms.includes(norm(r.machine)))),after:summary(after.filter(r=>ms.includes(norm(r.machine))))};}return {beforeStart,beforeEnd,afterStart:date,afterEnd:end<date?null:end,packs,before,after};}
+ function comparison(rows,days,asOf){const beforeStart=add(date,-days),beforeEnd=add(date,-1),afterEnd=add(date,days-1),end=asOf<afterEnd?asOf:afterEnd;const final=rows.map(normalize).filter(r=>!r.demo&&(r.isFinal===true||r.snapshotType==='historical-final'));const before=final.filter(r=>r.date>=beforeStart&&r.date<=beforeEnd),after=final.filter(r=>r.date>=date&&r.date<=end);const packs={};for(const [id,ms]of Object.entries(groups)){packs[id]={before:summary(before.filter(r=>ms.includes(norm(r.machine)))),after:summary(after.filter(r=>ms.includes(norm(r.machine))))};}return {beforeStart,beforeEnd,afterStart:date,afterEnd:end<date?null:end,packs,before,after};}
  return {date,changed,groups,currentModel,normalize,isCurrent,selectCurrent,summary,comparison,number,add,distance};
 }
 if(typeof module!=='undefined')module.exports={createPekaTransition};
@@ -1488,8 +1488,16 @@ redrawAll();
  const date=todayJST(),absent=[...E.changed].filter(m=>!finals.some(r=>normMachine(r.machine)===m&&E.isCurrent(r,date)));const old=get('transitionMorningNote');if(old)old.remove();const note=document.createElement('div');note.id='transitionMorningNote';note.className='notice';note.style.marginTop='9px';note.textContent=absent.length?'マイⅥの閉店データ未取得：'+absent.join('・')+'番。旧Ⅴの履歴からⅥの朝イチ候補は作りません。':'朝イチ候補は現機種区間の履歴で判定。履歴モードの切替とは独立です。';get('seatPickStatus').after(note);
  }
  get('tAsOf').value=todayJST();get('tAsOf').max=todayJST();get('tDays').onchange=render;get('tAsOf').onchange=()=>{if(get('tAsOf').value>todayJST())get('tAsOf').value=todayJST();render();};
- const oldRender=renderAll;renderAll=function(){oldRender();render();};nav();render();Promise.resolve(labStoreInit).then(()=>renderAll());
- document.title='PEKALOG LAB v0.20｜入替研究';const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.20｜機種区間・入替研究';
+ const oldRender=renderAll;renderAll=function(){oldRender();render();renderCloseComparison();};nav();render();Promise.resolve(labStoreInit).then(()=>renderAll());
+ 
+ function renderCloseComparison(){
+  let card=get('postCloseComparison');if(!card){card=document.createElement('div');card.className='card';card.id='postCloseComparison';get('event').appendChild(card)}
+  const rows=finalRows().filter(r=>isEventDate(r.date)&&(r.isFinal===true||r.snapshotType==='historical-final'));
+  const dates=[...new Set(rows.map(r=>r.date))].sort();
+  card.innerHTML='<h3>22日の月別比較</h3><div class="notice">綾ちゃんの観察：2026年10月、専業のように見える来店客が増えたと感じた。人数・職業・設定配分は未確認。客層の変化と店の配分の変化を分けて検証します。</div>'+table(['日付','区分','差枚判明台数','推定差枚合計','プラス台','合算','総回転数'],dates.map(d=>{const a=rows.filter(r=>r.date===d),s=E.summary(a),g=a.filter(r=>E.number(r.totalG)!==null).reduce((n,r)=>n+Number(r.totalG),0);return [safe(d),a.some(r=>r.finalEvidence==='user-confirmed-post-close')?'閉店後取得':'翌日履歴等',s.n+'/23台',sig(s.total)+'枚',s.positive+'/'+s.n+'（'+percent(s.rate)+'）',comb(s.comb),f(g)+'G']}))+'<p class="tiny">10/22は綾ちゃんが閉店後の取得値であることを確認。22:30以降の同日更新記録を「閉店後取得」として分析に含めます。元の保存データは変更せず、翌日履歴がある場合はそちらを優先。日付が違う他のLIVE記録にはこの扱いを広げません。合計差枚は稼働量でも変わるため、総回転数・合算も並べて比較します。</p>';
+ }
+ renderCloseComparison();
+document.title='PEKALOG LAB v0.20.1｜入替研究・閉店後取得';const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.20.1｜機種区間・入替研究';
 })();
 
 </script>
