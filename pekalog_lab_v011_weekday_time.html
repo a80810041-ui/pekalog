@@ -1703,5 +1703,69 @@ Promise.resolve(labStoreInit).then(schedule).catch(schedule);schedule();
 document.title='PEKALOG LAB v0.24.2｜総合評価・チャレンジ候補';const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.24.2｜総合評価・チャレンジ候補';
 })();
 </script>
+<style id="v243-style">
+/* PEKALOG 0.24.3: presentation only, leave all source data, scoring and functions intact. */
+#nav [data-view="data"] { background:linear-gradient(135deg,#ffda75,#f4ae32)!important;color:#211607!important;border:1px solid #ffe6a4!important;font-weight:900!important;box-shadow:0 0 0 1px #c58821,0 2px 12px #e9ad3a55!important; }
+#nav [data-view="data"].active { outline:2px solid #fff0bb;outline-offset:2px; }
+#nav .v243-legacy {display:none!important}
+#dash .v243-detail-note {font-size:12px;color:#93a6b6}
+#dash .v243-overview-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+#dash .v243-card{background:#171f2c;border:1px solid #394858;border-radius:13px;padding:13px;min-width:0;display:flex;flex-direction:column;gap:7px}
+#dash .v243-card h3{margin:0;font-size:16px}
+#dash .v243-card p{margin:0;font-size:13px;color:#c1ccd7;line-height:1.6;overflow-wrap:anywhere}
+#dash .v243-card .v243-mini{font-size:12px;color:#a9c2d6;max-height:4em;overflow:hidden}
+.v243-go{padding:9px 12px;min-height:38px;border-radius:9px;background:#253a50;color:#e9f4ff;border:1px solid #52728b;font-size:13px;font-weight:700;cursor:pointer;text-align:left}
+.v243-go:focus-visible{outline:3px solid #ffc55d;outline-offset:2px}
+.v243-hub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.v243-hub .v243-go{display:block;width:100%;height:100%}
+#v243-details .card{margin-bottom:14px}
+@media(max-width:520px){#dash .v243-overview-grid,.v243-hub{grid-template-columns:1fr}#nav [data-view="data"]{box-shadow:0 0 0 1px #c58821!important}}
+</style>
+<script id="v243-layout">
+/* PEKALOG LAB v0.24.3: summary on home, dedicated detail views, standout Data tab.
+   All pre-existing scoring, snapshot and persistence functions remain untouched. */
+(function(){'use strict';
+const by=id=>document.getElementById(id);
+const navEl=by('nav'),dash=by('dash');if(!navEl||!dash||by('v243-details'))return;
+function jump(id){const btn=navEl.querySelector('[data-view="'+id+'"]');if(btn){btn.click();window.scrollTo({top:0,behavior:'auto'})}}
+function addButton(view,label){const el=document.createElement('button');el.className='btn dark';el.dataset.view=view;el.textContent=label;navEl.appendChild(el);return el}
+function addSection(id,html){const el=document.createElement('section');el.id=id;el.className='view';el.innerHTML=html;document.querySelector('.wrap').insertBefore(el,document.querySelector('.footer'));return el}
+// Preserve existing DOM IDs and render targets while moving bulky analysis cards away from Home.
+const detail=addSection('v243-details','<div class="card"><h2>🎯 台の評価・詳細</h2><div class="notice">朝イチ候補・今から候補・台別の設定材料・発見した傾向を詳しく確認できます。総合評価とチャレンジ方式の検証結果は「予想検証」で確認してね。</div></div>');
+const cards=[...dash.querySelectorAll(':scope > .card')];
+for(const card of cards.slice(1))detail.appendChild(card);
+const stats=cards[0];if(stats){const h=stats.querySelector('.sectionTitle h3');if(h)h.textContent='📊 保存と収集の状況';const hyp=by('hypCount');if(hyp){const stat=hyp.closest('.stat');if(stat)stat.style.display='none'}}
+const dashboard=document.createElement('div');dashboard.className='v243-overview-grid';dashboard.innerHTML=`
+ <div class="v243-card"><h3>🟢 総合評価・おすすめ</h3><p>普段の台選び。候補の根拠と当日LIVEの様子を確認。</p><div class="v243-mini" id="v243Picks">最新の候補を確認中…</div><button class="v243-go" data-go="v243-details">台の評価を詳しく見る</button></div>
+ <div class="v243-card"><h3>🔬 予想精度</h3><p>総合評価・ペカ狙い・出玉狙いを比較。未判定も確認。</p><div class="v243-mini" id="v243Rates">検証結果を確認中…</div><button class="v243-go" data-go="v024">予想検証を詳しく見る</button></div>
+ <div class="v243-card"><h3>📈 店コンディション</h3><p>店全体の推定差枚、プラス台数、7日/14日の推移。</p><button class="v243-go" data-go="v243-shop">店分析を詳しく見る</button></div>
+ <div class="v243-card"><h3>👻 実戦分析</h3><p>自分の実戦記録と、ヤメた後の推移・判断の振り返り。</p><button class="v243-go" data-go="iflab">実戦分析を詳しく見る</button></div>
+ <div class="v243-card"><h3>🗃 データ・バックアップ</h3><p>収集・取込・バックアップの管理。ログの欠損や更新状況も確認。</p><button class="v243-go" data-go="data">データ管理を開く</button></div>
+ <div class="v243-card"><h3>🗂 研究アーカイブ</h3><p>旧仮説・入替研究・手動予想の記録。必要な時だけ開く。</p><button class="v243-go" data-go="v243-archive">過去の研究を見る</button></div>`;
+dash.appendChild(dashboard);
+addSection('v243-shop',`<div class="card"><h2>📈 店分析</h2><div class="notice">店全体の出玉傾向・7日/14日・特定日の比較を、目的別に選べる入口です。</div><div class="v243-hub" style="margin-top:13px"><button class="v243-go" data-go="trend">📉 7日/14日の推移を開く</button><button class="v243-go" data-go="condition">🏪 店コンディションを開く</button><button class="v243-go" data-go="event">🔥 22日分析を開く</button></div></div>`);
+addSection('v243-archive',`<div class="card"><h2>🗂 研究アーカイブ</h2><div class="notice">普段は見なくてもよい過去の研究。データも検証ロジックも削除していません。</div><div class="v243-hub" style="margin-top:13px"><button class="v243-go" data-go="hyp">🧠 旧・仮説</button><button class="v243-go" data-go="transition">🔄 機種入替研究</button><button class="v243-go" data-go="forecast">🎯 事前予想の記録</button><button class="v243-go" data-go="v023">🧪 手動並走予想</button></div></div>`);
+addButton('v243-details','🎯 台の評価');addButton('v243-shop','📈 店分析');addButton('v243-archive','🗂 研究');
+const hidden=['hyp','event','forecast','v023','transition','trend','condition'];
+for(const id of hidden){const btn=navEl.querySelector('[data-view="'+id+'"]');if(btn)btn.classList.add('v243-legacy')}
+const ifbtn=navEl.querySelector('[data-view="iflab"]');if(ifbtn)ifbtn.textContent='👻 実戦分析';
+const v024btn=navEl.querySelector('[data-view="v024"]');if(v024btn)v024btn.textContent='🔬 予想検証';
+// Reorder ONLY nav buttons. No data sections or event handlers are deleted.
+for(const id of ['dash','v243-details','v024','v243-shop','iflab','v243-archive','data']){const b=navEl.querySelector('[data-view="'+id+'"]');if(b)navEl.appendChild(b)}
+function bindGo(){document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>jump(b.dataset.go))}
+bindGo();
+// Original nav() is already defined by the base LAB and simply rebinds click navigation.
+nav();
+function preview(){
+ const picks=by('morningPicks'),peek=by('v243Picks');if(peek&&picks){const row=picks.querySelector('.row, .item, .pick, li, .card');const t=(row||picks).textContent.trim().replace(/\s+/g,' ');peek.textContent=t?t.slice(0,115):'候補は「台の評価」で確認してね'}
+ const summary=by('v024Summary'),out=by('v243Rates');if(out&&summary){const trs=[...summary.querySelectorAll('tbody tr')];const row=trs.find(x=>/総合評価/.test(x.textContent));if(row){const td=[...row.querySelectorAll('td')];out.textContent='総合評価：合算 '+(td[1]?.textContent?.trim()||'判定なし')+' ／ ＋1,000枚 '+(td[2]?.textContent?.trim()||'判定なし')}else out.textContent='検証結果は「予想検証」で確認してね'}
+}
+const observed=[by('morningPicks'),by('v024Summary')].filter(Boolean);let pending=false;
+function scheduled(){if(pending)return;pending=true;Promise.resolve().then(()=>{pending=false;preview()})}
+if(typeof MutationObserver!=='undefined'){const observer=new MutationObserver(scheduled);for(const el of observed)observer.observe(el,{childList:true,subtree:true,characterData:true})}
+scheduled();
+document.title='PEKALOG LAB v0.24.3｜総合ダッシュボード';const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.24.3｜総合ダッシュボード';
+})();
+</script>
 </body>
 </html>
