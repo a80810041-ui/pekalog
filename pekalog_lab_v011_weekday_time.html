@@ -1561,5 +1561,75 @@ const panel=document.createElement('section');panel.id='forecast';panel.classNam
  document.title='PEKALOG LAB v0.21｜朝イチ予想・答え合わせ';const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.21｜朝イチ予測検証';
 })();
 </script>
+<script>
+/* PEKALOG v0.23: parallel forecast trial. Read-only for existing LAB and v0.21 ledger. */
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const KEY='pekalog_v023_parallel_frozen_v1', OLD='pekalog_forecast_ledger_v021';
+const safe=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const n=x=>x===undefined||x===null||x===''?null:(Number.isFinite(Number(x))?Number(x):null);
+const dayOffset=(s,d)=>{const x=new Date(s+'T00:00:00Z');x.setUTCDate(x.getUTCDate()+d);return x.toISOString().slice(0,10)};
+const read=k=>{try{const a=JSON.parse(localStorage.getItem(k)||'[]');return Array.isArray(a)?a:[]}catch(e){return []}};
+const finalFlag=r=>r.isFinal===true||r.snapshotType==='historical-final'||r.finalEvidence==='user-confirmed-post-close';
+const methods=[['combined','🟠 合算重視'],['rb','🔵 RB重視'],['diff','🟣 差枚重視'],['balanced','🟢 複合評価']];
+function confirmed(){
+ const m=new Map();for(const r of lab.snapshots||[]){if(!r.date||r.machine===undefined||!finalFlag(r))continue;
+ const k=r.date+'|'+String(r.machine),old=m.get(k);if(!old||Number(r.ts||0)>=Number(old.ts||0))m.set(k,r)}return [...m.values()];
+}
+function candidates(date){
+ const before=confirmed().filter(r=>r.date<date);
+ const by=new Map();for(const r of before){const k=String(r.machine);if(!by.has(k))by.set(k,[]);by.get(k).push(r)}
+ const list=[];
+ for(const [machine,rows] of by){rows.sort((a,b)=>a.date.localeCompare(b.date));const model=rows.at(-1)?.model;
+ const h=rows.filter(r=>r.model===model&&r.date>=dayOffset(date,-14)&&n(r.totalG)>=1000&&n(r.big)!==null&&n(r.reg)!==null);
+ const g=h.reduce((s,r)=>s+n(r.totalG),0);if(h.length<3||g<7000)continue;
+ const bb=h.reduce((s,r)=>s+n(r.big),0),rb=h.reduce((s,r)=>s+n(r.reg),0);
+ const d=h.filter(r=>n(r.diff)!==null),avg=d.length>=3?d.reduce((s,r)=>s+n(r.diff),0)/d.length:null;
+ list.push({machine,model,days:h.length,g,combined:bb+rb?g/(bb+rb):Infinity,rb:rb?g/rb:Infinity,diff:avg});
+ }
+ if(list.length<3)return {list,ordered:{combined:[],rb:[],diff:[],balanced:[]}};
+ const sort=(arr,fn)=>arr.slice().sort((a,b)=>fn(a)-fn(b)||a.machine.localeCompare(b.machine,'ja',{numeric:true}));
+ const combined=sort(list,x=>x.combined),rb=sort(list,x=>x.rb),diff=sort(list,x=>-(x.diff??-1e12));
+ const norms={};for(const [k,arr] of [['combined',combined],['rb',rb],['diff',diff]])norms[k]=new Map(arr.map((x,i)=>[x.machine,i/(arr.length-1||1)]));
+ const balanced=sort(list,x=>.4*norms.combined.get(x.machine)+.4*norms.rb.get(x.machine)+.2*norms.diff.get(x.machine));
+ return {list,ordered:{combined,rb,diff,balanced}};
+}
+function result(r,model){if(!r||r.model!==model)return {state:'missing'};
+ const g=n(r.totalG),b=n(r.big),reg=n(r.reg),d=n(r.diff);
+ if(g===null||g<2000||b===null||reg===null)return {state:'insufficient'};
+ return {state:'evaluated',hit:b+reg>0&&g/(b+reg)<=135,profit:d===null?null:d>=1000,combined:b+reg?g/(b+reg):null,diff:d};
+}
+function scoreRow(rows,map){const res=rows.map(x=>result(map.get(String(x.machine)),x.model));const ev=res.filter(x=>x.state==='evaluated'),dif=ev.filter(x=>x.profit!==null);return {chosen:rows.length,valid:ev.length,hits:ev.filter(x=>x.hit).length,diffValid:dif.length,diffHits:dif.filter(x=>x.profit).length,unready:res.length-ev.length};}
+function statusInfo(f){const today=new Map(confirmed().filter(r=>r.date===f.date).map(r=>[String(r.machine),r]));return Object.fromEntries(Object.entries(f.methods).map(([k,rows])=>[k,scoreRow(rows,today)]));}
+function pickOld(date){const f=read(OLD).find(x=>x.date===date);if(!f||!Array.isArray(f.ranked))return null;
+ return f.ranked.filter(x=>x.recommended).map(x=>({machine:String(x.machine),model:x.model})).slice(0,3);
+}
+function build(){
+ const date=$('v023Date').value,today=todayJST();if(date!==dayOffset(today,1)){alert('本日の翌日だけ予想を凍結できます。');return}
+ if(read(KEY).some(x=>x.date===date)){alert('この日の比較予想はすでに保存済みです。');return}
+ if((lab.snapshots||[]).some(x=>x.date>=date)){alert('対象日以降のデータがLABに含まれるため、安全のため保存しません。');return}
+ const original=pickOld(date);if(!original||original.length===0){alert('最初に「🎯 朝イチ検証」で明日の予想を保存してね。v0.21の予想をそのまま比較基準にします。');return}
+ const {list,ordered}=candidates(date);if(list.length<3){alert('直近14日の確定データが不足しています（候補3台未満）。');return}
+ const methodsFrozen={baseline:original};for(const [k] of methods)methodsFrozen[k]=ordered[k].slice(0,3).map(x=>({machine:x.machine,model:x.model}));
+ const f={version:1,date,createdAt:new Date().toISOString(),method:'v023-parallel-asof',sourceMaxDate:confirmed().filter(r=>r.date<date).map(r=>r.date).sort().at(-1)||null,candidateCount:list.length,methods:methodsFrozen};
+ try{localStorage.setItem(KEY,JSON.stringify([...read(KEY),f]));$('v023Notice').textContent='✅ '+date+'の比較予想を固定したよ。翌日以降の閉店確定データで答え合わせするね。';render()}catch(e){alert('保存に失敗: '+e.message)}
+}
+function exportHistory(){const a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify({kind:'pekalog-v023-parallel-ledger',version:1,forecasts:read(KEY)},null,2)],{type:'application/json'}));a.href=u;a.download='pekalog_v023_parallel_'+todayJST()+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}
+function stats(label,rows,r){return `<tr><td>${safe(label)}</td><td>${rows.map(x=>safe(x.machine)).join(' / ')||'－'}</td><td>${r.valid?`${r.hits}/${r.valid} (${(r.hits/r.valid*100).toFixed(1)}%)`:'未判定'}</td><td>${r.diffValid?`${r.diffHits}/${r.diffValid}`:'未判定'}</td><td>${r.unready}</td></tr>`}
+function render(){const a=read(KEY).sort((x,y)=>y.date.localeCompare(x.date));$('v023Count').textContent='保存済みの比較予想：'+a.length+'日';const holder=$('v023History');
+ if(!a.length){holder.innerHTML='<div class="empty">まだ比較予想はありません。まず「🎯 朝イチ検証」で明日の予想を固定し、このタブで並走予想を保存してね。</div>';return}
+ let totals={};for(const k of ['baseline',...methods.map(x=>x[0])])totals[k]={hits:0,valid:0,diffHits:0,diffValid:0};
+ holder.innerHTML=a.map(f=>{const s=statusInfo(f);for(const [k,v] of Object.entries(s)){if(!totals[k])continue;for(const z of ['hits','valid','diffHits','diffValid'])totals[k][z]+=v[z]};return `<div class="card"><h3>📅 ${safe(f.date)}｜予想${f.candidateCount}台から選抜</h3><div class="tiny">予想凍結日時 ${safe(f.createdAt)} ／ 使用した最終日 ${safe(f.sourceMaxDate||'不明')}<br>未取得・機種変更・2,000G未満は保留。差枚は推定値。</div><div class="tablewrap"><table><thead><tr><th>方法</th><th>推奨台番</th><th>合算1/135以下</th><th>差枚＋1000枚</th><th>未判定</th></tr></thead><tbody>${stats('🎯 v0.21の保存予想',f.methods.baseline,s.baseline)}${methods.map(([k,l])=>stats(l,f.methods[k],s[k])).join('')}</tbody></table></div></div>`}).join('');
+ $('v023Totals').innerHTML=`<div class="card"><h3>📊 累積成績（判定可能分のみ）</h3><div class="tablewrap"><table><thead><tr><th>方法</th><th>ペカ基準</th><th>＋1000枚</th></tr></thead><tbody>${[['baseline','🎯 v0.21'],...methods].map(([k,l])=>{const t=totals[k];return `<tr><td>${safe(l)}</td><td>${t.valid?`${t.hits}/${t.valid} (${(t.hits/t.valid*100).toFixed(1)}%)`:'未判定'}</td><td>${t.diffValid?`${t.diffHits}/${t.diffValid} (${(t.diffHits/t.diffValid*100).toFixed(1)}%)`:'未判定'}</td></tr>`}).join('')}</tbody></table></div><div class="tiny">方式ごとに判定可能台数が異なる場合があります。過去に遡った最適化ではなく、保存時点で凍結した予想だけを集計します。</div></div>`;
+}
+const btn=document.createElement('button');btn.className='btn dark';btn.dataset.view='v023';btn.textContent='🧪 並走検証';$('nav').appendChild(btn);
+const panel=document.createElement('section');panel.className='view';panel.id='v023';panel.innerHTML=`<div class="card"><h2>🧪 v0.23 並走予想・精度比較</h2><div class="notice">既存v0.21の推奨3台をそのまま比較基準にし、改善候補4方式を同じ日に事前固定。未来データは参照しません。既存LABとv0.21予想は変更しません。</div><div class="grid2" style="margin-top:12px"><div><label>比較予想の対象日（明日）</label><input id="v023Date" type="date"></div><div><label>予想を並走保存</label><button class="btn cyan" id="v023Save" style="width:100%">📌 並走予想を固定する</button></div></div><div id="v023Notice" class="notice" style="margin-top:10px">まず「🎯 朝イチ検証」で明日の予想を保存。その後、このタブで並走予想を固定してね。</div><div class="tiny" style="margin-top:8px">比較方式：14日合算重視／14日RB重視／14日推定差枚重視／40:40:20の順位複合。候補条件＝直近14日で同機種の確定データ3日以上・総計7,000G以上・対象日より前の記録だけ。</div><button id="v023Export" class="btn dark" style="margin-top:10px">📤 並走予想JSONをバックアップ</button></div><div id="v023Count" class="tiny" style="margin:10px 0"></div><div id="v023Totals"></div><div id="v023History"></div>`;
+document.querySelector('.wrap').insertBefore(panel,document.querySelector('.footer'));
+$('v023Date').value=dayOffset(todayJST(),1);$('v023Save').onclick=build;$('v023Export').onclick=exportHistory;
+nav();render();const oldRender=renderAll;renderAll=function(){oldRender();render()};Promise.resolve(labStoreInit).then(()=>render()).catch(()=>render());
+document.title='PEKALOG LAB v0.23｜朝イチ並走検証';const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.23｜朝イチ並走検証';
+})();
+</script>
 </body>
 </html>
