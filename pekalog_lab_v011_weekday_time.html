@@ -1631,5 +1631,67 @@ nav();render();const oldRender=renderAll;renderAll=function(){oldRender();render
 document.title='PEKALOG LAB v0.23｜朝イチ並走検証';const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.23｜朝イチ並走検証';
 })();
 </script>
+<script>
+/* PEKALOG v0.24: historical automatic walk-forward, read-only, no manual forecasting. */
+(function(){'use strict';
+const $=id=>document.getElementById(id), N=x=>x==null||x===''?null:(Number.isFinite(+x)?+x:null),
+ safe=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),
+ shift=(s,n)=>{const d=new Date(s+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)},
+ final=r=>r.isFinal===true||r.snapshotType==='historical-final'||r.finalEvidence==='user-confirmed-post-close',
+ M=[['combined','🟠 14日合算'],['rb','🔵 14日RB'],['diff','🟣 14日差枚'],['balanced','🟢 複合40/40/20']];
+let report=null, signature='';
+function compute(){
+ const src=(lab.snapshots||[]).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x.date||'')&&x.machine!=null);
+ const dates=[...new Set(src.map(r=>r.date))].sort(), pairs=new Set(src.map(r=>r.date+'|'+r.machine));
+ const fm=new Map();for(const r of src){if(!final(r))continue;const k=r.date+'|'+String(r.machine), old=fm.get(k);if(!old||(+r.ts||0)>=(+old.ts||0))fm.set(k,r)}
+ const rows=[...fm.values()],byMachine=new Map(),byDate=new Map();for(const r of rows){const m=String(r.machine);if(!byMachine.has(m))byMachine.set(m,[]);byMachine.get(m).push(r);if(!byDate.has(r.date))byDate.set(r.date,[]);byDate.get(r.date).push(r)}for(const rs of byMachine.values())rs.sort((a,b)=>a.date.localeCompare(b.date));
+ const days=[];
+ for(let index=0;index<dates.length;index++){
+  const date=dates[index],result=byDate.get(date)||[];if(index<14||!result.length)continue;
+  const candidates=[];
+  for(const [machine,all] of byMachine){const prev=all.filter(r=>r.date<date);if(!prev.length)continue;const model=prev.at(-1).model;
+   const h=prev.filter(r=>r.model===model&&r.date>=shift(date,-14)&&N(r.totalG)>=1000&&N(r.big)!==null&&N(r.reg)!==null);
+   const g=h.reduce((s,r)=>s+N(r.totalG),0);if(h.length<3||g<7000)continue;
+   const bb=h.reduce((s,r)=>s+N(r.big),0),rb=h.reduce((s,r)=>s+N(r.reg),0),diff=h.filter(r=>N(r.diff)!==null);
+   candidates.push({machine,model,combined:bb+rb?g/(bb+rb):Infinity,rb:rb?g/rb:Infinity,diff:diff.length>=3?diff.reduce((s,r)=>s+N(r.diff),0)/diff.length:null});
+  }
+  if(candidates.length<3)continue;
+  const sort=fn=>candidates.slice().sort((a,b)=>fn(a)-fn(b)||a.machine.localeCompare(b.machine,'ja',{numeric:true}));
+  const ordered={combined:sort(x=>x.combined),rb:sort(x=>x.rb),diff:sort(x=>-(x.diff??-1e12))};
+  const ranks={};for(const key of ['combined','rb','diff'])ranks[key]=new Map(ordered[key].map((x,i)=>[x.machine,i/(candidates.length-1)]));
+  ordered.balanced=sort(x=>.4*ranks.combined.get(x.machine)+.4*ranks.rb.get(x.machine)+.2*ranks.diff.get(x.machine));
+  const outcomes=new Map(result.map(r=>[String(r.machine),r]));
+  function outcome(x){const r=outcomes.get(x.machine);if(!r||r.model!==x.model)return {state:'missing'};const g=N(r.totalG),b=N(r.big),rb=N(r.reg),d=N(r.diff);if(g===null||g<2000||b===null||rb===null)return {state:'insufficient'};return {state:'evaluated',hit:b+rb>0&&g/(b+rb)<=135,profit:d!==null?d>=1000:null,combined:b+rb>0?g/(b+rb):null,diff:d};}
+  const methods={};for(const [key] of M)methods[key]=ordered[key].slice(0,3).map(x=>({machine:x.machine,model:x.model,result:outcome(x)}));
+  days.push({date,available:candidates.length,confirmed:result.length,methods,baseline:candidates.map(x=>({machine:x.machine,model:x.model,result:outcome(x)}))});
+ }
+ const summarize=(ds,k)=>{const a=ds.flatMap(d=>k==='all'?d.baseline:d.methods[k]),v=a.filter(x=>x.result.state==='evaluated'),p=v.filter(x=>x.result.profit!==null);return {chosen:a.length,valid:v.length,hits:v.filter(x=>x.result.hit).length,diffValid:p.length,diffHits:p.filter(x=>x.result.profit).length,unready:a.length-v.length}};
+ const split=Math.floor(days.length*.7);return {quality:{snapshots:src.length,days:dates.length,pairs:pairs.size,finalPairs:fm.size,liveOnly:pairs.size-fm.size,confirmedDates:byDate.size},days,training:days.slice(0,split).length,testing:days.length-split,trainLast:days[split-1]?.date||null,testFirst:days[split]?.date||null,overall:Object.fromEntries([...M,['all','候補全体']].map(([k])=>[k,summarize(days,k)])),holdout:Object.fromEntries([...M,['all','候補全体']].map(([k])=>[k,summarize(days.slice(split),k)]))};
+}
+const rate=(a,b)=>b?`${(100*a/b).toFixed(1)}% (${a}/${b})`:'判定なし';
+function line(label,r){return `<tr><td>${safe(label)}</td><td>${rate(r.hits,r.valid)}</td><td>${rate(r.diffHits,r.diffValid)}</td><td>${r.unready}</td></tr>`}
+function render(){if(!report)return;
+ const q=report.quality;$('v024Status').textContent=`過去のログを自動検証：${q.days}日・${q.pairs}台日／閉店確定 ${q.finalPairs}台日／LIVEのみ ${q.liveOnly}台日。検証対象 ${report.days.length}日。`;
+ const tests=report.holdout;
+ $('v024Summary').innerHTML=`<div class="card"><h3>📊 全期間：上位3台の事後検証</h3><div class="tablewrap"><table><thead><tr><th>抽出方法</th><th>合算1/135以下</th><th>＋1,000枚</th><th>未判定</th></tr></thead><tbody>${[...M,['all','参考：候補全体']].map(([k,label])=>line(label,report.overall[k])).join('')}</tbody></table></div><div class="tiny">全期間は研究用。改善を保証しません。各方式とも対象日以前のデータだけを用い、合算・差枚は当日2,000G以上の確定データでのみ判定。</div></div>`;
+ $('v024Holdout').innerHTML=`<div class="card"><h3>🔍 後半${report.testing}日：時系列の参考検証</h3><div class="tiny">前半${report.training}日と後半${report.testing}日に分割。これは複数方式を同じ全データから選ぶ前の事前固定評価ではありません。</div><div class="tablewrap"><table><thead><tr><th>抽出方法</th><th>合算1/135以下</th><th>＋1,000枚</th><th>未判定</th></tr></thead><tbody>${[...M,['all','候補全体']].map(([k,label])=>line(label,tests[k])).join('')}</tbody></table></div></div>`;
+ const select=$('v024Day');const previous=select.value;select.innerHTML=report.days.slice().reverse().map(x=>`<option value="${x.date}">${x.date}（${x.available}候補／確定${x.confirmed}台）</option>`).join('');if(report.days.some(x=>x.date===previous))select.value=previous;renderDay();
+}
+function renderDay(){if(!report)return;const d=report.days.find(x=>x.date===$('v024Day').value),el=$('v024Detail');if(!d){el.textContent='検証可能な日がありません';return}
+ el.innerHTML=`<div class="tablewrap"><table><thead><tr><th>抽出方法</th><th>上位3台</th><th>ペカ基準</th><th>＋1000枚</th><th>保留</th></tr></thead><tbody>${M.map(([k,label])=>{const a=d.methods[k],v=a.filter(x=>x.result.state==='evaluated'),p=v.filter(x=>x.result.profit!==null);return `<tr><td>${safe(label)}</td><td>${a.map(x=>safe(x.machine)).join(' / ')}</td><td>${v.filter(x=>x.result.hit).length}/${v.length}</td><td>${p.filter(x=>x.result.profit).length}/${p.length}</td><td>${a.length-v.length}</td></tr>`}).join('')}</tbody></table></div>`;
+}
+function run(){try{report=compute();render()}catch(e){$('v024Status').textContent='検証エラー：'+e.message;console.error(e)}}
+function download(name,content,mime){const url=URL.createObjectURL(new Blob([content],{type:mime})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1800)}
+function csv(){if(!report)return;const a=[['日付','方法','推奨台','合算的中','合算判定','差枚1000達成','差枚判定','未判定']];for(const d of report.days)for(const [k,label] of M){const t=d.methods[k],v=t.filter(x=>x.result.state==='evaluated'),p=v.filter(x=>x.result.profit!==null);a.push([d.date,label,t.map(x=>x.machine).join('/'),v.filter(x=>x.result.hit).length,v.length,p.filter(x=>x.result.profit).length,p.length,t.length-v.length])}download('pekalog_v024_automatic_walkforward.csv','\ufeff'+a.map(r=>r.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(',')).join('\r\n'),'text/csv;charset=utf-8')}
+const btn=document.createElement('button');btn.className='btn dark';btn.dataset.view='v024';btn.textContent='🔬 自動ログ検証';$('nav').appendChild(btn);
+const panel=document.createElement('section');panel.className='view';panel.id='v024';panel.innerHTML=`<div class="card"><h2>🔬 自動ログ検証 v0.24</h2><div class="notice">入力・前日固定は不要。保存済みLABの履歴から日別に候補を再現して、当日の確定データで検証します。既存の保存データや予想記録は変更しません。</div><p id="v024Status" class="tiny">LAB履歴を確認中...</p><div class="tiny">過去の再現検証と、実際に前日保存した予想は別物。予想対象日以降の情報は使わず、未収集・LIVEのみは不的中に含めません。</div><button class="btn dark" id="v024Refresh">🔄 最新ログで再計算</button> <button class="btn dark" id="v024Csv">📥 日別結果をCSV保存</button></div><div id="v024Summary"></div><div id="v024Holdout"></div><div class="card"><h3>📅 日別の自動抽出結果</h3><label>確認する日付</label><select id="v024Day" style="max-width:100%;margin:8px 0"></select><div id="v024Detail"></div></div>`;
+document.querySelector('.wrap').insertBefore(panel,document.querySelector('.footer'));
+$('v024Refresh').onclick=run;$('v024Csv').onclick=csv;$('v024Day').onchange=renderDay;
+nav();const oldRender=renderAll;renderAll=function(){oldRender();schedule()};
+let queued=false;function schedule(){if(queued)return;queued=true;Promise.resolve().then(()=>{queued=false;const a=lab.snapshots||[],sig=a.length+'|'+a.reduce((s,r)=>s+(+r.ts||0),0)+'|'+a.reduce((s,r)=>s+(r.isFinal===true?1:0),0);if(sig===signature)return;signature=sig;run()})}
+Promise.resolve(labStoreInit).then(schedule).catch(schedule);schedule();
+document.title='PEKALOG LAB v0.24｜自動ログ検証';const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.24｜自動ログ検証';
+})();
+</script>
 </body>
 </html>
