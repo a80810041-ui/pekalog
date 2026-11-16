@@ -1501,5 +1501,65 @@ document.title='PEKALOG LAB v0.20.1｜入替研究・閉店後取得';const ver=
 })();
 
 </script>
+<script>
+/* PEKALOG v0.21: forecast ledger. Additive only; no mutation of existing LAB records. */
+(function(){
+'use strict';
+const $=id=>document.getElementById(id), KEY='pekalog_forecast_ledger_v021', TODAY=()=>todayJST();
+const htmlSafe=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nextDay=s=>{const d=new Date(s+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+1);return d.toISOString().slice(0,10)};
+const num=x=>x===null||x===undefined||x===''?null:(Number.isFinite(Number(x))?Number(x):null);
+function getLedger(){try{const x=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(x)?x:[]}catch(e){return []}}
+function saveLedger(a){localStorage.setItem(KEY,JSON.stringify(a));}
+function rows(){return finalRows().filter(r=>r.date&&r.machine)}
+function finals(){return rows().filter(r=>r.isFinal===true||r.snapshotType==='historical-final'||r.finalEvidence==='user-confirmed-post-close')}
+function activeMachine(m,date){const a=finals().filter(r=>String(r.machine)===String(m)&&r.date<date).sort((x,y)=>x.date.localeCompare(y.date));return a.at(-1)?.model||null}
+function recentStats(m,model,date){const a=finals().filter(r=>String(r.machine)===String(m)&&r.model===model&&r.date<date&&r.date>=dateMinus(date,14)&&num(r.totalG)>=1000).sort((a,b)=>a.date.localeCompare(b.date));
+ const valid=a.filter(r=>num(r.big)!==null&&num(r.reg)!==null&&num(r.totalG)>0);const g=valid.reduce((s,r)=>s+num(r.totalG),0),b=valid.reduce((s,r)=>s+num(r.big),0),reg=valid.reduce((s,r)=>s+num(r.reg),0);
+ const d=a.filter(r=>num(r.diff)!==null);const dif=d.reduce((s,r)=>s+num(r.diff),0);
+ return {days:valid.length,totalG:g,big:b,reg,regRate:reg?g/reg:null,combo:(b+reg)?g/(b+reg):null,diffDays:d.length,diffAvg:d.length?dif/d.length:null,plusDays:d.filter(r=>num(r.diff)>0).length,pekaPer1000:g?1000*(b+reg)/g:null};}
+function dateMinus(s,n){const d=new Date(s+'T00:00:00Z');d.setUTCDate(d.getUTCDate()-n);return d.toISOString().slice(0,10)}
+function evaluateRow(r){const G=num(r.totalG),big=num(r.big),reg=num(r.reg),diff=num(r.diff);if(G===null||big===null||reg===null||G<2000)return {status:'insufficient',reason:'2,000G未満またはBB/RB欠損'};
+ const combined=big+reg>0?G/(big+reg):Infinity;
+ return {status:'evaluated',G,big,reg,diff,combined,settingProxy:(combined<=135&&reg>0&&G/reg<=340),pekaTarget:combined<=135,profitTarget:diff===null?null:diff>=1000};}
+function buildForecast(){const date=$('forecastTarget').value;if(!date||date<=TODAY()){alert('予想対象日は明日以降を指定してね。予測に当日のデータが混ざらないようにします。');return;}
+ if(date!==nextDay(TODAY())){alert('この版では、予想を凍結する日は「明日」だけに限定しています。');return;}
+ const all=rows();if(all.some(r=>r.date>=date)){alert('対象日以降のデータがLABに存在します。情報漏れ防止のため予想を保存できません。');return;}
+ const ledger=getLedger();if(ledger.some(x=>x.date===date)){alert('この日付の予想は保存済み。上書きしない仕様だよ。');return;}
+ const allMachines=[...new Set(finals().filter(r=>r.date<date).map(r=>String(r.machine)))];if(allMachines.length<1){alert('閉店確定データがありません。');return;}
+ const pm=profileMap();const scored=allMachines.map(machine=>{const p=pm.get(machine),model=activeMachine(machine,date);if(!model)return null;const base=morningCandidate(p,date),st=recentStats(machine,model,date);
+ // Descriptive axis, not an estimated probability. Missing evidence yields no bonus.
+ let quality=50,parts=[];
+ if(st.days>=3&&st.totalG>=7000){
+   if(st.regRate!==null){quality+=Math.max(-15,Math.min(15,(340-st.regRate)/7));parts.push('RB '+Math.round(st.regRate)+'分の1')}
+   if(st.combo!==null){quality+=Math.max(-12,Math.min(12,(145-st.combo)/4));parts.push('合算 '+Math.round(st.combo)+'分の1')}
+ }else parts.push('直近の回転数・日数不足');
+ quality=Math.max(0,Math.min(100,quality));
+ let peka=50;
+ if(st.days>=3&&st.totalG>=7000&&st.pekaPer1000!==null)peka+=Math.max(-25,Math.min(25,(st.pekaPer1000-7)*8));
+ if(st.diffDays>=3){peka+=Math.max(-12,Math.min(12,st.diffAvg/100));parts.push('平均推定差枚 '+Math.round(st.diffAvg)+'枚')}else parts.push('差枚は参考不足');
+ peka=Math.max(0,Math.min(100,peka));
+ const score=Math.round(base.score*.50+quality*.30+peka*.20);
+ return {machine,model,score,settingScore:Math.round(base.score*.60+quality*.40),pekaScore:Math.round(peka),quality:Math.round(quality),days:st.days,totalG:st.totalG,regRate:st.regRate,combo:st.combo,diffDays:st.diffDays,reasons:parts};}).filter(Boolean).sort((a,b)=>b.score-a.score);
+ const now=new Date().toISOString();const forecast={version:1,date,createdAt:now,sourceMaxDate:all.map(r=>r.date).sort().at(-1)||null,method:'v0.21-descriptive-dual-axes',ranked:scored.map((c,i)=>({...c,rank:i+1,recommended:i<3}))};
+ try{saveLedger([...ledger,forecast]);$('forecastStatus').textContent=`✅ ${date}の朝イチ予想を${scored.length}台分保存。上位3台を推奨として凍結したよ。`;render();}catch(e){alert('予測の保存に失敗：'+e.message)}
+}
+function lookupResults(f){const a=finals().filter(r=>r.date===f.date),by=new Map(a.map(r=>[String(r.machine),r]));const joined=f.ranked.map(c=>{const r=by.get(c.machine);if(!r||r.model!==c.model)return {...c,result:{status:'missing',reason:'未取得または機種変更'}};return {...c,result:evaluateRow(r)};});return joined;}
+function render(){const ledger=getLedger().slice().sort((a,b)=>b.date.localeCompare(a.date)),list=$('forecastRows'),status=$('forecastStatus');if(!list)return;
+ if(!ledger.length){list.innerHTML='<div class="empty">まだ予想を凍結していないよ。翌日の予想を保存すると、閉店後のデータと自動照合するよ。</div>';return;}
+ list.innerHTML=ledger.map(f=>{const joined=lookupResults(f),rec=joined.filter(x=>x.recommended),ev=rec.filter(x=>x.result.status==='evaluated'),hits=ev.filter(x=>x.result.pekaTarget).length,missed=joined.filter(x=>!x.recommended&&x.result.status==='evaluated'&&x.result.pekaTarget),notready=joined.filter(x=>x.result.status!=='evaluated').length;
+ return `<div class="card"><h3>📅 ${htmlSafe(f.date)}｜${rec.length}台推奨</h3><div class="tiny">保存日時 ${htmlSafe(f.createdAt)} ／ 予想時点の最終データ ${htmlSafe(f.sourceMaxDate||'なし')}<br>判定：2,000G以上・合算1/135以下。設定確定・個人収支ではないよ。</div><div class="notice" style="margin-top:8px">推奨的中 <b>${hits}/${ev.length}</b>（判定可能分） ／ 見逃し好成績 <b>${missed.length}台</b> ／ 未判定 <b>${notready}台</b></div><div class="tablewrap"><table><thead><tr><th>順位・台</th><th>設定材料</th><th>ペカ・差枚材料</th><th>結果</th></tr></thead><tbody>${joined.slice(0,8).map(x=>{const r=x.result,description=r.status==='missing'?'未収集':r.status==='insufficient'?'判定保留':`合算 1/${Math.round(r.combined)}・${r.pekaTarget?'✅基準達成':'未達'}${r.diff===null?' / 差枚不明':' / 差枚'+Math.round(r.diff)+'枚'}`;return `<tr><td>${x.recommended?'🎯 ':''}${x.rank}位 ${htmlSafe(x.machine)}番<br><span class="tiny">${htmlSafe(MODELS[x.model]||x.model)}</span></td><td>${x.settingScore}/100</td><td>${x.pekaScore}/100</td><td>${description}</td></tr>`}).join('')}</tbody></table></div><div class="tiny">全${joined.length}台を照合し、表示は上位8台。未取得は不的中に数えません。推薦外の成績も検証対象です。</div></div>`}).join('');}
+function exportLedger(){const data=JSON.stringify({kind:'pekalog-forecast-ledger',version:1,forecasts:getLedger()},null,2);const a=document.createElement('a');const url=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.href=url;a.download='pekalog_forecast_ledger_'+TODAY()+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+const navBtn=document.createElement('button');navBtn.className='btn dark';navBtn.dataset.view='forecast';navBtn.textContent='🎯 朝イチ検証';$('nav').appendChild(navBtn);
+const panel=document.createElement('section');panel.id='forecast';panel.className='view';panel.innerHTML=`<div class="card"><h2>🎯 朝イチ予想と答え合わせ v0.21</h2><div class="notice">朝イチ予想を事前に保存して凍結。結果を見て予想を変更できない設計。既存の23台収集・LABバックアップには変更を加えません。</div><div class="grid2" style="margin-top:12px"><div><label>予想対象日（明日）</label><input type="date" id="forecastTarget"></div><div><label>予想を固定する</label><button class="btn cyan" id="forecastSave" style="width:100%">📌 明日の予想を保存</button></div></div><div class="tiny" style="margin-top:9px">設定材料＝過去の推定投入・RB・合算。ペカ・差枚材料＝過去14日のペカ密度・推定差枚。数値は候補比較用スコアであり、勝率や将来の的中確率ではありません。</div><div id="forecastStatus" class="notice" style="margin-top:10px">明日の予想を作成できます。</div><button class="btn dark" id="forecastExport" style="margin-top:10px">📤 予想記録をJSONバックアップ</button></div><div id="forecastRows"></div>`;
+ document.querySelector('.wrap').insertBefore(panel,document.querySelector('.footer'));
+ $('forecastTarget').value=nextDay(TODAY());$('forecastSave').onclick=buildForecast;$('forecastExport').onclick=exportLedger;
+ // Navigation is initialized by existing nav(); allow original event setup to rebind.
+ nav();render();
+ const oldRender=renderAll;renderAll=function(){oldRender();render()};
+ Promise.resolve(labStoreInit).then(()=>render()).catch(()=>render());
+ document.title='PEKALOG LAB v0.21｜朝イチ予想・答え合わせ';const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.21｜朝イチ予測検証';
+})();
+</script>
 </body>
 </html>
