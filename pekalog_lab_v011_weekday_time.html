@@ -1955,5 +1955,75 @@ btn.addEventListener('click',()=>{Promise.resolve().then(refresh)});
 refresh();document.title='PEKALOG LAB v0.26｜多角的総合評価';const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.26｜多角的総合評価';
 })();
 </script>
+
+<!-- PEKALOG MOBILE INTEGRATION v1 -->
+<style id="peka-mini-style">
+@media(max-width:480px){html,body{overflow-x:clip!important}.wrap,.view,.card{max-width:100%!important;min-width:0!important}.nav{flex-wrap:wrap!important}.nav .btn{min-width:0!important;white-space:normal!important}.grid2,.grid3,.grid4{grid-template-columns:repeat(2,minmax(0,1fr))!important}img,canvas,svg{max-width:100%}textarea,pre{max-width:100%;overflow-x:auto}}
+#pMiniBtn{position:fixed;z-index:9990;right:9px;bottom:calc(9px + env(safe-area-inset-bottom));border:0;border-radius:15px;padding:13px 15px;background:#7de3ff;color:#06242b;font:bold 13px -apple-system,BlinkMacSystemFont,'Noto Sans JP',sans-serif;box-shadow:0 5px 20px #0009}
+#pMiniPanel{display:none;position:fixed;inset:0;z-index:9991;background:#0b0d10;color:#f1f8ff;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans JP',sans-serif}
+#pMiniPanel.active{display:block}#pMiniPanel *{box-sizing:border-box}#pMiniPanel .pmwrap{height:100dvh;margin:auto;max-width:480px;display:flex;flex-direction:column;gap:7px;padding:calc(8px + env(safe-area-inset-top)) 11px calc(8px + env(safe-area-inset-bottom));overflow:hidden}
+#pMiniPanel .pmrow{display:flex;align-items:center;justify-content:space-between;gap:7px;min-width:0}#pMiniPanel button{border:1px solid #43506a;background:#263448;color:#fff;font-weight:700;border-radius:10px;padding:10px 8px;font-size:12px;cursor:pointer}#pMiniPanel button.pmactive,#pMiniPanel button.pmprimary{background:#7de3ff;color:#08262b;border-color:#7de3ff}#pMiniPanel button.pmselected{background:#246c63;border-color:#7de3ff}#pMiniPanel .pmrow>.pmgrow{flex:1}#pMiniPanel .pmcard{border:1px solid #303d4e;background:#151d29;border-radius:12px;padding:9px}#pMiniPanel h2{font-size:18px;margin:0}#pMiniPanel small{font-size:11px;color:#b5c6d8}#pMiniPanel .pmstatus{font-size:11px;color:#abc5d9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#pMiniPanel input[type=date]{width:133px;max-width:45%;background:#121c2a;border:1px solid #567;color:white;padding:7px;border-radius:8px;font-size:12px}#pMiniPanel textarea{display:none;margin-top:6px;width:100%;height:66px;background:#0b121b;color:white;border:1px solid #456;border-radius:8px;padding:7px;font-size:12px}#pMiniPanel textarea.pmshow{display:block}#pMiniPanel .pmresults{display:flex;flex-direction:column;flex:1;gap:6px;min-height:0;overflow-y:auto;overflow-x:hidden}#pMiniPanel .pmentry{border:1px solid #36465b;border-radius:11px;padding:10px;background:#192534;display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:12px}#pMiniPanel .pmentry b{font-size:16px}#pMiniPanel .pmentry strong{font-size:22px;color:#7de3ff}#pMiniPanel .pmfoot button{flex:1;padding:9px 3px}#pMiniPanel .pmnote{font-size:10px;color:#a6b7c6}@media(max-height:700px){#pMiniPanel .pmwrap{gap:4px}#pMiniPanel .pmcard{padding:6px}#pMiniPanel .pmentry{padding:6px}}
+</style>
+<button id="pMiniBtn" type="button">🌅 朝イチ・途中参戦</button><section id="pMiniPanel" role="dialog" aria-modal="true" aria-label="PEKALOG簡単分析"><div class="pmwrap">
+<div class="pmrow"><div><h2>🌺 PEKALOG LAB</h2><small>iPhone 12 mini最適化</small></div><button id="pmClose">✕ LABに戻る</button></div>
+<div class="pmrow"><button id="pmMorning" class="pmgrow pmselected">🌅 朝イチ</button><button id="pmLive" class="pmgrow">☀️ 途中参戦</button></div>
+<div class="pmcard"><div class="pmrow"><small>分析対象日</small><input id="pmDate" type="date"><button class="pmprimary" id="pmAnalyze">再分析</button></div><div class="pmstatus" id="pmDescription" style="margin-top:5px">前日までの閉店データ</div></div>
+<div class="pmcard"><div class="pmrow"><b style="font-size:12px">📥 データ取込</b><button id="pmToggle">JSON貼付</button><button id="pmData">取込タブへ</button></div><textarea id="pmPaste" placeholder="PEKALOG収集JSONを貼り付け"></textarea><button id="pmImport" style="display:none;width:100%;margin-top:5px" class="pmprimary">JSONを保存して再分析</button><div id="pmStatus" class="pmstatus" style="margin-top:5px">LABの既存履歴をそのまま利用します</div></div>
+<div class="pmrow"><b style="font-size:13px">🏅 おすすめ TOP 3</b><small>暫定相対スコア</small></div>
+<div id="pmResults" class="pmresults"><div class="pmentry">再分析で表示します</div></div>
+<div class="pmstatus" id="pmWarning">分析データを確認中…</div>
+<div class="pmrow pmfoot"><button class="pmprimary" id="pmSave">📌 予想を保存</button><button id="pmExport">⬇ 予想履歴</button><button id="pmDetails">📊 詳細</button></div>
+<div class="pmnote">予想は当時の根拠とともに別保存。推定差枚や相対スコアは勝率・利益を保証しません。</div>
+</div></section>
+<script id="peka-mini-script">
+(function(){
+'use strict';if(window.__pekaMiniIntegrated)return;window.__pekaMiniIntegrated=true;
+const get=id=>document.getElementById(id),PKEY='pekalog_mode_predictions_v2',T=['651','652','653','655','656','657','658','660','661','662','663','707','708','710','711','712','713','715','716','717','718','720','687'];
+let mode='morning',rankings=[],analysis=null;
+const num=x=>x==null||x===''||!Number.isFinite(Number(x))?0:Number(x);
+const has=x=>x!==null&&x!==undefined&&x!==''&&Number.isFinite(Number(x));
+const lim=(n,l,h)=>Math.min(h,Math.max(l,n));
+const days=(a,b)=>Math.round((Date.parse(a+'T00:00:00Z')-Date.parse(b+'T00:00:00Z'))/86400000);
+const closed=r=>r.isFinal===true||r.snapshotType==='historical-final';
+const nowJapan=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+get('pmDate').value=nowJapan();
+function enter(show){get('pMiniPanel').classList.toggle('active',show);get('pMiniBtn').style.display=show?'none':'';document.body.style.overflow=show?'hidden':'';if(show)analyze();}
+get('pMiniBtn').onclick=()=>enter(true);get('pmClose').onclick=()=>enter(false);
+get('pmData').onclick=()=>{enter(false);document.querySelector('#nav [data-view="data"]')?.click()};
+get('pmDetails').onclick=()=>{enter(false);document.querySelector('#nav [data-view="dash"]')?.click()};
+function select(next){mode=next;get('pmMorning').classList.toggle('pmselected',next==='morning');get('pmLive').classList.toggle('pmselected',next==='live');get('pmDescription').textContent=next==='morning'?'前日までの閉店データ':'当日のLIVEデータ＋過去履歴';analyze()}
+get('pmMorning').onclick=()=>select('morning');get('pmLive').onclick=()=>select('live');get('pmAnalyze').onclick=analyze;get('pmDate').onchange=analyze;
+get('pmToggle').onclick=()=>{const open=get('pmPaste').classList.toggle('pmshow');get('pmImport').style.display=open?'block':'none';};
+get('pmImport').onclick=async()=>{
+ try{const s=get('pmPaste').value.trim();if(!s)throw Error('収集JSONを入力してください');const j=JSON.parse(s);if(typeof importCollectorObject!=='function')throw Error('LABの取込関数が見つかりません');get('pmStatus').textContent='取込中…';const out=await importCollectorObject(j,'mini-mode');get('pmStatus').textContent='✅ 取込完了：'+(out?.count??'データ')+'件';get('pmPaste').value='';get('pmPaste').classList.remove('pmshow');get('pmImport').style.display='none';analyze()}
+ catch(e){get('pmStatus').textContent='⚠️ '+e.message}
+};
+function analyze(){
+ const target=get('pmDate').value||nowJapan();let raw=[];try{raw=Array.isArray(lab.snapshots)?lab.snapshots:[]}catch(e){}
+ const latest=new Map();for(const r of raw){const id=String(r.machine||'').replace(/\D/g,'');if(!T.includes(id)||!r.date||r.demo||r.isDemo)continue;const key=r.date+'|'+id,old=latest.get(key);if(!old||(closed(r)&&!closed(old))||(closed(r)===closed(old)&&num(r.ts)>=num(old.ts)))latest.set(key,r)}
+ const all=[...latest.values()],history=all.filter(r=>closed(r)&&days(target,r.date)>=1&&days(target,r.date)<=14),live=all.filter(r=>r.date===target&&!closed(r));
+ rankings=T.map(id=>{
+  const prior=history.filter(r=>String(r.machine).replace(/\D/g,'')===id),today=live.find(r=>String(r.machine).replace(/\D/g,'')===id);
+  if(mode==='morning'&&prior.length<3||mode==='live'&&!today)return null;
+  const valid=prior.filter(r=>has(r.diff)),rate=valid.length?valid.filter(r=>Number(r.diff)>0).length/valid.length:0,avg=valid.length?valid.reduce((a,r)=>a+Number(r.diff),0)/valid.length:0;
+  let score=50+lim((rate-0.4)*42,-13,13)+lim(avg/200,-12,12),reason='閉店'+prior.length+'日 / プラス率'+Math.round(rate*100)+'%';
+  if(mode==='live'){
+   const g=num(today.totalG),b=num(today.big),r=num(today.reg),delta=has(today.diff)?Number(today.diff):null;
+   const combined=g?(b+r)/g:0,regRate=g?r/g:0;
+   score=50+(score-50)*.25+lim((combined-1/145)*3400,-22,22)+lim((regRate-1/300)*2100,-12,12)+(delta==null?0:lim(delta/150,-13,13))-(g<800?13:0);
+   reason=g+'G / BB'+b+' RB'+r+' / 推定差枚'+(delta==null?'不明':(delta>0?'+':'')+Math.round(delta));
+  }
+  return {machine:id,score:Math.round(lim(score,0,100)),reason,historyDays:prior.length,liveTimestamp:today?.ts||null,sourceType:today?.snapshotType||null};
+ }).filter(Boolean).sort((a,b)=>b.score-a.score).slice(0,3);
+ analysis={mode,target,analyzedAt:new Date().toISOString(),historyLatest:history.map(r=>r.date).sort().at(-1)||null,liveLatest:live.map(r=>r.ts).filter(has).sort((a,b)=>b-a)[0]||null,liveCount:live.length,rankings:rankings.map(x=>({...x})),algorithm:'compact-heuristic-v1'};
+ get('pmResults').innerHTML=rankings.length?rankings.map((r,i)=>'<div class="pmentry"><div><b>'+(i+1)+'位 '+r.machine+'番</b><small style="display:block">'+r.reason+'</small></div><strong>'+r.score+'</strong></div>').join(''):'<div class="pmentry">分析データが不足しています。収集JSONを取り込んでください。</div>';
+ get('pmWarning').textContent=mode==='morning'?'閉店データ最新：'+(analysis.historyLatest||'なし')+' ／ 3日以上の履歴が必要':'当日LIVE '+live.length+'/23台・最終 '+(analysis.liveLatest?new Date(analysis.liveLatest).toLocaleString('ja-JP'):'未取得');
+ get('pmSave').disabled=!rankings.length;
+}
+get('pmSave').onclick=()=>{if(!analysis||!rankings.length)return;try{const old=JSON.parse(localStorage.getItem(PKEY)||'[]');old.push(analysis);localStorage.setItem(PKEY,JSON.stringify(old));get('pmStatus').textContent='📌 予想記録を保存（計'+old.length+'件）'}catch(e){get('pmStatus').textContent='⚠️ 保存できませんでした。端末容量を確認してください'}};
+get('pmExport').onclick=()=>{const data={kind:'pekalog-prediction-history',version:2,exportedAt:new Date().toISOString(),predictions:JSON.parse(localStorage.getItem(PKEY)||'[]')};const u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download='pekalog_predictions_backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};
+})();
+</script>
+<!-- END PEKALOG MOBILE INTEGRATION v1 -->
 </body>
 </html>
