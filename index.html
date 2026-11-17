@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.6.7 BONUS EDIT</title>
+<title>ペカログ JUGGLER EDITION v3.6.8 MOBILE</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -62,6 +62,48 @@ input,select,textarea{width:100%;background:#0d1117;color:#fff;border:1px solid 
 .quickHint{text-align:center;font-size:12px;color:#91a0b2;margin-top:8px}
 .photoDelta{background:#0b1118;border:1px solid #2e3b49;border-radius:12px;padding:10px;margin-top:9px;line-height:1.65}
 @media(max-width:560px){.photoGrid{grid-template-columns:1fr}.photoFields{grid-template-columns:repeat(2,1fr)}}
+
+
+
+/* PEKALOG JUGGLER v3.6.8 | iPhone 12 mini layout: presentation only */
+html,body{max-width:100%;overflow-x:clip}
+.wrap,.card,.notice,.stat,.item,.archiveItem,.archiveJudge,.shareBox{min-width:0;max-width:100%}
+.wrap *{overflow-wrap:anywhere}
+@media(max-width:600px){
+ .wrap{width:100%;max-width:100%;padding:9px 9px calc(25px + env(safe-area-inset-bottom))}
+ header{align-items:center;gap:5px;flex-wrap:wrap;margin:5px 2px 9px}
+ h1{font-size:22px;line-height:1.2}.ver{font-size:11px;white-space:normal;text-align:right}
+ .sub{font-size:11px}
+ .card{border-radius:14px;margin:8px 0;padding:11px}
+ .grid2,.grid3,.grid4,.photoFields,.quickFlags{gap:7px;min-width:0}
+ .grid2>* ,.grid3>* ,.grid4>*,.photoFields>*,.quickFlags>*{min-width:0}
+ .grid3{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .photoGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .photoSlot{padding:7px;min-width:0}
+ .photoFields{grid-template-columns:1fr}
+ .stat{min-height:60px;padding:8px;border-radius:11px}
+ .v{font-size:18px;overflow-wrap:anywhere}
+ .btn{max-width:100%;min-width:0;padding:11px 7px;font-size:15px;border-radius:11px;white-space:normal;line-height:1.3}
+ .btn.small{font-size:12px;padding:9px 7px}
+ .quickBonus{font-size:20px!important;padding:14px 7px!important;min-height:55px}
+ .modelBtn{min-height:48px;font-size:13px}
+ input,select,textarea{max-width:100%;min-width:0;font-size:16px;padding:9px;border-radius:9px}
+ .item,.archiveTop,.archiveJudgeTop{min-width:0;flex-wrap:wrap}
+ .item>*,.archiveTop>*,.archiveJudgeTop>*{min-width:0;max-width:100%}
+ .hist{max-height:290px}
+ .shareBox,pre,code{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;max-width:100%}
+ img,svg,canvas,video{max-width:100%;height:auto}
+ table{max-width:100%;width:100%;table-layout:fixed}
+ td,th{overflow-wrap:anywhere;word-break:break-word}
+ .settingRow{grid-template-columns:38px minmax(0,1fr) 47px;gap:5px}
+ .syncDialog{max-width:100%;padding:12px}
+}
+.archiveMobileHead{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.archiveMobileHead h3{margin:0}
+.archiveMobileToggle{border:1px solid #465970;background:#243348;color:#eff7ff;padding:9px 11px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer}
+.archiveMobileBody.isClosed{display:none}
+.archiveMobileSummary{font-size:11px;color:#a7b8cc;margin:8px 0 2px}
 
 </style>
 
@@ -1145,6 +1187,33 @@ function startTurkeyCollection(){
   window.location.assign(url);
 }
 window.addEventListener('load',updateTurkeySyncStatus);
+</script>
+
+
+<script id="pekalog-mobile-v368">
+(function(){
+ 'use strict';
+ const install=()=>{
+  const heading=[...document.querySelectorAll('.card > h3')].find(h=>h.textContent.includes('保存済み実戦'));
+  if(!heading || heading.closest('.card').dataset.mobileArchiveReady)return;
+  const card=heading.closest('.card');card.dataset.mobileArchiveReady='1';
+  const head=document.createElement('div');head.className='archiveMobileHead';
+  const button=document.createElement('button');button.type='button';button.className='archiveMobileToggle';button.setAttribute('aria-expanded','false');button.textContent='履歴を開く ▾';
+  const body=document.createElement('div');body.className='archiveMobileBody isClosed';body.id='pekaArchiveMobileBody';
+  heading.before(head);head.append(heading,button);
+  while(head.nextSibling)body.appendChild(head.nextSibling);
+  card.append(body);
+  const summary=document.createElement('div');summary.className='archiveMobileSummary';summary.textContent='保存データはそのまま。必要なときだけ一覧を表示';
+  head.after(summary);
+  const setOpen=open=>{body.classList.toggle('isClosed',!open);button.setAttribute('aria-expanded',String(open));button.textContent=open?'履歴を閉じる ▴':'履歴を開く ▾';};
+  button.onclick=()=>setOpen(body.classList.contains('isClosed'));
+  // Open archive automatically when user follows an anchor, leaving stored records untouched.
+  if(location.hash==='#archives')setOpen(true);
+  const version=document.querySelector('header .ver');if(version)version.textContent='v3.6.8 📱🍇✏️';
+  document.title='ペカログ JUGGLER EDITION v3.6.8 MOBILE';
+ };
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
 </script>
 
 </body></html>
