@@ -2025,5 +2025,15 @@ get('pmExport').onclick=()=>{const data={kind:'pekalog-prediction-history',versi
 })();
 </script>
 <!-- END PEKALOG MOBILE INTEGRATION v1 -->
+
+<!-- PEKALOG v0.27 version label fix -->
+<script>
+(function(){
+ const label='v0.27｜朝イチ・途中参戦統合版';
+ document.title='PEKALOG LAB '+label;
+ const header=document.querySelector('header .ver');
+ if(header)header.textContent=label;
+})();
+</script>
 </body>
 </html>
