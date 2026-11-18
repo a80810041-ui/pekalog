@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.6.8 MOBILE</title>
+<title>ペカログ JUGGLER EDITION v3.6.9 MOBILE NAV</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -130,17 +130,25 @@ html,body{max-width:100%;overflow-x:clip}
 })();
 </script>
 
+
+<style id="pekalog-v369-topnav-css">
+.peka-topnav{position:sticky;top:0;z-index:1000;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:calc(6px + env(safe-area-inset-top,0px)) 0 8px;background:#0b0d10;isolation:isolate}
+.peka-topnav a{display:block;text-align:center;text-decoration:none;border:1px solid #3b5060;color:#eaf5ff;border-radius:12px;padding:11px 8px;font-size:15px;font-weight:800;background:#1c2736;white-space:nowrap}
+.peka-topnav a[aria-current="page"]{background:#236d60;border-color:#76e2bc;color:#fff}
+@media(max-width:390px){.peka-topnav{gap:6px}.peka-topnav a{padding:11px 6px;font-size:14px}}
+</style>
 </head>
 <body>
 <div class="wrap">
-<header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍇🍒✨</div></div><div class="ver">v3.6.7 🍇✏️</div>
+ <nav class="peka-topnav" aria-label="実戦とLABの切替"><a aria-current="page" href="./index.html">🎰 実践</a><a href="./pekalog_lab_v011_weekday_time.html">🧪 ラボ</a></nav>
+ <header>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍇🍒✨</div></div><div class="ver">v3.6.9 📱🍇✏️</div>
 </header>
 
 <div class="card">
  <h3>今日は何ジャグ？</h3>
  <div id="modelPicker" class="grid3"></div>
- <div class="tiny" style="margin-top:8px">6機種対応。今後は機種データを追加するだけで選択肢も自動増殖。</div>
+ <div class="tiny" style="margin-top:8px">ターキーで使う機種を表示。以前の実戦履歴はそのまま読み込めます。</div>
  <div class="tiny" id="modelSpec" style="margin-top:8px"></div>
 </div>
 
@@ -325,19 +333,6 @@ html,body{max-width:100%;overflow-x:clip}
 </div>
 
 <div class="card">
- <h3>🐻 稼働報告</h3>
- <div class="grid2">
-  <button class="btn cyan small" onclick="buildShare('途中')">途中経過を作る</button>
-  <button class="btn violet small" onclick="buildShare('最終')">最終報告を作る</button>
- </div>
- <div id="shareBox" class="shareBox" style="margin-top:9px">ここに稼働報告が出るよ。</div>
- <div class="grid2" style="margin-top:9px">
-  <button class="btn green small" onclick="shareReport()">📣 共有する</button>
-  <button class="btn dark small" onclick="copyReport()">📋 コピー</button>
- </div>
-</div>
-
-<div class="card">
  <h3>🧪 PEKALOG LAB</h3>
  <div class="notice">朝は前日の答え合わせ。曜日・時間帯カルテも自動更新。打ちに行く日は道中で最新LIVEを取って「今日座るならコレ！」へ。</div>
  <div id="turkeySyncStatus" class="notice" style="margin-top:9px">🦃 最終収集：確認中…</div>
@@ -449,7 +444,7 @@ function saveMeta(){state.date=$('date').value;state.shop=$('shop').value;state.
 function persist(){localStorage.setItem(KEY,JSON.stringify(state))}
 function renderModelPicker(){
  const picker=$('modelPicker');
- picker.innerHTML=Object.entries(MODELS).map(([id,m]) =>
+ picker.innerHTML=Object.entries(MODELS).filter(([id])=>!(['happy3','ultra'].includes(id))).map(([id,m]) =>
   `<button id="btn-${id}" class="btn modelBtn ${state.model===id?'active':''}" onclick="setModel('${id}')">${m.short||m.name}</button>`
  ).join('');
 }
@@ -1210,7 +1205,7 @@ window.addEventListener('load',updateTurkeySyncStatus);
   // Open archive automatically when user follows an anchor, leaving stored records untouched.
   if(location.hash==='#archives')setOpen(true);
   const version=document.querySelector('header .ver');if(version)version.textContent='v3.6.8 📱🍇✏️';
-  document.title='ペカログ JUGGLER EDITION v3.6.8 MOBILE';
+  document.title='ペカログ JUGGLER EDITION v3.6.9 MOBILE NAV';
  };
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
