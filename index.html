@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>ペカログ JUGGLER EDITION v3.6.9 MOBILE NAV</title>
+<title>ペカログ JUGGLER EDITION v3.6.11 CLEAN NAV</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -105,7 +105,7 @@ html,body{max-width:100%;overflow-x:clip}
 .archiveMobileBody.isClosed{display:none}
 .archiveMobileSummary{font-size:11px;color:#a7b8cc;margin:8px 0 2px}
 
-</style>
+select#machine{width:100%;max-width:100%;min-width:0}input#investmentYen,input#returnYen{width:100%;min-width:0}</style>
 
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -142,7 +142,7 @@ html,body{max-width:100%;overflow-x:clip}
 <div class="wrap">
  <nav class="peka-topnav" aria-label="実戦とLABの切替"><a aria-current="page" href="./index.html">🎰 実践</a><a href="./pekalog_lab_v011_weekday_time.html">🧪 ラボ</a></nav>
  <header>
- <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍇🍒✨</div></div><div class="ver">v3.6.9 📱🍇✏️</div>
+ <div><h1>🎰 ペカログ</h1><div class="sub">JUGGLER EDITION 🍇🍒✨</div></div><div class="ver">v3.6.11 📱🍇✏️</div>
 </header>
 
 <div class="card">
@@ -156,10 +156,13 @@ html,body{max-width:100%;overflow-x:clip}
  <div class="grid2">
   <div><label>日付</label><input id="date" type="date"></div>
   <div><label>店名</label><input id="shop" placeholder="例：ターキー"></div>
-  <div><label>台番号</label><input id="machine" inputmode="numeric" placeholder="658"></div>
-  <div><label>差枚（任意）</label><input id="diffCoins" inputmode="numeric" placeholder="+1937 / -850"></div>
+  <div><label>台番号</label><select id="machine" aria-label="台番号"><option value="">台番号を選択</option><option value="651">651番</option><option value="652">652番</option><option value="653">653番</option><option value="655">655番</option><option value="656">656番</option><option value="657">657番</option><option value="658">658番</option><option value="660">660番</option><option value="661">661番</option><option value="662">662番</option><option value="663">663番</option><option value="707">707番</option><option value="708">708番</option><option value="710">710番</option><option value="711">711番</option><option value="712">712番</option><option value="713">713番</option><option value="715">715番</option><option value="716">716番</option><option value="717">717番</option><option value="718">718番</option><option value="720">720番</option><option value="687">687番 🌺</option><option value="other">その他（手入力）</option></select><input id="machineOther" inputmode="numeric" placeholder="その他の台番号" style="display:none;margin-top:6px" aria-label="その他の台番号"></div>
+  <div><label>差枚（任意・従来どおり）</label><input id="diffCoins" inputmode="numeric" placeholder="+1937 / -850"></div>
+  <div><label>💴 投資合計（円）</label><input id="investmentYen" type="number" min="0" step="100" inputmode="numeric" placeholder="例：5000"></div>
+  <div><label>💰 回収合計（円）</label><input id="returnYen" type="number" min="0" step="100" inputmode="numeric" placeholder="例：15500"></div>
+  <div class="notice" style="grid-column:1/-1;margin-top:0" id="yenProfit" role="status" aria-live="polite">収支：投資と回収を入力すると自動計算</div>
  </div>
- <div class="notice" style="margin-top:9px">⏰ 実戦時刻は自動記録。過去の実戦を後から登録した場合だけ、分かる範囲で時刻を補正できるよ。空欄は「不明」として扱う。</div>
+ <div class="notice" style="margin-top:9px">💡 時刻だけでは差枚や収支は算出できません。円収支は「回収合計 − 投資合計」で計算。差枚は必要なら別途入力できます。<div style="height:6px"></div>⏰ 実戦時刻は自動記録。過去の実戦を後から登録した場合だけ、分かる範囲で時刻を補正できるよ。空欄は「不明」として扱う。</div>
   <div class="grid2" style="margin-top:9px"><div><label>実際の着席時刻（任意）</label><input id="actualStartTime" type="datetime-local"></div><div><label>実際のヤメ時刻（任意）</label><input id="actualEndTime" type="datetime-local"></div></div>
   <div id="machinePosition" class="tiny" style="margin-top:7px"></div>
  <div style="margin-top:9px"><label>実戦メモ</label><input id="sessionMemo" placeholder="朝イチ / 据え置きっぽい / 🐻と並び打ち等"></div>
@@ -333,14 +336,11 @@ html,body{max-width:100%;overflow-x:clip}
 </div>
 
 <div class="card">
- <h3>🧪 PEKALOG LAB</h3>
- <div class="notice">朝は前日の答え合わせ。曜日・時間帯カルテも自動更新。打ちに行く日は道中で最新LIVEを取って「今日座るならコレ！」へ。</div>
+ <h3>🦃 ターキーデータ収集</h3>
+ <div class="notice">打ちに行く前に最新データを収集。分析結果は上部の「🧪 ラボ」タブで確認できるよ。</div>
  <div id="turkeySyncStatus" class="notice" style="margin-top:9px">🦃 最終収集：確認中…</div>
  <div id="turkeySyncHint" class="tiny" style="margin-top:6px"></div>
- <div class="grid2" style="margin-top:9px">
-  <button class="btn cyan small" onclick="startTurkeyCollection()">🦃 最新データを収集</button>
-  <button class="btn violet small" onclick="location.href='./pekalog_lab_v011_weekday_time.html'">🧪 LABを開く</button>
- </div>
+ <button class="btn cyan small wide" style="margin-top:9px" onclick="startTurkeyCollection()">🦃 最新データを収集</button>
 </div>
 
 <div class="card">
@@ -360,7 +360,7 @@ html,body{max-width:100%;overflow-x:clip}
 <div class="card"><h3>保存済み実戦 🧠</h3><div class="notice" style="margin-bottom:9px">保存一覧だけで設定判別を確認。BB・REG確率による相対整合度なので、短時間は「材料少」として見る。</div><div id="archives"></div></div>
 
 <div class="footer">
- ペカログは端末ブラウザ内に自動保存。6機種対応。設定推測は参考用です。<br>
+ ペカログは端末ブラウザ内に自動保存。ターキー向け機種を表示。設定推測は参考用です。<br>
  スマホで使うときはSafari/Chromeで開くと入力・保存・共有が使いやすいです。
 </div>
 </div>
@@ -376,9 +376,8 @@ html,body{max-width:100%;overflow-x:clip}
    <button class="btn cyan" onclick="startTurkeyAutoSync()">収集を始める</button>
    <button class="btn dark" onclick="closeTurkeySyncPrompt()">今はしない</button>
   </div>
-  <div id="turkeySyncDoneButtons" class="grid2 hidden">
-   <button class="btn green" onclick="closeTurkeySyncPrompt()">閉じる</button>
-   <button class="btn violet" onclick="location.href='./pekalog_lab_v011_weekday_time.html'">LABを見る</button>
+  <div id="turkeySyncDoneButtons" class="hidden">
+   <button class="btn green wide" onclick="closeTurkeySyncPrompt()">閉じる（分析は上部のラボタブへ）</button>
   </div>
  </div>
 </div>
@@ -436,11 +435,27 @@ if(state.grapeBaseG===undefined)state.grapeBaseG=null;
 if(!state.lamp) state.lamp={start:null,end:null};
 let pendingType=null,lastReport='';
 
-function blankState(){return {actualStartTime:'',actualEndTime:'',model:'gogo3',date:new Date().toISOString().slice(0,10),shop:'',machine:'',diffCoins:'',sessionMemo:'',endReason:'',startedAt:Date.now(),totalG:0,currentG:0,big:0,reg:0,cherry:0,grape:0,grapeBaseG:null,history:[],quickFlags:{cherry:false,premium:false},lamp:{start:null,end:null}}}
+function pekaTodayJST(){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
+function blankState(){return {actualStartTime:'',actualEndTime:'',model:'gogo3',date:pekaTodayJST(),shop:'',machine:'',diffCoins:'',investmentYen:'',returnYen:'',sessionMemo:'',endReason:'',startedAt:Date.now(),totalG:0,currentG:0,big:0,reg:0,cherry:0,grape:0,grapeBaseG:null,history:[],quickFlags:{cherry:false,premium:false},lamp:{start:null,end:null}}}
 function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function specs(){const a=MODELS[state.model].spec;return [0,1,2,3,4,5].map(i=>({s:i+1,bb:a[i*3],rb:a[i*3+1],all:a[i*3+2]}))}
 function rate(n){return n>0&&state.totalG>0?'1/'+(state.totalG/n).toFixed(1):'-'}
-function saveMeta(){state.date=$('date').value;state.shop=$('shop').value;state.machine=$('machine').value;state.diffCoins=$('diffCoins').value;state.sessionMemo=$('sessionMemo').value;state.endReason=$('endReason').value;state.actualStartTime=$('actualStartTime').value;state.actualEndTime=$('actualEndTime').value;persist()}
+function pekaMachineValue(){const selected=$('machine').value;return selected==='other'?$('machineOther').value.trim():selected}
+function pekaRenderYenProfit(){
+ const a=$('investmentYen').value,b=$('returnYen').value,n=$('yenProfit');
+ if(a===''||b===''){n.textContent='収支：投資・回収を入力すると自動計算（差枚とは別）';return}
+ const x=Number(a),y=Number(b);
+ if(!Number.isFinite(x)||!Number.isFinite(y)||x<0||y<0){n.textContent='金額を確認してください';return}
+ const p=y-x;n.textContent='💴 収支 '+(p>0?'+':'')+p.toLocaleString('ja-JP')+'円（回収 − 投資）';
+ n.style.color=p>=0?'#58e39a':'#ff9b9b';
+}
+function pekaSetMachineControl(value){
+ const select=$('machine'),other=$('machineOther');const v=String(value||'');
+ if(!v){select.value='';other.value='';other.style.display='none'}
+ else if([...select.options].some(o=>o.value===v)){select.value=v;other.value='';other.style.display='none'}
+ else {select.value='other';other.value=v;other.style.display='block'}
+}
+function saveMeta(){state.date=$('date').value;state.shop=$('shop').value;state.machine=pekaMachineValue();state.diffCoins=$('diffCoins').value;state.investmentYen=$('investmentYen').value;state.returnYen=$('returnYen').value;state.sessionMemo=$('sessionMemo').value;state.endReason=$('endReason').value;state.actualStartTime=$('actualStartTime').value;state.actualEndTime=$('actualEndTime').value;persist()}
 function persist(){localStorage.setItem(KEY,JSON.stringify(state))}
 function renderModelPicker(){
  const picker=$('modelPicker');
@@ -456,7 +471,7 @@ function updatePremiumOptions(){
 function render(){
  renderModelPicker();
  const sp=specs();$('modelSpec').textContent=`${MODELS[state.model].name}｜設定1 合算 1/${sp[0].all} → 設定6 1/${sp[5].all}`;
- $('actualStartTime').value=state.actualStartTime||'';$('actualEndTime').value=state.actualEndTime||'';$('date').value=state.date||new Date().toISOString().slice(0,10);$('shop').value=state.shop||'';$('machine').value=state.machine||'';$('diffCoins').value=state.diffCoins||'';$('sessionMemo').value=state.sessionMemo||'';$('endReason').value=state.endReason||'';
+ $('actualStartTime').value=state.actualStartTime||'';$('actualEndTime').value=state.actualEndTime||'';$('date').value=state.date||pekaTodayJST();$('shop').value=state.shop||'';pekaSetMachineControl(state.machine);$('diffCoins').value=state.diffCoins||'';$('investmentYen').value=state.investmentYen??'';$('returnYen').value=state.returnYen??'';pekaRenderYenProfit();$('sessionMemo').value=state.sessionMemo||'';$('endReason').value=state.endReason||'';
  const pos=$('machinePosition');if(pos){const rr=turkeyRoleTags(state.machine);pos.innerHTML=rr.length?`🗺 ターキー配置：${rr.map(x=>`<span class="judgeTag">${esc(x)}</span>`).join(' ')}`:''}
  $('totalG').textContent=state.totalG;$('currentG').textContent=state.currentG;$('bigCount').textContent=state.big;$('regCount').textContent=state.reg;
  $('bigRate').textContent=rate(state.big);$('regRate').textContent=rate(state.reg);$('allRate').textContent=rate(state.big+state.reg);$('maxHamar').textContent=Math.max(0,state.currentG,...state.history.map(x=>x.g));
@@ -876,9 +891,10 @@ function archiveSession(){
  const status=$('archiveSaveStatus');
  const say=(message,ok)=>{if(status){status.textContent=message;status.style.color=ok?'#58e39a':'#ff9b9b';}};
  try{
-  ['date','shop','machine','diffCoins','sessionMemo','endReason','actualStartTime','actualEndTime'].forEach(k=>{
+  ['date','shop','diffCoins','investmentYen','returnYen','sessionMemo','endReason','actualStartTime','actualEndTime'].forEach(k=>{
    const el=$(k);if(el)state[k]=el.value;
   });
+  state.machine=pekaMachineValue();
   if(!(Number(state.totalG)>0)&&!(state.history||[]).length){
    say('⚠️ 総回転またはボーナス履歴が必要だよ。',false);
    alert('まだ保存する実戦データがないよ');return;
@@ -918,7 +934,7 @@ function archiveSession(){
 }
 function renderArchives(){
  const a=JSON.parse(localStorage.getItem(ARCH)||'[]');
- $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">${esc(x.shop||'')} 台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}${x.endReason?` / ${esc(x.endReason)}`:''}</div>${turkeyRoleHtml(x.machine)}</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button><button class="btn small" style="background:#55212b;color:#ffe3e7" onclick="deleteArchive(${JSON.stringify(x.id)})">🗑️ 削除</button></div></div>${archiveJudgeHtml(x)}</div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'
+ $('archives').innerHTML=a.length?a.map(x=>`<div class="archiveItem"><div class="archiveTop"><div><b>${esc(x.date||'-')} ${esc((MODELS[x.model]||MODELS.gogo3).name)}</b><div class="tiny">${esc(x.shop||'')} 台${esc(x.machine||'-')} / ${x.totalG}G / BB${x.big} RB${x.reg}${x.diffCoins!==''?` / ${Number(x.diffCoins)>0?'+':''}${esc(x.diffCoins)}枚`:''}${x.investmentYen!==undefined&&x.investmentYen!==''&&x.returnYen!==undefined&&x.returnYen!==''?` / 収支${Number(x.returnYen)-Number(x.investmentYen)>=0?'+':''}${(Number(x.returnYen)-Number(x.investmentYen)).toLocaleString('ja-JP')}円`:''}${x.endReason?` / ${esc(x.endReason)}`:''}</div>${turkeyRoleHtml(x.machine)}</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn dark small" onclick="loadArchive(${x.id})">開く</button><button class="btn small" style="background:#55212b;color:#ffe3e7" onclick="deleteArchive(${JSON.stringify(x.id)})">🗑️ 削除</button></div></div>${archiveJudgeHtml(x)}</div>`).join(''):'<div class="tiny">保存済み実戦なし</div>'
 }
 function deleteArchive(id){
  try{
@@ -968,7 +984,7 @@ function newSession(){
  render();
  window.scrollTo({top:0,behavior:'smooth'});
 }
-['date','shop','machine','diffCoins','sessionMemo','endReason','actualStartTime','actualEndTime'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='actualStartTime'||id==='actualEndTime')state[id+'Source']='manual';saveMeta();if(id==='machine'){const rr=turkeyRoleTags(state.machine),pos=$('machinePosition');if(pos)pos.innerHTML=rr.length?`🗺 ターキー配置：${rr.map(x=>`<span class="judgeTag">${esc(x)}</span>`).join(' ')}`:''}}));
+['date','shop','machine','machineOther','diffCoins','investmentYen','returnYen','sessionMemo','endReason','actualStartTime','actualEndTime'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='actualStartTime'||id==='actualEndTime')state[id+'Source']='manual';if(id==='machine'){$('machineOther').style.display=$('machine').value==='other'?'block':'none'}saveMeta();if(id==='investmentYen'||id==='returnYen')pekaRenderYenProfit();if(id==='machine'||id==='machineOther'){const rr=turkeyRoleTags(state.machine),pos=$('machinePosition');if(pos)pos.innerHTML=rr.length?`🗺 ターキー配置：${rr.map(x=>`<span class="judgeTag">${esc(x)}</span>`).join(' ')}`:''}}));
 updatePremiumOptions();render();
 </script>
 
@@ -1204,8 +1220,8 @@ window.addEventListener('load',updateTurkeySyncStatus);
   button.onclick=()=>setOpen(body.classList.contains('isClosed'));
   // Open archive automatically when user follows an anchor, leaving stored records untouched.
   if(location.hash==='#archives')setOpen(true);
-  const version=document.querySelector('header .ver');if(version)version.textContent='v3.6.9 📱🍇✏️';
-  document.title='ペカログ JUGGLER EDITION v3.6.9 MOBILE NAV';
+  const version=document.querySelector('header .ver');if(version)version.textContent='v3.6.11 📱🍇✏️';
+  document.title='ペカログ JUGGLER EDITION v3.6.11 CLEAN NAV';
  };
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
