@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>PEKALOG LAB v0.18｜ランキング＆店のバイオリズム</title>
+<title>PEKALOG LAB v0.28｜スマホ検証・店傾向統合版</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -44,10 +44,40 @@ label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px} input,s
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PEKALOG LAB">
+
+<style id="pekalog-v028-mobile-css">
+.peka-topnav{position:sticky;top:0;z-index:2000;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:calc(6px + env(safe-area-inset-top,0px)) 0 8px;background:#0b0d10}
+.peka-topnav a{text-decoration:none;text-align:center;border:1px solid #3b5060;border-radius:12px;padding:11px 5px;background:#1c2736;color:#f2f8ff;font-size:15px;font-weight:800}
+.peka-topnav a[aria-current="page"]{background:#236d60;border-color:#76e2bc}
+@media(max-width:600px){
+ html,body{max-width:100%;overflow-x:clip!important}
+ .wrap,.view,.card,#nav,.nav,.notice,.list,.stat,.labGraph,.labTable,.v243-card{max-width:100%!important;min-width:0!important;box-sizing:border-box}
+ .wrap{padding-left:9px!important;padding-right:9px!important}
+ .view .card,.view .card *{overflow-wrap:anywhere}
+ #nav{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;overflow:visible!important}
+ #nav .btn{width:100%!important;min-width:0!important;white-space:normal!important;font-size:12px!important;padding:10px 5px!important;line-height:1.3}
+ .grid2,.grid3,.grid4,.pickGrid,.v026-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;min-width:0!important}
+ .grid2>*,.grid3>*,.grid4>*,.pickGrid>*,.v026-stats>*{min-width:0!important;max-width:100%!important}
+ input,select,textarea{max-width:100%!important;min-width:0!important;box-sizing:border-box}
+ pre,code{white-space:pre-wrap!important;overflow-wrap:anywhere!important}
+ img,canvas,svg{max-width:100%!important;height:auto}
+ .labGraph,.labTable,.tableWrap,.tableScroll,.v026-table-wrap,[class*="table-wrap"],[class*="tableWrap"]{overflow-x:hidden!important;max-width:100%!important}
+ .peka-stack-table{display:block!important;width:100%!important;max-width:100%!important;table-layout:fixed!important;border-collapse:separate!important}
+ .peka-stack-table thead{display:none!important}
+ .peka-stack-table tbody{display:block!important;width:100%!important}
+ .peka-stack-table tr{display:block!important;margin:7px 0!important;border:1px solid #374455!important;border-radius:12px!important;padding:7px 9px!important;background:#18202b!important}
+ .peka-stack-table td{display:grid!important;grid-template-columns:minmax(0,42%) minmax(0,58%);gap:5px;align-items:start;overflow-wrap:anywhere;white-space:normal!important;width:100%!important;max-width:100%!important;padding:5px 2px!important;text-align:right!important;border:0!important;font-size:12px!important}
+ .peka-stack-table td:before{content:attr(data-peka-label);text-align:left;color:#9aafc3;font-size:11px;font-weight:700}
+ .peka-stack-table td+td{border-top:1px solid #283545!important}
+ .peka-stack-table th{white-space:normal!important}
+ .v026-status,.labMeta{overflow-wrap:anywhere}
+}
+</style>
 </head>
 <body>
 <div class="wrap">
-<header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.18｜ランキング＆店のバイオリズム</div></header>
+ <nav class="peka-topnav" aria-label="実戦とLABの切替"><a href="./index.html">🎰 実践</a><a href="./pekalog_lab_v011_weekday_time.html" aria-current="page">🧪 ラボ</a></nav>
+ <header><div><h1>🧪 PEKALOG LAB</h1><div class="sub">TURKEY / JUGGLER RESEARCH</div></div><div class="ver">v0.18｜ランキング＆店のバイオリズム</div></header>
 <div class="nav" id="nav">
  <button class="btn dark active" data-view="dash">🏠 LAB</button>
  <button class="btn dark" data-view="hyp">🧠 仮説</button>
@@ -2033,6 +2063,55 @@ get('pmExport').onclick=()=>{const data={kind:'pekalog-prediction-history',versi
  document.title='PEKALOG LAB '+label;
  const header=document.querySelector('header .ver');
  if(header)header.textContent=label;
+})();
+</script>
+<script id="pekalog-v028-layout">
+(function(){
+'use strict';
+function init(){
+  const nav=document.getElementById('nav');
+  const condition=document.getElementById('condition');
+  const dash=document.getElementById('dash');
+  if(!nav||!condition||!dash)return;
+  // Move the original discoveries element WITH its id so existing renderDash updates still work.
+  const discoveries=document.getElementById('discoveries');
+  const original=discoveries?.closest('.card');
+  if(original && original.parentElement===dash && !condition.contains(original)){
+    original.querySelector('h3').textContent='🔎 LABが見つけた傾向';
+    original.dataset.pekaMoved='condition';
+    condition.insertBefore(original,condition.firstElementChild||null);
+  }
+  // Adapt all generated verification tables, including those added after initial load.
+  // Add text labels from header cells and show each data row vertically on narrow screens.
+  const adapt=()=>{
+    if(!window.matchMedia('(max-width:600px)').matches)return;
+    document.querySelectorAll('.view table').forEach(table=>{
+      if(table.dataset.pekaAdapted==='1')return;
+      const rows=[...table.querySelectorAll('tbody tr')];
+      if(!rows.length)return;
+      const heads=[...table.querySelectorAll('thead th')].map(n=>n.textContent.trim());
+      if(!heads.length)return;
+      for(const tr of rows){
+        const cells=[...tr.children].filter(c=>c.tagName==='TD');
+        if(cells.some(c=>Number(c.colSpan)>1))return;
+        cells.forEach((td,i)=>td.setAttribute('data-peka-label',heads[i]||'項目'+(i+1)));
+      }
+      table.classList.add('peka-stack-table');table.dataset.pekaAdapted='1';
+    });
+  };
+  let queued=false;
+  const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;adapt()})};
+  // Existing pages regenerate tables in place; process those on change without loop.
+  const obs=new MutationObserver(schedule);
+  obs.observe(document.querySelector('.wrap')||document.body,{subtree:true,childList:true});
+  window.addEventListener('resize',schedule);
+  nav.addEventListener('click',schedule);
+  schedule();
+  // Version display only; keep old labels inside historical sections untouched.
+  document.title='PEKALOG LAB v0.28｜スマホ検証・店傾向統合版';
+  const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.28｜スマホ検証・店傾向統合版';
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
 </body>
