@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>PEKALOG LAB v0.30｜スマホ縦読み最適化</title>
+<title>PEKALOG LAB v0.30.1｜スマホ縦読み・表示競合修正</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -2270,8 +2270,16 @@ function observe(){
  obs.observe(root,{subtree:true,childList:true});
  window.addEventListener('resize',schedule,{passive:true});
 }
- document.title='PEKALOG LAB v0.30｜スマホ縦読み最適化';
- const v=document.querySelector('header .ver');if(v)v.textContent='v0.30｜スマホ縦読み最適化';
+ // Older LAB modules also update this label on DOMContentLoaded.
+ // Register after them, so the most recent version stays visible.
+ function showVersion(){
+   document.title='PEKALOG LAB v0.30.1｜スマホ縦読み・表示競合修正';
+   const v=document.querySelector('header .ver');
+   if(v)v.textContent='v0.30.1｜スマホ縦読み・表示修正';
+ }
+ if(document.readyState==='loading'){
+   document.addEventListener('DOMContentLoaded',showVersion,{once:true});
+ }else showVersion();
 })();
 </script>
 <!-- END PEKALOG LAB v0.30 -->
