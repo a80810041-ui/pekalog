@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>PEKALOG LAB v0.28｜スマホ検証・店傾向統合版</title>
+<title>PEKALOG LAB v0.29｜データ品質・検証改善</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -395,7 +395,17 @@ function fmt(n){if(n===null||n===undefined||Number.isNaN(Number(n)))return '-';r
 function pct(n,d){return d?((n/d)*100).toFixed(1)+'%':'-'}
 function signed(n){if(n===null||n===undefined||n==='')return '-';n=Number(n);return `${n>0?'+':''}${fmt(n)}`}
 function isEventDate(d){const day=Number(String(d).slice(8,10));return day===Number(cfg.eventDay||22)||(cfg.extraEvents||[]).includes(String(d))}
-function finalRows(){const map=new Map();for(const s of lab.snapshots||[]){if(!s.date||!s.machine)continue;const k=s.date+'|'+s.machine;const old=map.get(k);if(!old||Number(s.ts||0)>=Number(old.ts||0))map.set(k,s)}return [...map.values()].map(transitionNormalizeRow).sort((a,b)=>(a.date+a.machine).localeCompare(b.date+b.machine))}
+/* v0.29: shared, read-only snapshot selector. A confirmed close always outranks a LIVE snapshot for the same date/machine. */
+const PEKA_TARGET_MACHINES=new Set(['651','652','653','655','656','657','658','660','661','662','663','707','708','710','711','712','713','715','716','717','718','720','687']);
+function pekaIsFinal(r){return r?.isFinal===true||r?.snapshotType==='historical-final'||r?.finalEvidence==='user-confirmed-post-close'}
+function pekaMachine(m){return String(m??'').trim().replace(/^0+(?=\d)/,'')}
+function pekaValidDate(d){return /^\d{4}-\d{2}-\d{2}$/.test(String(d||''))}
+function pekaCanonicalRows(){const map=new Map();for(const s of lab.snapshots||[]){
+ if(!s||!pekaValidDate(s.date)||!PEKA_TARGET_MACHINES.has(pekaMachine(s.machine))||s.demo||s.isDemo)continue;
+ const k=s.date+'|'+pekaMachine(s.machine),old=map.get(k);
+ if(!old||(pekaIsFinal(s)&&!pekaIsFinal(old))||(pekaIsFinal(s)===pekaIsFinal(old)&&Number(s.ts||0)>Number(old.ts||0)))map.set(k,s);
+ }return [...map.values()].sort((a,b)=>(a.date+pekaMachine(a.machine)).localeCompare(b.date+pekaMachine(b.machine)))}
+function finalRows(){return pekaCanonicalRows().map(transitionNormalizeRow)}
 function rowsByDate(){const m={};for(const r of finalRows())(m[r.date]??=[]).push(r);return m}
 function latestSnapshot(date,machine){return (lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===normMachine(machine)).sort((a,b)=>Number(a.ts||0)-Number(b.ts||0)).at(-1)||null}
 function nearestSnapshot(date,machine,ts){const a=(lab.snapshots||[]).filter(x=>x.date===date&&normMachine(x.machine)===normMachine(machine)&&x.ts).sort((x,y)=>Math.abs(x.ts-ts)-Math.abs(y.ts-ts));return a[0]||null}
@@ -1205,7 +1215,7 @@ const v18Target=[...new Set([...TURKEY_LIVE.defaultMachines,'687'])].map(normMac
 const v18TargetSet=new Set(v18Target);
 const EL=id=>document.getElementById(id);
 const VNUM=x=>(x!==null&&x!==undefined&&x!==''&&Number.isFinite(Number(x)))?Number(x):null;
-const FINAL=r=>r?.isFinal===true||r?.snapshotType==='historical-final';
+const FINAL=r=>pekaIsFinal(r);
 const N=(n)=>Number(n).toLocaleString('ja-JP');
 const SIGN=n=>n==null?'—':(n>0?'+':'')+N(Math.round(n));
 const COLOR=n=>n==null?'':n>=0?'pos':'neg';
@@ -1373,12 +1383,14 @@ function displayBio(){
  const stale=(Date.parse(today+'T00:00:00Z')-Date.parse(until+'T00:00:00Z'))/86400000>3;
  let type='wait',headline='判定保留',detail='直近7日間で、閉店差枚が18台以上揃った日を4日以上必要とします。';
  if(!stale&&recent.length>=4){
-  if(av<=-150&&good/recent.length<=.35){type='warn';headline='⚠️ 回収傾向注意！';detail='直近の集計対象は客側マイナスが優勢。今日は無理に打たず、様子見も選択肢。'}
+  if(av<=-150&&good/recent.length<=.35){type='warn';headline='⚠️ 客側マイナス強め';detail='直近の確定対象は客側マイナスが多く、1台平均も大きくマイナス。今後の出玉予測ではありません。'}
+  else if(av<0&&good/recent.length<=.4){type='warn';headline='📉 客側マイナス優勢';detail='直近の確定対象はマイナスの日が多い状態。ただし強い回収傾向の基準には未到達。'}
   else if(av>=100&&good/recent.length>=.6){type='calm';headline='✨ 客側プラス優勢';detail='直近の集計対象では客側プラスの日が比較的多い状態。次回の結果は分かりません。'}
-  else{type='wait';headline='🌥️ 明確な偏りなし';detail='直近の差枚には大きな一方向の偏りが見えていないよ。'}
+  else if(av>0&&good/recent.length>=.6){type='calm';headline='📈 客側プラスの日が多め';detail='直近の確定対象ではプラス日がやや優勢。次回の結果は分かりません。'}
+  else{type='wait';headline='🌥️ 判定は拮抗';detail='直近の確定対象では一方向の優勢判定に達していません。'}
  }else if(stale)detail='最新の閉店データが古いため、現在の傾向は判定しないよ。';
  EL('v18BioStatus').innerHTML=`<div class="v18-status ${type}"><strong>${headline}</strong><div class="v18-mini" style="margin-top:6px">${detail}</div></div>`;
- EL('v18BioDetail').innerHTML=`<div class="v18-grid"><div class="stat"><div class="k">直近7日・1台あたり平均</div><div class="v ${COLOR(av)}">${av==null?'—':SIGN(av)+'枚'}</div><div class="tiny">閉店18台以上の日 ${recent.length}/7日</div></div><div class="stat"><div class="k">客側プラスの日</div><div class="v">${recent.length?good+'/'+recent.length+'日':'—'}</div><div class="tiny">期間終了 ${escapeText(until)}</div></div><div class="stat"><div class="k">その前の7日・平均</div><div class="v ${COLOR(prior)}">${prior==null?'—':SIGN(prior)+'枚'}</div><div class="tiny">比較可能 ${old.length}/7日</div></div><div class="stat"><div class="k">今の判定条件</div><div class="v" style="font-size:17px">${stale?'期限切れ':recent.length<4?'資料不足':'参考判定'}</div><div class="tiny">全23台のうち閉店18台以上</div></div></div><div class="v18-chart-hint">判定ルール（暫定）：閉店18台以上の集計日が直近7日に4日以上。1台あたり平均−150枚以下かつ客側プラス日が35%以下なら「回収傾向注意」。＋100枚以上かつプラス日60%以上なら「客側プラス優勢」。データ未取得・LIVE日は判定から除外。これは次の営業日の予報ではありません。</div>`;
+ EL('v18BioDetail').innerHTML=`<div class="v18-grid"><div class="stat"><div class="k">直近7日・1台あたり平均</div><div class="v ${COLOR(av)}">${av==null?'—':SIGN(av)+'枚'}</div><div class="tiny">閉店18台以上の日 ${recent.length}/7日</div></div><div class="stat"><div class="k">客側プラスの日</div><div class="v">${recent.length?good+'/'+recent.length+'日':'—'}</div><div class="tiny">期間終了 ${escapeText(until)}</div></div><div class="stat"><div class="k">その前の7日・平均</div><div class="v ${COLOR(prior)}">${prior==null?'—':SIGN(prior)+'枚'}</div><div class="tiny">比較可能 ${old.length}/7日</div></div><div class="stat"><div class="k">今の判定条件</div><div class="v" style="font-size:17px">${stale?'期限切れ':recent.length<4?'資料不足':'参考判定'}</div><div class="tiny">全23台のうち閉店18台以上</div></div></div><div class="v18-chart-hint">判定ルール（暫定）：閉店18台以上の集計日が直近7日に4日以上。平均−150枚以下・プラス日35%以下は「マイナス強め」。平均マイナス・プラス日40%以下は「マイナス優勢」。プラス側も平均・プラス日率の2段階で評価。データ未取得・LIVE日は判定から除外。これは次の営業日の予報ではありません。</div>`;
 }
 function monthString(d){return String(d).slice(0,7)}
 function shiftMonth(m,delta){const [y,mo]=m.split('-').map(Number);const date=new Date(Date.UTC(y,mo-1+delta,1));return date.getUTCFullYear()+'-'+String(date.getUTCMonth()+1).padStart(2,'0')}
@@ -1888,13 +1900,13 @@ const BASE={combined:.4,rb:.4,diff:.2,weekday:0,event:0,recent:0};
 const LEARN_MIN=12; // Minimum evaluated days before any adaptive component is enabled
 let report=null,lastSignature='';
 function orderedRows(){
- const src=((typeof lab!=='undefined'&&lab?.snapshots)||[]).filter(r=>/^\d{4}-\d{2}-\d{2}$/.test(r.date||'')&&r.machine!=null&&String(r.machine)!=='687');
- const f=new Map(),models=new Map();
- for(const r of src){if(!final(r))continue;const k=r.date+'|'+String(r.machine),old=f.get(k);if(!old||(num(r.ts)||0)>=(num(old.ts)||0))f.set(k,r)}
- const rows=[...f.values()].filter(r=>num(r.totalG)!==null&&num(r.big)!==null&&num(r.reg)!==null);
+ const src=pekaCanonicalRows().filter(r=>pekaMachine(r.machine)!=='687');
+ const rows=src.filter(r=>pekaIsFinal(r)&&num(r.totalG)!==null&&num(r.big)!==null&&num(r.reg)!==null);
  rows.sort((a,b)=>a.date.localeCompare(b.date)||String(a.machine).localeCompare(String(b.machine),'ja',{numeric:true}));
- const byMachine=new Map(),byDate=new Map();for(const r of rows){let a=byMachine.get(String(r.machine));if(!a){a=[];byMachine.set(String(r.machine),a)}a.push(r);let b=byDate.get(r.date);if(!b){b=[];byDate.set(r.date,b)}b.push(r)}
- return {src,rows,byMachine,byDate};
+ const byMachine=new Map(),byDate=new Map();for(const r of rows){
+  let a=byMachine.get(String(r.machine));if(!a){a=[];byMachine.set(String(r.machine),a)}a.push(r);
+  let b=byDate.get(r.date);if(!b){b=[];byDate.set(r.date,b)}b.push(r);
+ }return {src,rows,byMachine,byDate};
 }
 function eventHit(date, config){const dd=Number(date.slice(-2));if(dd===Number(config.eventDay||22))return true;const list=Array.isArray(config.extraEvents)?config.extraEvents:[];return list.some(x=>{if(typeof x==='number')return dd===x;const t=String(x||'');return t===date||(/^\d{1,2}$/.test(t)&&Number(t)===dd)||t===date.slice(5)})}
 function getCfg(){try{return JSON.parse(localStorage.getItem('pekalog_lab_v02_config')||'{}')}catch(e){return {}}}
@@ -1963,7 +1975,7 @@ function render(){if(!report)return;const r=report,ls=r.learn,after=r.trained;
  $('v026-learning').innerHTML=`<div class="v026-stats">${FEATURES.map(f=>`<div class="v026-stat"><strong>${Math.round(ls.weights[f]*100)}%</strong><span>${NAMES[f]}の現在の比重</span><div class="v026-w"><i style="width:${Math.round(ls.weights[f]*100)}%"></i></div></div>`).join('')}</div><p class="v026-meta">曜日・特定日は過去の同条件データが少ないほど影響を抑えます。特定日は対象日に該当する場合のみ台別のサンプルを使います。店コンディションは全台共通の環境情報のため、現段階では順位加点せず今後の検証候補として分離しています。</p>`;
  let misses=r.trained.slice(-12).flatMap(d=>d.adaptive.filter(x=>x.ok&&!x.hit).map(x=>({date:d.date,...x})));
  $('v026-misses').innerHTML=misses.length?`<div class="tablewrap"><table class="v026-tbl"><thead><tr><th>日付</th><th>台</th><th>結果</th></tr></thead><tbody>${misses.slice(-10).reverse().map(x=>`<tr><td>${safe(x.date.slice(5))}</td><td>${safe(x.machine)}</td><td>合算基準未達</td></tr>`).join('')}</tbody></table></div><p class="v026-meta">単発の不的中では重みを変更しません。過去の複数日で補助要素の有効性を比べます。</p>`:'<p class="v026-meta">検証条件を満たす不的中事例がありません。</p>';
- $('v026-quality').textContent=`現行版では、過去データで補助要素の上位3台の成績と固定モデルを比較し、十分な根拠がある場合だけ加点幅を最大24%まで調整します。補正の採用による効果がない場合は自動で固定40/40/20に戻ります。「自己改善」は学習実験段階で、将来の精度向上を保証しません。`;
+ $('v026-quality').textContent=`評価可能日だけの成績は実戦勝率ではありません。欠損・LIVE・候補不足は別途『データ品質監査』で確認できます。期間中の除外日は見逃しと同一視しません。過去データで補助要素の上位3台の成績と固定モデルを比較し、十分な根拠がある場合だけ加点幅を最大24%まで調整します。補正の採用による効果がない場合は自動で固定40/40/20に戻ります。「自己改善」は学習実験段階で、将来の精度向上を保証しません。`;
  preview();
 }
 function refresh(){try{report=compute();render()}catch(e){$('v026-status').textContent='計算エラー：'+String(e.message||e);console.error(e)}}
@@ -2112,6 +2124,81 @@ function init(){
   const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.28｜スマホ検証・店傾向統合版';
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
+<!-- PEKALOG LAB v0.29 DATA QUALITY AUDIT; no mutation of snapshots -->
+<style id="peka-audit-style">
+#pekaAuditPanel,#pekaAuditHome{max-width:100%;min-width:0}
+.peka-audit-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:9px 0}
+.peka-audit-metric{background:#0e141d;border:1px solid #344052;border-radius:12px;padding:10px;min-width:0}
+.peka-audit-metric b{display:block;font-size:21px;line-height:1.5}
+.peka-audit-metric small{color:#a5b5c6;font-size:11px}
+.peka-audit-row{border:1px solid #324051;border-radius:10px;padding:9px;margin:6px 0;overflow-wrap:anywhere}
+.peka-audit-row summary{cursor:pointer;font-size:13px;font-weight:700}
+.peka-audit-row p{font-size:12px;color:#b8c8d8;margin:6px 0}
+#pekaAuditPanel button{margin:4px}
+@media(max-width:480px){#pekaAuditPanel,#pekaAuditHome{width:100%;overflow-wrap:anywhere}.peka-audit-row{max-width:100%}}
+</style>
+<script id="peka-audit-script">
+(function(){
+'use strict';
+const target=document.getElementById('data'),dash=document.getElementById('dash');if(!target||!dash)return;
+const audit=document.createElement('div');audit.className='card';audit.id='pekaAuditPanel';
+audit.innerHTML='<h3>🛡️ データ品質監査 v0.29</h3><div class="tiny">読み取り専用。既存のスナップショット、LIVE・閉店フラグは変更しません。</div><div id="pekaAuditStats"></div><div id="pekaAuditBreakdown"></div><button class="btn cyan" id="pekaAuditRefresh">🔄 再点検</button><button class="btn dark" id="pekaAuditExport">⬇ 監査結果JSON</button>';
+target.appendChild(audit);
+const home=document.createElement('div');home.className='card';home.id='pekaAuditHome';home.innerHTML='<h3>🛡️ データ品質</h3><div id="pekaAuditHomeText" class="notice">点検中…</div><button class="btn dark small" id="pekaAuditGo">除外日の内訳を見る</button>';dash.appendChild(home);
+let lastAudit=null;
+const num=x=>x===null||x===undefined||x===''||!Number.isFinite(Number(x))?null:Number(x);
+const safe=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const machine=r=>pekaMachine(r.machine);
+const short=r=>r&&pekaIsFinal(r)?'確定':'LIVE';
+function auditData(){
+ const raw=Array.isArray(lab?.snapshots)?lab.snapshots:[];
+ const accepted=raw.filter(r=>r&&pekaValidDate(r.date)&&PEKA_TARGET_MACHINES.has(machine(r))&&!r.demo&&!r.isDemo);
+ const canonical=pekaCanonicalRows(),dateMap=new Map(),groups=new Map();
+ for(const r of accepted){const key=r.date+'|'+machine(r);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(r)}
+ const duplicates=[...groups.values()].filter(rows=>rows.length>1).length;
+ const dates=[...new Set(accepted.map(r=>r.date))].sort();
+ for(const date of dates){dateMap.set(date,{date,all:0,final:0,juggler:0,eligible:0,missing:[],live:[],incomplete:[],finalDiff:0,finalDiffN:0})}
+ for(const r of canonical){
+  const d=dateMap.get(r.date);if(!d)continue;d.all++;if(pekaIsFinal(r))d.final++;
+  if(machine(r)==='687')continue;d.juggler++;
+  const ok=pekaIsFinal(r)&&num(r.totalG)!==null&&num(r.big)!==null&&num(r.reg)!==null;
+  if(ok){d.eligible++;if(num(r.diff)!==null){d.finalDiff+=num(r.diff);d.finalDiffN++}}
+  else if(!pekaIsFinal(r))d.live.push(machine(r));
+  else d.incomplete.push(machine(r));
+ }
+ const counted=[...dateMap.values()];
+ const noEligible=counted.filter(d=>d.eligible===0);
+ const partial=counted.filter(d=>d.eligible>0&&d.eligible<22);
+ const finalized=counted.filter(d=>d.eligible>0);
+ const stats={raw:raw.length,accepted:accepted.length,savedDays:counted.length,confirmedDays:finalized.length,missingDays:noEligible.length,partialDays:partial.length,duplicatePairs:duplicates,eligibleRows:finalized.reduce((x,d)=>x+d.eligible,0),latest:dates.at(-1)||null};
+ return {generatedAt:new Date().toISOString(),policy:'Confirmed beats LIVE; latest timestamp within same class. Never infer close from time.',stats,days:counted,excluded:noEligible,partial};
+}
+function draw(){
+ try{
+ const q=lastAudit=auditData(),m=q.stats;
+ document.getElementById('pekaAuditStats').innerHTML='<div class="peka-audit-metrics">'+[
+ ['保存日数',m.savedDays],['分析対象の確定日',m.confirmedDays],['確定対象外',m.missingDays],['確定データ一部欠損の日',m.partialDays],['日×台の複数記録',m.duplicatePairs],['確定・必要数値ありの台日',m.eligibleRows]
+ ].map(([n,v])=>'<div class="peka-audit-metric"><small>'+n+'</small><b>'+v+'</b></div>').join('')+'</div>';
+ document.getElementById('pekaAuditHomeText').textContent='保存 '+m.savedDays+'日／確定分析 '+m.confirmedDays+'日／全日対象外 '+m.missingDays+'日。最新保存日 '+(m.latest||'なし')+'。';
+ const notes=q.days.filter(d=>d.eligible===0||d.eligible<22).sort((a,b)=>b.date.localeCompare(a.date));
+ document.getElementById('pekaAuditBreakdown').innerHTML='<h4>📅 対象外・部分収集の日付（'+notes.length+'日）</h4>'+
+ (notes.length?notes.map(d=>'<details class="peka-audit-row"><summary>'+safe(d.date)+'｜確定・数値あり '+d.eligible+'/22台 '+(d.eligible===0?'⚠️ 日全体が対象外':'一部のみ')+'</summary><p>保存された台 '+d.all+'/23、確定 '+d.final+'台。'+(d.live.length?'LIVEのジャグラー：'+safe(d.live.join('、'))+'。':'')+(d.incomplete.length?'必要数値不足：'+safe(d.incomplete.join('、'))+'。':'')+'未取得・未記録の台は0枚扱いしません。閉店確定のないデータは自動で確定扱いにしません。</p></details>').join(''):'<div class="tiny">現在、対象外または一部欠損の日はありません。</div>')+
+ '<div class="tiny">※ 22台はジャグラーのみ。687番台は華ログ用。重複は異なる取得時刻の履歴を含み、必ずしも異常とは限りません。監査結果は端末内の保存データに基づきます。</div>';
+ }catch(e){document.getElementById('pekaAuditHomeText').textContent='監査エラー：'+e.message;console.error(e)}
+}
+document.getElementById('pekaAuditGo').onclick=()=>{const b=document.querySelector('#nav [data-view="data"]');b?.click();audit.scrollIntoView({behavior:'smooth',block:'start'});draw()};
+document.getElementById('pekaAuditRefresh').onclick=draw;
+document.getElementById('pekaAuditExport').onclick=()=>{
+ const q=lastAudit||auditData();const blob=new Blob([JSON.stringify(q,null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='pekalog_audit_v029.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1500);
+};
+// Keep audit in sync with imports and navigation without rewriting persistence.
+const previousRender=renderAll;renderAll=function(){previousRender();draw()};
+document.querySelector('#nav [data-view="data"]')?.addEventListener('click',draw);
+Promise.resolve(labStoreInit).then(draw,draw);draw();
+document.title='PEKALOG LAB v0.29｜データ品質・検証改善';
+const ver=document.querySelector('header .ver');if(ver)ver.textContent='v0.29｜データ品質・検証改善';
 })();
 </script>
 </body>
