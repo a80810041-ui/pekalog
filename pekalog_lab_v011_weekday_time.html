@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
-<title>PEKALOG LAB v0.31｜閉店時刻・判定統合</title>
+<title>PEKALOG LAB v0.32｜朝イチ予想精度検証</title>
 <style>
 :root{
  --bg:#0b0d10;--panel:#151922;--panel2:#0f1319;--line:#2a313d;--text:#f7f8fb;--muted:#96a0af;
@@ -2311,5 +2311,135 @@ function observe(){
 </script>
 <!-- END PEKALOG LAB v0.30 -->
 
+<!-- PEKALOG LAB v0.32: evidence-conscious morning prediction validation -->
+<style id="peka-v032-style">
+#pekaV032 .v32note{font-size:12px;color:#aab8cb;line-height:1.65;margin:10px 0}
+#pekaV032 .v32metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
+#pekaV032 .v32stat{background:#10151c;border:1px solid #303b4d;border-radius:13px;padding:12px;min-width:0}
+#pekaV032 .v32stat small{display:block;color:#9caac0;font-size:12px;line-height:1.5}
+#pekaV032 .v32stat b{display:block;font-size:23px;margin-top:5px;font-variant-numeric:tabular-nums}
+#pekaV032 details{border:1px solid #303b4d;border-radius:13px;margin:9px 0;padding:12px;background:#111821;overflow-wrap:anywhere}
+#pekaV032 summary{font-weight:700;line-height:1.5;cursor:pointer}
+#pekaV032 .v32row{font-size:13px;line-height:1.8;overflow-wrap:anywhere}
+#pekaV032 .v32ok{color:#79e9ab}#pekaV032 .v32no{color:#ff99a4}
+#pekaV032 .v32grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#pekaV032 .v32grid >div{background:#0d121a;border:1px solid #303b4d;border-radius:10px;padding:9px;min-width:0;overflow-wrap:anywhere;font-size:12px;line-height:1.5}
+#pekaV032 .v32head{margin:20px 0 8px;font-size:17px}
+#pekaV032 button{max-width:100%}
+@media(max-width:480px){#pekaV032{padding:12px!important}#pekaV032 .v32metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<script id="peka-v032-script">
+(function(){
+'use strict';
+const nav=document.getElementById('nav'),wrap=document.querySelector('.wrap');
+if(!nav||!wrap||document.getElementById('pekaV032'))return;
+const button=document.createElement('button');button.type='button';button.className='btn dark';button.dataset.view='pekaV032';button.textContent='🎯 精度検証';
+const dataNav=nav.querySelector('[data-view="data"]');nav.insertBefore(button,dataNav||null);
+const section=document.createElement('section');section.id='pekaV032';section.className='view';
+section.innerHTML=`<div class="card"><h2>🎯 朝イチ予想の精度検証 v0.32</h2>
+<p class="v32note">実際の事前保存予想と、過去の日付順に再計算した参考検証を混同しません。結果は店の収集対象22台だけ。確定値には時刻からの推定も含みます。勝率・利益の保証ではありません。</p>
+<button class="btn cyan wide" id="v32Recheck">🔄 最新データで再検証</button>
+<div id="v32Status" class="v32note">準備中…</div>
+<h3 class="v32head">🔒 事前保存した予想の答え合わせ</h3><div id="v32Frozen"></div>
+<h3 class="v32head">🧪 過去データによる参考検証</h3><div id="v32Walk"></div>
+<div class="v32note">成功基準：2,000G以上かつ合算1/135以下。出玉基準：推定差枚＋1,000枚以上（差枚がある台のみ）。おすすめ上位3台と、同日に推薦しなかった台を比較。過去検証では当日以降のデータを順位計算に使いません。実戦の投資円・回収円の成績とは別です。</div></div>`;
+const footer=wrap.querySelector('.footer');if(footer)wrap.insertBefore(section,footer);else wrap.appendChild(section);
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=v=>v===null||v===undefined||v===''?null:(Number.isFinite(Number(v))?Number(v):null);
+const add=(d,n)=>new Date(Date.parse(d+'T12:00:00Z')+n*86400000).toISOString().slice(0,10);
+const percentage=(n,d)=>d?((n/d)*100).toFixed(1)+'%':'―';
+const expected=new Set(['651','652','653','655','656','657','658','660','661','662','663','707','708','710','711','712','713','715','716','717','718','720']);
+function actualRows(){
+ // Always use LAB's v0.31 shared canonical selection, including evidence-based inferred finality.
+ const source=(typeof pekaCanonicalRows==='function'?pekaCanonicalRows():[]).filter(r=>expected.has(String(r.machine)));
+ return source.filter(r=>typeof pekaIsFinal==='function'&&pekaIsFinal(r)&&num(r.totalG)!==null&&num(r.big)!==null&&num(r.reg)!==null);
+}
+function outcome(r){
+ if(!r)return {status:'missing'};
+ const g=num(r.totalG),b=num(r.big),reg=num(r.reg),d=num(r.diff);
+ if(g===null||b===null||reg===null||g<2000)return {status:'insufficient'};
+ const combo=b+reg>0?g/(b+reg):Infinity;
+ return {status:'evaluated',hit:combo<=135,combo,profit:d===null?null:d>=1000,diff:d,estimated:r.finalEvidence==='inferred-source-post-2230'};
+}
+function metrics(rec,miss){
+ const valid=rec.filter(x=>x.result.status==='evaluated'),diff=valid.filter(x=>x.result.profit!==null);
+ const missed=miss.filter(x=>x.result.status==='evaluated');
+ const mDiff=missed.filter(x=>x.result.profit!==null);
+ return {n:rec.length,valid:valid.length,hit:valid.filter(x=>x.result.hit).length,diffN:diff.length,diffHit:diff.filter(x=>x.result.profit).length,missN:miss.length,missValid:missed.length,missHit:missed.filter(x=>x.result.hit).length,missDiffN:mDiff.length,missDiffHit:mDiff.filter(x=>x.result.profit).length,notready:rec.length-valid.length,est:valid.filter(x=>x.result.estimated).length};
+}
+function statBox(label,val){return '<div class="v32stat"><small>'+esc(label)+'</small><b>'+esc(val)+'</b></div>'}
+function summaryHtml(s,days){return '<div class="v32metrics">'+statBox('検証日数',days+'日')+statBox('推薦台・合算達成率',percentage(s.hit,s.valid)+' ('+s.hit+'/'+s.valid+')')+statBox('推薦台・差枚＋1000枚率',percentage(s.diffHit,s.diffN)+' ('+s.diffHit+'/'+s.diffN+')')+statBox('非推薦台・合算達成率',percentage(s.missHit,s.missValid)+' ('+s.missHit+'/'+s.missValid+')')+statBox('非推薦台・差枚＋1000枚率',percentage(s.missDiffHit,s.missDiffN)+' ('+s.missDiffHit+'/'+s.missDiffN+')')+statBox('推薦台・評価不可',s.notready+'台')+'</div>'}
+function combine(parts){const result={};for(const key of Object.keys(metrics([],[])))result[key]=parts.reduce((s,x)=>s+x[key],0);return result}
+function grouping(rows){const by=new Map();for(const r of rows){if(!by.has(r.date))by.set(r.date,new Map());by.get(r.date).set(String(r.machine),r)}return by}
+function scoreDay(date,previous){
+ const history=previous.filter(r=>r.date>=add(date,-14)&&r.date<date&&num(r.totalG)>=1000);
+ const per=new Map();for(const r of history){const k=String(r.machine);if(!per.has(k))per.set(k,[]);per.get(k).push(r)}
+ const cand=[];
+ for(const [machine,all] of per){const arr=all.sort((a,b)=>a.date.localeCompare(b.date)),model=arr.at(-1)?.model,rr=arr.filter(r=>r.model===model);
+  const g=rr.reduce((s,r)=>s+num(r.totalG),0),b=rr.reduce((s,r)=>s+num(r.big),0),reg=rr.reduce((s,r)=>s+num(r.reg),0);
+  if(rr.length<3||g<7000||!b&&!reg)continue;
+  const dif=rr.filter(r=>num(r.diff)!==null),avg=dif.length>=3?dif.reduce((s,r)=>s+num(r.diff),0)/dif.length:null;
+  cand.push({machine,model,combined:g/(b+reg),rb:reg?g/reg:Infinity,diff:avg});
+ }
+ if(cand.length<3)return [];
+ function percentile(k,reverse){const sorted=cand.slice().sort((a,b)=>{const x=a[k]??(reverse?-Infinity:Infinity),y=b[k]??(reverse?-Infinity:Infinity);return reverse?y-x:x-y});const m=new Map();sorted.forEach((x,i)=>m.set(x.machine,(sorted.length-1-i)/Math.max(1,sorted.length-1)));return m}
+ const c=percentile('combined',false),r=percentile('rb',false),d=percentile('diff',true);
+ return cand.map(x=>({...x,rankScore:c.get(x.machine)*.4+r.get(x.machine)*.4+(x.diff===null?.5:d.get(x.machine))*.2})).sort((a,b)=>b.rankScore-a.rankScore||xMachine(a.machine)-xMachine(b.machine));
+}
+const xMachine=s=>Number(s)||0;
+function walkForward(by){
+ const dates=[...by.keys()].sort(),past=[],records=[];
+ for(const date of dates){
+  const order=scoreDay(date,past),actual=by.get(date),top=order.slice(0,3),chosen=new Set(top.map(x=>x.machine));
+  if(top.length===3){
+   const recommended=top.map(x=>({...x,result:outcome(actual.get(x.machine)?.model===x.model?actual.get(x.machine):null)}));
+   const notSelected=[...actual.values()].filter(x=>!chosen.has(String(x.machine))).map(x=>({machine:x.machine,result:outcome(x)}));
+   records.push({date,recommended,notSelected,metrics:metrics(recommended,notSelected)});
+  }
+  past.push(...actual.values());
+ }
+ return records;
+}
+function frozen(by){
+ let ledger=[];try{const raw=JSON.parse(localStorage.getItem('pekalog_forecast_ledger_v021')||'[]');ledger=Array.isArray(raw)?raw:[]}catch(e){}
+ const records=[],notVerifiable=[];
+ for(const f of ledger){if(!f||!f.date||!Array.isArray(f.ranked))continue;
+  const created=f.createdAt&&Number.isFinite(Date.parse(f.createdAt))?new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(f.createdAt)):null;
+  if(!created||created>=f.date||f.sourceMaxDate&&f.sourceMaxDate>=f.date){notVerifiable.push(f.date);continue}
+  if(!by.has(f.date))continue;
+  const actual=by.get(f.date),top=f.ranked.filter(x=>x.recommended).slice(0,3),selected=new Set(top.map(x=>String(x.machine)));
+  if(!top.length)continue;
+  const rec=top.map(x=>({machine:x.machine,result:outcome(actual.get(String(x.machine))?.model===x.model?actual.get(String(x.machine)):null)}));
+  const missed=[...actual.values()].filter(x=>!selected.has(String(x.machine))).map(x=>({machine:x.machine,result:outcome(x)}));
+  records.push({date:f.date,recommended:rec,notSelected:missed,metrics:metrics(rec,missed)});
+ }
+ return {records,all:ledger.length,excluded:notVerifiable};
+}
+function details(records,limit=14){return records.slice(-limit).reverse().map(d=>{
+ const m=d.metrics,rec=d.recommended.map(x=>esc(x.machine)+'番 '+(x.result.status==='evaluated'?(x.result.hit?'✅合算達成':'合算未達')+(x.result.profit===null?'／差枚不明':x.result.profit?'／＋1000枚達成':'／＋1000枚未達'):'⚪評価保留')).join('、');
+ const missed=d.notSelected.filter(x=>x.result.status==='evaluated'&&x.result.hit).map(x=>esc(x.machine)+'番');
+ return '<details><summary>'+esc(d.date)+' ｜推薦 '+m.hit+'/'+m.valid+'台（判定可能分）／非推薦の合算達成 '+m.missHit+'台</summary><div class="v32row">推薦：'+(rec||'なし')+'</div><div class="v32row">非推薦で合算達成：'+(missed.join('、')||'なし')+'</div></details>';
+}).join('')}
+function render(){try{
+ const rows=actualRows(),by=grouping(rows),walk=walkForward(by),freeze=frozen(by);
+ const walkData=combine(walk.map(x=>x.metrics)),freezeData=combine(freeze.records.map(x=>x.metrics));
+ $('v32Frozen').innerHTML=(freeze.records.length?summaryHtml(freezeData,freeze.records.length)+details(freeze.records):'<div class="notice">まだ事前に保存した予想の検証可能な日がないよ。既存の「予想検証」で未来の日付の予想を保存しておくと、閉店データ取得後にここでも答え合わせできる。</div>')+
+ '<p class="v32note">保存済み予想 '+freeze.all+'件／事前保存の日時を確認できず除外 '+freeze.excluded.length+'件。未来の結果を見た後の保存は本番的中率に含めません。</p>';
+ $('v32Walk').innerHTML=(walk.length?summaryHtml(walkData,walk.length)+details(walk,20):'<div class="notice">比較に必要な過去履歴が不足しているよ。</div>')+
+ '<p class="v32note">参考検証は14日履歴から合算40%・REG40%・平均差枚20%の相対順位で上位3台を選択。既存の多角的評価そのものの精度ではなく、固定の比較モデルの結果です。非推薦台はその日に評価可能な全台から上位3台を除いたもの。</p>';
+ $('v32Status').textContent='読み取り専用｜確定（推定含む） '+by.size+'日／対象 '+rows.length+'台日／事前予想の検証可能 '+freeze.records.length+'日／参考検証 '+walk.length+'日';
+ }catch(e){$('v32Status').textContent='検証エラー：'+String(e?.message||e);console.error(e)}}
+button.addEventListener('click',()=>{
+ nav.querySelectorAll('.btn').forEach(b=>b.classList.remove('active'));
+ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+ button.classList.add('active');section.classList.add('active');render();
+});
+$('v32Recheck').addEventListener('click',render);
+function showVersion(){document.title='PEKALOG LAB v0.32｜朝イチ予想精度の答え合わせ';const v=document.querySelector('header .ver');if(v)v.textContent='v0.32｜朝イチ予想精度検証'}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showVersion,{once:true});else showVersion();
+})();
+</script>
+<!-- END PEKALOG LAB v0.32 -->
 </body>
 </html>
